@@ -13,12 +13,16 @@ import ContactPage from './pages/ContactPage';
 import LegalPage from './pages/LegalPage';
 import PartnershipsPage from './pages/PartnershipsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import TestSanity from './components/TestSanity'; // 🆕 Import du composant de test Sanity
 
 function App() {
   return (
     <Routes>
       {/* Page d'accueil */}
       <Route path="/" element={<HomePage />} />
+      
+      {/* 🆕 Route de test Sanity */}
+      <Route path="/test-sanity" element={<TestSanity />} />
       
       {/* ✅ CORRECTION : Route pour la page /univers avec le bon composant */}
       <Route path="/univers" element={<UniversPageTemplate />} />
