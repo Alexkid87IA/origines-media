@@ -1,0 +1,351 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.2;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .bg-gradient-origines {
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  }
+  
+  .glassmorphism {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Font Family Utilities */
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* Film Grain Texture Effect */
+  .film-grain-texture {
+    position: relative;
+  }
+
+  .film-grain-texture::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+    background-size: 100px 100px, 80px 80px, 120px 120px;
+    background-position: 0 0, 40px 60px, 130px 270px;
+    animation: filmGrainMove 8s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    opacity: 0.4;
+  }
+
+  @keyframes filmGrainMove {
+    0% {
+      transform: translate(0, 0);
+    }
+    10% {
+      transform: translate(-5%, -5%);
+    }
+    20% {
+      transform: translate(-10%, 5%);
+    }
+    30% {
+      transform: translate(5%, -10%);
+    }
+    40% {
+      transform: translate(-5%, 15%);
+    }
+    50% {
+      transform: translate(-10%, 5%);
+    }
+    60% {
+      transform: translate(15%, 0%);
+    }
+    70% {
+      transform: translate(0%, 15%);
+    }
+    80% {
+      transform: translate(-15%, 10%);
+    }
+    90% {
+      transform: translate(10%, -5%);
+    }
+    100% {
+      transform: translate(5%, -10%);
+    }
+  }
+
+  /* Hide Scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ENHANCED Ken Burns Effect - Plus cinématique */
+  @keyframes kenBurnsEnhanced {
+    0% {
+      transform: scale(1.08) translateX(0px) translateY(0px) rotate(0deg);
+      filter: brightness(0.7) contrast(1.2) saturate(1.3);
+    }
+    20% {
+      transform: scale(1.12) translateX(-15px) translateY(-8px) rotate(0.5deg);
+      filter: brightness(0.75) contrast(1.25) saturate(1.35);
+    }
+    40% {
+      transform: scale(1.10) translateX(12px) translateY(-12px) rotate(-0.3deg);
+      filter: brightness(0.8) contrast(1.3) saturate(1.4);
+    }
+    60% {
+      transform: scale(1.14) translateX(-8px) translateY(8px) rotate(0.2deg);
+      filter: brightness(0.7) contrast(1.2) saturate(1.3);
+    }
+    80% {
+      transform: scale(1.11) translateX(10px) translateY(-5px) rotate(-0.4deg);
+      filter: brightness(0.75) contrast(1.25) saturate(1.35);
+    }
+    100% {
+      transform: scale(1.13) translateX(-5px) translateY(3px) rotate(0.1deg);
+      filter: brightness(0.8) contrast(1.3) saturate(1.4);
+    }
+  }
+
+  /* Radial gradient utility */
+  .bg-radial-gradient {
+    background: radial-gradient(circle at center, var(--tw-gradient-stops));
+  }
+
+  /* ENHANCED Title Reveal Animation - Plus dramatique */
+  @keyframes titleRevealEnhanced {
+    0% {
+      opacity: 0;
+      transform: translateY(120px) scale(0.7) rotateX(90deg);
+      filter: blur(15px);
+    }
+    30% {
+      opacity: 0.3;
+      transform: translateY(60px) scale(0.85) rotateX(45deg);
+      filter: blur(8px);
+    }
+    60% {
+      opacity: 0.8;
+      transform: translateY(15px) scale(0.98) rotateX(10deg);
+      filter: blur(2px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1) rotateX(0deg);
+      filter: blur(0px);
+    }
+  }
+
+  /* ENHANCED Word Slide In Animation - Plus cinématique */
+  @keyframes wordSlideInEnhanced {
+    0% {
+      opacity: 0;
+      transform: translateY(80px) translateX(-30px) rotateX(90deg) rotateZ(-10deg);
+      filter: blur(10px);
+    }
+    40% {
+      opacity: 0.6;
+      transform: translateY(20px) translateX(-5px) rotateX(30deg) rotateZ(-3deg);
+      filter: blur(3px);
+    }
+    70% {
+      opacity: 0.9;
+      transform: translateY(-8px) translateX(2px) rotateX(-5deg) rotateZ(1deg);
+      filter: blur(1px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) translateX(0px) rotateX(0deg) rotateZ(0deg);
+      filter: blur(0px);
+    }
+  }
+
+  /* ENHANCED Line Expand Animation - Plus spectaculaire */
+  @keyframes lineExpandEnhanced {
+    0% {
+      transform: scaleX(0) scaleY(0.5);
+      opacity: 0;
+      filter: blur(2px);
+    }
+    30% {
+      transform: scaleX(0.3) scaleY(0.8);
+      opacity: 0.6;
+      filter: blur(1px);
+    }
+    60% {
+      transform: scaleX(0.8) scaleY(1.2);
+      opacity: 0.9;
+      filter: blur(0.5px);
+    }
+    100% {
+      transform: scaleX(1) scaleY(1);
+      opacity: 1;
+      filter: blur(0px);
+    }
+  }
+
+  /* Enhanced Fade In Up */
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+      filter: blur(2px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
+    }
+  }
+
+  /* Pulse Animation for Interactive Elements */
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  /* Shimmer Effect */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Custom Cursor for Interactive Areas */
+  .cursor-none {
+    cursor: none;
+  }
+
+  /* Smooth Transitions */
+  .transition-all-smooth {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Glass Morphism Enhanced */
+  .glass-enhanced {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  /* Text Shadow for Better Readability */
+  .text-shadow-strong {
+    text-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.3);
+  }
+
+  /* Gradient Text Animation */
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .gradient-text-animated {
+    background: linear-gradient(-45deg, #8B5CF6, #EC4899, #F59E0B, #8B5CF6);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease infinite;
+  }
+
+  /* Line Clamp Utility for Text Truncation */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* NOUVEAU : Animations pour les éléments interactifs */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* NOUVEAU : Glow effect pour les éléments premium */
+  .premium-glow {
+    position: relative;
+  }
+
+  .premium-glow::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, #8B5CF6, #EC4899, #F59E0B, #8B5CF6);
+    background-size: 400% 400%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: gradientShift 3s ease infinite;
+    opacity: 0.7;
+    filter: blur(8px);
+  }
+}
