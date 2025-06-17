@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
 
 interface Video {
   id: string;
@@ -20,6 +22,8 @@ const FragmentsSection: React.FC<FragmentsSectionProps> = ({ videos }) => {
   const [canScrollRight, setCanScrollRight] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
 
   // Intersection Observer for scroll animations
   useEffect(() => {
@@ -277,8 +281,7 @@ const FragmentsSection: React.FC<FragmentsSectionProps> = ({ videos }) => {
                 style={{
                   transitionDelay: `${index * 100}ms`,
                 }}
-                onClick={() => window.open(video.videoUrl, '_blank')}
-              >
+                onClick={() => navigate(`/video/${video.id}`)}              >
                 {/* Image Background */}
                 <div className="absolute inset-0">
                   {loadedImages.has(video.id) ? (

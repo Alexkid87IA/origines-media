@@ -1,19 +1,21 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import UniversPage from './components/UniversPage';
-import UniversPageTemplate from './pages/UniversPage'; // ✅ CORRECTION : Import correct
+import UniversPage from './pages/UniversPage';
 import SeriesPage from './pages/SeriesPage';
-import FormatPage from './pages/FormatPage'; // ✅ NOUVEAU : Import du template unifié
-import BibliothequeCompletePage from './pages/BibliothequeCompletePage';
+import FormatPage from './pages/FormatPage';
+import BibliothequePage from './pages/BibliothequePage';
 import ArticlePage from './pages/ArticlePage';
 import VideoPage from './pages/VideoPage';
+import ProductionDetailPage from './pages/ProductionDetailPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import LegalPage from './pages/LegalPage';
 import PartnershipsPage from './pages/PartnershipsPage';
 import NotFoundPage from './pages/NotFoundPage';
-import TestSanity from './components/TestSanity'; // 🆕 Import du composant de test Sanity
+import TestSanity from './components/TestSanity';
+import PortraitDetailPage from './pages/PortraitDetailPage';
+
 
 function App() {
   return (
@@ -25,7 +27,7 @@ function App() {
       <Route path="/test-sanity" element={<TestSanity />} />
       
       {/* ✅ CORRECTION : Route pour la page /univers avec le bon composant */}
-      <Route path="/univers" element={<UniversPageTemplate />} />
+      <Route path="/univers" element={<UniversPage />} />
       
       {/* Pages Univers - Routes dynamiques */}
       <Route path="/univers/psychologie" element={
@@ -115,7 +117,11 @@ function App() {
       <Route path="/format/:formatId" element={<FormatPage />} />
       
       {/* Page Bibliothèque Complète */}
-      <Route path="/bibliotheque" element={<BibliothequeCompletePage />} />
+      <Route path="/bibliotheque" element={<BibliothequePage />} />
+      
+      {/* 🆕 Route pour la page de détail Production */}
+      <Route path="/production/:slug" element={<ProductionDetailPage />} />
+      <Route path="/histoire/:slug" element={<PortraitDetailPage />} />
       
       {/* Templates de contenu */}
       <Route path="/article/:slug" element={<ArticlePage />} />
@@ -141,6 +147,7 @@ function App() {
       
       {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />
+      <Route path="/video/:id" element={<ProductionDetailPage />} />
     </Routes>
   );
 }

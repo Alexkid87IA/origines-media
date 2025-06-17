@@ -697,7 +697,7 @@ const SeriesPage: React.FC = () => {
                       onMouseEnter={() => setHoveredCard(video.id)}
                       onMouseLeave={() => setHoveredCard(null)}
                       onClick={() => window.open(video.videoUrl, '_blank')}
-                    >
+                      >
                       {/* Thumbnail Container */}
                       <div className="absolute inset-0">
                         {loadedImages.has(video.id) ? (

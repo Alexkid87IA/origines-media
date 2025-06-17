@@ -25,6 +25,12 @@ interface BibliothequeSectionProps {
 }
 
 const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales }) => {
+   // Debug - Ajoutez ces lignes
+   console.log('Verticales reçues dans BibliothequeSection:', verticales);
+   console.log('Couleurs des verticales:', JSON.stringify(verticales.map(v => ({
+    nom: v.verticale.nom,
+    couleur: v.verticale.couleurDominante
+  })), null, 2));
   const [activeTab, setActiveTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
@@ -87,6 +93,11 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
 
   const currentVerticale = verticales[activeTab];
   const currentColor = currentVerticale?.verticale.couleurDominante || '#8B5CF6';
+
+  // Debug - Ajoutez ces lignes
+console.log('Onglet actif:', activeTab);
+console.log('Verticale actuelle:', currentVerticale);
+console.log('Couleur actuelle:', currentColor);
 
   // Convert hex to RGB for CSS custom properties
   const hexToRgb = (hex: string) => {
@@ -273,8 +284,7 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
               }}
               onMouseEnter={() => setHoveredCard(production.id)}
               onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => window.open(production.url, '_blank')}
-            >
+              onClick={() => navigate(production.url)}              >
               {/* Image Container - IMAGES NETTES */}
               <div className="absolute inset-0">
                 {loadedImages.has(production.id) ? (

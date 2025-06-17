@@ -1,462 +1,412 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
-import Footer from '../components/Footer';
-import EngagementSection from '../components/EngagementSection';
+// src/pages/FormatPage.tsx
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { createClient } from '@sanity/client';
 import ActeHeroFormat from '../components/formats/ActeHeroFormat';
 import ActeEpisodesRecents from '../components/formats/ActeEpisodesRecents';
 import ActeBibliothequeFormat from '../components/formats/ActeBibliothequeFormat';
 import ActeEquipeCredits from '../components/formats/ActeEquipeCredits';
+import EngagementSection from '../components/EngagementSection'; // Ajout de l'engagement section
+import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
 
-interface Episode {
-  id: string;
-  titre: string;
-  description: string;
-  thumbnailUrl: string;
-  videoUrl: string;
-  datePublication: string;
-  duree: string;
-  vues: number;
-  likes: number;
-  episode?: number;
-  saison?: number;
-  isPopular?: boolean;
-  isRecent?: boolean;
-  tags: string[];
-}
+// Configuration du client Sanity
+const client = createClient({
+  projectId: 'sf5v7lj3',
+  dataset: 'production',
+  useCdn: true,
+  apiVersion: '2024-03-01',
+});
 
-interface FormatData {
+// Interface pour les formats
+interface FormatVideo {
   id: string;
   nom: string;
   couleur: string;
+  count: number;
   description: string;
-  tagline: string;
-  imageHero: string;
-  stats: {
-    episodes: number;
-    dureeTotal: string;
-    vuesMoyennes: number;
-    frequence: string;
-  };
-  animateur: {
-    nom: string;
-    bio: string;
-    avatar: string;
-    role: string;
-  };
-  credits: {
-    producteur?: string;
-    realisateur?: string;
-    montage?: string;
-    musique?: string;
-  };
-  episodes: Episode[];
 }
 
-const FormatPage: React.FC = () => {
-  const { formatId } = useParams<{ formatId: string }>();
-
-  // ✅ DONNÉES COMPLÈTES pour tous les 8 formats
-  const formatsData: { [key: string]: FormatData } = {
-    'la-lettre': {
-      id: 'la-lettre',
-      nom: 'La Lettre',
-      couleur: '#8B5CF6',
-      description: 'Analyses hebdomadaires approfondies des tendances qui façonnent notre époque',
-      tagline: 'L\'analyse qui va plus loin',
-      imageHero: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
-      stats: {
-        episodes: 24,
-        dureeTotal: '6h 30min',
-        vuesMoyennes: 15400,
-        frequence: 'Hebdomadaire'
-      },
-      animateur: {
-        nom: 'Marie Dubois',
-        bio: 'Journaliste et analyste, Marie décrypte les tendances sociétales avec une approche unique mêlant données et intuition.',
-        avatar: 'https://images.pexels.com/photos/3771089/pexels-photo-3771089.jpeg',
-        role: 'Analyste en chef'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Thomas Martin',
-        montage: 'Sophie Chen',
-        musique: 'Julien Rousseau'
-      },
-      episodes: [
-        {
-          id: 'lettre-001',
-          titre: 'Les 7 habitudes des leaders exceptionnels',
-          description: 'Découvrez les rituels quotidiens et les principes fondamentaux qui distinguent les vrais leaders.',
-          thumbnailUrl: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
-          videoUrl: '/video/7-habitudes-leaders',
-          datePublication: '2024-01-22',
-          duree: '15:42',
-          vues: 18450,
-          likes: 1203,
-          episode: 12,
-          saison: 2,
-          isPopular: true,
-          isRecent: true,
-          tags: ['Leadership', 'Habitudes', 'Excellence']
-        },
-        {
-          id: 'lettre-002',
-          titre: 'Décryptage de l\'économie créative',
-          description: 'Analyse approfondie des nouveaux modèles économiques dans les industries créatives.',
-          thumbnailUrl: 'https://images.pexels.com/photos/1269968/pexels-photo-1269968.jpeg',
-          videoUrl: '/video/economie-creative-analyse',
-          datePublication: '2023-12-22',
-          duree: '17:22',
-          vues: 11230,
-          likes: 834,
-          episode: 11,
-          saison: 2,
-          tags: ['Économie', 'Créativité', 'Innovation']
-        }
-      ]
+// Données des formats (même structure que dans SeriesPage)
+const formatsData: Record<string, any> = {
+  'la-lettre': {
+    id: 'la-lettre',
+    name: 'La Lettre',
+    color: '#8B5CF6',
+    tagline: 'Des conversations intimes qui transforment',
+    description: 'Analyses hebdomadaires approfondies. Chaque semaine, une personnalité se livre à travers une lettre qu\'elle n\'a jamais osé écrire.',
+    imageHero: 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg',
+    stats: {
+      episodes: 24,
+      dureeTotal: '12h30',
+      vuesMoyennes: 15000,
+      frequence: 'Hebdomadaire'
     },
-    'secrets-pro': {
-      id: 'secrets-pro',
-      nom: 'Secrets Pro',
-      couleur: '#EC4899',
-      description: 'Plongée exclusive dans les coulisses des métiers et l\'expertise de professionnels d\'exception',
-      tagline: 'Les coulisses de l\'excellence',
-      imageHero: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
-      stats: {
-        episodes: 18,
-        dureeTotal: '8h 15min',
-        vuesMoyennes: 12800,
-        frequence: 'Bi-mensuel'
-      },
-      animateur: {
-        nom: 'Thomas Martin',
-        bio: 'Réalisateur passionné par l\'artisanat et l\'excellence, Thomas révèle les secrets des maîtres de leur art.',
-        avatar: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
-        role: 'Réalisateur'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Thomas Martin',
-        montage: 'Marie Dubois'
-      },
-      episodes: [
-        {
-          id: 'secrets-001',
-          titre: 'Dans les coulisses d\'un chef étoilé',
-          description: 'Immersion exclusive dans la cuisine de Thomas Keller pour comprendre l\'obsession de la perfection.',
-          thumbnailUrl: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
-          videoUrl: '/video/coulisses-chef-etoile',
-          datePublication: '2024-01-20',
-          duree: '22:15',
-          vues: 12340,
-          likes: 892,
-          episode: 8,
-          saison: 1,
-          isPopular: true,
-          tags: ['Gastronomie', 'Excellence', 'Passion']
-        }
-      ]
+    animateur: {
+      nom: 'Sophie Martin',
+      bio: 'Journaliste et auteure, Sophie a l\'art de créer des espaces de confiance où les mots trouvent leur chemin.',
+      avatar: 'https://images.pexels.com/photos/3771089/pexels-photo-3771089.jpeg',
+      role: 'Animatrice'
     },
-    'il-etait-une-fois': {
-      id: 'il-etait-une-fois',
-      nom: 'Il était une fois',
-      couleur: '#F59E0B',
-      description: 'Récits narratifs immersifs qui racontent les histoires extraordinaires qui ont marqué notre époque',
-      tagline: 'Les histoires qui ont tout changé',
-      imageHero: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg',
-      stats: {
-        episodes: 32,
-        dureeTotal: '16h 45min',
-        vuesMoyennes: 22100,
-        frequence: 'Mensuel'
-      },
-      animateur: {
-        nom: 'Sophie Chen',
-        bio: 'Storyteller née, Sophie transforme les faits en récits captivants qui révèlent la magie du réel.',
-        avatar: 'https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg',
-        role: 'Narratrice'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Sophie Chen',
-        montage: 'Thomas Martin',
-        musique: 'Julien Rousseau'
-      },
-      episodes: [
-        {
-          id: 'histoire-001',
-          titre: 'Steve Jobs et la révolution Apple',
-          description: 'L\'histoire méconnue des premiers pas d\'Apple, racontée par ceux qui ont vécu cette aventure.',
-          thumbnailUrl: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg',
-          videoUrl: '/video/steve-jobs-apple',
-          datePublication: '2024-01-18',
-          duree: '28:33',
-          vues: 25670,
-          likes: 1876,
-          episode: 5,
-          saison: 3,
-          isPopular: true,
-          tags: ['Innovation', 'Entrepreneuriat', 'Technologie']
-        }
-      ]
-    },
-    'connexion': {
-      id: 'connexion',
-      nom: 'Connexion',
-      couleur: '#10B981',
-      description: 'Rencontres inspirantes avec des personnalités qui transforment notre vision du monde',
-      tagline: 'Les conversations qui inspirent',
-      imageHero: 'https://images.pexels.com/photos/3771089/pexels-photo-3771089.jpeg',
-      stats: {
-        episodes: 21,
-        dureeTotal: '18h 30min',
-        vuesMoyennes: 19200,
-        frequence: 'Bi-mensuel'
-      },
-      animateur: {
-        nom: 'Julien Rousseau',
-        bio: 'Journaliste et philosophe, Julien crée des espaces de dialogue authentique avec les esprits les plus brillants.',
-        avatar: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
-        role: 'Animateur'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Marie Dubois'
-      },
-      episodes: [
-        {
-          id: 'connexion-001',
-          titre: 'Connexion avec Yuval Noah Harari',
-          description: 'Une conversation profonde avec l\'historien sur l\'avenir de l\'humanité et les défis du 21ème siècle.',
-          thumbnailUrl: 'https://images.pexels.com/photos/3771089/pexels-photo-3771089.jpeg',
-          videoUrl: '/video/yuval-harari-connexion',
-          datePublication: '2024-01-15',
-          duree: '45:12',
-          vues: 31200,
-          likes: 2134,
-          episode: 15,
-          saison: 2,
-          isPopular: true,
-          tags: ['Philosophie', 'Futur', 'Société']
-        }
-      ]
-    },
-    'transmission': {
-      id: 'transmission',
-      nom: 'Transmission',
-      couleur: '#3B82F6',
-      description: 'Savoirs ancestraux et modernes transmis par les maîtres de leur discipline',
-      tagline: 'La sagesse qui traverse les âges',
-      imageHero: 'https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg',
-      stats: {
-        episodes: 15,
-        dureeTotal: '12h 20min',
-        vuesMoyennes: 13500,
-        frequence: 'Mensuel'
-      },
-      animateur: {
-        nom: 'Maître Chen',
-        bio: 'Gardien des traditions et passeur de savoirs, Maître Chen révèle les enseignements millénaires.',
-        avatar: 'https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg',
-        role: 'Maître transmetteur'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Thomas Martin'
-      },
-      episodes: [
-        {
-          id: 'transmission-001',
-          titre: 'L\'art ancestral de la méditation zen',
-          description: 'Transmission millénaire : un maître zen partage les secrets d\'une pratique qui transforme l\'esprit.',
-          thumbnailUrl: 'https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg',
-          videoUrl: '/video/meditation-zen-transmission',
-          datePublication: '2024-01-12',
-          duree: '18:27',
-          vues: 14560,
-          likes: 1045,
-          episode: 3,
-          saison: 1,
-          tags: ['Méditation', 'Spiritualité', 'Tradition']
-        }
-      ]
-    },
-    'etat-esprit': {
-      id: 'etat-esprit',
-      nom: 'État d\'Esprit',
-      couleur: '#EF4444',
-      description: 'Mindset et philosophie de vie pour développer une mentalité de champion',
-      tagline: 'Transformer sa vision du monde',
-      imageHero: 'https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg',
-      stats: {
-        episodes: 19,
-        dureeTotal: '9h 45min',
-        vuesMoyennes: 16800,
-        frequence: 'Hebdomadaire'
-      },
-      animateur: {
-        nom: 'Dr. Sarah Wilson',
-        bio: 'Psychologue du sport et coach mental, Sarah révèle les secrets de la performance mentale.',
-        avatar: 'https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg',
-        role: 'Coach mental'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Sophie Chen'
-      },
-      episodes: [
-        {
-          id: 'mindset-001',
-          titre: 'Transformer l\'échec en opportunité',
-          description: 'Comment les plus grands entrepreneurs utilisent leurs échecs comme tremplin vers le succès.',
-          thumbnailUrl: 'https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg',
-          videoUrl: '/video/echec-opportunite-mindset',
-          datePublication: '2024-01-10',
-          duree: '12:45',
-          vues: 16780,
-          likes: 1234,
-          episode: 7,
-          saison: 1,
-          isRecent: true,
-          tags: ['Mindset', 'Résilience', 'Entrepreneuriat']
-        }
-      ]
-    },
-    'apparence': {
-      id: 'apparence',
-      nom: 'Apparence',
-      couleur: '#8B5CF6',
-      description: 'Image et authenticité : redéfinir sa relation à l\'apparence dans un monde d\'images',
-      tagline: 'L\'authenticité comme force',
-      imageHero: 'https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg',
-      stats: {
-        episodes: 12,
-        dureeTotal: '6h 15min',
-        vuesMoyennes: 11200,
-        frequence: 'Mensuel'
-      },
-      animateur: {
-        nom: 'Emma Rodriguez',
-        bio: 'Sociologue et experte en image, Emma déconstruit les codes de beauté pour révéler l\'authenticité.',
-        avatar: 'https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg',
-        role: 'Sociologue'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Marie Dubois'
-      },
-      episodes: [
-        {
-          id: 'apparence-001',
-          titre: 'L\'authenticité comme force',
-          description: 'Pourquoi être soi-même est la stratégie la plus puissante dans un monde d\'apparences.',
-          thumbnailUrl: 'https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg',
-          videoUrl: '/video/authenticite-apparence',
-          datePublication: '2024-01-08',
-          duree: '14:18',
-          vues: 9876,
-          likes: 723,
-          episode: 4,
-          saison: 1,
-          tags: ['Authenticité', 'Image', 'Confiance']
-        }
-      ]
-    },
-    'je-suis': {
-      id: 'je-suis',
-      nom: 'Je Suis',
-      couleur: '#06B6D4',
-      description: 'Identité et transformation personnelle : portraits intimes de vies extraordinaires',
-      tagline: 'Les histoires qui nous définissent',
-      imageHero: 'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg',
-      stats: {
-        episodes: 15,
-        dureeTotal: '10h 30min',
-        vuesMoyennes: 14300,
-        frequence: 'Bi-mensuel'
-      },
-      animateur: {
-        nom: 'Alex Morgan',
-        bio: 'Documentariste et portraitiste, Alex révèle l\'humanité derrière les parcours extraordinaires.',
-        avatar: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
-        role: 'Documentariste'
-      },
-      credits: {
-        producteur: 'Origines Media',
-        realisateur: 'Alex Morgan',
-        montage: 'Thomas Martin'
-      },
-      episodes: [
-        {
-          id: 'jesuis-001',
-          titre: 'Je suis... une femme qui a révolutionné la tech',
-          description: 'Portrait intime d\'une pionnière qui a brisé les codes dans l\'univers masculin de la technologie.',
-          thumbnailUrl: 'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg',
-          videoUrl: '/video/femme-tech-revolution',
-          datePublication: '2024-01-05',
-          duree: '20:33',
-          vues: 13450,
-          likes: 967,
-          episode: 6,
-          saison: 2,
-          tags: ['Technologie', 'Féminisme', 'Innovation']
-        }
-      ]
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Thomas Dubois',
+      montage: 'Clara Rousseau',
+      musique: 'Julien Mercier'
     }
-  };
+  },
+  'secrets-pro': {
+    id: 'secrets-pro',
+    name: 'Secrets Pro',
+    color: '#EC4899',
+    tagline: 'Les coulisses du succès enfin révélées',
+    description: 'Coulisses des métiers et expertises. Des entrepreneurs et créateurs partagent leurs échecs, leurs doutes et les vraies clés de leur réussite.',
+    imageHero: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
+    stats: {
+      episodes: 18,
+      dureeTotal: '9h00',
+      vuesMoyennes: 22000,
+      frequence: 'Bi-mensuel'
+    },
+    animateur: {
+      nom: 'Marc Lefebvre',
+      bio: 'Serial entrepreneur et mentor, Marc sait poser les questions qui révèlent l\'essence du parcours entrepreneurial.',
+      avatar: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg',
+      role: 'Animateur'
+    },
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Emma Chen',
+      montage: 'Lucas Bernard',
+      musique: 'Sarah Petit'
+    }
+  },
+  'il-etait-une-fois': {
+    id: 'il-etait-une-fois',
+    name: 'Il était une fois',
+    color: '#F59E0B',
+    tagline: 'Quand l\'histoire personnelle rencontre l\'Histoire',
+    description: 'Récits narratifs immersifs. Des récits de vie extraordinaires qui nous rappellent que chaque existence est une épopée.',
+    imageHero: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg',
+    stats: {
+      episodes: 32,
+      dureeTotal: '16h00',
+      vuesMoyennes: 18000,
+      frequence: 'Hebdomadaire'
+    },
+    animateur: {
+      nom: 'Louise Moreau',
+      bio: 'Historienne et conteuse, Louise transforme chaque témoignage en une fresque vivante et touchante.',
+      avatar: 'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg',
+      role: 'Narratrice'
+    },
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Antoine Durand',
+      montage: 'Marie Lambert',
+      musique: 'Pierre Blanc'
+    }
+  },
+  'connexion': {
+    id: 'connexion',
+    name: 'Connexion',
+    color: '#10B981',
+    tagline: 'Là où les esprits se rencontrent',
+    description: 'Rencontres inspirantes. Des dialogues profonds entre deux personnalités qui ne se seraient jamais rencontrées.',
+    imageHero: 'https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg',
+    stats: {
+      episodes: 21,
+      dureeTotal: '10h30',
+      vuesMoyennes: 25000,
+      frequence: 'Mensuel'
+    },
+    animateur: {
+      nom: 'Alexandre Costa',
+      bio: 'Philosophe et médiateur, Alexandre orchestre des rencontres qui transcendent les différences.',
+      avatar: 'https://images.pexels.com/photos/3777564/pexels-photo-3777564.jpeg',
+      role: 'Médiateur'
+    },
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Nina Patel',
+      montage: 'David Kim',
+      musique: 'Léa Martin'
+    }
+  },
+  'transmission': {
+    id: 'transmission',
+    name: 'Transmission',
+    color: '#3B82F6',
+    tagline: 'Le savoir qui se partage, la sagesse qui se transmet',
+    description: 'Savoirs ancestraux et modernes. Des maîtres dans leur art partagent leur expertise et leur vision.',
+    imageHero: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg',
+    stats: {
+      episodes: 15,
+      dureeTotal: '7h30',
+      vuesMoyennes: 20000,
+      frequence: 'Bi-mensuel'
+    },
+    animateur: {
+      nom: 'Catherine Dubois',
+      bio: 'Pédagogue passionnée, Catherine sait extraire et transmettre l\'essence d\'un savoir-faire.',
+      avatar: 'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg',
+      role: 'Animatrice'
+    },
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Philippe Roy',
+      montage: 'Isabelle Mercier',
+      musique: 'François Leblanc'
+    }
+  },
+  'etat-esprit': {
+    id: 'etat-esprit',
+    name: 'État d\'Esprit',
+    color: '#EF4444',
+    tagline: 'La force mentale au service du succès',
+    description: 'Mindset et philosophie de vie. Explorer les stratégies mentales des plus grands performeurs.',
+    imageHero: 'https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg',
+    stats: {
+      episodes: 19,
+      dureeTotal: '9h30',
+      vuesMoyennes: 16000,
+      frequence: 'Bi-mensuel'
+    },
+    animateur: {
+      nom: 'David Rousseau',
+      bio: 'Coach mental et ancien sportif de haut niveau, David décrypte les mécanismes de la performance.',
+      avatar: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg',
+      role: 'Coach'
+    },
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Julie Martin',
+      montage: 'Alexandre Petit',
+      musique: 'Sophie Bernard'
+    }
+  },
+  'apparence': {
+    id: 'apparence',
+    name: 'Apparence',
+    color: '#8B5CF6',
+    tagline: 'L\'authenticité comme nouvelle élégance',
+    description: 'Image et authenticité. Redéfinir sa relation à l\'image dans un monde d\'apparences.',
+    imageHero: 'https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg',
+    stats: {
+      episodes: 12,
+      dureeTotal: '6h00',
+      vuesMoyennes: 14000,
+      frequence: 'Mensuel'
+    },
+    animateur: {
+      nom: 'Clara Fontaine',
+      bio: 'Styliste et philosophe de l\'image, Clara explore les liens entre apparence et essence.',
+      avatar: 'https://images.pexels.com/photos/3771089/pexels-photo-3771089.jpeg',
+      role: 'Animatrice'
+    },
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Maxime Durand',
+      montage: 'Emma Lambert',
+      musique: 'Victor Hugo'
+    }
+  },
+  'je-suis': {
+    id: 'je-suis',
+    name: 'Je Suis',
+    color: '#06B6D4',
+    tagline: 'Des identités qui transcendent les étiquettes',
+    description: 'Identité et transformation personnelle. Portraits intimes de parcours extraordinaires.',
+    imageHero: 'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg',
+    stats: {
+      episodes: 15,
+      dureeTotal: '7h30',
+      vuesMoyennes: 17000,
+      frequence: 'Bi-mensuel'
+    },
+    animateur: {
+      nom: 'Yasmine Belkacem',
+      bio: 'Documentariste et sociologue, Yasmine révèle la beauté des parcours humains singuliers.',
+      avatar: 'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg',
+      role: 'Documentariste'
+    },
+    credits: {
+      producteur: 'Origines Media',
+      realisateur: 'Sarah Chen',
+      montage: 'Lucas Martin',
+      musique: 'Nina Rousseau'
+    }
+  }
+};
 
-  // Obtenir les données du format actuel
-  const currentFormat = formatsData[formatId || 'la-lettre'];
+function FormatPage() {
+  // IMPORTANT: Changez slug en formatId pour correspondre à votre route
+  const { formatId } = useParams<{ formatId: string }>();
+  const navigate = useNavigate();
+  const [format, setFormat] = useState<any>(null);
+  const [episodes, setEpisodes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!currentFormat) {
-    return <div>Format non trouvé</div>;
+  useEffect(() => {
+    const loadFormatData = async () => {
+      try {
+        // Récupérer les données du format
+        const formatData = formatsData[formatId as keyof typeof formatsData];
+        
+        if (!formatData) {
+          navigate('/404');
+          return;
+        }
+        
+        setFormat(formatData);
+        
+        // Récupérer les productions de ce format depuis Sanity
+        try {
+          // Requête pour récupérer les productions vidéo de ce format
+          const query = `
+            *[_type == "production" && formats[]->nom == $formatName] | order(datePublication desc) [0...6] {
+              _id,
+              titre,
+              description,
+              imageUrl,
+              videoUrl,
+              datePublication,
+              duree,
+              "vues": coalesce(vues, 10000),
+              "likes": coalesce(likes, 500),
+              slug
+            }
+          `;
+          
+          const productions = await client.fetch(query, { formatName: formatData.name });
+          
+          if (productions && productions.length > 0) {
+            // Transformer les productions en format épisode
+            const formattedEpisodes = productions.map((prod: any, index: number) => ({
+              id: prod._id,
+              titre: prod.titre,
+              description: prod.description,
+              thumbnailUrl: prod.imageUrl || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
+              videoUrl: prod.videoUrl || `/production/${prod.slug?.current}`,
+              datePublication: prod.datePublication,
+              duree: prod.duree ? `${prod.duree} min` : '30 min',
+              vues: prod.vues,
+              likes: prod.likes,
+              episode: index + 1,
+              saison: 1,
+              isRecent: index < 2,
+              tags: []
+            }));
+            
+            setEpisodes(formattedEpisodes);
+          } else {
+            // Données de fallback si pas de productions
+            const mockEpisodes = [
+              {
+                id: '1',
+                titre: `${formatData.name} - Épisode pilote`,
+                description: 'Découvrez le premier épisode de notre format exclusif qui pose les bases de cette série unique.',
+                thumbnailUrl: formatData.imageHero,
+                videoUrl: `/production/${formatId}-episode-1`,
+                datePublication: '2024-03-01',
+                duree: '30 min',
+                vues: 15000,
+                likes: 1200,
+                episode: 1,
+                saison: 1,
+                isRecent: true,
+                tags: ['Découverte', 'Introduction']
+              }
+            ];
+            setEpisodes(mockEpisodes);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la récupération des épisodes:', error);
+          // Utiliser des données de fallback
+          setEpisodes([]);
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Erreur lors du chargement du format:', error);
+        setLoading(false);
+      }
+    };
+
+    if (formatId) {
+      loadFormatData();
+    }
+  }, [formatId, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <div className="text-white text-xl animate-pulse">Chargement...</div>
+      </div>
+    );
+  }
+
+  if (!format) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-white text-2xl mb-4">Format non trouvé</h1>
+          <button 
+            onClick={() => navigate('/series')}
+            className="text-purple-500 hover:text-purple-400 underline"
+          >
+            Retour aux séries
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5] overflow-x-hidden">
-      {/* Sidebar Desktop */}
+    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5]">
+      {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <main className="min-h-screen md:ml-[280px]">
-        
-        {/* 🎭 Acte 1 : Hero du Format */}
+      <main className="md:ml-[280px]">
+        {/* Acte 1: Hero */}
         <ActeHeroFormat
-          formatId={currentFormat.id}
-          formatName={currentFormat.nom}
-          formatColor={currentFormat.couleur}
-          tagline={currentFormat.tagline}
-          description={currentFormat.description}
-          imageHero={currentFormat.imageHero}
-          stats={currentFormat.stats}
+          formatId={format.id}
+          formatName={format.name}
+          formatColor={format.color}
+          tagline={format.tagline}
+          description={format.description}
+          imageHero={format.imageHero}
+          stats={format.stats}
         />
 
-        {/* 📺 Acte 2 : Épisodes Récents */}
-        <ActeEpisodesRecents
-          formatId={currentFormat.id}
-          formatName={currentFormat.nom}
-          formatColor={currentFormat.couleur}
-          episodes={currentFormat.episodes}
-        />
+        {/* Acte 2: Episodes Récents */}
+        {episodes.length > 0 && (
+          <ActeEpisodesRecents
+            formatId={format.id}
+            formatName={format.name}
+            formatColor={format.color}
+            episodes={episodes}
+          />
+        )}
 
-        {/* 📚 Acte 3 : Bibliothèque Complète */}
+        {/* Acte 3: Bibliothèque */}
         <ActeBibliothequeFormat
-          formatId={currentFormat.id}
-          formatName={currentFormat.nom}
-          formatColor={currentFormat.couleur}
+          formatId={format.id}
+          formatName={format.name}
+          formatColor={format.color}
         />
 
-        {/* 👥 Acte 4 : L'Équipe & Crédits */}
+        {/* Acte 4: Équipe & Crédits */}
         <ActeEquipeCredits
-          formatId={currentFormat.id}
-          formatName={currentFormat.nom}
-          formatColor={currentFormat.couleur}
-          animateur={currentFormat.animateur}
-          credits={currentFormat.credits}
+          formatId={format.id}
+          formatName={format.name}
+          formatColor={format.color}
+          animateur={format.animateur}
+          credits={format.credits}
         />
 
-        {/* 🎯 Acte 5 : Kit d'Introspection */}
+        {/* Acte 5: Kit d'Introspection (EngagementSection) */}
         <EngagementSection />
       </main>
 
@@ -464,6 +414,6 @@ const FormatPage: React.FC = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default FormatPage;
