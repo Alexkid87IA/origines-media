@@ -15,6 +15,7 @@ import PartnershipsPage from './pages/PartnershipsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import TestSanity from './components/TestSanity';
 import PortraitDetailPage from './pages/PortraitDetailPage';
+import JoinPage from './pages/JoinPage';
 
 
 function App() {
@@ -141,13 +142,13 @@ function App() {
       {/* Pages génériques */}
       <Route path="/essentiels" element={<div>Page Les Essentiels</div>} />
       <Route path="/fragments" element={<div>Page Fragments</div>} />
-      <Route path="/rejoindre" element={<div>Page Rejoindre la Communauté</div>} />
       <Route path="/proposer-histoire" element={<div>Page Proposer mon Histoire</div>} />
       <Route path="/equipe" element={<div>Page Équipe</div>} />
       
       {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />
       <Route path="/video/:id" element={<ProductionDetailPage />} />
+      <Route path="/rejoindre" element={<JoinPage />} />
     </Routes>
   );
 }

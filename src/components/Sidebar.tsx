@@ -116,7 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile = false, onClose }) => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src="https://26.staticbtf.eno.do/v1/12-default/6b72d83f2de3f869e8fae974e755f62d/media.jpg"
+              src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png"
               alt="Origines Media"
               className={`w-full h-auto transition-all duration-500 group-hover:scale-105 mx-auto ${
                 isMobile ? 'max-w-[200px]' : 'max-w-[180px]'
