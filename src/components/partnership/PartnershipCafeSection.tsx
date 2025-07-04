@@ -168,13 +168,36 @@ const PartnershipCafeSection: React.FC = () => {
         <div className={`text-center mb-8 md:mb-16 transition-all duration-1000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
-          <h2 className="font-bold text-2xl md:text-3xl lg:text-5xl text-white mb-3 md:mb-4">
-            Wanted Café & Co
+          {/* Badge */}
+          <div className="inline-flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
+            <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400 text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase font-medium">
+              Révolution Café
+            </span>
+            <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+          </div>
+          
+          {/* Main title with animation */}
+          <h2 className="font-black text-3xl md:text-5xl lg:text-7xl uppercase tracking-tight text-white mb-3 md:mb-4 leading-tight">
+            Wanted
+            <span className="block text-4xl md:text-6xl lg:text-8xl">
+              <span className="gradient-text-animated">Café & Co</span>
+            </span>
           </h2>
-          <p className="text-base md:text-xl text-white/60 max-w-3xl mx-auto px-2">
-            Le seul café au monde qui nourrit le jour et devient viral la nuit. 
-            Un tiers-lieu rentable qui prouve qu'on peut faire du business ET de l'impact.
+          
+          {/* Subtitle with better styling */}
+          <p className="text-base md:text-xl lg:text-2xl text-white/70 max-w-3xl mx-auto px-4 leading-relaxed">
+            Le seul café au monde qui 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400 font-semibold"> nourrit le jour</span> et devient 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 font-semibold"> viral la nuit</span>
           </p>
+          
+          {/* Punchline */}
+          <div className="mt-4 md:mt-6">
+            <p className="text-sm md:text-base text-white/50 font-medium">
+              Un tiers-lieu rentable qui prouve qu'on peut faire du business ET de l'impact
+            </p>
+          </div>
         </div>
 
         {/* Stats rapides */}
@@ -597,6 +620,28 @@ const PartnershipCafeSection: React.FC = () => {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        .gradient-text-animated {
+          background: linear-gradient(135deg, #F97316 0%, #EC4899 25%, #8B5CF6 50%, #3B82F6 75%, #F97316 100%);
+          background-size: 300% 300%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: gradient-shift 4s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+      `}</style>
     </section>
   );
 };
