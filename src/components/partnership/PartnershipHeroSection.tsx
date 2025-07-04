@@ -1,36 +1,117 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ChevronRight, Users, TrendingUp, DollarSign, Play, Zap, Target, Rocket } from 'lucide-react';
 
 interface PartnershipHeroSectionProps {
   onGoLive?: () => void;
 }
 
+// Hook personnalisé pour animer les compteurs
+const useCountUp = (end: number, duration: number = 2000, startCounting: boolean = false) => {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    if (!startCounting) return;
+    
+    let startTime: number | null = null;
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      
+      setCount(Math.floor(progress * end));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [end, duration, startCounting]);
+  
+  return count;
+};
+
 const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLive }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [animationPhase, setAnimationPhase] = useState(0);
-  const [textVisible, setTextVisible] = useState(false);
+  const [currentActe, setCurrentActe] = useState(0);
+  const [metricsVisible, setMetricsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Nouveau texte de la lettre
-  const letterParagraphs = [
-    "À la croisée d'un comptoir de quartier et d'un studio de télévision, nous allons faire naître un lieu – et un média – où chaque café se convertit en acte de solidarité et chaque histoire enflamme les réseaux.",
+  // Fonction de scroll personnalisée
+  const handleGoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     
-    "Wanted devient la scène. Origines Media devient l'écho. Ensemble, nous transformons l'entraide en spectacle vivant :",
+    // Si onGoLive est fourni, l'utiliser
+    if (onGoLive) {
+      onGoLive();
+      return;
+    }
     
-    "Le Café n'est plus seulement un refuge pour les estomacs vides : c'est le cœur battant d'une narration en temps réel. Des micros branchés en continu, un compteur lumineux qui grimpe à chaque don, des écrans qui diffusent la gratitude en direct. Ici, le public ne se contente pas d'applaudir ; il nourrit, il relaie, il rallume l'étincelle suivante.",
-    
-    "Pendant ce temps, Origines Media capte la matière brute – ces éclats d'humanité, ces scènes improvisées – et les propulse partout : TikTok, Reels, YouTube, podcasts. Les formats longs révèlent la profondeur, les formats courts déclenchent l'impulsion. Nous recyclons chaque seconde vécue pour qu'elle revienne, démultipliée, gonfler la vague de générosité."
-  ];
+    // Sinon, scroller vers le bas
+    // Option 1: Scroller jusqu'à la fin de cette section
+    if (sectionRef.current) {
+      const sectionBottom = sectionRef.current.offsetTop + sectionRef.current.offsetHeight;
+      window.scrollTo({
+        top: sectionBottom,
+        behavior: 'smooth'
+      });
+    } else {
+      // Option 2: Scroller d'une hauteur d'écran depuis la position actuelle
+      const scrollDistance = window.innerHeight;
+      const currentPosition = window.pageYOffset || document.documentElement.scrollTop;
+      const targetPosition = currentPosition + scrollDistance;
+      
+      // Utiliser requestAnimationFrame pour un scroll plus fluide
+      const startTime = performance.now();
+      const duration = 800; // durée en ms
+      
+      const animateScroll = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Fonction d'easing
+        const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        
+        const easedProgress = easeInOutCubic(progress);
+        const newPosition = currentPosition + (targetPosition - currentPosition) * easedProgress;
+        
+        window.scrollTo(0, newPosition);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+      
+      requestAnimationFrame(animateScroll);
+    }
+  };
 
-  const promises = [
-    "Un live, un repas.",
-    "Un témoignage, un électrochoc.",
-    "Un like, une graine de changement."
-  ];
-
-  const circleSteps = [
-    "Le Café nourrit les gens.",
-    "Les Lives nourrissent les histoires.",
-    "Les Histoires nourrissent la communauté."
+  // Données des 4 actes
+  const actes = [
+    {
+      title: "Sprint 30 jours",
+      subtitle: "L'allumage",
+      metrics: { value: 200, unit: "contenus/mois" },
+      color: "from-violet-600 to-purple-600"
+    },
+    {
+      title: "6 mois",
+      subtitle: "Les 12 empires",
+      metrics: { value: 20, unit: "M vues/mois" },
+      color: "from-purple-600 to-pink-600"
+    },
+    {
+      title: "1 an",
+      subtitle: "Machine auto-financée",
+      metrics: { value: 500, unit: "k€ CA média" },
+      color: "from-pink-600 to-orange-600"
+    },
+    {
+      title: "3 ans",
+      subtitle: "Netflix de la solidarité",
+      metrics: { value: 10, unit: "M€ CA/an" },
+      color: "from-orange-600 to-red-600"
+    }
   ];
 
   // Intersection Observer
@@ -39,6 +120,7 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          setTimeout(() => setMetricsVisible(true), 1000);
         }
       },
       { threshold: 0.1 }
@@ -51,551 +133,503 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
     return () => observer.disconnect();
   }, []);
 
-  // Animation sequence
+  // Auto-progression des actes
   useEffect(() => {
-    if (isVisible) {
-      // Phase 1: Logos appear
-      setTimeout(() => setAnimationPhase(1), 500);
-      // Phase 2: DNA strands emit
-      setTimeout(() => setAnimationPhase(2), 1500);
-      // Phase 3: Helix forms
-      setTimeout(() => setAnimationPhase(3), 2500);
-      // Phase 4: Text appears
-      setTimeout(() => setTextVisible(true), 3500);
+    if (isVisible && currentActe < 3) {
+      const timer = setTimeout(() => {
+        setCurrentActe(prev => prev + 1);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [isVisible]);
+  }, [isVisible, currentActe]);
+
+  // Compteurs animés
+  const membersCount = useCountUp(1500000, 2000, metricsVisible);
+  const verticalesCount = useCountUp(12, 1500, metricsVisible);
+  const contentCount = useCountUp(200, 2000, metricsVisible);
+  const viewsCount = useCountUp(20, 1800, metricsVisible);
 
   return (
     <section 
       ref={sectionRef}
-      className="relative min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A] overflow-hidden"
+      className="relative min-h-screen bg-black overflow-hidden"
     >
-      {/* Background subtil */}
+      {/* Background avec gradient animé */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-900/5 via-transparent to-orange-900/5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-black to-orange-900/20 animate-gradient-shift" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.1),transparent_70%)]" />
       </div>
 
-      {/* Animation des logos avec Fusion Magnétique */}
-      <div className="relative z-10 min-h-[50vh] lg:min-h-[60vh] flex items-center justify-center">
-        <div className="relative w-full max-w-6xl mx-auto px-8">
-          {/* Container pour l'animation */}
-          <div className="relative h-[250px] lg:h-[350px]">
+      {/* Header avec métriques clés */}
+      <div className="relative z-10 pt-20 pb-10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          {/* Logos principaux */}
+          <div className={`flex items-center justify-center gap-4 lg:gap-8 mb-8 transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <img 
+                src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png" 
+                alt="Wanted Community" 
+                className="h-16 lg:h-20 w-auto relative z-10 filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+              />
+            </div>
             
-            {/* Logo Origines - Position initiale à gauche */}
-            <div className={`absolute left-0 lg:left-10 top-1/2 -translate-y-1/2 transition-all ${
-              animationPhase >= 2 
-                ? 'duration-[2000ms] ease-in-out' 
-                : 'duration-1000'
-            } ${
-              animationPhase >= 3
-                ? 'left-1/2 -translate-x-[150px] scale-75 opacity-80'
-                : animationPhase >= 2 
-                  ? 'left-1/2 -translate-x-[60px]' 
-                  : animationPhase >= 1
-                    ? 'opacity-100 scale-100'
-                    : 'opacity-0 scale-50'
-            }`}>
-              <div className="relative">
-                {/* Effet magnétique */}
-                <div className={`absolute inset-0 -m-8 transition-all duration-1000 ${
-                  animationPhase >= 2 ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  <div className="w-full h-full rounded-full bg-violet-500/20 blur-xl animate-pulse" />
-                </div>
-                <img
-                  src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png"
-                  alt="Origines Media"
-                  className={`h-20 lg:h-24 w-auto relative z-10 transition-transform duration-1000 ${
-                    animationPhase >= 2 ? 'scale-110' : 'scale-100'
-                  }`}
-                />
-              </div>
-            </div>
-
-            {/* Logo Wanted - Position initiale à droite */}
-            <div className={`absolute right-0 lg:right-10 top-1/2 -translate-y-1/2 transition-all ${
-              animationPhase >= 2 
-                ? 'duration-[2000ms] ease-in-out' 
-                : 'duration-1000'
-            } ${
-              animationPhase >= 3
-                ? 'right-1/2 translate-x-[150px] scale-75 opacity-80'
-                : animationPhase >= 2 
-                  ? 'right-1/2 translate-x-[60px]' 
-                  : animationPhase >= 1
-                    ? 'opacity-100 scale-100'
-                    : 'opacity-0 scale-50'
-            }`}>
-              <div className="relative">
-                {/* Effet magnétique */}
-                <div className={`absolute inset-0 -m-8 transition-all duration-1000 ${
-                  animationPhase >= 2 ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  <div className="w-full h-full rounded-full bg-orange-500/20 blur-xl animate-pulse" />
-                </div>
-                <img
-                  src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png"
-                  alt="Wanted Community"
-                  className={`h-16 lg:h-20 w-auto relative z-10 transition-transform duration-1000 ${
-                    animationPhase >= 2 ? 'scale-110' : 'scale-100'
-                  }`}
-                />
-              </div>
-            </div>
-
-            {/* Lignes de force magnétiques pendant l'attraction */}
-            {animationPhase >= 2 && animationPhase < 3 && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <svg className="w-full h-32 opacity-30">
-                  {[...Array(5)].map((_, i) => (
-                    <line
-                      key={`force-${i}`}
-                      x1="20%"
-                      y1="50%"
-                      x2="80%"
-                      y2="50%"
-                      stroke="url(#forceGradient)"
-                      strokeWidth="1"
-                      strokeDasharray="5 5"
-                      className="animate-dash"
-                      style={{
-                        transform: `translateY(${(i - 2) * 8}px)`
-                      }}
-                    />
-                  ))}
-                  <defs>
-                    <linearGradient id="forceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#8B5CF6" />
-                      <stop offset="50%" stopColor="#EC4899" />
-                      <stop offset="100%" stopColor="#F97316" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-            )}
-
-            {/* Explosion et symbole infini au centre */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              {animationPhase >= 3 && (
-                <>
-                  {/* Explosion de particules */}
-                  <div className="absolute inset-0">
-                    {[...Array(40)].map((_, i) => {
-                      const angle = (i * 9) * Math.PI / 180;
-                      const distance = 80 + Math.random() * 120;
-                      const x = Math.cos(angle) * distance;
-                      const y = Math.sin(angle) * distance;
-                      const isViolet = i % 2 === 0;
-                      const size = Math.random() * 6 + 2;
-                      
-                      return (
-                        <div
-                          key={`explosion-${i}`}
-                          className="absolute rounded-full"
-                          style={{
-                            width: `${size}px`,
-                            height: `${size}px`,
-                            left: '50%',
-                            top: '50%',
-                            backgroundColor: isViolet ? '#8B5CF6' : '#F97316',
-                            boxShadow: `0 0 ${size * 3}px ${isViolet ? '#8B5CF6' : '#F97316'}`,
-                            animation: `explode 2s ease-out forwards`,
-                            animationDelay: `${Math.random() * 0.3}s`,
-                            '--x': `${x}px`,
-                            '--y': `${y}px`
-                          } as React.CSSProperties}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  {/* Symbole de l'infini */}
-                  <div className="relative z-20 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-                    <svg 
-                      className="w-[200px] h-[100px] lg:w-[280px] lg:h-[140px]"
-                      viewBox="0 0 280 140"
-                      style={{
-                        filter: 'drop-shadow(0 0 40px rgba(139, 92, 246, 0.5))'
-                      }}
-                    >
-                      {/* Infini principal */}
-                      <path
-                        d="M 70 70 C 70 40, 40 40, 40 70 C 40 100, 70 100, 70 70 L 210 70 C 210 100, 240 100, 240 70 C 240 40, 210 40, 210 70"
-                        fill="none"
-                        stroke="url(#infinityGradient)"
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                        className="animate-draw-infinity"
-                        style={{
-                          strokeDasharray: 800,
-                          strokeDashoffset: 800
-                        }}
-                      />
-                      
-                      {/* Points lumineux qui parcourent l'infini */}
-                      <circle r="4" fill="#8B5CF6" filter="url(#glow)">
-                        <animateMotion dur="4s" repeatCount="indefinite">
-                          <mpath href="#infinityPath" />
-                        </animateMotion>
-                      </circle>
-                      
-                      <circle r="4" fill="#F97316" filter="url(#glow)">
-                        <animateMotion dur="4s" repeatCount="indefinite" begin="2s">
-                          <mpath href="#infinityPath" />
-                        </animateMotion>
-                      </circle>
-
-                      {/* Path invisible pour l'animation */}
-                      <path
-                        id="infinityPath"
-                        d="M 70 70 C 70 40, 40 40, 40 70 C 40 100, 70 100, 70 70 L 210 70 C 210 100, 240 100, 240 70 C 240 40, 210 40, 210 70"
-                        fill="none"
-                        stroke="none"
-                      />
-
-                      {/* Définitions */}
-                      <defs>
-                        <linearGradient id="infinityGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#8B5CF6">
-                            <animate attributeName="stop-color" values="#8B5CF6;#F97316;#8B5CF6" dur="4s" repeatCount="indefinite" />
-                          </stop>
-                          <stop offset="50%" stopColor="#EC4899" />
-                          <stop offset="100%" stopColor="#F97316">
-                            <animate attributeName="stop-color" values="#F97316;#8B5CF6;#F97316" dur="4s" repeatCount="indefinite" />
-                          </stop>
-                        </linearGradient>
-                        
-                        <filter id="glow">
-                          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                          <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                          </feMerge>
-                        </filter>
-                      </defs>
-                    </svg>
-
-                    {/* Effet de pulsation derrière l'infini */}
-                    <div className="absolute inset-0 -m-20 flex items-center justify-center">
-                      <div className="w-[300px] h-[300px] lg:w-[400px] lg:h-[400px] rounded-full bg-gradient-to-r from-violet-500/10 to-orange-500/10 blur-3xl animate-pulse-slow" />
-                    </div>
-                  </div>
-                </>
-              )}
+            <div className="text-3xl lg:text-4xl font-light text-white/40">×</div>
+            
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-gradient-to-r from-violet-600/20 to-purple-600/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <img 
+                src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png" 
+                alt="Origines Media" 
+                className="h-16 lg:h-20 w-auto relative z-10 opacity-90 hover:opacity-100 transition-opacity"
+              />
             </div>
           </div>
+          
+          {/* Sous-titre */}
+          <div className={`text-center transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <p className="text-xl lg:text-2xl text-white/60 font-light">
+              L'empire média de l'entraide commence maintenant
+            </p>
+          </div>
 
-          {/* Titre */}
-          <div className={`text-center mt-8 lg:mt-12 transition-all duration-1000 ${
-            textVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          }`}>
-            <h1 className="font-playfair text-xl lg:text-2xl text-white/60 mb-2">
-              Lettre d'allumage
-            </h1>
-            <div className="font-montserrat font-black text-3xl lg:text-5xl uppercase tracking-wider">
-              <span className="gradient-text-animated-orange">Wanted</span>
-              <span className="text-white/60 mx-2 lg:mx-3">×</span>
-              <span className="text-white">Origines Media</span>
+          {/* Métriques en temps réel */}
+          <div className={`grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 mt-12 transition-all duration-1000 delay-300 ${metricsVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <div className="text-center p-4 lg:p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 group hover:bg-white/10 transition-all">
+              <Users className="w-6 lg:w-8 h-6 lg:h-8 text-violet-400 mx-auto mb-2" />
+              <div className="font-montserrat font-bold text-2xl lg:text-3xl text-white">
+                {(membersCount / 1000000).toFixed(1)}M
+              </div>
+              <div className="text-white/60 text-xs lg:text-sm">membres Wanted</div>
+            </div>
+
+            <div className="text-center p-4 lg:p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 group hover:bg-white/10 transition-all">
+              <Users className="w-6 lg:w-8 h-6 lg:h-8 text-purple-500 mx-auto mb-2" />
+              <div className="font-montserrat font-bold text-2xl lg:text-3xl text-white">
+                3M
+              </div>
+              <div className="text-white/60 text-xs lg:text-sm">abonnés Origines</div>
+              <div className="text-white/40 text-[10px] lg:text-xs mt-1">(FR, MX, US)</div>
+            </div>
+            
+            <div className="text-center p-4 lg:p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 group hover:bg-white/10 transition-all">
+              <Target className="w-6 lg:w-8 h-6 lg:h-8 text-purple-400 mx-auto mb-2" />
+              <div className="font-montserrat font-bold text-2xl lg:text-3xl text-white">
+                {verticalesCount}
+              </div>
+              <div className="text-white/60 text-xs lg:text-sm">verticales prêtes</div>
+            </div>
+            
+            <div className="text-center p-4 lg:p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 group hover:bg-white/10 transition-all">
+              <Zap className="w-6 lg:w-8 h-6 lg:h-8 text-pink-400 mx-auto mb-2" />
+              <div className="font-montserrat font-bold text-2xl lg:text-3xl text-white">
+                {contentCount}
+              </div>
+              <div className="text-white/60 text-xs lg:text-sm">contenus/mois</div>
+            </div>
+            
+            <div className="text-center p-4 lg:p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 group hover:bg-white/10 transition-all">
+              <TrendingUp className="w-6 lg:w-8 h-6 lg:h-8 text-orange-400 mx-auto mb-2" />
+              <div className="font-montserrat font-bold text-2xl lg:text-3xl text-white">
+                {viewsCount}M
+              </div>
+              <div className="text-white/60 text-xs lg:text-sm">vues/mois (cible)</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Lettre d'intention */}
-      <div className={`relative z-10 max-w-5xl mx-auto px-8 lg:px-16 pb-20 transition-all duration-1000 delay-500 ${
-        textVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-      }`}>
-        {/* Carte principale avec design premium */}
-        <div className="relative">
-          {/* Effet de lueur derrière la carte */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-violet-600/20 via-transparent to-orange-600/20 blur-3xl opacity-50" />
-          
-          {/* Carte avec glassmorphism amélioré */}
-          <div className="relative bg-gradient-to-br from-black/40 via-black/30 to-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden">
-            {/* Pattern décoratif en arrière-plan */}
-            <div className="absolute inset-0 opacity-[0.03]">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.5'%3E%3Cpath d='M0 0L50 50L0 100M50 0L100 50L50 100'/%3E%3C/g%3E%3C/svg%3E")`,
-                backgroundSize: '100px 100px'
-              }} />
+      {/* Section principale : Les faits */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12 py-20">
+        <div className={`transition-all duration-1000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+          {/* Card "Les faits" */}
+          <div className="relative group mb-20">
+            <div className="absolute -inset-4 bg-gradient-to-r from-violet-600/20 to-orange-600/20 rounded-3xl blur-2xl opacity-50 group-hover:opacity-75 transition-opacity" />
+            <div className="relative bg-black/60 backdrop-blur-xl rounded-3xl border border-white/10 p-10 lg:p-16">
+              <h2 className="font-montserrat font-black text-3xl lg:text-4xl text-white mb-8">
+                Les faits :
+              </h2>
+              <p className="text-xl lg:text-2xl text-white/90 leading-relaxed mb-6">
+                <span className="font-bold text-orange-400">1,5 million de membres</span>. 
+                <span className="font-bold text-purple-400"> 12 verticales</span> prêtes à exploser. 
+                Des milliers d'histoires qui changent des vies chaque jour.
+              </p>
+              <p className="text-lg lg:text-xl text-white/80 leading-relaxed">
+                Mais soyons lucides : <span className="text-red-400 font-semibold">90% de cette valeur se perd</span> dans le flux Facebook. 
+                <span className="text-red-400 font-semibold"> Zéro euro</span> de monétisation média. 
+                Impact réel non mesuré. C'est comme posséder Netflix mais diffuser sur Périscope.
+              </p>
+              
+              {/* Mini visualisation de la perte */}
+              <div className="mt-8 grid grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                  <div className="text-2xl font-bold text-red-400">90%</div>
+                  <div className="text-sm text-white/60">Valeur perdue</div>
+                </div>
+                <div className="text-center p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                  <div className="text-2xl font-bold text-red-400">0€</div>
+                  <div className="text-sm text-white/60">Monétisation</div>
+                </div>
+                <div className="text-center p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                  <div className="text-2xl font-bold text-red-400">?</div>
+                  <div className="text-sm text-white/60">Impact réel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Vision centrale */}
+          <div className="text-center my-20">
+            <p className="text-2xl lg:text-3xl text-white font-light">
+              Wanted devient <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">la scène</span>.
+            </p>
+            <p className="text-2xl lg:text-3xl text-white font-light mt-2">
+              Origines Media devient <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-500">la machine</span>.
+            </p>
+            <p className="text-3xl lg:text-4xl text-white font-bold mt-6">
+              Ensemble, nous créons le premier empire média où{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400">
+                chaque clic finance une action concrète
+              </span>.
+            </p>
+          </div>
+
+          {/* Timeline des 4 actes */}
+          <div className="relative mt-32">
+            <h2 className="font-montserrat font-black text-3xl lg:text-4xl text-white text-center mb-16">
+              La transformation en 4 actes
+            </h2>
+
+            {/* Barre de progression */}
+            <div className="relative mb-20">
+              <div className="absolute left-0 right-0 h-2 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-violet-600 to-orange-600 rounded-full transition-all duration-1000"
+                  style={{ width: `${((currentActe + 1) / 4) * 100}%` }}
+                />
+              </div>
+              
+              {/* Points de la timeline */}
+              <div className="relative flex justify-between">
+                {actes.map((acte, index) => (
+                  <div 
+                    key={index} 
+                    className={`relative transition-all duration-500 ${index <= currentActe ? 'scale-100 opacity-100' : 'scale-75 opacity-50'}`}
+                  >
+                    <div className={`w-6 h-6 rounded-full border-4 ${index <= currentActe ? 'bg-white border-white' : 'bg-transparent border-white/30'} transition-all`} />
+                    <div className="absolute top-10 left-1/2 -translate-x-1/2 text-center whitespace-nowrap">
+                      <div className="font-montserrat font-bold text-white">{acte.title}</div>
+                      <div className="text-sm text-white/60">{acte.subtitle}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Contenu de la lettre */}
-            <div className="relative p-10 lg:p-16">
-              {/* En-tête élégant */}
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-4 mb-6">
-                  <div className="w-20 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                  <span className="font-playfair text-white/50 text-lg italic">Manifeste</span>
-                  <div className="w-20 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+            {/* Contenu de l'acte actuel */}
+            <div className="relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl p-10 lg:p-16 border border-white/20">
+              <div className="absolute top-0 right-0 p-6">
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${actes[currentActe].color} text-white font-bold`}>
+                  <Rocket className="w-4 h-4" />
+                  {actes[currentActe].title}
                 </div>
               </div>
 
-              {/* Paragraphes avec typographie solennelle */}
-              <div className="space-y-8 mb-12">
-                {/* Premier paragraphe - Mise en scène */}
-                <p className="font-playfair text-xl lg:text-2xl text-white/90 leading-relaxed tracking-wide text-center lg:text-left">
-                  <span className="text-3xl lg:text-4xl float-left mr-3 mt-1 font-bold text-white/80">À</span>
-                  la croisée d'un comptoir de quartier et d'un studio de télévision, nous allons faire naître un lieu – et un média – où chaque café se convertit en acte de solidarité et chaque histoire enflamme les réseaux.
-                </p>
-
-                {/* Deuxième paragraphe - La transformation */}
-                <div className="relative pl-8 lg:pl-12 border-l-2 border-gradient-to-b from-violet-500/50 to-orange-500/50">
-                  <p className="font-inter text-lg lg:text-xl text-white/80 leading-relaxed italic">
-                    Wanted devient la scène.<br />
-                    Origines Media devient l'écho.<br />
-                    <span className="text-white font-semibold not-italic">Ensemble, nous transformons l'entraide en spectacle vivant :</span>
+              {/* Acte I : Sprint 30 jours */}
+              {currentActe === 0 && (
+                <div className="animate-fade-in">
+                  <h3 className="font-montserrat font-black text-2xl lg:text-3xl text-white mb-6">
+                    Acte I : Sprint 30 jours - L'allumage
+                  </h3>
+                  <p className="text-lg text-white/90 mb-8">
+                    Dès le jour 1, on lance la production : <span className="font-bold text-violet-400">200 contenus/mois</span>. 
+                    Pas de blabla, que de l'exécution.
                   </p>
-                </div>
-
-                {/* Les promesses - Design cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-10">
-                  {promises.map((promise, index) => (
-                    <div 
-                      key={index}
-                      className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-500"
-                      style={{
-                        animationDelay: `${index * 100 + 1000}ms`,
-                        opacity: textVisible ? 1 : 0,
-                        transform: textVisible ? 'translateY(0)' : 'translateY(20px)'
-                      }}
-                    >
-                      <div className="absolute top-0 left-0 w-full h-full rounded-2xl bg-gradient-to-br from-violet-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      <p className="relative font-montserrat font-bold text-white text-center">
-                        {promise}
-                      </p>
+                  
+                  {/* Breakdown de la production */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                      <div className="text-3xl font-bold text-violet-400">8</div>
+                      <div className="text-sm text-white/70">formats longs</div>
+                      <div className="text-xs text-white/50 mt-1">15-20 min</div>
                     </div>
-                  ))}
-                </div>
+                    <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                      <div className="text-3xl font-bold text-purple-400">40</div>
+                      <div className="text-sm text-white/70">formats moyens</div>
+                      <div className="text-xs text-white/50 mt-1">3-5 min</div>
+                    </div>
+                    <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                      <div className="text-3xl font-bold text-pink-400">120</div>
+                      <div className="text-sm text-white/70">shorts</div>
+                      <div className="text-xs text-white/50 mt-1">15-60 sec</div>
+                    </div>
+                    <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                      <div className="text-3xl font-bold text-orange-400">32</div>
+                      <div className="text-sm text-white/70">carrousels</div>
+                      <div className="text-xs text-white/50 mt-1">LinkedIn/Insta</div>
+                    </div>
+                  </div>
 
-                {/* Paragraphes centraux avec style magazine */}
-                <div className="space-y-6">
-                  <p className="font-inter text-lg lg:text-xl text-white/85 leading-relaxed">
-                    Le Café n'est plus seulement un refuge pour les estomacs vides : c'est le <span className="font-semibold text-white bg-gradient-to-r from-violet-500/20 to-orange-500/20 px-2 py-1 rounded">cœur battant</span> d'une narration en temps réel. Des micros branchés en continu, un compteur lumineux qui grimpe à chaque don, des écrans qui diffusent la gratitude en direct. Ici, le public ne se contente pas d'applaudir ; il nourrit, il relaie, il rallume l'étincelle suivante.
-                  </p>
-
-                  <p className="font-inter text-lg lg:text-xl text-white/85 leading-relaxed">
-                    Pendant ce temps, Origines Media capte la matière brute – ces éclats d'humanité, ces scènes improvisées – et les propulse partout : TikTok, Reels, YouTube, podcasts. Les formats longs révèlent la profondeur, les formats courts déclenchent l'impulsion. Nous recyclons chaque seconde vécue pour qu'elle revienne, démultipliée, gonfler la vague de générosité.
-                  </p>
-                </div>
-
-                {/* Le cercle vertueux - Visualisation */}
-                <div className="my-12 p-8 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
-                  <p className="font-playfair text-xl text-white text-center mb-8">
-                    Le résultat ? Un cercle vertueux qui tourne à plein régime :
-                  </p>
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-                    {circleSteps.map((step, index) => (
-                      <React.Fragment key={index}>
-                        <div className="text-center">
-                          <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-violet-500/20 to-orange-500/20 flex items-center justify-center border border-white/20">
-                            <span className="font-montserrat font-bold text-2xl text-white">
-                              {index + 1}
-                            </span>
-                          </div>
-                          <p className="font-inter text-white/80 max-w-[200px]">
-                            {step}
-                          </p>
-                        </div>
-                        {index < circleSteps.length - 1 && (
-                          <div className="hidden md:block w-16 h-0.5 bg-gradient-to-r from-violet-500/50 to-orange-500/50" />
-                        )}
-                      </React.Fragment>
-                    ))}
+                  <div className="p-6 bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-2xl border border-violet-500/20">
+                    <p className="text-white font-semibold">
+                      🎯 La formule magique : 1 tournage = 1 long = 10 shorts = 3 carrousels = 15 points de contact
+                    </p>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* Section finale avec emphase */}
-              <div className="space-y-6 border-t border-white/10 pt-10">
-                <p className="font-inter text-lg lg:text-xl text-white/90 leading-relaxed">
-                  Et cette communauté, en retour, garde la roue lancée. Pas de hiérarchie, pas de barrières : tu entres, tu parles, tu changes le monde à hauteur de voix.
-                </p>
-
-                <div className="my-8 p-8 bg-gradient-to-r from-violet-500/10 to-orange-500/10 rounded-2xl border border-white/20">
-                  <p className="font-playfair text-xl lg:text-2xl text-white leading-relaxed text-center">
-                    Nous ne promettons pas un simple média ;<br />
-                    nous promettons un <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-orange-400">accélérateur d'espérance</span>.
+              {/* Acte II : 6 mois */}
+              {currentActe === 1 && (
+                <div className="animate-fade-in">
+                  <h3 className="font-montserrat font-black text-2xl lg:text-3xl text-white mb-6">
+                    Acte II : 6 mois - Les 12 empires verticaux
+                  </h3>
+                  <p className="text-lg text-white/90 mb-8">
+                    Fini le mélange des genres. Wanted éclate en <span className="font-bold text-purple-400">12 médias spécialisés</span>, 
+                    chacun avec sa ligne éditoriale laser.
                   </p>
+                  
+                  {/* Exemples de verticales */}
+                  <div className="grid lg:grid-cols-2 gap-4 mb-8">
+                    <div className="p-6 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-2xl border border-orange-500/20">
+                      <h4 className="font-bold text-orange-400 text-xl mb-2">WantedAnimaux</h4>
+                      <p className="text-white/80 text-sm mb-2">Mignon + Urgent = Adoption</p>
+                      <p className="text-white/60 text-sm">→ 20k€/mois = 500 adoptions financées</p>
+                    </div>
+                    <div className="p-6 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl border border-purple-500/20">
+                      <h4 className="font-bold text-purple-400 text-xl mb-2">WantedBusiness</h4>
+                      <p className="text-white/80 text-sm mb-2">Échec + Mentor = Rebond</p>
+                      <p className="text-white/60 text-sm">→ 35k€/mois = 50 entreprises créées</p>
+                    </div>
+                  </div>
+
+                  <div className="text-center p-6 bg-white/5 rounded-2xl">
+                    <p className="text-2xl font-bold text-white">
+                      Résultat : <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">20M vues/mois</span> vs 2M aujourd'hui
+                    </p>
+                  </div>
                 </div>
+              )}
 
-                <p className="font-inter text-lg lg:text-xl text-white/90 leading-relaxed">
-                  Un endroit où l'on peut voir, entendre, ressentir et mesurer – instant après instant – l'impact de notre volonté collective.
-                </p>
-
-                <div className="space-y-4 my-10">
-                  <p className="font-inter text-lg lg:text-xl text-white/90 leading-relaxed">
-                    Que ceux qui doutent passent la porte : ils verront une caméra braquée sur un inconnu devenu héros, sentiront le parfum d'un repas payé par un viewer à l'autre bout de la ville, entendront battre le tambour d'une solidarité qui ne dort jamais.
+              {/* Acte III : 1 an */}
+              {currentActe === 2 && (
+                <div className="animate-fade-in">
+                  <h3 className="font-montserrat font-black text-2xl lg:text-3xl text-white mb-6">
+                    Acte III : 1 an - La machine auto-financée
+                  </h3>
+                  <p className="text-lg text-white/90 mb-8">
+                    Les chiffres explosent. Chaque verticale devient <span className="font-bold text-pink-400">rentable et redistribue</span>.
                   </p>
                   
-                  <p className="font-inter text-lg lg:text-xl text-white/90 leading-relaxed">
-                    Et à ceux qui rêvent d'un monde qui raconte mieux qu'il ne consomme :
-                  </p>
-                  
-                  <p className="font-playfair text-2xl lg:text-3xl text-white text-center mt-6 italic">
-                    Bienvenue dans notre révolution à caféine.
-                  </p>
-                </div>
-
-                {/* Call to Action final avec bouton GO */}
-                <div className="text-center mt-12 pt-8 border-t border-white/10">
-                  <p className="font-montserrat font-black text-2xl lg:text-3xl text-white mb-8">
-                    Appuie sur "Go Live". Le reste suivra.
-                  </p>
-                  
-                  {/* Bouton GO spectaculaire */}
-                  <button
-                    onClick={onGoLive}
-                    className="group relative inline-flex items-center justify-center"
-                  >
-                    <div className="absolute inset-0 w-32 h-32 bg-gradient-to-r from-violet-600 to-orange-600 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500 animate-pulse" />
-                    <div className="relative w-32 h-32 bg-gradient-to-r from-violet-600 to-orange-600 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-active:scale-95">
-                      <div className="absolute inset-2 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center">
-                        <span className="font-montserrat font-black text-4xl text-white tracking-wider">
-                          GO
-                        </span>
+                  {/* Formats de production */}
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl">
+                      <Play className="w-6 h-6 text-pink-400 flex-shrink-0" />
+                      <div>
+                        <span className="font-semibold text-white">12 Hack-Trocs filmés</span>
+                        <span className="text-white/60 text-sm ml-2">(1/mois/verticale)</span>
                       </div>
                     </div>
-                    {/* Cercles concentriques animés */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-40 h-40 border-2 border-white/20 rounded-full animate-ping" />
-                      <div className="absolute w-48 h-48 border border-white/10 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
+                    <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl">
+                      <Play className="w-6 h-6 text-pink-400 flex-shrink-0" />
+                      <div>
+                        <span className="font-semibold text-white">Séries signatures</span>
+                        <span className="text-white/60 text-sm ml-2">"7 jours pour s'en sortir"</span>
+                      </div>
                     </div>
-                  </button>
-                  
-                  <p className="font-inter text-white/60 text-sm mt-6 animate-pulse">
-                    Cliquez pour découvrir la suite
-                  </p>
+                    <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl">
+                      <Play className="w-6 h-6 text-pink-400 flex-shrink-0" />
+                      <div>
+                        <span className="font-semibold text-white">Wanted Daily</span>
+                        <span className="text-white/60 text-sm ml-2">JT de l'entraide 5min</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div className="p-4 bg-gradient-to-br from-pink-500/10 to-orange-500/10 rounded-xl">
+                      <div className="text-2xl font-bold text-pink-400">2400</div>
+                      <div className="text-sm text-white/70">contenus/an</div>
+                    </div>
+                    <div className="p-4 bg-gradient-to-br from-pink-500/10 to-orange-500/10 rounded-xl">
+                      <div className="text-2xl font-bold text-orange-400">100M</div>
+                      <div className="text-sm text-white/70">vues cumulées</div>
+                    </div>
+                    <div className="p-4 bg-gradient-to-br from-pink-500/10 to-orange-500/10 rounded-xl">
+                      <div className="text-2xl font-bold text-red-400">500k€</div>
+                      <div className="text-sm text-white/70">CA média</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Acte IV : 3 ans */}
+              {currentActe === 3 && (
+                <div className="animate-fade-in">
+                  <h3 className="font-montserrat font-black text-2xl lg:text-3xl text-white mb-6">
+                    Acte IV : 3 ans - Le Netflix de la solidarité
+                  </h3>
+                  <p className="text-lg text-white/90 mb-8">
+                    Wanted n'est plus une page Facebook. C'est <span className="font-bold text-orange-400">LE média de référence mondiale</span> de l'impact positif.
+                  </p>
+                  
+                  {/* L'empire en chiffres */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div className="text-center p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl">
+                      <div className="text-3xl font-bold text-orange-400">20</div>
+                      <div className="text-sm text-white/70">villes</div>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl">
+                      <div className="text-3xl font-bold text-orange-400">5M</div>
+                      <div className="text-sm text-white/70">users actifs</div>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl">
+                      <div className="text-3xl font-bold text-red-400">1B</div>
+                      <div className="text-sm text-white/70">vues/an</div>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl">
+                      <div className="text-3xl font-bold text-red-400">10M€</div>
+                      <div className="text-sm text-white/70">CA/an</div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-2xl border border-orange-500/30">
+                    <p className="text-xl text-white font-bold text-center">
+                      100% réinvesti dans l'action directe
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Navigation entre actes */}
+            <div className="flex justify-center gap-4 mt-8">
+              {actes.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentActe(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentActe 
+                      ? 'w-8 bg-gradient-to-r from-violet-500 to-orange-500' 
+                      : 'bg-white/30 hover:bg-white/50'
+                  }`}
+                />
+              ))}
             </div>
           </div>
+
+          {/* La formule éditoriale */}
+          <div className="mt-32">
+            <h2 className="font-montserrat font-black text-3xl lg:text-4xl text-white text-center mb-12">
+              La formule éditoriale qui tue
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { pct: 20, title: "Urgence", desc: "Il faut agir MAINTENANT", color: "from-red-500 to-orange-500" },
+                { pct: 30, title: "Émotion", desc: "Cette histoire va vous bouleverser", color: "from-purple-500 to-pink-500" },
+                { pct: 30, title: "Solution", desc: "Voici exactement comment faire", color: "from-blue-500 to-purple-500" },
+                { pct: 20, title: "Célébration", desc: "Regardez ce qu'on a accompli", color: "from-green-500 to-teal-500" }
+              ].map((pilier, index) => (
+                <div key={index} className="relative group h-full">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
+                  <div className="relative h-full bg-black/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10 group-hover:border-white/20 transition-all flex flex-col">
+                    <div className={`flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${pilier.color} mb-4 flex-shrink-0`}>
+                      <span className="font-montserrat font-bold text-2xl text-white">{pilier.pct}%</span>
+                    </div>
+                    <h4 className="font-bold text-xl text-white mb-2">{pilier.title}</h4>
+                    <p className="text-sm text-white/70 flex-grow">{pilier.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Call to Action Final */}
+          <div className="mt-32 text-center">
+            <div className="max-w-4xl mx-auto space-y-8">
+              <p className="text-xl lg:text-2xl text-white/80 leading-relaxed">
+                Chaque jour qui passe, des milliers d'histoires extraordinaires meurent dans l'oubli d'un fil Facebook.
+                Chaque jour, ton impact réel reste invisible. 
+                Chaque jour, des sponsors passent à côté de la plus belle audience de France.
+              </p>
+              
+              <p className="text-3xl lg:text-4xl font-montserrat font-black text-white">
+                C'est fini.
+              </p>
+
+              <div className="space-y-4 text-xl lg:text-2xl text-white/90">
+                <p>Dans <span className="font-bold text-violet-400">48h</span>, on se voit. On pose tout.</p>
+                <p>Dans <span className="font-bold text-purple-400">30 jours</span>, les 200 premiers contenus sont en ligne.</p>
+                <p>Dans <span className="font-bold text-pink-400">6 mois</span>, tu ne reconnais plus Wanted.</p>
+                <p>Dans <span className="font-bold text-orange-400">3 ans</span>, on a créé le nouveau standard mondial.</p>
+              </div>
+
+              <div className="relative inline-block mt-16">
+                <div className="absolute -inset-4 bg-gradient-to-r from-violet-600 to-orange-600 rounded-full blur-2xl opacity-70 animate-pulse" />
+                <button
+                  onClick={handleGoClick}
+                  type="button"
+                  className="relative group px-12 py-6 bg-gradient-to-r from-violet-600 to-orange-600 rounded-full text-white font-montserrat font-black text-2xl tracking-wider transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                >
+                  <span className="flex items-center gap-3 pointer-events-none">
+                    APPUIE SUR GO
+                    <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </button>
+              </div>
+              
+              <p className="text-white/60 text-lg mt-6">
+                Le reste, c'est de l'histoire.
+              </p>
+            </div>
+          </div>
+
+          {/* Citation finale */}
+          <div className="mt-32 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/10 via-pink-600/10 to-orange-600/10 blur-3xl" />
+            <div className="relative bg-black/50 backdrop-blur-xl rounded-3xl p-10 lg:p-16 border border-white/20 text-center">
+              <p className="text-2xl lg:text-3xl text-white/90 leading-relaxed font-light italic">
+                "Tes 1,5 million de membres méritent mieux qu'un groupe Facebook. 
+                Construisons ensemble le premier empire média où chaque clic finance une vraie action. 
+                Où chaque vue sauve une vie. Où chaque partage change une destinée."
+              </p>
+            </div>
+          </div>
+
+          {/* P.S. */}
+          <p className="text-center text-white/50 text-lg mt-12">
+            P.S. : On ne fait pas dans le charity porn. On fait dans l'impact entertainment. Nuance.
+          </p>
         </div>
       </div>
 
+      {/* Styles d'animation */}
       <style jsx>{`
-        @keyframes float {
-          0% {
-            transform: translateY(0px) translateX(0px);
-          }
-          33% {
-            transform: translateY(-20px) translateX(10px);
-          }
-          66% {
-            transform: translateY(10px) translateX(-10px);
-          }
-          100% {
-            transform: translateY(0px) translateX(0px);
-          }
-        }
-
-        @keyframes explode {
-          0% {
-            transform: translate(-50%, -50%) translate(0, 0) scale(0);
-            opacity: 1;
-          }
-          50% {
-            opacity: 1;
-          }
-          100% {
-            transform: translate(-50%, -50%) translate(var(--x), var(--y)) scale(1);
-            opacity: 0;
-          }
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
 
         @keyframes fade-in {
-          0% {
+          from {
             opacity: 0;
-            transform: scale(0.8);
+            transform: translateY(20px);
           }
-          100% {
+          to {
             opacity: 1;
-            transform: scale(1);
+            transform: translateY(0);
           }
         }
 
-        @keyframes draw-infinity {
-          0% {
-            stroke-dashoffset: 800;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
-        }
-
-        @keyframes pulse-slow {
-          0%, 100% {
-            opacity: 0.3;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.6;
-            transform: scale(1.1);
-          }
-        }
-
-        @keyframes dash {
-          0% {
-            stroke-dashoffset: 0;
-          }
-          100% {
-            stroke-dashoffset: 10;
-          }
-        }
-        
-        .animate-float {
-          animation: float 20s ease-in-out infinite;
-        }
-
-        .animate-explode {
-          animation: explode 2s ease-out forwards;
+        .animate-gradient-shift {
+          background-size: 200% 200%;
+          animation: gradient-shift 10s ease infinite;
         }
 
         .animate-fade-in {
-          animation: fade-in 1s ease-out forwards;
-          opacity: 0;
-        }
-
-        .animate-draw-infinity {
-          animation: draw-infinity 2s ease-out forwards;
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-
-        .animate-dash {
-          animation: dash 1s linear infinite;
-        }
-
-        .gradient-text-animated {
-          background: linear-gradient(135deg, #F97316 0%, #EF4444 100%);
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: gradient-shift 3s ease infinite;
-        }
-
-        .gradient-text-animated-orange {
-          background: linear-gradient(135deg, #F97316 0%, #EF4444 100%);
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: gradient-shift 3s ease infinite;
-        }
-
-        @keyframes gradient-shift {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
+          animation: fade-in 0.8s ease-out forwards;
         }
       `}</style>
     </section>

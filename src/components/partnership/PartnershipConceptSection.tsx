@@ -1,87 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mic, Heart, Film, RotateCw, Coffee, Users, Camera, Radio, Zap, Facebook, Hash, Calendar, Share2 } from 'lucide-react';
+import { 
+  ArrowRight, Coffee, Camera, Share2, Heart, Mic, Film, RefreshCw,
+  Facebook, ChevronRight, Play, Users, DollarSign
+} from 'lucide-react';
 
 const PartnershipConceptSection: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
-  const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
+  const [activeFlow, setActiveFlow] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Les 4 étapes du cycle
-  const cycleSteps = [
-    {
-      id: 'live',
-      title: 'LIVE',
-      icon: Mic,
-      color: '#8B5CF6',
-      description: 'Des micros ouverts 7j/7',
-      details: 'Twitch, YouTube, TikTok, Insta Live, X Spaces'
-    },
-    {
-      id: 'impact',
-      title: 'IMPACT',
-      icon: Heart,
-      color: '#EC4899',
-      description: 'Chaque minute finance un geste',
-      details: 'Repas suspendu, collecte, service rendu'
-    },
-    {
-      id: 'story',
-      title: 'STORY',
-      icon: Film,
-      color: '#F97316',
-      description: 'Origines capte et transforme',
-      details: 'Shorts, reels, docs, podcasts'
-    },
-    {
-      id: 'live-loop',
-      title: 'LIVE',
-      icon: RotateCw,
-      color: '#10B981',
-      description: 'Les contenus inspirent',
-      details: 'La roue recommence, plus grande'
-    }
-  ];
-
-  // Les plateformes et leur rôle
-  const platforms = [
-    {
-      id: 'twitch',
-      name: 'Twitch',
-      role: 'Show interactif "Wanted Live"',
-      icon: '🎮',
-      color: '#9146FF'
-    },
-    {
-      id: 'youtube',
-      name: 'YouTube Live',
-      role: 'Docs longs & after-movies',
-      icon: '📺',
-      color: '#FF0000'
-    },
-    {
-      id: 'tiktok',
-      name: 'TikTok & Reels',
-      role: 'Clips < 90s, moments émotion',
-      icon: '📱',
-      color: '#000000'
-    },
-    {
-      id: 'facebook',
-      name: 'Groupes Facebook',
-      role: 'Détecteur d\'histoires & amplificateur',
-      icon: '👥',
-      color: '#1877F2'
-    }
-  ];
-
-  // Rituels hebdomadaires
-  const weeklyRituals = [
-    { day: 'Lundi', title: 'Héros', description: 'Nomme quelqu\'un, on l\'appelle en live', icon: '🦸' },
-    { day: 'Mardi', title: 'Associations', description: 'Tag une asso, on l\'interviewe', icon: '🤝' },
-    { day: 'Mercredi', title: 'Coup de main', description: 'Poste ce que tu offres, on relaie', icon: '🔧' },
-    { day: 'Jeudi', title: 'Open-Mic', description: 'Monte sur scène, raconte ton déclic', icon: '🎤' },
-    { day: 'Vendredi', title: 'Café-Concert', description: 'Artistes engagés, donations live', icon: '🎵' }
+  // Données du flux de création
+  const creationFlow = [
+    { step: "Post Facebook", entity: "wanted", icon: Facebook },
+    { step: "Sélection histoire", entity: "both", icon: Heart },
+    { step: "Live multi-plateforme", entity: "both", icon: Mic },
+    { step: "Captation pro", entity: "origines", icon: Camera },
+    { step: "200 contenus/mois", entity: "origines", icon: Film },
+    { step: "Viralité + Revenus", entity: "both", icon: Share2 },
+    { step: "Réinvestissement", entity: "wanted", icon: RefreshCw }
   ];
 
   // Intersection Observer
@@ -102,12 +38,12 @@ const PartnershipConceptSection: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Animation du cycle
+  // Animation du flux
   useEffect(() => {
     if (isVisible) {
       const interval = setInterval(() => {
-        setActiveStep((prev) => (prev + 1) % cycleSteps.length);
-      }, 3000);
+        setActiveFlow((prev) => (prev + 1) % creationFlow.length);
+      }, 2000);
       return () => clearInterval(interval);
     }
   }, [isVisible]);
@@ -115,375 +51,401 @@ const PartnershipConceptSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-20 px-8 lg:px-16 bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A] overflow-hidden"
+      className="relative py-32 bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden"
     >
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-[0.02]">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+      {/* Background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(139,92,246,0.08),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(249,115,22,0.08),transparent_50%)]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
-        <div className={`text-center mb-16 transform transition-all duration-1000 ${
-          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+        <div className={`text-center mb-20 transition-all duration-1000 ${
+          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
-          <div className="inline-flex items-center gap-4 mb-6">
-            <div className="w-20 h-px bg-gradient-to-r from-transparent via-violet-500 to-transparent" />
-            <span className="font-inter text-violet-400 text-sm tracking-[0.2em] uppercase">Le Concept Cœur</span>
-            <div className="w-20 h-px bg-gradient-to-r from-transparent via-violet-500 to-transparent" />
-          </div>
-          
-          <h2 className="font-montserrat font-black text-4xl md:text-5xl lg:text-6xl uppercase tracking-wider text-white mb-6">
-            Live → Impact → Story →
-            <br />
-            <span className="gradient-text-animated">Live</span>
+          <h2 className="font-montserrat font-black text-3xl lg:text-5xl text-white mb-4">
+            Les Ponts entre
           </h2>
-          
-          <p className="font-inter text-xl text-white/70 max-w-3xl mx-auto">
-            Un écosystème où chaque geste d'entraide devient instantanément du contenu qui nourrit l'action suivante
+          <div className="flex items-center justify-center gap-3">
+            <span className="font-montserrat font-black text-4xl lg:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">Wanted</span>
+            <span className="font-montserrat font-black text-4xl lg:text-6xl text-white">&</span>
+            <span className="font-montserrat font-black text-4xl lg:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-500">Origines</span>
+          </div>
+          <p className="text-xl text-white/60 mt-6 max-w-3xl mx-auto">
+            Comment deux forces complémentaires créent le premier empire média de l'entraide
           </p>
         </div>
 
-        {/* Cycle Visualization */}
-        <div className={`mb-20 transform transition-all duration-1000 delay-300 ${
+        {/* Ce que chacun apporte */}
+        <div className={`grid lg:grid-cols-2 gap-8 mb-24 transition-all duration-1000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="relative max-w-4xl mx-auto">
-            {/* Cercle central */}
-            <div className="relative h-[400px] lg:h-[500px] flex items-center justify-center">
-              {/* Logo central */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full bg-gradient-to-br from-violet-600/20 to-orange-600/20 backdrop-blur-xl flex items-center justify-center">
-                  <Coffee className="w-16 h-16 lg:w-20 lg:h-20 text-white/80" />
+          {/* Wanted apporte */}
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition-opacity" />
+            <div className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-10 border border-orange-500/20 h-full">
+              <h3 className="font-montserrat font-bold text-2xl text-white mb-8 flex items-center gap-3">
+                <Coffee className="w-10 h-10 text-orange-400" />
+                Wanted apporte
+              </h3>
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">La matière première</h4>
+                    <p className="text-white/60">1.5M histoires vraies quotidiennes, des besoins réels, des élans spontanés</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">Les lieux vivants</h4>
+                    <p className="text-white/60">Cafés-studios authentiques, scènes ouvertes, espaces de rencontre</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">La communauté active</h4>
+                    <p className="text-white/60">Lives spontanés, engagement réel, énergie du terrain</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">L'impact mesurable</h4>
+                    <p className="text-white/60">Compteurs temps réel, preuves terrain, data transparente</p>
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Étapes du cycle */}
-              {cycleSteps.map((step, index) => {
-                const angle = (index * 90 - 90) * (Math.PI / 180);
-                const radius = 150;
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
-                const isActive = activeStep === index;
+          {/* Origines transforme */}
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-violet-500 to-purple-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition-opacity" />
+            <div className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-10 border border-violet-500/20 h-full">
+              <h3 className="font-montserrat font-bold text-2xl text-white mb-8 flex items-center gap-3">
+                <Camera className="w-10 h-10 text-violet-400" />
+                Origines transforme
+              </h3>
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">En contenus émotionnels</h4>
+                    <p className="text-white/60">Stories qui touchent, formats qui cartonnent, narration pro</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">En production scalable</h4>
+                    <p className="text-white/60">200 contenus/mois, système de recyclage, IA d'optimisation</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">En audiences qualifiées</h4>
+                    <p className="text-white/60">Distribution multi-plateformes, ciblage par verticale, reach x10</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-white text-lg mb-1">En revenus éthiques</h4>
+                    <p className="text-white/60">Monétisation sans compromis, sponsors alignés, 100% réinvesti</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                return (
-                  <div
-                    key={step.id}
-                    className={`absolute top-1/2 left-1/2 transition-all duration-1000 ${
-                      isActive ? 'scale-110 z-20' : 'scale-100 z-10'
-                    }`}
-                    style={{
-                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
-                    }}
-                  >
-                    <div className="relative group">
-                      {/* Glow effect */}
-                      <div 
-                        className={`absolute inset-0 -m-4 rounded-full blur-xl transition-all duration-500 ${
-                          isActive ? 'opacity-100' : 'opacity-0'
-                        }`}
-                        style={{ backgroundColor: `${step.color}40` }}
-                      />
-                      
-                      {/* Step card */}
-                      <div 
-                        className={`relative w-24 h-24 lg:w-32 lg:h-32 rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-500 ${
-                          isActive ? 'shadow-2xl' : 'shadow-lg'
-                        }`}
-                        style={{
-                          backgroundColor: isActive ? `${step.color}20` : 'rgba(0,0,0,0.5)',
-                          borderColor: isActive ? step.color : 'rgba(255,255,255,0.1)',
-                          backdropFilter: 'blur(10px)'
-                        }}
-                      >
-                        <step.icon 
-                          className={`w-8 h-8 lg:w-10 lg:h-10 mb-2 transition-all duration-500`}
-                          style={{ color: isActive ? step.color : 'rgba(255,255,255,0.6)' }}
-                        />
-                        <span 
-                          className={`font-montserrat font-bold text-xs lg:text-sm transition-all duration-500 ${
-                            isActive ? 'text-white' : 'text-white/60'
+        {/* Le cycle de création de valeur */}
+        <div className={`relative mb-24 transition-all duration-1000 delay-400 ${
+          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+        }`}>
+          <div className="relative bg-black/60 backdrop-blur-xl rounded-3xl p-8 lg:p-12 border border-white/10 overflow-hidden">
+            <h3 className="font-montserrat font-bold text-2xl lg:text-3xl text-white text-center mb-12">
+              Le Cycle de Création de Valeur
+            </h3>
+            
+            {/* Desktop: Flux horizontal */}
+            <div className="hidden lg:block">
+              <div className="relative max-w-5xl mx-auto">
+                {/* Ligne de connexion de fond */}
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2">
+                  <div className="h-full bg-white/10 rounded-full" />
+                </div>
+
+                {/* Cards en ligne */}
+                <div className="relative flex justify-between items-center">
+                  {creationFlow.map((item, index) => (
+                    <div key={index} className="relative flex items-center">
+                      <div className="relative group">
+                        <div 
+                          className={`relative p-4 rounded-2xl border transition-all duration-500 ${
+                            activeFlow === index 
+                              ? 'scale-110 shadow-xl' 
+                              : 'scale-100 hover:scale-105'
                           }`}
+                          style={{
+                            backgroundColor: activeFlow === index 
+                              ? item.entity === 'wanted' 
+                                ? 'rgba(249, 115, 22, 0.15)' 
+                                : item.entity === 'origines'
+                                ? 'rgba(139, 92, 246, 0.15)'
+                                : 'rgba(236, 72, 153, 0.15)'
+                              : 'rgba(0, 0, 0, 0.6)',
+                            borderColor: activeFlow === index
+                              ? item.entity === 'wanted'
+                                ? '#F97316'
+                                : item.entity === 'origines'
+                                ? '#8B5CF6'
+                                : '#EC4899'
+                              : 'rgba(255, 255, 255, 0.1)'
+                          }}
                         >
-                          {step.title}
-                        </span>
+                          <item.icon 
+                            className={`w-6 h-6 mx-auto mb-2 transition-all ${
+                              activeFlow === index
+                                ? item.entity === 'wanted'
+                                  ? 'text-orange-400'
+                                  : item.entity === 'origines'
+                                  ? 'text-violet-400'
+                                  : 'text-pink-400'
+                                : 'text-white/60'
+                            }`}
+                          />
+                          <p className={`text-center text-xs font-medium whitespace-nowrap transition-all ${
+                            activeFlow === index ? 'text-white' : 'text-white/60'
+                          }`}>
+                            {item.step}
+                          </p>
+                          
+                          {/* Tag de l'entité */}
+                          <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                            item.entity === 'wanted'
+                              ? 'bg-orange-500'
+                              : item.entity === 'origines'
+                              ? 'bg-violet-500'
+                              : 'bg-gradient-to-r from-orange-500 to-violet-500'
+                          }`}>
+                            {item.entity === 'both' ? 'W+O' : item.entity === 'wanted' ? 'W' : 'O'}
+                          </div>
+                        </div>
                       </div>
+                      
+                      {/* Flèche entre les étapes */}
+                      {index < creationFlow.length - 1 && (
+                        <ChevronRight className={`w-5 h-5 mx-2 transition-all ${
+                          activeFlow >= index ? 'text-white/60' : 'text-white/20'
+                        }`} />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-                      {/* Details on hover/active */}
-                      <div className={`absolute top-full mt-4 left-1/2 -translate-x-1/2 w-48 p-3 bg-black/80 backdrop-blur-xl rounded-xl border border-white/10 transition-all duration-500 ${
-                        isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+            {/* Mobile: Grille 2x4 */}
+            <div className="lg:hidden">
+              <div className="grid grid-cols-2 gap-4">
+                {creationFlow.map((item, index) => (
+                  <div key={index} className="relative">
+                    <div 
+                      className={`relative p-4 rounded-2xl border transition-all duration-500 ${
+                        activeFlow === index 
+                          ? 'scale-105 shadow-xl' 
+                          : 'scale-100'
+                      }`}
+                      style={{
+                        backgroundColor: activeFlow === index 
+                          ? item.entity === 'wanted' 
+                            ? 'rgba(249, 115, 22, 0.15)' 
+                            : item.entity === 'origines'
+                            ? 'rgba(139, 92, 246, 0.15)'
+                            : 'rgba(236, 72, 153, 0.15)'
+                          : 'rgba(0, 0, 0, 0.6)',
+                        borderColor: activeFlow === index
+                          ? item.entity === 'wanted'
+                            ? '#F97316'
+                            : item.entity === 'origines'
+                            ? '#8B5CF6'
+                            : '#EC4899'
+                          : 'rgba(255, 255, 255, 0.1)'
+                      }}
+                    >
+                      <item.icon 
+                        className={`w-6 h-6 mx-auto mb-2 transition-all ${
+                          activeFlow === index
+                            ? item.entity === 'wanted'
+                              ? 'text-orange-400'
+                              : item.entity === 'origines'
+                              ? 'text-violet-400'
+                              : 'text-pink-400'
+                            : 'text-white/60'
+                        }`}
+                      />
+                      <p className={`text-center text-xs font-medium transition-all ${
+                        activeFlow === index ? 'text-white' : 'text-white/60'
                       }`}>
-                        <p className="font-inter text-white font-semibold text-sm mb-1">
-                          {step.description}
-                        </p>
-                        <p className="font-inter text-white/60 text-xs">
-                          {step.details}
-                        </p>
+                        {item.step}
+                      </p>
+                      
+                      {/* Tag de l'entité */}
+                      <div className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                        item.entity === 'wanted'
+                          ? 'bg-orange-500'
+                          : item.entity === 'origines'
+                          ? 'bg-violet-500'
+                          : 'bg-gradient-to-r from-orange-500 to-violet-500'
+                      }`}>
+                        {item.entity === 'both' ? 'W+O' : item.entity === 'wanted' ? 'W' : 'O'}
                       </div>
                     </div>
                   </div>
-                );
-              })}
-
-              {/* Flèches de connexion animées */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                <defs>
-                  <marker
-                    id="arrowhead"
-                    markerWidth="10"
-                    markerHeight="10"
-                    refX="9"
-                    refY="3"
-                    orient="auto"
-                  >
-                    <polygon
-                      points="0 0, 10 3, 0 6"
-                      fill="url(#arrowGradient)"
-                    />
-                  </marker>
-                  <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#8B5CF6" />
-                    <stop offset="100%" stopColor="#F97316" />
-                  </linearGradient>
-                </defs>
-                
-                <circle
-                  cx="50%"
-                  cy="50%"
-                  r="150"
-                  fill="none"
-                  stroke="url(#arrowGradient)"
-                  strokeWidth="2"
-                  strokeDasharray="5 5"
-                  opacity="0.2"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    attributeType="XML"
-                    type="rotate"
-                    from="0 250 250"
-                    to="360 250 250"
-                    dur="30s"
-                    repeatCount="indefinite"
-                  />
-                </circle>
-              </svg>
+                ))}
+              </div>
+            </div>
+            
+            {/* Indicateur de cycle */}
+            <div className="mt-8 text-center">
+              <div className="inline-flex items-center gap-3 text-white/60 text-sm">
+                <RefreshCw className={`w-5 h-5 transition-all ${
+                  activeFlow === creationFlow.length - 1 ? 'text-green-400 rotate-180' : ''
+                }`} />
+                <span>Le cycle recommence, amplifié</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Écosystème détaillé */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
-          {/* Le Café Wanted */}
-          <div className={`bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 transform transition-all duration-1000 delay-500 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-          }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center">
-                <Coffee className="w-6 h-6 text-orange-400" />
-              </div>
-              <h3 className="font-montserrat font-bold text-xl text-white">Le Café Wanted</h3>
-            </div>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <span className="text-orange-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Scène physique permanente</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-orange-400 mt-1">•</span>
-                <span className="font-inter text-white/70">3€ = 1 repas servi le jour même</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-orange-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Mur-compteur lumineux temps réel</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-orange-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Soirées thématiques & open-mic</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Les Lives */}
-          <div className={`bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 transform transition-all duration-1000 delay-600 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-          }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center">
-                <Radio className="w-6 h-6 text-violet-400" />
-              </div>
-              <h3 className="font-montserrat font-bold text-xl text-white">Les Lives</h3>
-            </div>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <span className="text-violet-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Caisse de résonance temps réel</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-violet-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Multi-plateforme simultané</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-violet-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Compteur qui s'illumine à chaque don</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-violet-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Interaction directe donateurs</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Origines Media */}
-          <div className={`bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 transform transition-all duration-1000 delay-700 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-          }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-fuchsia-500/20 to-pink-500/20 flex items-center justify-center">
-                <Camera className="w-6 h-6 text-fuchsia-400" />
-              </div>
-              <h3 className="font-montserrat font-bold text-xl text-white">Origines Media</h3>
-            </div>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <span className="text-fuchsia-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Atelier de transmutation content</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-fuchsia-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Shorts TikTok, docs YouTube</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-fuchsia-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Podcasts hebdomadaires</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-fuchsia-400 mt-1">•</span>
-                <span className="font-inter text-white/70">Formats calibrés pour l'algo</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Rôle central des Groupes Facebook */}
-        <div className={`mb-20 transform transition-all duration-1000 delay-800 ${
+        {/* Qui fait quoi */}
+        <div className={`grid lg:grid-cols-3 gap-8 mb-24 transition-all duration-1000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="text-center mb-12">
-            <h3 className="font-montserrat font-black text-3xl lg:text-4xl text-white mb-4">
-              Le Cœur Battant :
-              <br />
-              <span className="gradient-text-animated">Les Groupes Facebook</span>
-            </h3>
-            <p className="font-inter text-lg text-white/70 max-w-2xl mx-auto">
-              Pépinière d'histoires et radar des besoins sociaux
-            </p>
+          {/* Wanted */}
+          <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-sm rounded-3xl p-8 border border-orange-500/20">
+            <h4 className="font-montserrat font-bold text-xl text-orange-400 mb-6 flex items-center gap-3">
+              <Users className="w-6 h-6" />
+              WANTED
+            </h4>
+            <ul className="space-y-3 text-white/80">
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-orange-400 mt-1 flex-shrink-0" />
+                <span>Anime la communauté 24/7</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-orange-400 mt-1 flex-shrink-0" />
+                <span>Gère les cafés-studios</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-orange-400 mt-1 flex-shrink-0" />
+                <span>Organise les lives thématiques</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-orange-400 mt-1 flex-shrink-0" />
+                <span>Mesure l'impact terrain</span>
+              </li>
+            </ul>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Hash,
-                title: 'Détecteur d\'histoires',
-                description: 'Posts scannés, protagonistes contactés',
-                color: '#1877F2'
-              },
-              {
-                icon: Calendar,
-                title: 'Agenda participatif',
-                description: 'La communauté vote les thèmes',
-                color: '#1877F2'
-              },
-              {
-                icon: Zap,
-                title: 'Bourse d\'entraide',
-                description: 'Hashtags triés, urgences relayées',
-                color: '#1877F2'
-              },
-              {
-                icon: Share2,
-                title: 'Amplificateur',
-                description: 'Vidéos repostées, impact prouvé',
-                color: '#1877F2'
-              }
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="group bg-gradient-to-br from-blue-600/10 to-blue-800/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 hover:scale-105 transition-all duration-500"
-              >
-                <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
-                  <feature.icon className="w-6 h-6 text-blue-400" />
-                </div>
-                <h4 className="font-montserrat font-bold text-white mb-2">
-                  {feature.title}
-                </h4>
-                <p className="font-inter text-white/60 text-sm">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+          {/* Origines */}
+          <div className="bg-gradient-to-br from-violet-500/10 to-purple-500/10 backdrop-blur-sm rounded-3xl p-8 border border-violet-500/20">
+            <h4 className="font-montserrat font-bold text-xl text-violet-400 mb-6 flex items-center gap-3">
+              <Camera className="w-6 h-6" />
+              ORIGINES
+            </h4>
+            <ul className="space-y-3 text-white/80">
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-violet-400 mt-1 flex-shrink-0" />
+                <span>Filme et monte pro</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-violet-400 mt-1 flex-shrink-0" />
+                <span>Optimise pour les algos</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-violet-400 mt-1 flex-shrink-0" />
+                <span>Distribue multi-plateformes</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-violet-400 mt-1 flex-shrink-0" />
+                <span>Monétise éthiquement</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Ensemble */}
+          <div className="bg-gradient-to-br from-pink-500/10 to-orange-500/10 backdrop-blur-sm rounded-3xl p-8 border border-pink-500/20">
+            <h4 className="font-montserrat font-bold text-xl text-pink-400 mb-6 flex items-center gap-3">
+              <Share2 className="w-6 h-6" />
+              ENSEMBLE
+            </h4>
+            <ul className="space-y-3 text-white/80">
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-pink-400 mt-1 flex-shrink-0" />
+                <span>Co-création éditoriale</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-pink-400 mt-1 flex-shrink-0" />
+                <span>Sélection des histoires</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-pink-400 mt-1 flex-shrink-0" />
+                <span>Direction artistique</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <ChevronRight className="w-4 h-4 text-pink-400 mt-1 flex-shrink-0" />
+                <span>Partage des revenus 50/50</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Rituels hebdomadaires */}
-        <div className={`transform transition-all duration-1000 delay-900 ${
+        {/* Impact concret */}
+        <div className={`bg-gradient-to-r from-violet-600/10 via-pink-600/10 to-orange-600/10 backdrop-blur-sm rounded-3xl p-10 lg:p-16 border border-white/10 text-center transition-all duration-1000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="text-center mb-12">
-            <h3 className="font-montserrat font-black text-3xl lg:text-4xl text-white mb-4">
-              Rituels qui font
-              <span className="gradient-text-animated"> tourner la roue</span>
-            </h3>
-          </div>
-
-          <div className="relative max-w-5xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {weeklyRituals.map((ritual, index) => (
-                <div
-                  key={index}
-                  className="group relative bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-black/60 transition-all duration-500 hover:scale-105"
-                >
-                  <div className="text-4xl mb-3">{ritual.icon}</div>
-                  <div className="font-montserrat font-bold text-white mb-1">
-                    {ritual.day}
-                  </div>
-                  <div className="font-montserrat font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-orange-400 mb-2">
-                    {ritual.title}
-                  </div>
-                  <p className="font-inter text-white/60 text-xs">
-                    {ritual.description}
-                  </p>
-                </div>
-              ))}
+          <h3 className="font-montserrat font-bold text-2xl lg:text-3xl text-white mb-8">
+            L'Impact en Chiffres
+          </h3>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 mb-2">
+                1 Live
+              </div>
+              <p className="text-white/60">=</p>
+              <p className="text-white font-semibold">127 repas financés</p>
+            </div>
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-2">
+                1 Story
+              </div>
+              <p className="text-white/60">=</p>
+              <p className="text-white font-semibold">500 partages</p>
+            </div>
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-orange-400 mb-2">
+                1 Doc
+              </div>
+              <p className="text-white/60">=</p>
+              <p className="text-white font-semibold">50 entreprises créées</p>
+            </div>
+            <div>
+              <div className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-500 mb-2">
+                1 Mois
+              </div>
+              <p className="text-white/60">=</p>
+              <p className="text-white font-semibold">10k vies changées</p>
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .gradient-text-animated {
-          background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: gradient-shift 3s ease infinite;
-        }
-
-        @keyframes gradient-shift {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-      `}</style>
     </section>
   );
 };
