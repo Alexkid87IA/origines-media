@@ -43,7 +43,7 @@ const PartnershipConceptSection: React.FC = () => {
     if (isVisible) {
       const interval = setInterval(() => {
         setActiveFlow((prev) => (prev + 1) % creationFlow.length);
-      }, 2000);
+      }, 3000); // Ralenti de 2s à 3s pour mieux voir l'animation
       return () => clearInterval(interval);
     }
   }, [isVisible, creationFlow.length]);
@@ -191,41 +191,48 @@ const PartnershipConceptSection: React.FC = () => {
             {/* Desktop: Flux horizontal */}
             <div className="hidden lg:block">
               <div className="relative max-w-5xl mx-auto">
-                {/* Ligne de connexion de fond */}
-                <div className="absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2">
-                  <div className="h-full bg-white/10 rounded-full" />
-                </div>
-
                 {/* Cards en ligne */}
                 <div className="relative flex justify-between items-center">
+                  {/* Ligne de connexion de fond - déplacée ici */}
+                  <div className="absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 -z-10">
+                    <div className="h-full bg-white/10 rounded-full" />
+                  </div>
+                  
                   {creationFlow.map((item, index) => (
                     <div key={index} className="relative flex items-center">
                       <div className="relative group">
                         <div 
-                          className={`relative p-4 rounded-2xl border transition-all duration-500 ${
+                          className={`relative p-4 rounded-2xl border-2 transition-all duration-700 ${
                             activeFlow === index 
-                              ? 'scale-110 shadow-xl' 
-                              : 'scale-100 hover:scale-105'
+                              ? 'scale-110 shadow-2xl' 
+                              : 'scale-100 opacity-60 hover:opacity-80'
                           }`}
                           style={{
                             backgroundColor: activeFlow === index 
                               ? item.entity === 'wanted' 
-                                ? 'rgba(249, 115, 22, 0.15)' 
+                                ? 'rgba(249, 115, 22, 0.25)' 
                                 : item.entity === 'origines'
-                                ? 'rgba(139, 92, 246, 0.15)'
-                                : 'rgba(236, 72, 153, 0.15)'
-                              : 'rgba(0, 0, 0, 0.6)',
+                                ? 'rgba(139, 92, 246, 0.25)'
+                                : 'rgba(236, 72, 153, 0.25)'
+                              : 'rgba(0, 0, 0, 0.4)',
                             borderColor: activeFlow === index
                               ? item.entity === 'wanted'
                                 ? '#F97316'
                                 : item.entity === 'origines'
                                 ? '#8B5CF6'
                                 : '#EC4899'
-                              : 'rgba(255, 255, 255, 0.1)'
+                              : 'rgba(255, 255, 255, 0.1)',
+                            boxShadow: activeFlow === index
+                              ? item.entity === 'wanted'
+                                ? '0 0 30px rgba(249, 115, 22, 0.5)'
+                                : item.entity === 'origines'
+                                ? '0 0 30px rgba(139, 92, 246, 0.5)'
+                                : '0 0 30px rgba(236, 72, 153, 0.5)'
+                              : 'none'
                           }}
                         >
                           <item.icon 
-                            className={`w-6 h-6 mx-auto mb-2 transition-all ${
+                            className={`w-6 h-6 mx-auto mb-2 transition-all duration-700 ${
                               activeFlow === index
                                 ? item.entity === 'wanted'
                                   ? 'text-orange-400'
@@ -233,22 +240,22 @@ const PartnershipConceptSection: React.FC = () => {
                                   ? 'text-violet-400'
                                   : 'text-pink-400'
                                 : 'text-white/60'
-                            }`}
+                            } ${activeFlow === index ? 'scale-110' : 'scale-100'}`}
                           />
-                          <p className={`text-center text-xs font-medium whitespace-nowrap transition-all ${
-                            activeFlow === index ? 'text-white' : 'text-white/60'
+                          <p className={`text-center text-xs font-medium whitespace-nowrap transition-all duration-700 ${
+                            activeFlow === index ? 'text-white font-semibold' : 'text-white/60'
                           }`}>
                             {item.step}
                           </p>
                           
                           {/* Tag de l'entité */}
-                          <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                          <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-700 ${
                             item.entity === 'wanted'
                               ? 'bg-orange-500'
                               : item.entity === 'origines'
                               ? 'bg-violet-500'
                               : 'bg-gradient-to-r from-orange-500 to-violet-500'
-                          }`}>
+                          } ${activeFlow === index ? 'scale-110' : 'scale-100'}`}>
                             {item.entity === 'both' ? 'W+O' : item.entity === 'wanted' ? 'W' : 'O'}
                           </div>
                         </div>
@@ -256,7 +263,7 @@ const PartnershipConceptSection: React.FC = () => {
                       
                       {/* Flèche entre les étapes */}
                       {index < creationFlow.length - 1 && (
-                        <ChevronRight className={`w-5 h-5 mx-2 transition-all ${
+                        <ChevronRight className={`w-5 h-5 mx-2 transition-all duration-700 ${
                           activeFlow >= index ? 'text-white/60' : 'text-white/20'
                         }`} />
                       )}
@@ -267,63 +274,72 @@ const PartnershipConceptSection: React.FC = () => {
             </div>
 
             {/* Mobile: Scroll horizontal */}
-            <div className="lg:hidden overflow-x-auto pb-4">
-              <div className="flex gap-3 min-w-max px-2">
-                {creationFlow.map((item, index) => (
-                  <div key={index} className="relative flex-shrink-0">
-                    <div 
-                      className={`relative p-3 md:p-4 rounded-xl md:rounded-2xl border transition-all duration-500 ${
-                        activeFlow === index 
-                          ? 'scale-105 shadow-xl' 
-                          : 'scale-100'
-                      }`}
-                      style={{
-                        backgroundColor: activeFlow === index 
-                          ? item.entity === 'wanted' 
-                            ? 'rgba(249, 115, 22, 0.15)' 
-                            : item.entity === 'origines'
-                            ? 'rgba(139, 92, 246, 0.15)'
-                            : 'rgba(236, 72, 153, 0.15)'
-                          : 'rgba(0, 0, 0, 0.6)',
-                        borderColor: activeFlow === index
-                          ? item.entity === 'wanted'
-                            ? '#F97316'
-                            : item.entity === 'origines'
-                            ? '#8B5CF6'
-                            : '#EC4899'
-                          : 'rgba(255, 255, 255, 0.1)'
-                      }}
-                    >
-                      <item.icon 
-                        className={`w-5 h-5 md:w-6 md:h-6 mx-auto mb-1 md:mb-2 transition-all ${
-                          activeFlow === index
-                            ? item.entity === 'wanted'
-                              ? 'text-orange-400'
-                              : item.entity === 'origines'
-                              ? 'text-violet-400'
-                              : 'text-pink-400'
-                            : 'text-white/60'
+            <div className="lg:hidden">
+              <div className="overflow-x-auto pb-4 -mx-4 px-4">
+                <div className="flex gap-3 min-w-max">
+                  {creationFlow.map((item, index) => (
+                    <div key={index} className="relative flex-shrink-0">
+                      <div 
+                        className={`relative p-3 md:p-4 pt-5 rounded-xl md:rounded-2xl border-2 transition-all duration-700 min-w-[120px] ${
+                          activeFlow === index 
+                            ? 'scale-110 shadow-2xl' 
+                            : 'scale-100 opacity-60 hover:opacity-80'
                         }`}
-                      />
-                      <p className={`text-center text-xs font-medium transition-all whitespace-nowrap ${
-                        activeFlow === index ? 'text-white' : 'text-white/60'
-                      }`}>
-                        {item.step}
-                      </p>
-                      
-                      {/* Tag de l'entité */}
-                      <div className={`absolute -top-2 -right-2 w-6 h-6 md:w-7 md:h-7 rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold ${
-                        item.entity === 'wanted'
-                          ? 'bg-orange-500'
-                          : item.entity === 'origines'
-                          ? 'bg-violet-500'
-                          : 'bg-gradient-to-r from-orange-500 to-violet-500'
-                      }`}>
-                        {item.entity === 'both' ? 'W+O' : item.entity === 'wanted' ? 'W' : 'O'}
+                        style={{
+                          backgroundColor: activeFlow === index 
+                            ? item.entity === 'wanted' 
+                              ? 'rgba(249, 115, 22, 0.25)' 
+                              : item.entity === 'origines'
+                              ? 'rgba(139, 92, 246, 0.25)'
+                              : 'rgba(236, 72, 153, 0.25)'
+                            : 'rgba(0, 0, 0, 0.4)',
+                          borderColor: activeFlow === index
+                            ? item.entity === 'wanted'
+                              ? '#F97316'
+                              : item.entity === 'origines'
+                              ? '#8B5CF6'
+                              : '#EC4899'
+                            : 'rgba(255, 255, 255, 0.1)',
+                          boxShadow: activeFlow === index
+                            ? item.entity === 'wanted'
+                              ? '0 0 30px rgba(249, 115, 22, 0.5)'
+                              : item.entity === 'origines'
+                              ? '0 0 30px rgba(139, 92, 246, 0.5)'
+                              : '0 0 30px rgba(236, 72, 153, 0.5)'
+                            : 'none'
+                        }}
+                      >
+                        {/* Tag de l'entité - déplacé à l'intérieur */}
+                        <div className={`absolute top-2 right-2 w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold z-10 transition-all duration-700 ${
+                          item.entity === 'wanted'
+                            ? 'bg-orange-500'
+                            : item.entity === 'origines'
+                            ? 'bg-violet-500'
+                            : 'bg-gradient-to-r from-orange-500 to-violet-500'
+                        } ${activeFlow === index ? 'scale-110' : 'scale-100'}`}>
+                          {item.entity === 'both' ? 'W+O' : item.entity === 'wanted' ? 'W' : 'O'}
+                        </div>
+                        
+                        <item.icon 
+                          className={`w-5 h-5 md:w-6 md:h-6 mx-auto mb-1 md:mb-2 transition-all duration-700 ${
+                            activeFlow === index
+                              ? item.entity === 'wanted'
+                                ? 'text-orange-400'
+                                : item.entity === 'origines'
+                                ? 'text-violet-400'
+                                : 'text-pink-400'
+                              : 'text-white/60'
+                          } ${activeFlow === index ? 'scale-110' : 'scale-100'}`}
+                        />
+                        <p className={`text-center text-xs font-medium transition-all duration-700 ${
+                          activeFlow === index ? 'text-white font-semibold' : 'text-white/60'
+                        }`}>
+                          {item.step}
+                        </p>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
               
               {/* Indicateur de scroll */}

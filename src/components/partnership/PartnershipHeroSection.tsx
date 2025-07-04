@@ -225,7 +225,7 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
               </p>
               <p className="text-sm sm:text-lg lg:text-xl text-white/80 leading-relaxed">
                 Mais soyons lucides : <span className="text-red-400 font-semibold">90% de cette valeur se perd</span> dans le flux Facebook. 
-                <span className="text-red-400 font-semibold"> Zéro euro</span> de monétisation média. 
+                <span className="text-red-400 font-semibold"> Zéro euro</span> généré par le média. 
                 Impact réel non mesuré. C'est comme posséder Netflix mais diffuser sur Périscope.
               </p>
               
@@ -237,7 +237,7 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
                 </div>
                 <div className="text-center p-3 sm:p-4 bg-red-500/10 rounded-lg sm:rounded-xl border border-red-500/20">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-red-400">0€</div>
-                  <div className="text-[10px] sm:text-xs lg:text-sm text-white/60">Monétisation</div>
+                  <div className="text-[10px] sm:text-xs lg:text-sm text-white/60">Généré</div>
                 </div>
                 <div className="text-center p-3 sm:p-4 bg-red-500/10 rounded-lg sm:rounded-xl border border-red-500/20">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-red-400">?</div>
