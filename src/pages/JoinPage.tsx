@@ -8,6 +8,7 @@ import PartnershipConceptSection from '../components/partnership/PartnershipConc
 import PartnershipImpactMultifacettesSection from '../components/partnership/PartnershipImpactMultifacettesSection';
 import PartnershipTechSection from '../components/partnership/PartnershipTechSection';
 import PartnershipEcosystemSection from '../components/partnership/PartnershipEcosystemSection';
+import PartnershipCafeSection from '../components/partnership/PartnershipCafeSection';
 import PartnershipVisionSection from '../components/partnership/PartnershipVisionSection';
 import PartnershipTeamSection from '../components/partnership/PartnershipTeamSection';
 import PartnershipCarouselSection from '../components/partnership/PartnershipCarouselSection';
@@ -58,13 +59,16 @@ function JoinPage() {
             {/* Section 4 : L'Écosystème - Les partenariats par verticale média */}
             <PartnershipEcosystemSection />
 
-            {/* Section 5 : L'Impact - Ce que ça change concrètement */}
+            {/* Section 5 : Le Café - L'espace physique de rencontre */}
+            <PartnershipCafeSection />
+
+            {/* Section 6 : L'Impact - Ce que ça change concrètement */}
             <PartnershipImpactMultifacettesSection />
 
-            {/* Section 6 : La Tech du Troc - Le business model innovant */}
+            {/* Section 7 : La Tech du Troc - Le business model innovant */}
             <PartnershipTechSection />
 
-            {/* Section 7 : L'Équipe - Les porteurs du projet */}
+            {/* Section 8 : L'Équipe - Les porteurs du projet */}
             <PartnershipTeamSection />
 
             {/* Section 8 : Synthèse - Tout le projet en 14 slides */}
