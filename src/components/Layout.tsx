@@ -24,8 +24,12 @@ const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
 
-      {/* Kit d'Inspiration Section - Automatique sur toutes les pages */}
-      {showEngagement && <EngagementSection />}
+      {/* Kit d'Inspiration Section - Avec le même décalage que le main */}
+      {showEngagement && (
+        <div className={showSidebar ? "md:ml-[280px]" : ""}>
+          <EngagementSection />
+        </div>
+      )}
 
       {/* Footer */}
       <Footer />

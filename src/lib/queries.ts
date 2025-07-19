@@ -459,3 +459,387 @@ export const RELATED_PRODUCTIONS_QUERY = `
     "verticale": verticale->nom
   }
 `
+
+// ========================================
+// REQUÊTES POUR LES ARTICLES (ADAPTÉES POUR PRODUCTIONS)
+// ========================================
+
+// Requête pour un article/production spécifique
+export const ARTICLE_BY_SLUG_QUERY = `
+  *[_type == "production" && slug.current == $slug][0] {
+    _id,
+    "title": titre,
+    slug,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    "imageUrl": image.asset->url,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    
+    // Contenu
+    body,
+    contenu,
+    htmlContent,
+    rawHtml,
+    structuredContent,
+    keyPoints,
+    
+    // Auteur
+    author-> {
+      _id,
+      name,
+      bio,
+      image {
+        asset-> {
+          url
+        }
+      }
+    },
+    authorDetails,
+    
+    // Métadonnées
+    readingTime,
+    "difficulty": niveau,
+    format,
+    views,
+    "likes": coalesce(stats.likes, 0),
+    "vues": coalesce(stats.views, views, vues, 0),
+    
+    // Relations
+    categories[]-> {
+      _id,
+      title,
+      slug
+    },
+    tags[]-> {
+      _id,
+      "title": nom,
+      slug,
+      "color": couleur
+    },
+    univers-> {
+      _id,
+      nom,
+      couleur,
+      slug
+    },
+    verticale-> {
+      _id,
+      nom,
+      "couleurDominante": couleur,
+      slug
+    },
+    
+    // Type de section
+    sectionType-> {
+      _id,
+      title,
+      slug
+    },
+    videoUrl,
+    "duration": duree,
+    
+    // SEO
+    seo,
+    
+    // Options
+    displayOptions,
+    isEssential,
+    
+    // Articles liés
+    relatedArticles[]-> {
+      _id,
+      "title": titre,
+      slug,
+      "imageUrl": image.asset->url,
+      mainImage {
+        asset-> {
+          url
+        }
+      },
+      "excerpt": description,
+      readingTime,
+      categories[]-> {
+        title
+      }
+    }
+  }
+`;
+
+// Requête pour les articles liés (si pas définis manuellement)
+export const RELATED_ARTICLES_QUERY = `
+  *[_type == "production" && _id != $currentId && (
+    count(categories[@._ref in $categoryIds]) > 0 ||
+    univers._ref == $universId ||
+    verticale._ref == $verticaleId ||
+    count(tags[@._ref in $tagIds]) > 0
+  )] | order(datePublication desc) [0...4] {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    readingTime,
+    "publishedAt": datePublication,
+    categories[0]-> {
+      title
+    },
+    verticale-> {
+      nom
+    }
+  }
+`;
+
+// Requête pour les articles par catégorie
+export const ARTICLES_BY_CATEGORY_QUERY = `
+  *[_type == "production" && references($categoryId)] | order(datePublication desc) {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    readingTime,
+    author-> {
+      name
+    },
+    categories[]-> {
+      title
+    }
+  }
+`;
+
+// Requête pour les articles par tag
+export const ARTICLES_BY_TAG_QUERY = `
+  *[_type == "production" && references($tagId)] | order(datePublication desc) {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    readingTime,
+    tags[]-> {
+      "title": nom,
+      "color": couleur
+    }
+  }
+`;
+
+// Requête pour les articles essentiels
+export const ESSENTIAL_ARTICLES_QUERY = `
+  *[_type == "production" && isEssential == true] | order(orderInEssentials asc) [0...5] {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    categories[]-> {
+      title,
+      slug
+    },
+    readingTime,
+    orderInEssentials
+  }
+`;
+
+// Requête pour récupérer plusieurs articles par IDs (pour les bookmarks)
+export const ARTICLES_BY_IDS_QUERY = `
+  *[_type == "production" && _id in $articleIds] {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    readingTime,
+    categories[0]-> {
+      title
+    },
+    verticale-> {
+      nom,
+      "couleurDominante": couleur
+    }
+  }
+`;
+
+// Recherche d'articles par mot-clé
+export const SEARCH_ARTICLES_QUERY = `
+  *[_type == "production" && (
+    titre match $searchTerm + "*" || 
+    description match $searchTerm + "*" ||
+    pt::text(body) match $searchTerm + "*"
+  )] | order(datePublication desc) {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    readingTime,
+    categories[]-> {
+      title
+    }
+  }
+`;
+
+// Articles récents
+export const RECENT_ARTICLES_QUERY = `
+  *[_type == "production"] | order(datePublication desc) [0...6] {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    readingTime,
+    author-> {
+      name
+    },
+    categories[]-> {
+      title
+    },
+    format
+  }
+`;
+
+// Articles par univers
+export const ARTICLES_BY_UNIVERS_QUERY = `
+  *[_type == "production" && univers->slug.current == $universId] | order(datePublication desc) {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    readingTime,
+    author-> {
+      name
+    },
+    categories[]-> {
+      title
+    },
+    tags[]-> {
+      "title": nom,
+      "color": couleur
+    }
+  }
+`;
+
+// Statistiques des articles
+export const ARTICLE_STATS_QUERY = `
+{
+  "totalArticles": count(*[_type == "production"]),
+  "totalEssentials": count(*[_type == "production" && isEssential == true]),
+  "totalVideos": count(*[_type == "production" && defined(videoUrl)]),
+  "totalByFormat": *[_type == "production"] | group(format) | order(count desc) {
+    "format": format,
+    "count": count
+  }
+}`;
+
+// Articles par type de section
+export const ARTICLES_BY_SECTION_TYPE_QUERY = `
+  *[_type == "production" && sectionType->slug.current == $sectionType] | order(datePublication desc) {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "publishedAt": datePublication,
+    videoUrl,
+    "duration": duree,
+    views,
+    sectionType-> {
+      title
+    }
+  }
+`;
+
+// Articles populaires (par vues)
+export const POPULAR_ARTICLES_QUERY = `
+  *[_type == "production"] | order(coalesce(stats.views, views, 0) desc) [0...10] {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "views": coalesce(stats.views, views, 0),
+    categories[]-> {
+      title
+    }
+  }
+`;
+
+// Articles les plus likés
+export const MOST_LIKED_ARTICLES_QUERY = `
+  *[_type == "production"] | order(coalesce(stats.likes, 0) desc) [0...10] {
+    _id,
+    "title": titre,
+    slug,
+    mainImage {
+      asset-> {
+        url
+      }
+    },
+    "imageUrl": image.asset->url,
+    "excerpt": description,
+    "likes": coalesce(stats.likes, 0),
+    categories[]-> {
+      title
+    }
+  }
+`;

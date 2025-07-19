@@ -5,7 +5,7 @@ import UniversPage from './pages/UniversPage';
 import SeriesPage from './pages/SeriesPage';
 import FormatPage from './pages/FormatPage';
 import BibliothequePage from './pages/BibliothequePage';
-import ArticlePage from './pages/ArticlePage';
+import ArticlePage from './pages/ArticlePage'; // ✅ CORRECTION: Le chemin pointe maintenant vers le fichier directement dans /pages
 import VideoPage from './pages/VideoPage';
 import ProductionDetailPage from './pages/ProductionDetailPage';
 import AboutPage from './pages/AboutPage';
@@ -16,7 +16,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import TestSanity from './components/TestSanity';
 import PortraitDetailPage from './pages/PortraitDetailPage';
 import JoinPage from './pages/JoinPage';
-
+import ArticlesDebug from './pages/ArticlesDebug';
 
 function App() {
   return (
@@ -27,94 +27,25 @@ function App() {
       {/* 🆕 Route de test Sanity */}
       <Route path="/test-sanity" element={<TestSanity />} />
       
-      {/* ✅ CORRECTION : Route pour la page /univers avec le bon composant */}
+      {/* ✅ CORRECTION : Route pour la page /univers listant tous les univers */}
       <Route path="/univers" element={<UniversPage />} />
       
-      {/* Pages Univers - Routes dynamiques */}
-      <Route path="/univers/psychologie" element={
-        <UniversPage 
-          universId="psychologie"
-          universName="PSYCHOLOGIE"
-          universColor="#4299E1"
-        />
-      } />
+      {/* ✅ CORRECTION : Route DYNAMIQUE pour gérer TOUS les univers individuels */}
+      <Route path="/univers/:universId" element={<UniversPage />} />
       
-      <Route path="/univers/societe" element={
-        <UniversPage 
-          universId="societe"
-          universName="SOCIÉTÉ"
-          universColor="#ED8936"
-        />
-      } />
-      
-      <Route path="/univers/carriere" element={
-        <UniversPage 
-          universId="carriere"
-          universName="CARRIÈRE"
-          universColor="#4A5568"
-        />
-      } />
-      
-      <Route path="/univers/voyage" element={
-        <UniversPage 
-          universId="voyage"
-          universName="VOYAGE"
-          universColor="#48BB78"
-        />
-      } />
-      
-      <Route path="/univers/art-creativite" element={
-        <UniversPage 
-          universId="art-creativite"
-          universName="ART & CRÉATIVITÉ"
-          universColor="#9F7AEA"
-        />
-      } />
-      
-      <Route path="/univers/spiritualite" element={
-        <UniversPage 
-          universId="spiritualite"
-          universName="SPIRITUALITÉ"
-          universColor="#805AD5"
-        />
-      } />
-      
-      <Route path="/univers/sante" element={
-        <UniversPage 
-          universId="sante"
-          universName="SANTÉ"
-          universColor="#38B2AC"
-        />
-      } />
-      
-      <Route path="/univers/technologie" element={
-        <UniversPage 
-          universId="technologie"
-          universName="TECHNOLOGIE"
-          universColor="#3182CE"
-        />
-      } />
-      
-      <Route path="/univers/relations" element={
-        <UniversPage 
-          universId="relations"
-          universName="RELATIONS"
-          universColor="#E53E3E"
-        />
-      } />
-      
-      <Route path="/univers/environnement" element={
-        <UniversPage 
-          universId="environnement"
-          universName="ENVIRONNEMENT"
-          universColor="#38A169"
-        />
-      } />
+      {/* SUPPRIMÉ : Toutes les routes individuelles pour chaque univers
+          qui étaient hardcodées comme :
+          - /univers/psychologie
+          - /univers/societe
+          - /univers/carriere
+          - etc.
+          Elles sont maintenant gérées par la route dynamique ci-dessus
+      */}
       
       {/* Page Séries Exclusives */}
       <Route path="/series" element={<SeriesPage />} />
       
-      {/* ✅ CORRECTION : Routes pour les 8 formats exclusifs avec paramètre dynamique */}
+      {/* ✅ Routes pour les 8 formats exclusifs avec paramètre dynamique */}
       <Route path="/format/:formatId" element={<FormatPage />} />
       
       {/* Page Bibliothèque Complète */}
@@ -133,6 +64,7 @@ function App() {
       <Route path="/a-propos" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/partenariats" element={<PartnershipsPage />} />
+      <Route path="/rejoindre" element={<JoinPage />} />
       
       {/* Pages légales */}
       <Route path="/mentions-legales" element={<LegalPage />} />
@@ -148,7 +80,7 @@ function App() {
       {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />
       <Route path="/video/:id" element={<ProductionDetailPage />} />
-      <Route path="/rejoindre" element={<JoinPage />} />
+      <Route path="/debug/articles" element={<ArticlesDebug />} />
     </Routes>
   );
 }
