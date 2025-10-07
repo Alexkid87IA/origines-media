@@ -25,12 +25,6 @@ interface BibliothequeSectionProps {
 }
 
 const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales }) => {
-   // Debug - Ajoutez ces lignes
-   console.log('Verticales reçues dans BibliothequeSection:', verticales);
-   console.log('Couleurs des verticales:', JSON.stringify(verticales.map(v => ({
-    nom: v.verticale.nom,
-    couleur: v.verticale.couleurDominante
-  })), null, 2));
   const [activeTab, setActiveTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
@@ -87,17 +81,12 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
   const handleNavigateToBibliotheque = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🔍 Navigation vers /bibliotheque avec React Router...');
     navigate('/bibliotheque');
   };
 
   const currentVerticale = verticales[activeTab];
   const currentColor = currentVerticale?.verticale.couleurDominante || '#8B5CF6';
 
-  // Debug - Ajoutez ces lignes
-console.log('Onglet actif:', activeTab);
-console.log('Verticale actuelle:', currentVerticale);
-console.log('Couleur actuelle:', currentColor);
 
   // Convert hex to RGB for CSS custom properties
   const hexToRgb = (hex: string) => {
