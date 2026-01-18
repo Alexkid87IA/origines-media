@@ -385,10 +385,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="relative group"
+                className="relative group h-full"
               >
                 <div
-                  className={`rounded-2xl overflow-hidden transition-all duration-300 bg-white ${
+                  className={`h-full rounded-2xl overflow-hidden transition-all duration-300 bg-white ${
                     isExpanded ? 'ring-2' : 'ring-1 hover:ring-2'
                   }`}
                   style={{
@@ -401,9 +401,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                   {/* Header cliquable */}
                   <button
                     onClick={() => setExpandedReco(isExpanded ? null : reco.id)}
-                    className="w-full text-left"
+                    className="w-full h-full text-left"
                   >
-                    <div className="relative p-2.5 lg:p-3 flex items-center gap-2.5">
+                    <div className="relative h-full p-2.5 lg:p-3 flex items-center gap-2.5">
                       {/* Image thumbnail */}
                       <motion.div
                         className="relative flex-shrink-0"
