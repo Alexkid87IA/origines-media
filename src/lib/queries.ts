@@ -6,23 +6,24 @@
 // HOME PAGE
 // ========================================
 
-// Articles vedettes pour le Hero (6 derniers articles avec image)
+// Articles vedettes pour le Hero (1 article par verticale, max 6)
+// On récupère le dernier article de chaque verticale pour avoir de la diversité
 export const FEATURED_ARTICLES_QUERY = `
-  *[_type == "production" && defined(image.asset)] | order(datePublication desc) [0...6] {
-    _id,
-    titre,
-    description,
-    typeArticle,
-    "imageUrl": image.asset->url,
-    "slug": slug.current,
-    datePublication,
-    tempsLecture,
-    "verticale": verticale->{
+  *[_type == "verticale"] | order(ordre asc) [0...6] {
+    "article": *[_type == "production" && references(^._id) && defined(image.asset)] | order(datePublication desc) [0] {
       _id,
-      nom,
-      couleurDominante,
-      "slug": slug.current
-    }
+      titre,
+      description,
+      typeArticle,
+      "imageUrl": image.asset->url,
+      "slug": slug.current,
+      datePublication,
+      tempsLecture
+    },
+    _id,
+    nom,
+    couleurDominante,
+    "slug": slug.current
   }
 `
 

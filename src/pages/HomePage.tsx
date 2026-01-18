@@ -18,20 +18,20 @@ import {
   VERTICALES_WITH_PRODUCTIONS_QUERY
 } from '../lib/queries';
 
-interface SanityFeaturedArticle {
+interface SanityVerticaleWithArticle {
   _id: string;
-  titre: string;
-  description: string;
-  typeArticle?: string;
-  imageUrl?: string;
+  nom: string;
+  couleurDominante?: string;
   slug?: string;
-  datePublication?: string;
-  tempsLecture?: number;
-  verticale?: {
+  article?: {
     _id: string;
-    nom: string;
-    couleurDominante?: string;
+    titre: string;
+    description?: string;
+    typeArticle?: string;
+    imageUrl?: string;
     slug?: string;
+    datePublication?: string;
+    tempsLecture?: number;
   };
 }
 
@@ -59,16 +59,20 @@ function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch featured articles for hero
-        const articlesData = await sanityFetch(FEATURED_ARTICLES_QUERY) as SanityFeaturedArticle[];
-        setFeaturedArticles(articlesData.map((a: SanityFeaturedArticle, index: number) => ({
-          id: index + 1,
-          titre: a.titre,
-          categorie: a.verticale?.nom || 'Article',
-          accroche: a.description || '',
-          imageUrl: a.imageUrl || "/placeholder.svg",
-          url: `/article/${a.slug || 'default'}`
-        })));
+        // Fetch featured articles for hero (1 per verticale)
+        const verticalesData = await sanityFetch(FEATURED_ARTICLES_QUERY) as SanityVerticaleWithArticle[];
+        // Filter out verticales without articles and map to hero format
+        const articlesWithVerticale = verticalesData
+          .filter((v) => v.article && v.article.titre && v.article.imageUrl)
+          .map((v, index: number) => ({
+            id: index + 1,
+            titre: v.article!.titre,
+            categorie: v.nom,
+            accroche: v.article!.description || '',
+            imageUrl: v.article!.imageUrl || "/placeholder.svg",
+            url: `/article/${v.article!.slug || 'default'}`
+          }));
+        setFeaturedArticles(articlesWithVerticale);
 
         // Fetch series
         try {

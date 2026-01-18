@@ -338,14 +338,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ duration: 0.25, delay: 0.05 }}
                           >
-                            {/* Titre complet */}
-                            <h4 className="text-xs lg:text-sm font-semibold text-gray-900 leading-snug mb-1.5">
-                              {typo(item.titre)}
-                            </h4>
-
-                            {/* Accroche */}
+                            {/* Extrait / Description */}
                             <p className="text-[11px] text-gray-600 leading-relaxed mb-3">
-                              {item.accroche}
+                              {item.accroche || 'Découvrez cet article...'}
                             </p>
 
                             {/* Footer */}
