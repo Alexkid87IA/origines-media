@@ -6,6 +6,26 @@
 // HOME PAGE
 // ========================================
 
+// Articles vedettes pour le Hero (6 derniers articles avec image)
+export const FEATURED_ARTICLES_QUERY = `
+  *[_type == "production" && defined(image.asset)] | order(datePublication desc) [0...6] {
+    _id,
+    titre,
+    description,
+    typeArticle,
+    "imageUrl": image.asset->url,
+    "slug": slug.current,
+    datePublication,
+    tempsLecture,
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    }
+  }
+`
+
 // Portraits du carousel
 export const PORTRAITS_QUERY = `
   *[_type == "portrait"] | order(ordre asc) {

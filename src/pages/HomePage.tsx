@@ -13,17 +13,26 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { sanityFetch } from '../lib/sanity';
 import {
-  PORTRAITS_QUERY,
+  FEATURED_ARTICLES_QUERY,
   SERIES_QUERY,
   VERTICALES_WITH_PRODUCTIONS_QUERY
 } from '../lib/queries';
 
-interface SanityPortrait {
+interface SanityFeaturedArticle {
+  _id: string;
   titre: string;
-  categorie: string;
-  accroche: string;
+  description: string;
+  typeArticle?: string;
   imageUrl?: string;
-  slug?: { current: string };
+  slug?: string;
+  datePublication?: string;
+  tempsLecture?: number;
+  verticale?: {
+    _id: string;
+    nom: string;
+    couleurDominante?: string;
+    slug?: string;
+  };
 }
 
 interface SanityVerticaleRaw {
@@ -42,7 +51,7 @@ interface SanityVerticaleRaw {
 }
 
 function HomePage() {
-  const [portraits, setPortraits] = useState<any[]>([]);
+  const [featuredArticles, setFeaturedArticles] = useState<any[]>([]);
   const [series, setSeries] = useState<any[]>([]);
   const [verticales, setVerticales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,14 +59,15 @@ function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const portraitsData = await sanityFetch(PORTRAITS_QUERY) as SanityPortrait[];
-        setPortraits(portraitsData.map((p: SanityPortrait, index: number) => ({
+        // Fetch featured articles for hero
+        const articlesData = await sanityFetch(FEATURED_ARTICLES_QUERY) as SanityFeaturedArticle[];
+        setFeaturedArticles(articlesData.map((a: SanityFeaturedArticle, index: number) => ({
           id: index + 1,
-          titre: p.titre,
-          categorie: p.categorie,
-          accroche: p.accroche,
-          imageUrl: p.imageUrl || "/placeholder.svg",
-          url: `/histoire/${p.slug?.current || 'default'}`
+          titre: a.titre,
+          categorie: a.verticale?.nom || 'Article',
+          accroche: a.description || '',
+          imageUrl: a.imageUrl || "/placeholder.svg",
+          url: `/article/${a.slug || 'default'}`
         })));
 
         // Fetch series
@@ -129,7 +139,7 @@ function HomePage() {
       <Navbar />
 
       <main>
-        <HeroSection portraits={portraits} />
+        <HeroSection portraits={featuredArticles} />
         <VideosSection />
         <RecentProductionsSection verticales={verticales} />
         <SeriesSection series={series} />
