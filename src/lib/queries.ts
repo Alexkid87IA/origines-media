@@ -8,17 +8,15 @@
 
 // Articles vedettes pour le Hero (1 article par verticale, max 6)
 // On récupère le dernier article de chaque verticale pour avoir de la diversité
-// Extrait: extrait > description > 200 premiers caractères du contenu
+// Extrait: extrait > description > texte extrait du contenu
 export const FEATURED_ARTICLES_QUERY = `
   *[_type == "verticale"] | order(ordre asc) [0...6] {
     "article": *[_type == "production" && references(^._id) && defined(image.asset)] | order(datePublication desc) [0] {
       _id,
       titre,
-      "extrait": coalesce(
-        extrait,
-        description,
-        pt::text(contenu[0..2])
-      )[0...200],
+      extrait,
+      description,
+      "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       typeArticle,
       "imageUrl": image.asset->url,
       "slug": slug.current,

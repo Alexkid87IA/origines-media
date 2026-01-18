@@ -27,6 +27,8 @@ interface SanityVerticaleWithArticle {
     _id: string;
     titre: string;
     extrait?: string;
+    description?: string;
+    contenuTexte?: string;
     typeArticle?: string;
     imageUrl?: string;
     slug?: string;
@@ -34,6 +36,19 @@ interface SanityVerticaleWithArticle {
     tempsLecture?: number;
   };
 }
+
+// Helper: récupère l'extrait avec fallback
+const getExtrait = (article: SanityVerticaleWithArticle['article']): string => {
+  if (!article) return '';
+  // Priorité: extrait > description > contenuTexte (200 premiers caractères)
+  if (article.extrait) return article.extrait;
+  if (article.description) return article.description;
+  if (article.contenuTexte) {
+    const text = article.contenuTexte.substring(0, 200);
+    return text.length === 200 ? text + '...' : text;
+  }
+  return '';
+};
 
 interface SanityVerticaleRaw {
   _id: string;
@@ -68,7 +83,7 @@ function HomePage() {
             id: index + 1,
             titre: v.article!.titre,
             categorie: v.nom,
-            accroche: v.article!.extrait || '',
+            accroche: getExtrait(v.article),
             imageUrl: v.article!.imageUrl || "/placeholder.svg",
             url: `/article/${v.article!.slug || 'default'}`
           }));
