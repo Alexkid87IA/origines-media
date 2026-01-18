@@ -182,13 +182,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                         {currentItem.categorie}
                       </span>
 
-                      <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-white leading-tight mb-1.5 max-w-2xl">
+                      <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-white leading-tight mb-3 max-w-2xl">
                         {typo(currentItem.titre)}
                       </h1>
-
-                      <p className="text-white/70 text-[11px] lg:text-xs max-w-xl line-clamp-2 mb-2">
-                        {currentItem.accroche}
-                      </p>
 
                       <span className="inline-flex items-center gap-1.5 text-white font-semibold text-xs group-hover:gap-2 transition-all">
                         Lire l'histoire

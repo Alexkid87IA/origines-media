@@ -26,7 +26,7 @@ interface SanityVerticaleWithArticle {
   article?: {
     _id: string;
     titre: string;
-    description?: string;
+    extrait?: string;
     typeArticle?: string;
     imageUrl?: string;
     slug?: string;
@@ -68,7 +68,7 @@ function HomePage() {
             id: index + 1,
             titre: v.article!.titre,
             categorie: v.nom,
-            accroche: v.article!.description || '',
+            accroche: v.article!.extrait || '',
             imageUrl: v.article!.imageUrl || "/placeholder.svg",
             url: `/article/${v.article!.slug || 'default'}`
           }));

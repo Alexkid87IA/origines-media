@@ -13,7 +13,7 @@ export const FEATURED_ARTICLES_QUERY = `
     "article": *[_type == "production" && references(^._id) && defined(image.asset)] | order(datePublication desc) [0] {
       _id,
       titre,
-      description,
+      "extrait": coalesce(extrait, description),
       typeArticle,
       "imageUrl": image.asset->url,
       "slug": slug.current,
