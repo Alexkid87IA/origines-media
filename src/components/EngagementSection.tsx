@@ -28,8 +28,8 @@ const EngagementSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-6 lg:py-8 bg-gradient-to-br from-cyan-50 via-white to-pink-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-4 sm:py-6 lg:py-8 bg-gradient-to-br from-cyan-50 via-white to-pink-50">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* Main Card - Fond clair et coloré */}
         <motion.div
@@ -42,7 +42,7 @@ const EngagementSection: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-0">
 
             {/* Left - Product Image Container */}
-            <div className="relative min-h-[200px] lg:min-h-[260px] bg-gradient-to-br from-cyan-100 via-cyan-50 to-pink-50 flex items-center justify-center p-3 lg:p-4">
+            <div className="relative min-h-[160px] sm:min-h-[200px] lg:min-h-[260px] bg-gradient-to-br from-cyan-100 via-cyan-50 to-pink-50 flex items-center justify-center p-2 sm:p-3 lg:p-4">
               {/* Decorative shapes - couleurs du livre */}
               <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-pink-400/20" />
               <div className="absolute top-1/4 right-4 w-6 h-6 rounded-full bg-yellow-400/30" />
@@ -55,7 +55,7 @@ const EngagementSection: React.FC = () => {
               <div className="absolute top-1/2 right-1/3 w-1 h-1 rounded-full bg-yellow-400" />
 
               {/* Product Image */}
-              <div className="relative z-10 w-full max-w-[140px] lg:max-w-[170px]">
+              <div className="relative z-10 w-full max-w-[110px] sm:max-w-[140px] lg:max-w-[170px]">
                 <motion.div
                   initial={{ rotate: -3 }}
                   whileHover={{ rotate: 0, scale: 1.02 }}
@@ -80,23 +80,23 @@ const EngagementSection: React.FC = () => {
             </div>
 
             {/* Right - Content & Form */}
-            <div className="p-3 lg:p-4 flex flex-col justify-center bg-white">
+            <div className="p-2.5 sm:p-3 lg:p-4 flex flex-col justify-center bg-white">
               {/* Badge */}
               <span className="inline-flex items-center gap-1 self-start px-2 py-0.5 bg-gradient-to-r from-cyan-100 to-pink-100 rounded-full text-gray-700 text-[8px] font-semibold uppercase tracking-wider mb-2">
                 <Sparkles className="w-2 h-2 text-pink-500" />
                 Ressource gratuite
               </span>
 
-              <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-2">
+              <h2 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">
                 Le Kit d'Introspection
               </h2>
 
-              <p className="text-gray-600 text-xs sm:text-sm mb-3 leading-relaxed">
+              <p className="text-gray-600 text-[11px] sm:text-xs lg:text-sm mb-2 sm:mb-3 leading-relaxed">
                 Nous avons compilé les outils et les questions les plus puissantes de nos intervenants dans un guide pratique et exclusif. 24 pages pour mieux vous connaître, identifier vos blocages et tracer votre chemin.
               </p>
 
               {/* Features - avec icônes colorées */}
-              <div className="space-y-1.5 mb-3">
+              <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
                 {features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <div

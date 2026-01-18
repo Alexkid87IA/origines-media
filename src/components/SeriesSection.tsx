@@ -62,17 +62,17 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
   };
 
   return (
-    <section className="bg-white py-6 lg:py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-white py-4 sm:py-6 lg:py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* Header avec introduction étoffée */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="max-w-xl">
-            <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-3" />
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
+            <div className="h-0.5 w-8 sm:w-10 bg-gray-900 rounded-full mb-2 sm:mb-3" />
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
               Nos séries
             </h2>
-            <p className="text-gray-600 text-sm leading-relaxed">
+            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
               {typo("Plongez dans des récits en plusieurs épisodes, conçus pour explorer un thème en profondeur. Chaque série est une invitation à prendre le temps, à réfléchir et à grandir au fil des chapitres.")}
             </p>
           </div>
@@ -87,7 +87,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-12 gap-2 lg:gap-3">
+        <div className="grid grid-cols-12 gap-1.5 sm:gap-2 lg:gap-3">
 
           {/* Main Featured Serie (8 cols) */}
           <motion.div
@@ -97,7 +97,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="relative h-full min-h-[220px] lg:min-h-[280px] rounded-xl overflow-hidden group">
+            <div className="relative h-full min-h-[180px] sm:min-h-[220px] lg:min-h-[280px] rounded-xl overflow-hidden group">
               {/* Background Image */}
               <AnimatePresence mode="wait">
                 <motion.div
@@ -211,7 +211,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
           </motion.div>
 
           {/* Side cards - Other series (4 cols) - Style sobre */}
-          <div className="col-span-12 lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-2 lg:gap-2">
+          <div className="col-span-12 lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-1.5 sm:gap-2">
             {otherSeries.map((serie, index) => {
               const originalIndex = series.findIndex(s => s._id === serie._id);
               const accent = seriesAccents[originalIndex % seriesAccents.length];

@@ -112,17 +112,17 @@ const videos = [
 
 export default function VideosSection() {
   return (
-    <section className="bg-gray-50 py-6 lg:py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-gray-50 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* Header avec introduction étoffée */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="max-w-xl">
-            <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-3" />
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
+            <div className="h-0.5 w-8 sm:w-10 bg-gray-900 rounded-full mb-2 sm:mb-3" />
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
               Nos dernières vidéos
             </h2>
-            <p className="text-gray-600 text-sm leading-relaxed">
+            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
               {typo("Des formats courts pensés pour votre quotidien : témoignages authentiques, conseils pratiques et moments d'inspiration. Parfaits à regarder pendant une pause café ou dans les transports.")}
             </p>
           </div>

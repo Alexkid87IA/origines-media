@@ -56,25 +56,25 @@ export default function RecommandationsSection() {
   const MainIcon = typeConfig[mainReco.type]?.icon || BookOpen;
 
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-white py-8 lg:py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-gradient-to-b from-gray-50 to-white py-5 sm:py-8 lg:py-12">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* Header avec introduction étoffée */}
-        <div className="mb-6 lg:mb-8">
+        <div className="mb-4 sm:mb-6 lg:mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4"
+            className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4"
           >
             <div className="max-w-xl">
-              <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-3" />
+              <div className="h-0.5 w-8 sm:w-10 bg-gray-900 rounded-full mb-2 sm:mb-3" />
 
-              <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Nos recommandations
               </h2>
 
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                 {typo("Chaque jour, notre équipe partage ses découvertes culturelles : les livres qui nous ont bouleversés, les films qui nous ont marqués, les podcasts qui nous accompagnent. Des recommandations sincères, testées et approuvées, pour nourrir votre curiosité.")}
               </p>
             </div>
@@ -214,24 +214,27 @@ export default function RecommandationsSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="mt-6 pt-6 border-t border-gray-100"
+          className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-100"
         >
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <span className="text-xs text-gray-400">Explorer par catégorie :</span>
-            {['Livres', 'Films', 'Podcasts', 'Chaîne YouTube', 'Compte Instagram', 'Livre audio', 'Musée', 'Théâtre'].map((cat) => {
-              const config = typeConfig[cat];
-              const Icon = config?.icon || BookOpen;
-              return (
-                <Link
-                  key={cat}
-                  to={`/recommandations?type=${cat.toLowerCase()}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors"
-                >
-                  <Icon className="w-3 h-3" style={{ color: config?.color }} />
-                  {cat}
-                </Link>
-              );
-            })}
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-0 sm:justify-center">
+            <span className="text-[10px] sm:text-xs text-gray-400 whitespace-nowrap flex-shrink-0">Explorer :</span>
+            {/* Mobile: scroll horizontal, Desktop: wrap */}
+            <div className="flex sm:flex-wrap gap-1.5 sm:gap-2 overflow-x-auto pb-2 sm:pb-0 -mr-3 pr-3 sm:mr-0 sm:pr-0 sm:justify-center scrollbar-hide">
+              {['Livres', 'Films', 'Podcasts', 'Chaîne YouTube', 'Compte Instagram', 'Livre audio', 'Musée', 'Théâtre'].map((cat) => {
+                const config = typeConfig[cat];
+                const Icon = config?.icon || BookOpen;
+                return (
+                  <Link
+                    key={cat}
+                    to={`/recommandations?type=${cat.toLowerCase()}`}
+                    className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-50 rounded-full text-[10px] sm:text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors whitespace-nowrap flex-shrink-0"
+                  >
+                    <Icon className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ color: config?.color }} />
+                    {cat}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </motion.div>
       </div>

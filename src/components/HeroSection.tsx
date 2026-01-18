@@ -125,10 +125,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
   return (
     <section className="bg-gray-50/50 relative overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-3 pb-4 sm:pb-6">
 
         {/* Bento Grid Magazine */}
-        <div className="grid grid-cols-12 gap-3 lg:gap-4">
+        <div className="grid grid-cols-12 gap-2 sm:gap-3 lg:gap-4">
 
           {/* Main Featured - Large card (8 cols) */}
           <motion.div
@@ -138,7 +138,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
             transition={{ duration: 0.5 }}
           >
             <Link to={currentItem.url} className="group block h-full">
-              <div className="relative h-full min-h-[240px] lg:min-h-[300px] rounded-xl overflow-hidden">
+              <div className="relative h-full min-h-[200px] sm:min-h-[240px] lg:min-h-[300px] rounded-xl overflow-hidden">
                 {/* Image */}
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -161,7 +161,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/30 to-gray-900/10" />
 
                 {/* Content - Positioned at bottom */}
-                <div className="absolute inset-x-0 bottom-0 p-4 lg:p-6">
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 lg:p-6">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeIndex}
@@ -205,7 +205,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
           </motion.div>
 
           {/* Side cards - 5 Sober cards (4 cols) avec Accordion */}
-          <div ref={sidebarRef} className="col-span-12 lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-2 lg:gap-2">
+          <div ref={sidebarRef} className="col-span-12 lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-1.5 sm:gap-2">
             {sidebarItems.map((item, index) => {
               const itemColors = getUniversColors(item.categorie);
               const isActive = activeIndex === index + 1;
@@ -374,7 +374,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
         </div>
 
         {/* Bottom row - 2 Recommendations - Style sobre */}
-        <div ref={recoRef} className="grid grid-cols-1 sm:grid-cols-2 gap-2 lg:gap-3 mt-4">
+        <div ref={recoRef} className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 lg:gap-3 mt-3 sm:mt-4">
           {recommendations.map((reco, index) => {
             const accentColor = recommendationColors[index];
             const isExpanded = expandedReco === reco.id;
@@ -547,7 +547,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
         </div>
 
         {/* Navigation dots + CTA */}
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-3 sm:mt-4 flex items-center justify-between">
           {/* Progress dots with colors */}
           <div className="flex items-center gap-1.5">
             {allItems.map((item, index) => {

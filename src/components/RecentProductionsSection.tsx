@@ -90,18 +90,18 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
   };
 
   return (
-    <section className="bg-gray-50 py-6 lg:py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-gray-50 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* Header avec introduction étoffée */}
-        <div className="mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
             <div className="max-w-xl">
-              <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-3" />
-              <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
+              <div className="h-0.5 w-8 sm:w-10 bg-gray-900 rounded-full mb-2 sm:mb-3" />
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Par univers
               </h2>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                 {typo("Chaque univers est un monde à explorer : psychologie, carrière, famille, spiritualité... Trouvez les récits qui résonnent avec vos questionnements du moment et laissez-vous guider par vos centres d'intérêt.")}
               </p>
             </div>
@@ -155,7 +155,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
         {/* Productions Grid - Glassmorphism Premium */}
         {/* Responsive: 6 sur mobile (3×2), 9 sur tablette (3×3), 8 sur desktop (2×4) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-3 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5 sm:gap-2 lg:gap-3 mb-4 sm:mb-5">
           {filteredProductions.slice(0, 9).map((production, index) => {
             const colors = getUniversColors(production.verticale?.nom);
 
@@ -270,7 +270,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+        <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-gray-200">
           <span className="text-[10px] text-gray-400">
             {allProductions.length} récits disponibles
           </span>
