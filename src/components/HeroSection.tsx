@@ -275,11 +275,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                         <div className="flex-1 min-w-0 py-0.5">
                           {/* Badge coloré discret */}
                           <span
-                            className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider mb-1.5"
+                            className="inline-flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider mb-1.5 whitespace-nowrap"
                             style={{ color: itemColors.bg }}
                           >
                             <span
-                              className="w-1.5 h-1.5 rounded-full"
+                              className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0"
                               style={{ backgroundColor: itemColors.bg }}
                             />
                             {item.categorie}
