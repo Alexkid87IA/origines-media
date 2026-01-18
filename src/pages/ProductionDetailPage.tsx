@@ -1,20 +1,280 @@
 // src/pages/ProductionDetailPage.tsx
-import React, { useState, useEffect } from 'react';
+// Nouvelle version avec hero split et sidebar widgets
+
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Clock, Calendar, Tag, Play, BookOpen, Share2, Heart, Volume2, VolumeX } from 'lucide-react';
-import { createClient } from '@sanity/client';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ArrowLeft, Clock, Calendar, Tag, BookOpen, User,
+  Share2, Heart, Bookmark, Copy, Check, X, ChevronRight,
+  List, Zap, Flame, TrendingUp, Mail, ExternalLink,
+  AlertCircle, Quote, ChevronDown, CheckCircle, Lightbulb, Info, Sparkles, Plus
+} from 'lucide-react';
+import { sanityFetch } from '../lib/sanity';
 import { PRODUCTION_BY_SLUG_QUERY } from '../lib/queries';
-import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
+import { PortableText } from '@portabletext/react';
+import { typo } from '../lib/typography';
 
-// Configuration du client Sanity
-const client = createClient({
-  projectId: 'sf5v7lj3',
-  dataset: 'production',
-  useCdn: true,
-  apiVersion: '2024-03-01',
-});
+// Helper to extract text from Sanity block or return string
+const extractTextFromSanity = (value: any): string => {
+  if (typeof value === 'string') return value;
+  // Sanity block structure: { _type: 'block', children: [{ text: '...' }] }
+  if (value?.children && Array.isArray(value.children)) {
+    return value.children.map((child: any) => child.text || '').join('');
+  }
+  // Array of blocks
+  if (Array.isArray(value)) {
+    return value.map((block: any) => {
+      if (block?.children && Array.isArray(block.children)) {
+        return block.children.map((child: any) => child.text || '').join('');
+      }
+      return '';
+    }).join(' ');
+  }
+  return '';
+};
 
+// Accordion Item Component with animations
+const AccordionItemProduction = ({
+  question,
+  answer,
+  isOpen,
+  onToggle,
+  isLast = false,
+  themeColor = '#8B5CF6'
+}: {
+  question: string;
+  answer: any;
+  isOpen: boolean;
+  onToggle: () => void;
+  isLast?: boolean;
+  themeColor?: string;
+}) => {
+  const isRichText = Array.isArray(answer);
+
+  return (
+    <motion.div
+      className={`relative ${!isLast ? 'border-b border-gray-100' : ''}`}
+      initial={false}
+    >
+      {/* Colored accent line when open */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-1 rounded-full"
+        style={{ backgroundColor: themeColor }}
+        initial={{ opacity: 0, scaleY: 0 }}
+        animate={{
+          opacity: isOpen ? 1 : 0,
+          scaleY: isOpen ? 1 : 0
+        }}
+        transition={{ duration: 0.2 }}
+      />
+
+      <button
+        onClick={onToggle}
+        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-200 ${
+          isOpen ? 'bg-gradient-to-r from-gray-50/80 to-transparent' : 'hover:bg-gray-50/50'
+        }`}
+      >
+        <span className={`font-semibold text-[17px] transition-colors duration-200 ${
+          isOpen ? 'text-gray-900' : 'text-gray-700'
+        }`}>
+          {question}
+        </span>
+
+        {/* Animated icon */}
+        <motion.div
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+            isOpen ? 'bg-gray-900' : 'bg-gray-100'
+          }`}
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+            isOpen ? 'text-white' : 'text-gray-500'
+          }`} />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 pb-6">
+              <div className="pt-1">
+                {isRichText ? (
+                  <div className="text-gray-600 leading-relaxed text-[15px]">
+                    <PortableText value={answer} />
+                  </div>
+                ) : answer ? (
+                  <p className="text-gray-600 leading-relaxed text-[15px] whitespace-pre-line">{answer}</p>
+                ) : null}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+// Accordion Component for PortableText - handles both single item and items array
+const AccordionBlockProduction = ({ value, themeColor = '#8B5CF6' }: { value: any; themeColor?: string }) => {
+  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
+  const [singleOpen, setSingleOpen] = useState(false);
+
+  // Check if this is a multi-item accordion (has items array)
+  const items = value.items || [];
+  const hasMultipleItems = items.length > 0;
+  const allowMultiple = value.allowMultiple !== false;
+  const sectionTitle = value.title;
+
+  const toggleItem = (index: number) => {
+    setOpenItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        if (!allowMultiple) {
+          newSet.clear();
+        }
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
+  // Multi-item accordion (FAQ style)
+  if (hasMultipleItems) {
+    return (
+      <div className="my-10">
+        {sectionTitle && (
+          <div className="flex items-center gap-3 mb-6">
+            <div
+              className="w-1 h-8 rounded-full"
+              style={{ backgroundColor: themeColor }}
+            />
+            <h4 className="text-xl font-bold text-gray-900">{sectionTitle}</h4>
+          </div>
+        )}
+        <div className="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
+          {items.map((item: any, index: number) => {
+            const question = item.question || item.title || item.heading || `Question ${index + 1}`;
+            const answer = item.answer || item.content || item.body || item.text || '';
+            const isOpen = openItems.has(index) || item.defaultOpen;
+
+            return (
+              <AccordionItemProduction
+                key={item._key || index}
+                question={question}
+                answer={answer}
+                isOpen={isOpen}
+                onToggle={() => toggleItem(index)}
+                isLast={index === items.length - 1}
+                themeColor={themeColor}
+              />
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Single item accordion (legacy format)
+  const rawTitle = value.title || value.heading || value.question || value.label;
+  const rawContent = value.content || value.body || value.answer || value.text || value.description;
+  const title = extractTextFromSanity(rawTitle) || 'Voir plus';
+  const isRichText = Array.isArray(rawContent);
+  const contentText = isRichText ? null : extractTextFromSanity(rawContent);
+
+  return (
+    <motion.div
+      className="my-8 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100"
+      initial={false}
+      animate={{
+        boxShadow: singleOpen
+          ? '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05)'
+          : '0 1px 3px 0 rgba(0, 0, 0, 0.05)'
+      }}
+      transition={{ duration: 0.3 }}
+    >
+      <button
+        onClick={() => setSingleOpen(!singleOpen)}
+        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-200 ${
+          singleOpen ? 'bg-gradient-to-r from-gray-50 to-white' : 'hover:bg-gray-50/50'
+        }`}
+      >
+        <div className="flex items-center gap-4 flex-1">
+          <motion.div
+            className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ backgroundColor: `${themeColor}15` }}
+            animate={{ scale: singleOpen ? 1.05 : 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              animate={{ rotate: singleOpen ? 45 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Plus className="w-5 h-5" style={{ color: themeColor }} />
+            </motion.div>
+          </motion.div>
+          <span className={`font-semibold text-lg transition-colors duration-200 ${
+            singleOpen ? 'text-gray-900' : 'text-gray-700'
+          }`}>
+            {title}
+          </span>
+        </div>
+
+        <motion.div
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+            singleOpen ? 'bg-gray-900' : 'bg-gray-100'
+          }`}
+          animate={{ rotate: singleOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+            singleOpen ? 'text-white' : 'text-gray-500'
+          }`} />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {singleOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 pb-6 pl-[72px]">
+              <div className="pt-2 border-t border-gray-100">
+                <div className="pt-4">
+                  {isRichText ? (
+                    <div className="text-gray-600 leading-relaxed text-[15px]">
+                      <PortableText value={rawContent} />
+                    </div>
+                  ) : contentText ? (
+                    <p className="text-gray-600 leading-relaxed text-[15px]">{contentText}</p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+// Types
 interface Production {
   _id: string;
   titre: string;
@@ -23,8 +283,9 @@ interface Production {
   slug: { current: string };
   datePublication: string;
   duree: number;
+  tempsLecture?: number;
   videoUrl?: string;
-  contenu?: any;
+  contenu?: any[];
   univers?: {
     nom: string;
     couleur: string;
@@ -46,65 +307,1224 @@ interface Production {
   }>;
 }
 
+interface Heading {
+  id: string;
+  text: string;
+  level: number;
+}
+
+interface RelatedArticle {
+  _id: string;
+  titre: string;
+  description?: string;
+  imageUrl: string;
+  slug: string;
+  verticale?: { nom: string; couleurDominante: string };
+  datePublication?: string;
+}
+
+// Fonction de shuffle intelligent - jamais 2 articles de même catégorie côte à côte
+function shuffleWithVariety(articles: RelatedArticle[]): RelatedArticle[] {
+  if (articles.length <= 1) return articles;
+
+  // Grouper par catégorie
+  const byCategory: { [key: string]: RelatedArticle[] } = {};
+  articles.forEach(article => {
+    const cat = article.verticale?.nom || 'Autre';
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push(article);
+  });
+
+  // Mélanger chaque groupe
+  Object.values(byCategory).forEach(group => {
+    for (let i = group.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [group[i], group[j]] = [group[j], group[i]];
+    }
+  });
+
+  // Reconstruire la liste en alternant les catégories
+  const result: RelatedArticle[] = [];
+  const categories = Object.keys(byCategory);
+  let lastCategory = '';
+  let maxIterations = articles.length * 2; // Sécurité anti-boucle infinie
+
+  while (result.length < articles.length && maxIterations > 0) {
+    maxIterations--;
+
+    // Trouver une catégorie différente de la précédente qui a encore des articles
+    let found = false;
+
+    // D'abord, essayer les catégories différentes de la dernière
+    for (const cat of categories) {
+      if (cat !== lastCategory && byCategory[cat].length > 0) {
+        result.push(byCategory[cat].shift()!);
+        lastCategory = cat;
+        found = true;
+        break;
+      }
+    }
+
+    // Si pas trouvé (toutes les catégories restantes sont identiques à la dernière),
+    // prendre n'importe quel article restant
+    if (!found) {
+      for (const cat of categories) {
+        if (byCategory[cat].length > 0) {
+          result.push(byCategory[cat].shift()!);
+          lastCategory = cat;
+          break;
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+// Composant Espace Pub
+const AdSpace: React.FC<{ format?: 'rectangle' | 'banner'; className?: string }> = ({
+  format = 'rectangle',
+  className = ''
+}) => (
+  <div className={`relative ${className}`}>
+    <div className={`
+      p-4 bg-gray-100 border border-dashed border-gray-300 rounded-xl
+      flex flex-col items-center justify-center text-center
+      ${format === 'banner' ? 'min-h-[100px]' : 'min-h-[250px]'}
+    `}>
+      <p className="text-[10px] uppercase tracking-widest text-gray-400">
+        Publicité
+      </p>
+    </div>
+  </div>
+);
+
+// Composant Widget Newsletter
+const NewsletterWidget: React.FC<{ themeColor: string }> = ({ themeColor }) => {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribed(true);
+      setTimeout(() => setSubscribed(false), 3000);
+      setEmail('');
+    }
+  };
+
+  return (
+    <div className="rounded-xl bg-gray-50 border border-gray-200 p-5">
+      <div className="flex items-center gap-3 mb-4">
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center"
+          style={{ backgroundColor: `${themeColor}15` }}
+        >
+          <Mail className="w-5 h-5" style={{ color: themeColor }} />
+        </div>
+        <div>
+          <h4 className="font-bold text-gray-900 text-sm">Newsletter</h4>
+          <p className="text-xs text-gray-500">Recevez nos meilleurs articles</p>
+        </div>
+      </div>
+
+      {subscribed ? (
+        <div className="flex items-center gap-2 text-emerald-600 text-sm">
+          <Check className="w-4 h-4" />
+          Merci pour votre inscription !
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="votre@email.com"
+            className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-sm focus:outline-none focus:border-gray-400 transition-colors"
+          />
+          <button
+            type="submit"
+            className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all hover:opacity-90"
+            style={{ backgroundColor: themeColor }}
+          >
+            S'inscrire
+          </button>
+        </form>
+      )}
+    </div>
+  );
+};
+
+// Composant Table des matières dépliable
+const TableOfContentsWidget: React.FC<{
+  headings: Heading[];
+  activeSection: string;
+  scrollProgress: number;
+  themeColor: string;
+  onSectionClick: (id: string) => void;
+}> = ({ headings, activeSection, scrollProgress, themeColor, onSectionClick }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  return (
+    <div className="rounded-xl bg-gray-50 border border-gray-200 overflow-hidden">
+      {/* Header cliquable */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="w-full p-4 flex items-center justify-between hover:bg-gray-100 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ backgroundColor: `${themeColor}15` }}
+          >
+            <List className="w-5 h-5" style={{ color: themeColor }} />
+          </div>
+          <div className="text-left">
+            <h4 className="font-bold text-gray-900 text-sm">Sommaire</h4>
+            <p className="text-xs text-gray-500">{headings.length} sections</p>
+          </div>
+        </div>
+        <motion.div
+          animate={{ rotate: isCollapsed ? 0 : 180 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ChevronRight className="w-5 h-5 text-gray-400 rotate-90" />
+        </motion.div>
+      </button>
+
+      {/* Contenu dépliable */}
+      <AnimatePresence>
+        {!isCollapsed && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <nav className="p-4 pt-0 space-y-1 max-h-[300px] overflow-y-auto">
+              {headings.map((heading, index) => {
+                const isActive = activeSection === heading.id;
+                return (
+                  <button
+                    key={heading.id}
+                    onClick={() => onSectionClick(heading.id)}
+                    className={`
+                      w-full flex items-center gap-3 py-2.5 px-3 rounded-lg text-left
+                      transition-all duration-200
+                      ${heading.level === 3 ? 'ml-4' : ''}
+                      ${isActive ? 'bg-white shadow-sm' : 'hover:bg-white/50'}
+                    `}
+                    style={{
+                      borderLeft: isActive ? `3px solid ${themeColor}` : '3px solid transparent'
+                    }}
+                  >
+                    <div
+                      className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                      style={{
+                        backgroundColor: isActive ? themeColor : `${themeColor}15`,
+                        color: isActive ? 'white' : themeColor
+                      }}
+                    >
+                      {heading.level === 2 ? index + 1 : '•'}
+                    </div>
+                    <span className={`text-sm line-clamp-2 ${isActive ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
+                      {heading.text}
+                    </span>
+                    {isActive && (
+                      <div className="ml-auto flex items-center gap-1">
+                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Barre de progression */}
+            <div className="p-4 pt-2 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-500">Progression</span>
+                <span className="text-xs font-medium" style={{ color: themeColor }}>
+                  {Math.round(scrollProgress)}%
+                </span>
+              </div>
+              <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ backgroundColor: themeColor }}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${scrollProgress}%` }}
+                  transition={{ duration: 0.2 }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// Composant Widget Réseaux Sociaux
+const SocialWidget: React.FC = () => (
+  <div className="rounded-xl bg-gray-50 border border-gray-200 p-5">
+    <h4 className="font-bold text-gray-900 text-sm mb-4">Suivez-nous</h4>
+    <div className="grid grid-cols-3 gap-2">
+      <a
+        href="https://instagram.com/originesmedia"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-pink-300 hover:bg-pink-50 transition-colors group"
+      >
+        <svg className="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        <span className="text-xs text-gray-500 group-hover:text-pink-600">Instagram</span>
+      </a>
+      <a
+        href="https://linkedin.com/company/originesmedia"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors group"
+      >
+        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        <span className="text-xs text-gray-500 group-hover:text-blue-600">LinkedIn</span>
+      </a>
+      <a
+        href="https://twitter.com/originesmedia"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-colors group"
+      >
+        <svg className="w-5 h-5 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        <span className="text-xs text-gray-500 group-hover:text-gray-800">X</span>
+      </a>
+    </div>
+  </div>
+);
+
 function ProductionDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [production, setProduction] = useState<Production | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [liked, setLiked] = useState(false);
 
+  // États principaux
+  const [production, setProduction] = useState<Production | null>(null);
+  const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
+  const [latestArticles, setLatestArticles] = useState<RelatedArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // États UI
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState('');
+  const [headings, setHeadings] = useState<Heading[]>([]);
+  const [activeTab, setActiveTab] = useState<'recent' | 'popular' | 'univers'>('recent');
+
+  // Refs pour sidebar sticky
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const sidebarContainerRef = useRef<HTMLDivElement>(null);
+  const articleRef = useRef<HTMLDivElement>(null);
+  const [sidebarStyle, setSidebarStyle] = useState<React.CSSProperties>({});
+
+  // Extraction des headings du contenu
   useEffect(() => {
-    const fetchProduction = async () => {
+    if (production?.contenu) {
+      const extracted: Heading[] = [];
+      production.contenu.forEach((block: any, index: number) => {
+        if (block._type === 'block' && (block.style === 'h2' || block.style === 'h3')) {
+          const text = block.children?.map((child: any) => child.text).join('') || '';
+          if (text) {
+            extracted.push({
+              id: `heading-${index}`,
+              text,
+              level: block.style === 'h2' ? 2 : 3
+            });
+          }
+        }
+      });
+      setHeadings(extracted);
+    }
+  }, [production]);
+
+  // Sync sidebar container height with article height
+  useEffect(() => {
+    const syncHeight = () => {
+      if (articleRef.current && sidebarContainerRef.current) {
+        const articleHeight = articleRef.current.offsetHeight;
+        sidebarContainerRef.current.style.height = `${articleHeight}px`;
+      }
+    };
+
+    syncHeight();
+    window.addEventListener('resize', syncHeight);
+    // Re-sync after images load
+    const timer = setTimeout(syncHeight, 500);
+
+    return () => {
+      window.removeEventListener('resize', syncHeight);
+      clearTimeout(timer);
+    };
+  }, [production]);
+
+  // Sidebar sticky avec JavaScript - comportement "sticky bottom"
+  // La sidebar défile avec la page, puis se fixe quand son bas atteint le bas du viewport
+  useEffect(() => {
+    const handleSidebarScroll = () => {
+      if (!sidebarRef.current || !sidebarContainerRef.current) {
+        return;
+      }
+
+      const container = sidebarContainerRef.current;
+      const sidebar = sidebarRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const sidebarHeight = sidebar.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      // Position du bas de la sidebar si elle était en position relative (en haut du conteneur)
+      const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
+
+      if (sidebarBottomIfRelative > viewportHeight) {
+        // État 1: Le bas de la sidebar n'a pas encore atteint le bas du viewport
+        // → Scroll normal avec la page
+        setSidebarStyle({ position: 'relative', top: 0 });
+      } else if (containerRect.bottom > sidebarHeight) {
+        // État 2: Le bas de la sidebar a atteint le bas du viewport
+        // ET le conteneur n'est pas encore fini
+        // → Fixed avec le bas collé au bas du viewport
+        const topPosition = viewportHeight - sidebarHeight;
+        setSidebarStyle({ position: 'fixed', top: topPosition, width: container.offsetWidth });
+      } else {
+        // État 3: Le conteneur est presque fini
+        // → Absolute en bas du conteneur pour finir ensemble
+        setSidebarStyle({ position: 'absolute', bottom: 0, top: 'auto', width: '100%' });
+      }
+    };
+
+    window.addEventListener('scroll', handleSidebarScroll, { passive: true });
+    window.addEventListener('resize', handleSidebarScroll);
+    setTimeout(handleSidebarScroll, 200);
+
+    return () => {
+      window.removeEventListener('scroll', handleSidebarScroll);
+      window.removeEventListener('resize', handleSidebarScroll);
+    };
+  }, [production]);
+
+  // Scroll progress et section active
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+      setScrollProgress(Math.min(progress, 100));
+
+      headings.forEach(heading => {
+        const element = document.getElementById(heading.id);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 150 && rect.bottom >= 0) {
+            setActiveSection(heading.id);
+          }
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [headings]);
+
+  // Chargement des données
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        console.log('Fetching production with slug:', slug);
-        const data = await client.fetch(PRODUCTION_BY_SLUG_QUERY, { slug });
-        console.log('Production data:', data);
-        
+        setLoading(true);
+        const data = await sanityFetch(PRODUCTION_BY_SLUG_QUERY, { slug });
+
         if (!data) {
-          console.log('No production found');
           navigate('/404');
           return;
         }
-        
+
         setProduction(data);
+
+        // Charger les articles liés et récents
+        try {
+          const allProductions = await sanityFetch(`
+            *[_type == "production" && slug.current != $slug] | order(datePublication desc) [0...30] {
+              _id,
+              titre,
+              description,
+              "imageUrl": coalesce(image.asset->url, imageUrl),
+              "slug": slug.current,
+              datePublication,
+              verticale->{nom, couleurDominante}
+            }
+          `, { slug });
+
+          if (allProductions) {
+            // Shuffle intelligent : jamais 2 articles de même catégorie côte à côte
+            const shuffledArticles = shuffleWithVariety(allProductions);
+            setLatestArticles(shuffledArticles.slice(0, 6));
+
+            // Filtrer par même verticale pour les articles liés
+            const related = data.verticale
+              ? allProductions.filter((a: RelatedArticle) => a.verticale?.nom === data.verticale.nom).slice(0, 4)
+              : allProductions.slice(0, 4);
+            setRelatedArticles(related);
+          }
+        } catch {
+          // Silent fail for related articles
+        }
+
         setLoading(false);
-      } catch (error) {
-        console.error('Erreur lors de la récupération de la production:', error);
+      } catch {
         setLoading(false);
       }
     };
 
     if (slug) {
-      fetchProduction();
+      fetchData();
+      window.scrollTo(0, 0);
     }
   }, [slug, navigate]);
 
+  // Helpers
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 100;
+      const top = element.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  };
+
+  const getRelativeTime = (date: string) => {
+    const now = new Date();
+    const publishedDate = new Date(date);
+    const diffInHours = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInHours < 1) return "À l'instant";
+    if (diffInHours < 24) return `${diffInHours}h`;
+    if (diffInDays === 1) return "Hier";
+    if (diffInDays < 7) return `${diffInDays}j`;
+    return publishedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  };
+
+  const isLongArticle = headings.length >= 3;
+  const themeColor = production?.verticale?.couleurDominante || '#8B5CF6';
+
+  // Helper function to convert URLs in text to clickable links
+  // Detects patterns like "Text : https://url.com" and makes "Text" the clickable link
+  const linkifyText = (text: string): React.ReactNode => {
+    const labeledUrlRegex = /([^•\n]+?)\s*:\s*(https?:\/\/[^\s]+)/g;
+
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+
+    labeledUrlRegex.lastIndex = 0;
+
+    while ((match = labeledUrlRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        const beforeText = text.slice(lastIndex, match.index);
+        parts.push(...linkifySimpleUrls(beforeText, parts.length));
+      }
+
+      const label = match[1].trim();
+      const url = match[2];
+
+      parts.push(
+        <a
+          key={`labeled-${parts.length}`}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline transition-colors"
+          style={{ color: themeColor }}
+        >
+          {label}
+        </a>
+      );
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    if (lastIndex < text.length) {
+      const remainingText = text.slice(lastIndex);
+      parts.push(...linkifySimpleUrls(remainingText, parts.length));
+    }
+
+    return parts.length > 0 ? parts : text;
+  };
+
+  const linkifySimpleUrls = (text: string, keyOffset: number): React.ReactNode[] => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        urlRegex.lastIndex = 0;
+        return (
+          <a
+            key={`simple-${keyOffset}-${index}`}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline transition-colors break-all"
+            style={{ color: themeColor }}
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    }).filter(part => part !== '');
+  };
+
+  // Helper component to process children and linkify URLs
+  const LinkifyChildren: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const processNode = (node: React.ReactNode): React.ReactNode => {
+      if (typeof node === 'string') {
+        return linkifyText(node);
+      }
+      if (Array.isArray(node)) {
+        return node.map((child, i) => <React.Fragment key={i}>{processNode(child)}</React.Fragment>);
+      }
+      if (React.isValidElement(node) && node.props.children) {
+        return React.cloneElement(node, {}, processNode(node.props.children));
+      }
+      return node;
+    };
+    return <>{processNode(children)}</>;
+  };
+
+  // PortableText components
+  const portableTextComponents = useMemo(() => ({
+    block: {
+      h1: ({ children, value }: any) => {
+        const index = production?.contenu?.findIndex((b: any) => b._key === value._key);
+        return <h1 id={`heading-${index}`} className="text-3xl md:text-4xl font-bold text-gray-900 mt-10 mb-6 scroll-mt-24">{children}</h1>;
+      },
+      h2: ({ children, value }: any) => {
+        const index = production?.contenu?.findIndex((b: any) => b._key === value._key);
+        return (
+          <h2 id={`heading-${index}`} className="mt-14 mb-6 scroll-mt-24">
+            <span className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight block">{children}</span>
+            <div
+              className="mt-3 h-1 w-16 rounded-full"
+              style={{ background: `linear-gradient(to right, ${themeColor}, ${themeColor}40)` }}
+            />
+          </h2>
+        );
+      },
+      h3: ({ children, value }: any) => {
+        const index = production?.contenu?.findIndex((b: any) => b._key === value._key);
+        return (
+          <h3 id={`heading-${index}`} className="mt-10 mb-4 scroll-mt-24">
+            <span className="text-xl md:text-2xl font-semibold text-gray-800">{children}</span>
+            <div
+              className="mt-2 h-0.5 w-10 rounded-full"
+              style={{ background: `linear-gradient(to right, ${themeColor}80, ${themeColor}20)` }}
+            />
+          </h3>
+        );
+      },
+      normal: ({ children }: any) => <p className="text-gray-600 leading-relaxed mb-6 text-lg"><LinkifyChildren>{children}</LinkifyChildren></p>,
+      blockquote: ({ children }: any) => (
+        <blockquote className="border-l-4 pl-6 py-4 my-8 bg-gray-50 rounded-r-xl" style={{ borderColor: themeColor }}>
+          <p className="text-gray-700 italic text-lg">{children}</p>
+        </blockquote>
+      ),
+    },
+    marks: {
+      strong: ({ children }: any) => <strong className="font-bold text-gray-900">{children}</strong>,
+      em: ({ children }: any) => <em className="italic" style={{ color: themeColor }}>{children}</em>,
+      link: ({ children, value }: any) => {
+        if (!value?.href) {
+          return <span style={{ color: themeColor }}>{children}</span>;
+        }
+        return (
+          <a href={value.href} className="underline transition-colors hover:opacity-80" style={{ color: themeColor }} target="_blank" rel="noopener noreferrer">
+            {children}
+          </a>
+        );
+      },
+    },
+    list: {
+      bullet: ({ children }: any) => (
+        <ul className="my-8 space-y-3">
+          {children}
+        </ul>
+      ),
+      number: ({ children }: any) => (
+        <ol className="my-8 space-y-3 list-none counter-reset-item">
+          {children}
+        </ol>
+      ),
+    },
+    listItem: {
+      bullet: ({ children }: any) => (
+        <li className="flex items-start gap-4 p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 transition-all duration-300 hover:border-gray-200 hover:shadow-sm">
+          <span className="flex-shrink-0 w-2 h-2 mt-2.5 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 shadow-sm" />
+          <span className="text-gray-700 text-[17px] leading-relaxed"><LinkifyChildren>{children}</LinkifyChildren></span>
+        </li>
+      ),
+      number: ({ children, index }: any) => (
+        <li className="flex items-start gap-4 p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 transition-all duration-300 hover:border-gray-200 hover:shadow-sm group">
+          <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-white text-sm font-bold flex items-center justify-center shadow-sm">
+            {index !== undefined ? index + 1 : '•'}
+          </span>
+          <span className="text-gray-700 text-[17px] leading-relaxed"><LinkifyChildren>{children}</LinkifyChildren></span>
+        </li>
+      ),
+    },
+    types: {
+      // Image (avec limite de hauteur pour les images verticales)
+      image: ({ value }: any) => (
+        <figure className="my-8 flex flex-col items-center">
+          <img src={value.asset?.url || value.url} alt={value.alt || ''} className="max-h-[400px] w-auto max-w-full rounded-2xl object-contain" />
+          {value.caption && <figcaption className="text-center text-gray-500 text-sm mt-3">{value.caption}</figcaption>}
+        </figure>
+      ),
+      imageGallery: ({ value }: any) => {
+        if (!value?.images?.length) return null;
+        const layout = value.layout || 'single';
+        const gridClasses: Record<string, string> = {
+          'single': 'grid-cols-1',
+          'grid-2': 'grid-cols-1 md:grid-cols-2 gap-4',
+          'grid-3': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4',
+          'carousel': 'grid-cols-1',
+          'masonry': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
+        };
+        return (
+          <div className={`my-10 grid ${gridClasses[layout] || gridClasses.single}`}>
+            {value.images.map((img: any) => (
+              <figure key={img._key} className="relative group">
+                <div className="overflow-hidden rounded-xl">
+                  <img
+                    src={img.imageUrl || img.asset?.url}
+                    alt={img.caption || img.alt || ''}
+                    loading="lazy"
+                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                {img.caption && (
+                  <figcaption className="text-center text-gray-500 text-sm mt-3 italic">{img.caption}</figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        );
+      },
+      callout: ({ value }: any) => {
+        const types: Record<string, { icon: any; bg: string; border: string; text: string; iconBg: string }> = {
+          info: { icon: Info, bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', iconBg: 'bg-blue-100' },
+          warning: { icon: AlertCircle, bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', iconBg: 'bg-amber-100' },
+          success: { icon: CheckCircle, bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-800', iconBg: 'bg-emerald-100' },
+          tip: { icon: Lightbulb, bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-800', iconBg: 'bg-violet-100' },
+          remember: { icon: BookOpen, bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-800', iconBg: 'bg-indigo-100' },
+          didyouknow: { icon: Sparkles, bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-800', iconBg: 'bg-pink-100' },
+          key: { icon: Zap, bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-800', iconBg: 'bg-orange-100' },
+          testimonial: { icon: Heart, bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-800', iconBg: 'bg-rose-100' },
+          stat: { icon: TrendingUp, bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-800', iconBg: 'bg-cyan-100' },
+        };
+        const style = types[value.type] || types.info;
+        const Icon = style.icon;
+        const content = value.text || value.content || value.body;
+        const isRichText = Array.isArray(content);
+
+        // Style spécial pour les stats
+        if (value.type === 'stat') {
+          return (
+            <div className="my-10 p-8 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 border border-violet-200/50 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-sm">
+                  <TrendingUp className="w-5 h-5 text-white" />
+                </div>
+                {value.title && (
+                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">{value.title}</h4>
+                )}
+              </div>
+              <div className="text-gray-700 leading-relaxed pl-13">
+                {isRichText ? <PortableText value={content} /> : <p>{content}</p>}
+              </div>
+              {value.source && (
+                <p className="mt-4 text-sm text-violet-600/70 italic pl-13">Source : {value.source}</p>
+              )}
+            </div>
+          );
+        }
+
+        return (
+          <div className={`my-8 p-6 rounded-xl border ${style.bg} ${style.border}`}>
+            <div className="flex items-start gap-4">
+              <div className={`w-10 h-10 rounded-xl ${style.iconBg} flex items-center justify-center flex-shrink-0`}>
+                <Icon className={`w-5 h-5 ${style.text}`} />
+              </div>
+              <div className={`${style.text} text-base leading-relaxed flex-1`}>
+                {value.title && <p className="font-bold mb-2 text-lg">{value.title}</p>}
+                {isRichText ? (
+                  <PortableText value={content} />
+                ) : content ? (
+                  <p>{content}</p>
+                ) : null}
+                {value.source && (
+                  <p className="mt-3 text-sm opacity-70 italic">Source : {value.source}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      },
+      styledQuote: ({ value }: any) => {
+        const quoteStyle = value.style || 'classic';
+
+        // Helper pour rendre la source avec lien cliquable si sourceUrl existe
+        const renderSource = () => {
+          if (!value.source) return null;
+          if (value.sourceUrl) {
+            return (
+              <a
+                href={value.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-violet-500 transition-colors underline underline-offset-2"
+              >
+                {value.source}
+              </a>
+            );
+          }
+          return <>{value.source}</>;
+        };
+
+        // Style Testimonial - avec photo et rôle
+        if (quoteStyle === 'testimonial' || value.image) {
+          return (
+            <figure className="my-10 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+              <div className="flex flex-col md:flex-row gap-6">
+                {value.image?.asset?.url && (
+                  <div className="flex-shrink-0">
+                    <img
+                      src={value.image.asset.url}
+                      alt={value.author || ''}
+                      className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <Quote className="w-8 h-8 text-violet-300 mb-3" />
+                  <blockquote className="text-lg md:text-xl text-gray-700 leading-relaxed italic mb-4">
+                    "{value.quote}"
+                  </blockquote>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-0.5 bg-violet-300" />
+                    <div>
+                      {value.author && <p className="font-bold text-gray-900">{value.author}</p>}
+                      {value.role && <p className="text-sm text-gray-500">{value.role}</p>}
+                      {value.source && <p className="text-xs text-gray-400 mt-1">{renderSource()}</p>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </figure>
+          );
+        }
+
+        // Style Large - grande citation mise en avant
+        if (quoteStyle === 'large') {
+          return (
+            <figure className="my-12 py-8 border-y border-gray-200">
+              <blockquote className="text-center">
+                <p className="text-2xl md:text-4xl font-medium text-gray-800 leading-relaxed italic max-w-3xl mx-auto">
+                  "{value.quote}"
+                </p>
+              </blockquote>
+              {(value.author || value.source) && (
+                <figcaption className="mt-6 text-center text-gray-500">
+                  {value.author && <span className="font-semibold text-gray-700">{value.author}</span>}
+                  {value.role && <span className="text-gray-500">, {value.role}</span>}
+                  {value.source && <span className="text-gray-400"> — {renderSource()}</span>}
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
+
+        // Style Filled - avec fond coloré
+        if (quoteStyle === 'filled') {
+          return (
+            <figure className="my-10 p-8 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white">
+              <Quote className="w-10 h-10 text-white/30 mb-4" />
+              <blockquote>
+                <p className="text-xl md:text-2xl font-medium leading-relaxed">
+                  "{value.quote}"
+                </p>
+              </blockquote>
+              {(value.author || value.source) && (
+                <figcaption className="mt-6 flex items-center gap-3">
+                  <div className="w-10 h-0.5 bg-white/50" />
+                  <div>
+                    {value.author && <span className="font-semibold">{value.author}</span>}
+                    {value.role && <span className="opacity-80">, {value.role}</span>}
+                  </div>
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
+
+        // Style Bordered - encadré élégant
+        if (quoteStyle === 'bordered') {
+          return (
+            <figure className="my-10 p-6 md:p-8 border-2 border-gray-200 rounded-2xl relative">
+              <Quote className="absolute -top-4 left-6 w-8 h-8 text-violet-400 bg-white px-1" />
+              <blockquote>
+                <p className="text-lg md:text-xl text-gray-700 leading-relaxed italic">
+                  "{value.quote}"
+                </p>
+              </blockquote>
+              {(value.author || value.source) && (
+                <figcaption className="mt-4 pt-4 border-t border-gray-100 text-gray-500">
+                  {value.author && <span className="font-semibold text-gray-700">{value.author}</span>}
+                  {value.role && <span className="text-gray-500">, {value.role}</span>}
+                  {value.source && <span className="text-gray-400"> — {renderSource()}</span>}
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
+
+        // Style Classic (défaut)
+        return (
+          <figure className="my-12 relative">
+            <Quote className="absolute -top-4 -left-2 w-12 h-12 text-violet-200" />
+            <blockquote className="pl-8 pr-4">
+              <p className="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed italic">
+                "{value.quote}"
+              </p>
+            </blockquote>
+            {(value.author || value.source) && (
+              <figcaption className="mt-4 pl-8 text-gray-500">
+                {value.author && <span className="font-semibold text-gray-700">{value.author}</span>}
+                {value.role && <span className="text-gray-500">, {value.role}</span>}
+                {value.source && <span className="text-gray-400"> — {renderSource()}</span>}
+              </figcaption>
+            )}
+          </figure>
+        );
+      },
+      accordion: ({ value }: any) => <AccordionBlockProduction value={value} themeColor={themeColor} />,
+      keyTakeaways: ({ value }: any) => {
+        const items = value.items || value.points || value.takeaways || value.list || value.content || value.bullets || [];
+        const takeawayStyle = value.style || 'boxed';
+
+        // Format text with bold prefix if pattern "Title : Description" is detected
+        const formatItemText = (text: string): React.ReactNode => {
+          // Check for "Title : Description" or "Title: Description" pattern
+          const colonMatch = text.match(/^([^:]+)\s*:\s*(.+)$/);
+          if (colonMatch) {
+            const [, title, description] = colonMatch;
+            return (
+              <>
+                <strong className="text-gray-900">{title.trim()}</strong>
+                <span className="text-gray-500"> : </span>
+                {description.trim()}
+              </>
+            );
+          }
+          return text;
+        };
+
+        // Handle items - can be string, object with various properties, or Sanity block structure
+        const getItemText = (item: any): React.ReactNode => {
+          let rawText = '';
+
+          if (typeof item === 'string') {
+            rawText = item;
+          } else if (item?.text) {
+            rawText = item.text;
+          } else if (item?.point) {
+            rawText = item.point;
+          } else if (item?.title && item?.description) {
+            // If both title and description exist, format them
+            return (
+              <>
+                <strong className="text-gray-900">{item.title}</strong>
+                <span className="text-gray-500"> : </span>
+                {item.description}
+              </>
+            );
+          } else if (item?.title) {
+            rawText = item.title;
+          } else if (item?.content && typeof item.content === 'string') {
+            rawText = item.content;
+          } else if (item?.value && typeof item.value === 'string') {
+            rawText = item.value;
+          } else if (item?.description) {
+            rawText = item.description;
+          } else if (item?.children && Array.isArray(item.children)) {
+            rawText = item.children.map((child: any) => child.text || '').join('');
+          } else if (Array.isArray(item)) {
+            return <PortableText value={item} />;
+          }
+
+          // Apply formatting if we have text
+          if (rawText) {
+            return formatItemText(rawText);
+          }
+          return '';
+        };
+
+        const getItemIcon = (item: any) => {
+          const iconType = item?.icon || 'check';
+          const icons: Record<string, any> = {
+            check: CheckCircle,
+            bulb: Lightbulb,
+            target: Zap,
+            star: Sparkles,
+            key: Zap,
+            pin: BookOpen,
+          };
+          return icons[iconType] || CheckCircle;
+        };
+
+        // Style Cards - en grille
+        if (takeawayStyle === 'cards') {
+          return (
+            <div className="my-10">
+              <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <Sparkles className="w-6 h-6 text-violet-600" />
+                {value.title || 'Points clés à retenir'}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Array.isArray(items) && items.map((item: any, index: number) => {
+                  const Icon = getItemIcon(item);
+                  return (
+                    <div key={index} className="p-5 bg-white border border-gray-200 rounded-xl hover:border-violet-200 hover:shadow-md transition-all">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-violet-600" />
+                        </div>
+                        <p className="text-gray-700 leading-relaxed">{getItemText(item)}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
+        // Style Timeline - vertical avec ligne
+        if (takeawayStyle === 'timeline') {
+          return (
+            <div className="my-10">
+              <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <Sparkles className="w-6 h-6 text-violet-600" />
+                {value.title || 'Points clés à retenir'}
+              </h4>
+              <div className="relative pl-8 border-l-2 border-violet-200 space-y-6">
+                {Array.isArray(items) && items.map((item: any, index: number) => {
+                  const Icon = getItemIcon(item);
+                  return (
+                    <div key={index} className="relative">
+                      <div className="absolute -left-[41px] w-10 h-10 rounded-full bg-violet-100 border-4 border-white flex items-center justify-center">
+                        <Icon className="w-4 h-4 text-violet-600" />
+                      </div>
+                      <p className="text-gray-700 leading-relaxed pt-2">{getItemText(item)}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
+        // Style List - simple liste
+        if (takeawayStyle === 'list') {
+          return (
+            <div className="my-10">
+              <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                <Sparkles className="w-6 h-6 text-violet-600" />
+                {value.title || 'Points clés à retenir'}
+              </h4>
+              <ul className="space-y-3">
+                {Array.isArray(items) && items.map((item: any, index: number) => {
+                  const Icon = getItemIcon(item);
+                  return (
+                    <li key={index} className="flex items-start gap-3">
+                      <Icon className="w-5 h-5 text-violet-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{getItemText(item)}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        }
+
+        // Style Boxed (défaut) - encadré avec fond
+        return (
+          <div className="my-10 p-6 md:p-8 bg-gradient-to-br from-violet-50 to-fuchsia-50 border border-violet-100 rounded-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-violet-600" />
+              </div>
+              <h4 className="text-xl font-bold text-gray-900">{value.title || 'Points clés à retenir'}</h4>
+            </div>
+            <ul className="space-y-4">
+              {Array.isArray(items) && items.map((item: any, index: number) => {
+                const Icon = getItemIcon(item);
+                return (
+                  <li key={index} className="flex items-start gap-4 p-4 bg-white/60 rounded-xl">
+                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-4 h-4 text-violet-600" />
+                    </div>
+                    <span className="text-gray-700 leading-relaxed">{getItemText(item)}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      },
+      progressSteps: ({ value }: any) => (
+        <div className="my-10">
+          {value.title && <h4 className="text-xl font-bold text-gray-900 mb-6">{value.title}</h4>}
+          <div className="space-y-4">
+            {value.steps?.map((step: { title: string; description: string }, index: number) => (
+              <div key={index} className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold">
+                  {index + 1}
+                </div>
+                <div className="flex-1 pt-1">
+                  <h5 className="font-semibold text-gray-900 mb-1">{step.title}</h5>
+                  <p className="text-gray-600">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+      newsletterCta: ({ value }: any) => (
+        <div className="my-12 relative overflow-hidden">
+          {/* Background with subtle gradient border */}
+          <div className="relative bg-white border border-gray-200 rounded-3xl p-8 md:p-10 shadow-xl shadow-gray-100/50">
+            {/* Decorative gradient blur */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-violet-400/20 to-fuchsia-400/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-violet-400/20 rounded-full blur-3xl" />
+
+            <div className="relative flex flex-col md:flex-row items-center gap-8">
+              {/* Icon */}
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/25">
+                  <Mail className="w-10 h-10 text-white" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 text-center md:text-left">
+                <h4 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                  {value.title || 'Restez informé'}
+                </h4>
+                <p className="text-gray-500 mb-0 max-w-lg">
+                  {value.description || 'Inscrivez-vous à notre newsletter pour recevoir nos derniers contenus directement dans votre boîte mail.'}
+                </p>
+              </div>
+
+              {/* CTA Button */}
+              <div className="flex-shrink-0">
+                <Link
+                  to="/newsletter"
+                  className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold rounded-2xl hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 hover:scale-105"
+                >
+                  <span>{value.buttonText || "S'abonner"}</span>
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+
+      // Related Articles - Articles liés (inline)
+      relatedArticles: ({ value }: any) => {
+        const articles = value.articles || value.items || [];
+        if (!articles.length) return null;
+
+        return (
+          <div className="my-10 p-6 bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl">
+            <h4 className="text-lg font-bold text-gray-900 mb-4">
+              {value.title || 'Articles recommandés'}
+            </h4>
+            <div className="grid gap-4">
+              {articles.slice(0, 3).map((article: any, index: number) => {
+                const slug = article.slug?.current || article.slug;
+                const title = article.title || article.titre;
+                const image = article.imageUrl || article.mainImage?.asset?.url;
+
+                if (!slug || !title) return null;
+
+                return (
+                  <Link
+                    key={index}
+                    to={`/article/${slug}`}
+                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+                  >
+                    {image && (
+                      <img
+                        src={image}
+                        alt={title}
+                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h5 className="font-medium text-gray-900 group-hover:text-violet-600 transition-colors line-clamp-2">
+                        {title}
+                      </h5>
+                      {article.excerpt && (
+                        <p className="text-sm text-gray-500 line-clamp-1 mt-1">{article.excerpt}</p>
+                      )}
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-violet-500 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        );
+      },
+    },
+  }), [production, themeColor]);
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <div className="text-white text-xl animate-pulse">Chargement...</div>
-      </div>
-    );
-  }
-
-  if (!production) {
-    return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-white text-2xl mb-4">Production non trouvée</h1>
-          <button 
-            onClick={() => navigate('/')}
-            className="text-purple-500 hover:text-purple-400 underline"
-          >
-            Retour à l'accueil
-          </button>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
+          <span className="text-gray-600">Chargement...</span>
         </div>
       </div>
     );
   }
 
-  const themeColor = production.verticale?.couleurDominante || '#8B5CF6';
-  const formattedDate = production.datePublication 
+  if (!production) return null;
+
+  const formattedDate = production.datePublication
     ? new Date(production.datePublication).toLocaleDateString('fr-FR', {
         year: 'numeric',
         month: 'long',
@@ -112,267 +1532,484 @@ function ProductionDetailPage() {
       })
     : '';
 
-  return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5]">
-      {/* Sidebar */}
-      <Sidebar />
+  const readTime = production.tempsLecture || production.duree || 5;
 
-      {/* Main Content */}
-      <main className="md:ml-[280px]">
-        {/* Hero Section avec image ou vidéo */}
-        <div className="relative h-[70vh] min-h-[500px] overflow-hidden">
-          {/* Background - Image ou Vidéo selon le format */}
-          {production.videoUrl && production.formats?.[0]?.nom === 'Vidéo' ? (
-            <>
-              {/* Vidéo en arrière-plan pour les formats vidéo */}
-              <video 
-                autoPlay 
-                muted 
-                loop 
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ filter: 'brightness(0.4) contrast(1.1)' }}
-              >
-                <source src={production.videoUrl} type="video/mp4" />
-                {/* Fallback sur l'image si la vidéo ne charge pas */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${production.imageUrl || 'https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg'})`,
-                  }}
-                />
-              </video>
-              
-              {/* Overlay pour la vidéo */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/70 via-transparent to-[#0A0A0A]/30" />
-              
-              {/* Indicateur de lecture vidéo */}
-              <div className="absolute top-8 right-8 flex items-center gap-2 px-3 py-1.5 bg-black/50 backdrop-blur-sm rounded-full border border-white/20">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-white/80 text-xs font-inter uppercase tracking-wider">Vidéo</span>
+  return (
+    <div className="min-h-screen bg-white text-gray-900">
+      <SEO
+        title={production.titre}
+        description={production.description}
+        url={`/article/${production.slug.current}`}
+        imageUrl={production.imageUrl}
+      />
+
+      {/* Progress Bar */}
+      <div
+        className="fixed top-0 left-0 h-1 z-[60] transition-all duration-150"
+        style={{
+          width: `${scrollProgress}%`,
+          background: `linear-gradient(90deg, ${themeColor}, ${themeColor}99)`
+        }}
+      />
+
+      <Navbar />
+
+      <main>
+        {/* Hero Section - Layout Split */}
+        <div className="relative">
+          {/* Header flottant */}
+          <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-6 lg:p-12">
+            <button
+              onClick={() => navigate(-1)}
+              className="group flex items-center gap-3 text-white/90 hover:text-white transition-colors"
+            >
+              <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center group-hover:border-white/50 transition-colors backdrop-blur-sm bg-black/20">
+                <ArrowLeft className="w-5 h-5" />
               </div>
-            </>
-          ) : (
-            <>
-              {/* Image de fond pour les autres formats */}
-              <div 
+              <span className="hidden sm:block text-sm uppercase tracking-wider">Retour</span>
+            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setLiked(!liked)}
+                className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors backdrop-blur-sm ${
+                  liked ? 'bg-red-500/30 border-red-400/50' : 'border-white/30 bg-black/20 hover:border-white/50'
+                }`}
+              >
+                <Heart className={`w-5 h-5 ${liked ? 'fill-red-400 text-red-400' : 'text-white'}`} />
+              </button>
+              <button
+                onClick={() => setBookmarked(!bookmarked)}
+                className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors backdrop-blur-sm ${
+                  bookmarked ? 'bg-violet-500/30 border-violet-400/50' : 'border-white/30 bg-black/20 hover:border-white/50'
+                }`}
+              >
+                <Bookmark className={`w-5 h-5 ${bookmarked ? 'fill-violet-400 text-violet-400' : 'text-white'}`} />
+              </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center hover:border-white/50 transition-colors backdrop-blur-sm bg-black/20"
+              >
+                <Share2 className="w-5 h-5 text-white" />
+              </button>
+            </div>
+          </div>
+
+          {/* Layout Split 2 colonnes */}
+          <div className="grid lg:grid-cols-2 min-h-[70vh]">
+            {/* Colonne Image */}
+            <div className="relative h-[50vh] lg:h-auto">
+              <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(${production.imageUrl || 'https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg'})`,
+                  backgroundImage: `url(${production.imageUrl || '/placeholder.svg'})`,
                 }}
               >
-                {/* Overlays pour assombrir */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/70 to-[#0A0A0A]/30" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/80 via-transparent to-[#0A0A0A]/40" />
-              </div>
-            </>
-          )}
-
-          {/* Contenu du hero */}
-          <div className="relative h-full flex flex-col justify-between p-8 lg:p-16">
-            {/* Header avec navigation */}
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => navigate(-1)}
-                className="group flex items-center gap-3 text-white/80 hover:text-white transition-colors"
-              >
-                <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-white/40 transition-colors">
-                  <ArrowLeft className="w-5 h-5" />
-                </div>
-                <span className="font-inter text-sm uppercase tracking-wider">Retour</span>
-              </button>
-
-              {/* Actions */}
-              <div className="flex items-center gap-4">
-                <button 
-                  onClick={() => setLiked(!liked)}
-                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:border-white/40 transition-colors"
-                >
-                  <Heart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : 'text-white'}`} />
-                </button>
-                <button className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:border-white/40 transition-colors">
-                  <Share2 className="w-5 h-5 text-white" />
-                </button>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-black/20 lg:to-white" />
               </div>
             </div>
 
-            {/* Titre et métadonnées */}
-            <div className="max-w-4xl">
-              {/* Badges */}
-              <div className="flex flex-wrap items-center gap-3 mb-6">
-                {production.verticale && (
-                  <Link
-                    to={`/verticale/${production.verticale.slug.current}`}
-                    className="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all hover:scale-105"
-                    style={{
-                      backgroundColor: `${themeColor}30`,
-                      color: themeColor,
-                      borderWidth: '1px',
-                      borderColor: `${themeColor}50`
-                    }}
-                  >
-                    {production.verticale.nom}
-                  </Link>
-                )}
-                
-                {production.formats?.map((format) => (
-                  <span
-                    key={format.slug.current}
-                    className="px-4 py-2 rounded-full bg-white/10 text-white/80 text-xs font-medium uppercase tracking-wider"
-                  >
-                    {format.nom}
-                  </span>
-                ))}
-              </div>
+            {/* Colonne Contenu */}
+            <div className="flex flex-col justify-center p-8 lg:p-12 xl:p-16 bg-white">
+              {/* Verticale Badge */}
+              {production.verticale && (
+                <Link
+                  to={`/univers/${production.verticale.slug.current}`}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 w-fit transition-opacity hover:opacity-80"
+                  style={{
+                    backgroundColor: `${themeColor}15`,
+                    color: themeColor
+                  }}
+                >
+                  {production.verticale.nom}
+                </Link>
+              )}
 
               {/* Titre */}
-              <h1 className="font-montserrat font-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white mb-6 leading-[0.9]">
-                {production.titre}
+              <h1 className="font-bold text-3xl md:text-4xl lg:text-5xl text-gray-900 mb-6 leading-tight">
+                {typo(production.titre)}
               </h1>
 
               {/* Description */}
-              <p className="font-inter text-lg lg:text-xl text-white/80 leading-relaxed max-w-3xl mb-8">
-                {production.description}
+              <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8">
+                {typo(production.description)}
               </p>
 
               {/* Métadonnées */}
-              <div className="flex flex-wrap items-center gap-6 text-white/60 text-sm">
+              <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  <span>Origines Media</span>
+                </div>
                 {formattedDate && (
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
                     <span>{formattedDate}</span>
                   </div>
                 )}
-                
-                {production.duree && (
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{production.duree} min</span>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{readTime} min de lecture</span>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {production.tags && production.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-6">
+                  {production.tags.map((tag) => tag && (
+                    <span
+                      key={tag.slug?.current || tag.nom}
+                      className="px-3 py-1 bg-gray-100 border border-gray-200 rounded-full text-xs text-gray-600"
+                    >
+                      #{tag.nom}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Contenu Principal + Sidebar */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+
+            {/* Colonne Contenu */}
+            <div ref={articleRef} className="lg:col-span-8">
+              {/* Pub banner en haut du contenu */}
+              <AdSpace format="banner" className="mb-8 lg:hidden" />
+
+              {/* Contenu Article */}
+              {production.contenu && production.contenu.length > 0 ? (
+                <div className="prose prose-lg max-w-none">
+                  <PortableText value={production.contenu} components={portableTextComponents} />
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <BookOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                  <p>Contenu en cours de rédaction...</p>
+                </div>
+              )}
+
+              {/* Section CTA */}
+              {production.verticale && (
+                <div className="mt-16 p-8 rounded-2xl bg-gray-50 border border-gray-200">
+                  <h3 className="font-bold text-xl text-gray-900 mb-3">
+                    Envie d'aller plus loin ?
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Découvrez tous nos articles sur {production.verticale.nom}
+                  </p>
+                  <Link
+                    to={`/univers/${production.verticale.slug.current}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-medium transition-all hover:opacity-90"
+                    style={{ backgroundColor: themeColor }}
+                  >
+                    Explorer {production.verticale.nom}
+                    <ChevronRight className="w-5 h-5" />
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar */}
+            <div
+              ref={sidebarContainerRef}
+              className="hidden lg:block lg:col-span-4 relative"
+            >
+              <div ref={sidebarRef} style={sidebarStyle} className="space-y-6">
+
+                {/* Widget Auteur */}
+                <div className="rounded-xl bg-gray-50 border border-gray-200 p-5">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl"
+                      style={{ backgroundColor: themeColor }}
+                    >
+                      O
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Écrit par</p>
+                      <h4 className="font-bold text-gray-900">Origines Media</h4>
+                      <p className="text-sm text-gray-500">Rédaction</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Table des matières dépliable (si article long) */}
+                {isLongArticle && headings.length > 0 && (
+                  <TableOfContentsWidget
+                    headings={headings}
+                    activeSection={activeSection}
+                    scrollProgress={scrollProgress}
+                    themeColor={themeColor}
+                    onSectionClick={scrollToSection}
+                  />
+                )}
+
+                {/* PUB 1 */}
+                <AdSpace format="rectangle" />
+
+                {/* Widget À explorer */}
+                <div className="rounded-xl bg-gray-50 border border-gray-200 overflow-hidden">
+                  {/* Onglets */}
+                  <div className="p-1 bg-gray-100">
+                    <div className="flex gap-1">
+                      {[
+                        { id: 'recent' as const, label: 'Récents', icon: Zap },
+                        { id: 'popular' as const, label: 'Populaires', icon: Flame },
+                      ].map((tab) => {
+                        const Icon = tab.icon;
+                        const isActive = activeTab === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`
+                              flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg
+                              text-sm font-medium transition-all
+                              ${isActive ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}
+                            `}
+                          >
+                            <Icon size={14} />
+                            {tab.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Liste articles */}
+                  <div className="max-h-[280px] overflow-y-auto">
+                    <div className="p-2 space-y-1">
+                      {latestArticles.map((item) => (
+                        <Link
+                          key={item._id}
+                          to={`/article/${item.slug}`}
+                          className="group flex items-start gap-3 p-2 rounded-lg hover:bg-white transition-all"
+                        >
+                          {item.imageUrl && (
+                            <div className="w-14 h-10 rounded-md overflow-hidden flex-shrink-0 bg-gray-200">
+                              <img src={item.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            {item.verticale && (
+                              <span
+                                className="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded mb-1"
+                                style={{
+                                  backgroundColor: `${item.verticale.couleurDominante || themeColor}15`,
+                                  color: item.verticale.couleurDominante || themeColor
+                                }}
+                              >
+                                {item.verticale.nom}
+                              </span>
+                            )}
+                            <h4 className="text-xs text-gray-700 group-hover:text-gray-900 transition-colors line-clamp-2 leading-snug">
+                              {typo(item.titre)}
+                            </h4>
+                            {item.datePublication && (
+                              <span className="text-[10px] text-gray-400">{getRelativeTime(item.datePublication)}</span>
+                            )}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/bibliotheque"
+                    className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-700 p-3 border-t border-gray-200"
+                  >
+                    Voir tous les articles <ChevronRight size={14} />
+                  </Link>
+                </div>
+
+                {/* Newsletter */}
+                <NewsletterWidget themeColor={themeColor} />
+
+                {/* PUB 2 */}
+                <AdSpace format="rectangle" />
+
+                {/* Réseaux sociaux */}
+                <SocialWidget />
+
+                {/* À lire aussi (si article long) */}
+                {isLongArticle && relatedArticles.length > 0 && (
+                  <div className="rounded-xl bg-gray-50 border border-gray-200 overflow-hidden">
+                    <div className="p-4 border-b border-gray-200 flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5" style={{ color: themeColor }} />
+                      <span className="font-bold text-gray-900 text-sm">À lire aussi</span>
+                    </div>
+                    <div className="p-2 space-y-1">
+                      {relatedArticles.map((related) => (
+                        <Link
+                          key={related._id}
+                          to={`/article/${related.slug}`}
+                          className="group flex items-center gap-3 p-2 rounded-lg hover:bg-white transition-all"
+                        >
+                          <div className="w-14 h-10 rounded-md overflow-hidden flex-shrink-0 bg-gray-200">
+                            {related.imageUrl && (
+                              <img src={related.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
+                            )}
+                          </div>
+                          <h4 className="flex-1 text-xs text-gray-700 group-hover:text-gray-900 transition-colors line-clamp-2">
+                            {typo(related.titre)}
+                          </h4>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
 
-                {production.formats?.[0] && (
-                  <div className="flex items-center gap-2">
-                    {production.formats[0].nom === 'Vidéo' ? (
-                      <Play className="w-4 h-4" />
-                    ) : (
-                      <BookOpen className="w-4 h-4" />
-                    )}
-                    <span>{production.formats[0].nom}</span>
-                  </div>
-                )}
+                {/* PUB 3 */}
+                <AdSpace format="rectangle" />
+
               </div>
             </div>
           </div>
         </div>
 
-        {/* Contenu principal */}
-        <div className="max-w-4xl mx-auto px-8 lg:px-16 py-16">
-          {/* Tags */}
-          {production.tags && production.tags.length > 0 && (
-            <div className="mb-12">
-              <h3 className="font-inter text-xs uppercase tracking-[0.2em] text-white/40 mb-4">
-                Thèmes abordés
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {production.tags.map((tag) => tag && tag.slug ? (
+        {/* Section Articles Recommandés (Full Width) */}
+        {relatedArticles.length > 0 && (
+          <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 border-t border-gray-200">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+                Articles recommandés
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {relatedArticles.slice(0, 6).map((related) => (
                   <Link
-                    key={tag.slug.current}
-                    to={`/tag/${tag.slug.current}`}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
+                    key={related._id}
+                    to={`/article/${related.slug}`}
+                    className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
                   >
-                    <Tag className="w-3 h-3" style={{ color: tag.couleur || '#ffffff' }} />
-                    <span className="text-sm text-white/80">{tag.nom || 'Sans nom'}</span>
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={related.imageUrl || '/placeholder.svg'}
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-5">
+                      {related.verticale && (
+                        <span
+                          className="inline-block px-2 py-1 rounded text-xs font-bold mb-3"
+                          style={{
+                            backgroundColor: `${related.verticale.couleurDominante || themeColor}15`,
+                            color: related.verticale.couleurDominante || themeColor
+                          }}
+                        >
+                          {related.verticale.nom}
+                        </span>
+                      )}
+                      <h3 className="text-gray-900 font-bold line-clamp-2 group-hover:text-violet-600 transition-colors">
+                        {typo(related.titre)}
+                      </h3>
+                    </div>
                   </Link>
-                ) : null)}
+                ))}
               </div>
             </div>
-          )}
+          </section>
+        )}
 
-          {/* Contenu de l'article ou Section Vidéo */}
-          <div className="prose prose-invert prose-lg max-w-none">
-            {production.videoUrl && production.formats?.[0]?.nom === 'Vidéo' ? (
-              /* Section Lecteur Vidéo */
-              <div className="mb-12">
-                <div className="relative bg-black rounded-2xl overflow-hidden">
-                  <div className="aspect-video">
-                    <video
-                      controls
-                      className="w-full h-full object-cover"
-                      poster={production.imageUrl}
-                    >
-                      <source src={production.videoUrl} type="video/mp4" />
-                      Votre navigateur ne supporte pas la lecture vidéo.
-                    </video>
-                  </div>
-                </div>
-                
-                {/* Description de la vidéo */}
-                <div className="mt-8 p-6 bg-white/5 rounded-xl border border-white/10">
-                  <h3 className="font-montserrat font-bold text-xl text-white mb-4">
-                    À propos de cette vidéo
-                  </h3>
-                  <p className="text-white/80 leading-relaxed">
-                    {production.description}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              /* Contenu textuel pour les articles */
-              <div className="space-y-6 text-white/80 leading-relaxed">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
-                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p>
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
-                  fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in 
-                  culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-                <blockquote className="border-l-4 pl-6 italic text-white/60" style={{ borderColor: themeColor }}>
-                  "Une citation inspirante qui illustre le propos de l'article et apporte une 
-                  perspective unique sur le sujet traité."
-                </blockquote>
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium 
-                  doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore 
-                  veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                </p>
-              </div>
-            )}
+        {/* Mobile Floating Action Bar */}
+        <div className="fixed bottom-4 left-4 right-4 lg:hidden z-50">
+          <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
+            <button
+              onClick={() => setLiked(!liked)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                liked ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-600'
+              }`}
+            >
+              <Heart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
+            </button>
+
+            <button
+              onClick={() => setShowShareModal(true)}
+              className="flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-xl text-white font-medium"
+              style={{ backgroundColor: themeColor }}
+            >
+              <Share2 className="w-5 h-5" />
+              <span>Partager</span>
+            </button>
+
+            <button
+              onClick={() => setBookmarked(!bookmarked)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+                bookmarked ? 'bg-violet-50 text-violet-600' : 'bg-gray-100 text-gray-600'
+              }`}
+            >
+              <Bookmark className={`w-5 h-5 ${bookmarked ? 'fill-current' : ''}`} />
+            </button>
           </div>
-
-          {/* CTA Section */}
-          {production.verticale && (
-            <div className="mt-16 p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
-              <h3 className="font-montserrat font-bold text-2xl text-white mb-4">
-                Aller plus loin
-              </h3>
-              <p className="text-white/70 mb-6">
-                Explorez d'autres contenus de la verticale {production.verticale.nom}
-              </p>
-              <Link
-                to={`/verticale/${production.verticale.slug.current}`}
-                className="inline-flex items-center gap-3 px-6 py-3 rounded-full font-medium transition-all hover:gap-4"
-                style={{
-                  backgroundColor: `${themeColor}20`,
-                  color: themeColor,
-                  borderWidth: '1px',
-                  borderColor: `${themeColor}40`
-                }}
-              >
-                Découvrir plus de contenus
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-          )}
         </div>
       </main>
 
-      {/* Footer */}
       <Footer />
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowShareModal(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="relative w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-2xl p-6"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowShareModal(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Partager</h3>
+
+            <div className="space-y-3">
+              <button
+                onClick={copyToClipboard}
+                className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
+              >
+                {copied ? (
+                  <Check className="w-5 h-5 text-emerald-500" />
+                ) : (
+                  <Copy className="w-5 h-5 text-gray-500" />
+                )}
+                <span className="text-gray-900">{copied ? 'Lien copié !' : 'Copier le lien'}</span>
+              </button>
+
+              <a
+                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(production.titre)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
+              >
+                <ExternalLink className="w-5 h-5 text-gray-500" />
+                <span className="text-gray-900">Partager sur X</span>
+              </a>
+
+              <a
+                href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(production.titre)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
+              >
+                <ExternalLink className="w-5 h-5 text-gray-500" />
+                <span className="text-gray-900">Partager sur LinkedIn</span>
+              </a>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

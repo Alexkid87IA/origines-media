@@ -51,7 +51,7 @@ const PartnershipConceptSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-16 md:py-32 bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden"
+      className="relative py-16 md:py-32 bg-white overflow-hidden"
     >
       {/* Background effects - simplified on mobile */}
       <div className="absolute inset-0">
@@ -74,14 +74,14 @@ const PartnershipConceptSection: React.FC = () => {
           </div>
           
           {/* Main title with animation */}
-          <h2 className="font-black text-3xl md:text-5xl lg:text-7xl uppercase tracking-tight text-white mb-2 md:mb-4 leading-none">
+          <h2 className="font-black text-3xl md:text-5xl lg:text-7xl uppercase tracking-tight text-gray-900 mb-2 md:mb-4 leading-none">
             <span className="inline-block gradient-text-orange text-4xl md:text-6xl lg:text-8xl">Wanted</span>
             <span className="inline-block mx-2 md:mx-4 text-3xl md:text-5xl lg:text-7xl gradient-text-fusion">×</span>
             <span className="inline-block gradient-text-purple text-4xl md:text-6xl lg:text-8xl">Origines</span>
           </h2>
           
           {/* Subtitle with better styling */}
-          <p className="text-base md:text-xl lg:text-2xl text-white/70 mt-4 md:mt-6 max-w-3xl mx-auto px-4 leading-relaxed">
+          <p className="text-base md:text-xl lg:text-2xl text-gray-900/70 mt-4 md:mt-6 max-w-3xl mx-auto px-4 leading-relaxed">
             Deux forces complémentaires qui créent 
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 font-semibold"> le premier empire média</span> de l'entraide
           </p>
@@ -99,8 +99,8 @@ const PartnershipConceptSection: React.FC = () => {
           {/* Wanted apporte */}
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl md:rounded-3xl blur opacity-25 group-hover:opacity-40 transition-opacity" />
-            <div className="relative bg-black/80 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-10 border border-orange-500/20 h-full">
-              <h3 className="font-bold text-xl md:text-2xl text-white mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
+            <div className="relative bg-white shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-10 border border-orange-500/20 h-full">
+              <h3 className="font-bold text-xl md:text-2xl text-gray-900 mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
                 <Coffee className="w-8 h-8 md:w-10 md:h-10 text-orange-400" />
                 Wanted apporte
               </h3>
@@ -108,29 +108,29 @@ const PartnershipConceptSection: React.FC = () => {
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-orange-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">La matière première</h4>
-                    <p className="text-white/60 text-sm md:text-base">1.5M histoires vraies quotidiennes, des besoins réels, des élans spontanés</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">La matière première</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">1.5M histoires vraies quotidiennes, des besoins réels, des élans spontanés</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-orange-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">Les lieux vivants</h4>
-                    <p className="text-white/60 text-sm md:text-base">Cafés-studios authentiques, scènes ouvertes, espaces de rencontre</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">Les lieux vivants</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">Cafés-studios authentiques, scènes ouvertes, espaces de rencontre</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-orange-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">La communauté active</h4>
-                    <p className="text-white/60 text-sm md:text-base">Lives spontanés, engagement réel, énergie du terrain</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">La communauté active</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">Lives spontanés, engagement réel, énergie du terrain</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-orange-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">L'impact mesurable</h4>
-                    <p className="text-white/60 text-sm md:text-base">Compteurs temps réel, preuves terrain, data transparente</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">L'impact mesurable</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">Compteurs temps réel, preuves terrain, data transparente</p>
                   </div>
                 </div>
               </div>
@@ -140,8 +140,8 @@ const PartnershipConceptSection: React.FC = () => {
           {/* Origines transforme */}
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl md:rounded-3xl blur opacity-25 group-hover:opacity-40 transition-opacity" />
-            <div className="relative bg-black/80 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-10 border border-violet-500/20 h-full">
-              <h3 className="font-bold text-xl md:text-2xl text-white mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
+            <div className="relative bg-white shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-10 border border-violet-500/20 h-full">
+              <h3 className="font-bold text-xl md:text-2xl text-gray-900 mb-6 md:mb-8 flex items-center gap-2 md:gap-3">
                 <Camera className="w-8 h-8 md:w-10 md:h-10 text-violet-400" />
                 Origines transforme
               </h3>
@@ -149,29 +149,29 @@ const PartnershipConceptSection: React.FC = () => {
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-violet-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">En contenus émotionnels</h4>
-                    <p className="text-white/60 text-sm md:text-base">Stories qui touchent, formats qui cartonnent, narration pro</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">En contenus émotionnels</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">Stories qui touchent, formats qui cartonnent, narration pro</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-violet-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">En production scalable</h4>
-                    <p className="text-white/60 text-sm md:text-base">200 contenus/mois, système de recyclage, IA d'optimisation</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">En production scalable</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">200 contenus/mois, système de recyclage, IA d'optimisation</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-violet-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">En audiences qualifiées</h4>
-                    <p className="text-white/60 text-sm md:text-base">Distribution multi-plateformes, ciblage par verticale, reach x10</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">En audiences qualifiées</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">Distribution multi-plateformes, ciblage par verticale, reach x10</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 md:gap-4">
                   <div className="w-2 h-2 rounded-full bg-violet-400 mt-1.5 md:mt-2 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-white text-base md:text-lg mb-0.5 md:mb-1">En revenus éthiques</h4>
-                    <p className="text-white/60 text-sm md:text-base">Monétisation sans compromis, sponsors alignés, 100% réinvesti</p>
+                    <h4 className="font-semibold text-gray-900 text-base md:text-lg mb-0.5 md:mb-1">En revenus éthiques</h4>
+                    <p className="text-gray-900/60 text-sm md:text-base">Monétisation sans compromis, sponsors alignés, 100% réinvesti</p>
                   </div>
                 </div>
               </div>
@@ -183,8 +183,8 @@ const PartnershipConceptSection: React.FC = () => {
         <div className={`relative mb-12 md:mb-24 transition-all duration-1000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="relative bg-black/60 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 border border-white/10 overflow-hidden">
-            <h3 className="font-bold text-xl md:text-2xl lg:text-3xl text-white text-center mb-8 md:mb-12">
+          <div className="relative bg-white shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 border border-gray-200 overflow-hidden">
+            <h3 className="font-bold text-xl md:text-2xl lg:text-3xl text-gray-900 text-center mb-8 md:mb-12">
               Le Cycle de Création de Valeur
             </h3>
             
@@ -239,11 +239,11 @@ const PartnershipConceptSection: React.FC = () => {
                                   : item.entity === 'origines'
                                   ? 'text-violet-400'
                                   : 'text-pink-400'
-                                : 'text-white/60'
+                                : 'text-gray-900/60'
                             } ${activeFlow === index ? 'scale-110' : 'scale-100'}`}
                           />
                           <p className={`text-center text-xs font-medium whitespace-nowrap transition-all duration-700 ${
-                            activeFlow === index ? 'text-white font-semibold' : 'text-white/60'
+                            activeFlow === index ? 'text-gray-900 font-semibold' : 'text-gray-900/60'
                           }`}>
                             {item.step}
                           </p>
@@ -264,7 +264,7 @@ const PartnershipConceptSection: React.FC = () => {
                       {/* Flèche entre les étapes */}
                       {index < creationFlow.length - 1 && (
                         <ChevronRight className={`w-5 h-5 mx-2 transition-all duration-700 ${
-                          activeFlow >= index ? 'text-white/60' : 'text-white/20'
+                          activeFlow >= index ? 'text-gray-900/60' : 'text-gray-900/20'
                         }`} />
                       )}
                     </div>
@@ -328,11 +328,11 @@ const PartnershipConceptSection: React.FC = () => {
                                 : item.entity === 'origines'
                                 ? 'text-violet-400'
                                 : 'text-pink-400'
-                              : 'text-white/60'
+                              : 'text-gray-900/60'
                           } ${activeFlow === index ? 'scale-110' : 'scale-100'}`}
                         />
                         <p className={`text-center text-xs font-medium transition-all duration-700 ${
-                          activeFlow === index ? 'text-white font-semibold' : 'text-white/60'
+                          activeFlow === index ? 'text-gray-900 font-semibold' : 'text-gray-900/60'
                         }`}>
                           {item.step}
                         </p>
@@ -344,7 +344,7 @@ const PartnershipConceptSection: React.FC = () => {
               
               {/* Indicateur de scroll */}
               <div className="flex justify-center mt-2">
-                <p className="text-xs text-white/40 flex items-center gap-2">
+                <p className="text-xs text-gray-900/40 flex items-center gap-2">
                   <ChevronRight className="w-3 h-3 rotate-180" />
                   Glissez pour voir le cycle
                   <ChevronRight className="w-3 h-3" />
@@ -354,7 +354,7 @@ const PartnershipConceptSection: React.FC = () => {
             
             {/* Indicateur de cycle */}
             <div className="mt-6 md:mt-8 text-center">
-              <div className="inline-flex items-center gap-2 md:gap-3 text-white/60 text-xs md:text-sm">
+              <div className="inline-flex items-center gap-2 md:gap-3 text-gray-900/60 text-xs md:text-sm">
                 <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 transition-all ${
                   activeFlow === creationFlow.length - 1 ? 'text-green-400 rotate-180' : ''
                 }`} />
@@ -369,12 +369,12 @@ const PartnershipConceptSection: React.FC = () => {
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           {/* Wanted */}
-          <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-orange-500/20">
+          <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-orange-500/20">
             <h4 className="font-bold text-lg md:text-xl text-orange-400 mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
               <Users className="w-5 h-5 md:w-6 md:h-6" />
               WANTED
             </h4>
-            <ul className="space-y-2 md:space-y-3 text-white/80">
+            <ul className="space-y-2 md:space-y-3 text-gray-900/80">
               <li className="flex items-start gap-2 md:gap-3">
                 <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-orange-400 mt-0.5 md:mt-1 flex-shrink-0" />
                 <span className="text-sm md:text-base">Anime la communauté 24/7</span>
@@ -395,12 +395,12 @@ const PartnershipConceptSection: React.FC = () => {
           </div>
 
           {/* Origines */}
-          <div className="bg-gradient-to-br from-violet-500/10 to-purple-500/10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-violet-500/20">
+          <div className="bg-gradient-to-br from-violet-500/10 to-purple-500/10 shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-violet-500/20">
             <h4 className="font-bold text-lg md:text-xl text-violet-400 mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
               <Camera className="w-5 h-5 md:w-6 md:h-6" />
               ORIGINES
             </h4>
-            <ul className="space-y-2 md:space-y-3 text-white/80">
+            <ul className="space-y-2 md:space-y-3 text-gray-900/80">
               <li className="flex items-start gap-2 md:gap-3">
                 <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-violet-400 mt-0.5 md:mt-1 flex-shrink-0" />
                 <span className="text-sm md:text-base">Filme et monte pro</span>
@@ -421,12 +421,12 @@ const PartnershipConceptSection: React.FC = () => {
           </div>
 
           {/* Ensemble */}
-          <div className="bg-gradient-to-br from-pink-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-pink-500/20">
+          <div className="bg-gradient-to-br from-pink-500/10 to-orange-500/10 shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-pink-500/20">
             <h4 className="font-bold text-lg md:text-xl text-pink-400 mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
               <Share2 className="w-5 h-5 md:w-6 md:h-6" />
               ENSEMBLE
             </h4>
-            <ul className="space-y-2 md:space-y-3 text-white/80">
+            <ul className="space-y-2 md:space-y-3 text-gray-900/80">
               <li className="flex items-start gap-2 md:gap-3">
                 <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-pink-400 mt-0.5 md:mt-1 flex-shrink-0" />
                 <span className="text-sm md:text-base">Co-création éditoriale</span>
@@ -448,10 +448,10 @@ const PartnershipConceptSection: React.FC = () => {
         </div>
 
         {/* Impact concret */}
-        <div className={`bg-gradient-to-r from-violet-600/10 via-pink-600/10 to-orange-600/10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-16 border border-white/10 text-center transition-all duration-1000 delay-800 ${
+        <div className={`bg-gradient-to-r from-violet-600/10 via-pink-600/10 to-orange-600/10 shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-16 border border-gray-200 text-center transition-all duration-1000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <h3 className="font-bold text-xl md:text-2xl lg:text-3xl text-white mb-6 md:mb-8">
+          <h3 className="font-bold text-xl md:text-2xl lg:text-3xl text-gray-900 mb-6 md:mb-8">
             L'Impact en Chiffres
           </h3>
           <div className="grid grid-cols-2 gap-4 md:gap-8">
@@ -459,29 +459,29 @@ const PartnershipConceptSection: React.FC = () => {
               <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 mb-1 md:mb-2">
                 1 Live
               </div>
-              <p className="text-white/60 text-sm md:text-base">=</p>
-              <p className="text-white font-semibold text-sm md:text-base">127 repas financés</p>
+              <p className="text-gray-900/60 text-sm md:text-base">=</p>
+              <p className="text-gray-900 font-semibold text-sm md:text-base">127 repas financés</p>
             </div>
             <div>
               <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-1 md:mb-2">
                 1 Story
               </div>
-              <p className="text-white/60 text-sm md:text-base">=</p>
-              <p className="text-white font-semibold text-sm md:text-base">500 partages</p>
+              <p className="text-gray-900/60 text-sm md:text-base">=</p>
+              <p className="text-gray-900 font-semibold text-sm md:text-base">500 partages</p>
             </div>
             <div>
               <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-orange-400 mb-1 md:mb-2">
                 1 Doc
               </div>
-              <p className="text-white/60 text-sm md:text-base">=</p>
-              <p className="text-white font-semibold text-sm md:text-base">50 entreprises créées</p>
+              <p className="text-gray-900/60 text-sm md:text-base">=</p>
+              <p className="text-gray-900 font-semibold text-sm md:text-base">50 entreprises créées</p>
             </div>
             <div>
               <div className="text-2xl md:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-500 mb-1 md:mb-2">
                 1 Mois
               </div>
-              <p className="text-white/60 text-sm md:text-base">=</p>
-              <p className="text-white font-semibold text-sm md:text-base">10k vies changées</p>
+              <p className="text-gray-900/60 text-sm md:text-base">=</p>
+              <p className="text-gray-900 font-semibold text-sm md:text-base">10k vies changées</p>
             </div>
           </div>
         </div>

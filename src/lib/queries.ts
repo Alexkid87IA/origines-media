@@ -1,76 +1,80 @@
-// src/lib/queries.ts - Fichier complet
+// src/lib/queries.ts
+// Requêtes Sanity GROQ - Nettoyé le 18/01/2026
+// Seules les queries utilisées sont conservées
 
 // ========================================
-// REQUÊTES POUR LE CAROUSEL ET LA HOME
+// HOME PAGE
 // ========================================
 
-// Requête pour les portraits du carousel
+// Portraits du carousel
 export const PORTRAITS_QUERY = `
   *[_type == "portrait"] | order(ordre asc) {
     _id,
     titre,
     categorie,
     accroche,
-    imageUrl,
-    slug
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": {"current": slug.current},
+    "univers": univers->{
+      _id,
+      nom,
+      couleur,
+      "slug": slug.current
+    },
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    },
+    "tags": tags[]->{
+      _id,
+      nom,
+      "title": coalesce(title, nom),
+      couleur,
+      "slug": slug.current
+    }
   }
 `
 
-// Requête pour les vidéos (Fragments)
-export const VIDEOS_QUERY = `
-  *[_type == "video"] | order(ordre asc) {
+// Séries pour la home
+export const SERIES_QUERY = `
+  *[_type == "serie"] | order(titre asc) {
     _id,
     titre,
     description,
     imageUrl,
-    videoUrl,
-    ordre
+    slug,
+    "nombreEpisodes": count(*[_type == "episode" && references(^._id)])
   }
 `
 
-// ========================================
-// REQUÊTES POUR LES UNIVERS
-// ========================================
-
-// Requête pour tous les univers
-export const UNIVERS_QUERY = `
-  *[_type == "univers"] | order(ordre asc) {
+// Verticales avec leurs productions
+export const VERTICALES_WITH_PRODUCTIONS_QUERY = `
+  *[_type == "verticale"] | order(ordre asc) {
     _id,
     nom,
-    couleur,
+    slug,
+    couleurDominante,
     description,
     imageUrl,
-    slug
-  }
-`
-
-// Requête pour un univers spécifique
-export const UNIVERS_BY_SLUG_QUERY = `
-  *[_type == "univers" && slug.current == $slug][0] {
-    _id,
-    nom,
-    couleur,
-    description,
-    imageUrl,
-    slug
-  }
-`
-
-// Requête pour les productions par univers
-export const PRODUCTIONS_BY_UNIVERS_QUERY = `
-  *[_type == "production" && references($universId)] | order(datePublication desc) [0...3] {
-    _id,
-    titre,
-    imageUrl,
-    slug
+    "productions": *[_type == "production" && references(^._id)] | order(datePublication desc) {
+      _id,
+      titre,
+      description,
+      "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
+      "slug": slug.current,
+      datePublication,
+      duree
+    }
   }
 `
 
 // ========================================
-// REQUÊTES POUR LES VERTICALES
+// VERTICALES
 // ========================================
 
-// Requête pour toutes les verticales
+// Toutes les verticales (pour filtres)
 export const VERTICALES_QUERY = `
   *[_type == "verticale"] | order(ordre asc) {
     _id,
@@ -83,388 +87,246 @@ export const VERTICALES_QUERY = `
   }
 `
 
-// Requête pour une verticale spécifique
-export const VERTICALE_BY_SLUG_QUERY = `
-  *[_type == "verticale" && slug.current == $slug][0] {
-    _id,
-    nom,
-    slug,
-    couleurDominante,
-    description,
-    imageUrl
-  }
-`
-
-// Requête pour les productions par verticale
-export const PRODUCTIONS_BY_VERTICALE_QUERY = `
-  *[_type == "production" && references($verticaleId)] | order(datePublication desc) {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    datePublication,
-    duree,
-    "formats": formats[]->nom,
-    "tags": tags[]->nom
-  }
-`
-
-// Requête pour les verticales avec leurs productions (pour la bibliothèque)
-export const VERTICALES_WITH_PRODUCTIONS_QUERY = `
+// Verticales pour la page Univers (avec stats et univers liés)
+export const VERTICALES_FOR_UNIVERS_PAGE_QUERY = `
   *[_type == "verticale"] | order(ordre asc) {
     _id,
     nom,
-    slug,
+    "slug": slug.current,
     couleurDominante,
     description,
-    imageUrl,
-    "productions": *[_type == "production" && references(^._id)] | order(datePublication desc) [0...6] {
+    "imageUrl": coalesce(image.asset->url, "/placeholder.svg"),
+    ordre,
+    "stats": {
+      "articles": count(*[_type == "production" && references(^._id)])
+    },
+    "univers": *[_type == "univers" && references(^._id)] | order(ordre asc) {
+      _id,
+      nom,
+      "slug": slug.current,
+      couleur,
+      description
+    }
+  }
+`
+
+// Détail d'une verticale
+export const VERTICALE_DETAIL_QUERY = `
+  *[_type == "verticale" && slug.current == $slug][0] {
+    _id,
+    nom,
+    "slug": slug.current,
+    couleurDominante,
+    description,
+    "imageUrl": coalesce(image.asset->url, "/placeholder.svg"),
+    "stats": {
+      "articles": count(*[_type == "production" && references(^._id)])
+    },
+    "univers": *[_type == "univers" && references(^._id)] | order(ordre asc) {
+      _id,
+      nom,
+      "slug": slug.current,
+      couleur,
+      description,
+      "articlesCount": count(*[_type == "production" && references(^._id)])
+    },
+    "productions": *[_type == "production" && references(^._id)] | order(datePublication desc) [0...12] {
       _id,
       titre,
       description,
-      "imageUrl": select(
-        defined(imageUrl) => imageUrl,
-        defined(image.asset) => image.asset->url,
-        "https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg"
-      ),
       "slug": slug.current,
+      "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
       datePublication,
-      duree
+      tempsLecture,
+      "univers": univers->{nom, "slug": slug.current, couleur}
     }
   }
 `
 
 // ========================================
-// REQUÊTES POUR LES PRODUCTIONS
+// EXPLORER (BIBLIOTHÈQUE)
 // ========================================
 
-// Requête pour toutes les productions
-export const PRODUCTIONS_QUERY = `
+// Articles pour Explorer
+export const EXPLORER_ARTICLES_QUERY = `
   *[_type == "production"] | order(datePublication desc) {
     _id,
     titre,
     description,
-    imageUrl,
-    slug,
+    typeArticle,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
     datePublication,
-    duree,
-    videoUrl,
-    "univers": univers->nom,
-    "verticale": verticale->nom,
-    "formats": formats[]->nom,
-    "tags": tags[]->nom
-  }
-`
-
-// Requête pour une production spécifique
-export const PRODUCTION_BY_SLUG_QUERY = `
-  *[_type == "production" && slug.current == $slug][0] {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    datePublication,
-    duree,
-    videoUrl,
-    contenu,
-    "univers": univers->{
-      nom,
-      couleur,
-      slug
-    },
+    tempsLecture,
     "verticale": verticale->{
+      _id,
       nom,
       couleurDominante,
-      slug
-    },
-    "formats": formats[]->{
-      nom,
-      slug
-    },
-    "tags": tags[]->{
-      nom,
-      couleur,
-      slug
+      "slug": slug.current
     }
   }
 `
 
-// ========================================
-// REQUÊTES POUR LES PORTRAITS
-// ========================================
+// Vidéos pour Explorer
+export const EXPLORER_VIDEOS_QUERY = `
+  *[_type == "video"] | order(datePublication desc, _createdAt desc) {
+    _id,
+    titre,
+    description,
+    "imageUrl": coalesce(thumbnail.asset->url, thumbnailUrl),
+    videoUrl,
+    duree,
+    vues,
+    "slug": slug.current,
+    "datePublication": coalesce(datePublication, _createdAt),
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    }
+  }
+`
 
-// Requête pour un portrait spécifique
-export const PORTRAIT_BY_SLUG_QUERY = `
-  *[_type == "portrait" && slug.current == $slug][0] {
+// Séries pour Explorer
+export const EXPLORER_SERIES_QUERY = `
+  *[_type == "serie"] | order(ordre asc, _createdAt desc) {
+    _id,
+    titre,
+    description,
+    "imageUrl": coalesce(poster.asset->url, imageUrl),
+    "slug": slug.current,
+    "episodeCount": count(*[_type == "episode" && references(^._id)]),
+    "datePublication": coalesce(datePublication, _createdAt),
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    }
+  }
+`
+
+// Recommandations pour Explorer
+export const EXPLORER_RECOS_QUERY = `
+  *[_type == "recommendation"] | order(datePublication desc, _createdAt desc) {
+    _id,
+    titre,
+    type,
+    auteur,
+    note,
+    coupDeCoeur,
+    accroche,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
+    "datePublication": coalesce(datePublication, _createdAt)
+  }
+`
+
+// Histoires pour Explorer
+export const EXPLORER_HISTOIRES_QUERY = `
+  *[_type == "portrait"] | order(ordre asc, _createdAt desc) {
     _id,
     titre,
     categorie,
     accroche,
-    imageUrl,
-    slug,
-    biographie,
-    citation,
-    dateNaissance,
-    lieuNaissance,
-    "productions": *[_type == "production" && references(^._id)] {
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
+    "datePublication": coalesce(datePublication, _createdAt),
+    "verticale": verticale->{
       _id,
-      titre,
-      imageUrl,
-      slug
+      nom,
+      couleurDominante,
+      "slug": slug.current
     }
   }
 `
 
 // ========================================
-// REQUÊTES POUR LES TAGS ET FORMATS
+// PRODUCTIONS / ARTICLES
 // ========================================
 
-// Requête pour tous les tags
-export const TAGS_QUERY = `
-  *[_type == "tag"] | order(nom asc) {
-    _id,
-    nom,
-    slug,
-    couleur
-  }
-`
-
-// Requête pour un tag spécifique
-export const TAG_BY_SLUG_QUERY = `
-  *[_type == "tag" && slug.current == $slug][0] {
-    _id,
-    nom,
-    slug,
-    couleur,
-    description
-  }
-`
-
-// Requête pour tous les formats
-export const FORMATS_QUERY = `
-  *[_type == "format"] | order(nom asc) {
-    _id,
-    nom,
-    slug,
-    description
-  }
-`
-
-// Requête pour un format spécifique
-export const FORMAT_BY_SLUG_QUERY = `
-  *[_type == "format" && slug.current == $slug][0] {
-    _id,
-    nom,
-    slug,
-    description
-  }
-`
-
-// ========================================
-// REQUÊTES POUR LES SÉRIES ET ÉPISODES
-// ========================================
-
-// Requête pour toutes les séries
-export const SERIES_QUERY = `
-  *[_type == "serie"] | order(titre asc) {
+// Production par slug (détail)
+export const PRODUCTION_BY_SLUG_QUERY = `
+  *[_type == "production" && slug.current == $slug][0] {
     _id,
     titre,
+    typeArticle,
     description,
-    imageUrl,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
     slug,
-    "nombreEpisodes": count(*[_type == "episode" && references(^._id)])
-  }
-`
-
-// Requête pour une série spécifique avec ses épisodes
-export const SERIE_BY_SLUG_QUERY = `
-  *[_type == "serie" && slug.current == $slug][0] {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    "episodes": *[_type == "episode" && references(^._id)] | order(numero asc) {
-      _id,
-      titre,
-      numero,
-      description,
-      imageUrl,
-      slug,
-      duree,
-      datePublication
-    }
-  }
-`
-
-// Requête pour un épisode spécifique
-export const EPISODE_BY_SLUG_QUERY = `
-  *[_type == "episode" && slug.current == $slug][0] {
-    _id,
-    titre,
-    numero,
-    description,
-    imageUrl,
-    slug,
-    duree,
     datePublication,
+    duree,
+    tempsLecture,
     videoUrl,
-    "serie": serie->{
+    contenu,
+    "univers": univers->{
+      _id,
+      nom,
+      couleur,
+      "slug": slug.current
+    },
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    },
+    "formats": formats[]->{
+      _id,
+      nom,
+      "slug": slug.current
+    },
+    "tags": tags[]->{
+      _id,
+      nom,
+      couleur,
+      "slug": slug.current
+    },
+    "portrait": portrait->{
+      _id,
       titre,
-      slug
+      "imageUrl": coalesce(image.asset->url, imageUrl),
+      "slug": slug.current,
+      accroche,
+      citation
     }
   }
 `
 
-// ========================================
-// REQUÊTES DE RECHERCHE ET FILTRAGE
-// ========================================
-
-// Recherche de productions par mot-clé
-export const SEARCH_PRODUCTIONS_QUERY = `
-  *[_type == "production" && (
-    titre match $searchTerm + "*" || 
-    description match $searchTerm + "*"
-  )] | order(datePublication desc) {
+// Articles pour la page Articles (actualités, guides - pas les histoires)
+export const ARTICLES_PAGE_QUERY = `
+  *[_type == "production" && coalesce(typeArticle, "article") in ["article", "actu", "guide", "interview"]] | order(datePublication desc) {
     _id,
     titre,
+    typeArticle,
     description,
-    imageUrl,
-    slug,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
     datePublication,
-    duree,
-    "verticale": verticale->nom,
-    "formats": formats[]->nom
+    tempsLecture,
+    "univers": univers->{
+      _id,
+      nom,
+      couleur,
+      "slug": slug.current
+    },
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    },
+    "tags": tags[]->{
+      _id,
+      nom,
+      couleur,
+      "slug": slug.current
+    }
   }
 `
 
-// Productions filtrées par tag
-export const PRODUCTIONS_BY_TAG_QUERY = `
-  *[_type == "production" && references($tagId)] | order(datePublication desc) {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    datePublication,
-    duree,
-    "verticale": verticale->nom,
-    "formats": formats[]->nom
-  }
-`
-
-// Productions filtrées par format
-export const PRODUCTIONS_BY_FORMAT_QUERY = `
-  *[_type == "production" && references($formatId)] | order(datePublication desc) {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    datePublication,
-    duree,
-    "verticale": verticale->nom
-  }
-`
-
-// ========================================
-// REQUÊTES POUR LA PAGE D'ACCUEIL
-// ========================================
-
-// Productions récentes (pour la section "Nouveautés")
-export const RECENT_PRODUCTIONS_QUERY = `
-  *[_type == "production"] | order(datePublication desc) [0...6] {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    datePublication,
-    duree,
-    "univers": univers->nom,
-    "verticale": verticale->nom
-  }
-`
-
-// Productions populaires/mises en avant
-export const FEATURED_PRODUCTIONS_QUERY = `
-  *[_type == "production" && miseEnAvant == true] | order(datePublication desc) [0...6] {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    datePublication,
-    duree,
-    "univers": univers->nom,
-    "verticale": verticale->nom
-  }
-`
-
-// ========================================
-// REQUÊTES POUR LES STATISTIQUES
-// ========================================
-
-// Compteurs pour le tableau de bord
-export const CONTENT_STATS_QUERY = `
-{
-  "totalProductions": count(*[_type == "production"]),
-  "totalPortraits": count(*[_type == "portrait"]),
-  "totalVideos": count(*[_type == "video"]),
-  "totalUnivers": count(*[_type == "univers"]),
-  "totalVerticales": count(*[_type == "verticale"]),
-  "totalSeries": count(*[_type == "serie"]),
-  "totalEpisodes": count(*[_type == "episode"])
-}
-`
-
-// ========================================
-// REQUÊTES POUR LA PAGINATION
-// ========================================
-
-// Productions avec pagination
-export const PRODUCTIONS_PAGINATED_QUERY = `
-{
-  "items": *[_type == "production"] | order(datePublication desc) [$start...$end] {
-    _id,
-    titre,
-    description,
-    imageUrl,
-    slug,
-    datePublication,
-    duree,
-    "verticale": verticale->nom,
-    "formats": formats[]->nom
-  },
-  "total": count(*[_type == "production"])
-}
-`
-
-// ========================================
-// REQUÊTES POUR LES CONTENUS CONNEXES
-// ========================================
-
-// Productions similaires (même verticale, même univers)
-export const RELATED_PRODUCTIONS_QUERY = `
-  *[_type == "production" && _id != $currentId && (
-    verticale._ref == $verticaleId || 
-    univers._ref == $universId
-  )] | order(datePublication desc) [0...4] {
-    _id,
-    titre,
-    imageUrl,
-    slug,
-    "verticale": verticale->nom
-  }
-`
-
-// ========================================
-// REQUÊTES POUR LES ARTICLES (ADAPTÉES POUR PRODUCTIONS)
-// ========================================
-
-// Requête pour un article/production spécifique
+// Article par slug (page article complète)
 export const ARTICLE_BY_SLUG_QUERY = `
   *[_type == "production" && slug.current == $slug][0] {
     _id,
@@ -478,15 +340,33 @@ export const ARTICLE_BY_SLUG_QUERY = `
         url
       }
     },
-    
-    // Contenu
+
+    // Contenu avec résolution des liens internes et articles liés
     body,
-    contenu,
+    contenu[] {
+      ...,
+      markDefs[] {
+        ...,
+        _type == "internalLink" => {
+          "slug": reference->slug.current
+        }
+      },
+      _type == "relatedArticles" => {
+        ...,
+        "articles": articles[]->{
+          _id,
+          "title": titre,
+          "slug": slug.current,
+          "imageUrl": coalesce(image.asset->url, imageUrl),
+          "verticale": verticale->{nom, couleurDominante}
+        }
+      }
+    },
     htmlContent,
     rawHtml,
     structuredContent,
     keyPoints,
-    
+
     // Auteur
     author-> {
       _id,
@@ -499,7 +379,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
       }
     },
     authorDetails,
-    
+
     // Métadonnées
     readingTime,
     "difficulty": niveau,
@@ -507,7 +387,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
     views,
     "likes": coalesce(stats.likes, 0),
     "vues": coalesce(stats.views, views, vues, 0),
-    
+
     // Relations
     categories[]-> {
       _id,
@@ -532,7 +412,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
       "couleurDominante": couleur,
       slug
     },
-    
+
     // Type de section
     sectionType-> {
       _id,
@@ -541,14 +421,14 @@ export const ARTICLE_BY_SLUG_QUERY = `
     },
     videoUrl,
     "duration": duree,
-    
+
     // SEO
     seo,
-    
+
     // Options
     displayOptions,
     isEssential,
-    
+
     // Articles liés
     relatedArticles[]-> {
       _id,
@@ -567,16 +447,16 @@ export const ARTICLE_BY_SLUG_QUERY = `
       }
     }
   }
-`;
+`
 
-// Requête pour les articles liés (si pas définis manuellement)
+// Articles liés (fallback si pas définis manuellement)
 export const RELATED_ARTICLES_QUERY = `
   *[_type == "production" && _id != $currentId && (
     count(categories[@._ref in $categoryIds]) > 0 ||
     univers._ref == $universId ||
     verticale._ref == $verticaleId ||
     count(tags[@._ref in $tagIds]) > 0
-  )] | order(datePublication desc) [0...4] {
+  )] | order(datePublication desc) [0...3] {
     _id,
     "title": titre,
     slug,
@@ -596,213 +476,7 @@ export const RELATED_ARTICLES_QUERY = `
       nom
     }
   }
-`;
-
-// Requête pour les articles par catégorie
-export const ARTICLES_BY_CATEGORY_QUERY = `
-  *[_type == "production" && references($categoryId)] | order(datePublication desc) {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "publishedAt": datePublication,
-    readingTime,
-    author-> {
-      name
-    },
-    categories[]-> {
-      title
-    }
-  }
-`;
-
-// Requête pour les articles par tag
-export const ARTICLES_BY_TAG_QUERY = `
-  *[_type == "production" && references($tagId)] | order(datePublication desc) {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "publishedAt": datePublication,
-    readingTime,
-    tags[]-> {
-      "title": nom,
-      "color": couleur
-    }
-  }
-`;
-
-// Requête pour les articles essentiels
-export const ESSENTIAL_ARTICLES_QUERY = `
-  *[_type == "production" && isEssential == true] | order(orderInEssentials asc) [0...5] {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    categories[]-> {
-      title,
-      slug
-    },
-    readingTime,
-    orderInEssentials
-  }
-`;
-
-// Requête pour récupérer plusieurs articles par IDs (pour les bookmarks)
-export const ARTICLES_BY_IDS_QUERY = `
-  *[_type == "production" && _id in $articleIds] {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "publishedAt": datePublication,
-    readingTime,
-    categories[0]-> {
-      title
-    },
-    verticale-> {
-      nom,
-      "couleurDominante": couleur
-    }
-  }
-`;
-
-// Recherche d'articles par mot-clé
-export const SEARCH_ARTICLES_QUERY = `
-  *[_type == "production" && (
-    titre match $searchTerm + "*" || 
-    description match $searchTerm + "*" ||
-    pt::text(body) match $searchTerm + "*"
-  )] | order(datePublication desc) {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "publishedAt": datePublication,
-    readingTime,
-    categories[]-> {
-      title
-    }
-  }
-`;
-
-// Articles récents
-export const RECENT_ARTICLES_QUERY = `
-  *[_type == "production"] | order(datePublication desc) [0...6] {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "publishedAt": datePublication,
-    readingTime,
-    author-> {
-      name
-    },
-    categories[]-> {
-      title
-    },
-    format
-  }
-`;
-
-// Articles par univers
-export const ARTICLES_BY_UNIVERS_QUERY = `
-  *[_type == "production" && univers->slug.current == $universId] | order(datePublication desc) {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "publishedAt": datePublication,
-    readingTime,
-    author-> {
-      name
-    },
-    categories[]-> {
-      title
-    },
-    tags[]-> {
-      "title": nom,
-      "color": couleur
-    }
-  }
-`;
-
-// Statistiques des articles
-export const ARTICLE_STATS_QUERY = `
-{
-  "totalArticles": count(*[_type == "production"]),
-  "totalEssentials": count(*[_type == "production" && isEssential == true]),
-  "totalVideos": count(*[_type == "production" && defined(videoUrl)]),
-  "totalByFormat": *[_type == "production"] | group(format) | order(count desc) {
-    "format": format,
-    "count": count
-  }
-}`;
-
-// Articles par type de section
-export const ARTICLES_BY_SECTION_TYPE_QUERY = `
-  *[_type == "production" && sectionType->slug.current == $sectionType] | order(datePublication desc) {
-    _id,
-    "title": titre,
-    slug,
-    mainImage {
-      asset-> {
-        url
-      }
-    },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "publishedAt": datePublication,
-    videoUrl,
-    "duration": duree,
-    views,
-    sectionType-> {
-      title
-    }
-  }
-`;
+`
 
 // Articles populaires (par vues)
 export const POPULAR_ARTICLES_QUERY = `
@@ -822,24 +496,98 @@ export const POPULAR_ARTICLES_QUERY = `
       title
     }
   }
-`;
+`
 
-// Articles les plus likés
-export const MOST_LIKED_ARTICLES_QUERY = `
-  *[_type == "production"] | order(coalesce(stats.likes, 0) desc) [0...10] {
+// ========================================
+// PORTRAITS / HISTOIRES
+// ========================================
+
+// Portrait par slug (détail)
+export const PORTRAIT_BY_SLUG_QUERY = `
+  *[_type == "portrait" && slug.current == $slug][0] {
     _id,
-    "title": titre,
+    titre,
+    categorie,
+    accroche,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
     slug,
-    mainImage {
-      asset-> {
-        url
-      }
+    biographie,
+    citation,
+    dateNaissance,
+    lieuNaissance,
+    "univers": univers->{
+      _id,
+      nom,
+      couleur,
+      "slug": slug.current
     },
-    "imageUrl": image.asset->url,
-    "excerpt": description,
-    "likes": coalesce(stats.likes, 0),
-    categories[]-> {
-      title
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    },
+    "tags": tags[]->{
+      _id,
+      nom,
+      "title": coalesce(title, nom),
+      couleur,
+      "slug": slug.current
+    },
+    "productions": productions[]->{
+      _id,
+      titre,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
+      "slug": slug.current,
+      description,
+      typeArticle
     }
   }
-`;
+`
+
+// Portraits pour la page Histoires
+export const HISTOIRES_PAGE_QUERY = `
+  *[_type == "portrait"] | order(ordre asc, _createdAt desc) {
+    _id,
+    titre,
+    categorie,
+    accroche,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
+    citation,
+    "univers": univers->{
+      _id,
+      nom,
+      couleur,
+      "slug": slug.current
+    },
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
+    },
+    "tags": tags[]->{
+      _id,
+      nom,
+      "title": coalesce(title, nom),
+      couleur,
+      "slug": slug.current
+    },
+    "articleSlug": productions[0]->slug.current
+  }
+`
+
+// ========================================
+// TAGS
+// ========================================
+
+// Tous les tags (pour filtres)
+export const TAGS_QUERY = `
+  *[_type == "tag"] | order(nom asc) {
+    _id,
+    nom,
+    slug,
+    couleur
+  }
+`

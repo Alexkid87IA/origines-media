@@ -1,5 +1,94 @@
+// src/components/Footer.tsx
+// Footer Premium - Complet et cohérent avec la Navbar
+
 import React, { useState } from 'react';
-import { ArrowRight, CheckCircle, Instagram, Twitter, Youtube, Facebook } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Check } from 'lucide-react';
+
+// ============ ICÔNES RÉSEAUX SOCIAUX ============
+const YouTubeIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+);
+
+const XIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
+
+const SnapchatIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.031-.063-.052-.15-.055-.225-.015-.243.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-1.107-.435-1.257-.93-1.197-1.273.09-.479.674-.793 1.168-.793.146 0 .27.029.383.074.42.194.789.3 1.104.3.234 0 .384-.06.465-.105l-.046-.569c-.098-1.626-.225-3.651.307-4.837C7.392 1.077 10.739.807 11.727.807l.419-.015h.06z"/>
+  </svg>
+);
+
+const FacebookIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+  </svg>
+);
+
+const TikTokIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+  </svg>
+);
+
+// ============ DATA ============
+const socialLinks = [
+  { icon: YouTubeIcon, href: 'https://youtube.com/@originesmedia', label: 'YouTube', color: '#FF0000' },
+  { icon: XIcon, href: 'https://x.com/originesmedia', label: 'X', color: '#1DA1F2' },
+  { icon: SnapchatIcon, href: 'https://snapchat.com/add/originesmedia', label: 'Snapchat', color: '#FFFC00' },
+  { icon: FacebookIcon, href: 'https://facebook.com/originesmedia', label: 'Facebook', color: '#1877F2' },
+  { icon: InstagramIcon, href: 'https://instagram.com/originesmedia', label: 'Instagram', color: '#E4405F' },
+  { icon: TikTokIcon, href: 'https://tiktok.com/@originesmedia', label: 'TikTok', color: '#00F2EA' },
+];
+
+const navigationColumns = [
+  {
+    title: 'Contenus',
+    links: [
+      { label: 'Séries', href: '/series' },
+      { label: 'Histoires', href: '/histoires' },
+      { label: 'Articles', href: '/articles' },
+      { label: 'Vidéos', href: '/videos' },
+      { label: 'Bibliothèque', href: '/bibliotheque' },
+    ]
+  },
+  {
+    title: 'Explorer',
+    links: [
+      { label: 'Tous les univers', href: '/univers' },
+      { label: 'Recommandations', href: '/recommandations' },
+      { label: 'Academy', href: '/academy' },
+    ]
+  },
+  {
+    title: 'Ensemble',
+    links: [
+      { label: 'Raconter son histoire', href: '/racontez-votre-histoire' },
+      { label: 'Rejoindre l\'équipe', href: '/rejoindre' },
+      { label: 'Newsletter', href: '/newsletter' },
+      { label: 'Partenariats', href: '/partenariats' },
+    ]
+  },
+  {
+    title: 'À propos',
+    links: [
+      { label: 'Notre mission', href: '/a-propos' },
+      { label: 'Contact', href: '/contact' },
+      { label: 'Média Kit', href: '/media-kit' },
+    ]
+  }
+];
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -9,352 +98,165 @@ const Footer: React.FC = () => {
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-
     setIsSubmitting(true);
-    
-    // Simulation d'envoi (remplacer par votre logique d'API)
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setIsSubmitted(true);
     setIsSubmitting(false);
   };
 
-  // Composant pour l'icône Snapchat
-  const SnapchatIcon = () => (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.024-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.748-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
-    </svg>
-  );
-
-  // Composant pour l'icône WhatsApp
-  const WhatsAppIcon = () => (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488"/>
-    </svg>
-  );
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#0A0A0A] border-t border-white/10 md:ml-[280px]">
-      {/* Main Footer Content */}
-      <div className="px-8 lg:px-16 py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
-            
-            {/* Left Column (40%) - Navigation & Resources */}
-            <div className="lg:col-span-2 space-y-12">
-              
-              {/* Logo */}
-              <div className="mb-12">
-                <a href="/" className="block group">
-                  <img
-                    src="https://26.staticbtf.eno.do/v1/12-default/6b72d83f2de3f869e8fae974e755f62d/media.jpg"
-                    alt="Origines Media"
-                    className="h-12 w-auto transition-all duration-500 group-hover:scale-105"
-                    style={{
-                      filter: 'brightness(1.1) contrast(1.05)'
-                    }}
-                  />
-                </a>
-              </div>
+    <footer className="bg-gray-50 text-gray-900">
+      {/* Gradient accent bar at top - tons doux */}
+      <div className="h-1 bg-gradient-to-r from-rose-300 via-violet-300 to-teal-300" />
 
-              {/* Navigation Sections */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8 lg:gap-12">
-                
-                {/* EXPLORER Section */}
-                <div>
-                  <h3 className="font-montserrat font-bold text-white text-sm tracking-[0.2em] uppercase mb-6 border-b border-white/10 pb-3">
-                    Explorer
-                  </h3>
-                  <ul className="space-y-4">
-                    <li>
-                      <a
-                        href="/essentiels"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Les Essentiels
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/fragments"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Fragments
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/univers"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Nos 10 Univers
-                      </a>
-                    </li>
-                    {/* ✨ NOUVEAU : Nos Séries */}
-                    <li>
-                      <a
-                        href="/series"
-                        className="group font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform flex items-center gap-2"
-                      >
-                        <span>Nos Séries</span>
-                        <span className="inline-flex items-center px-2 py-0.5 bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 border border-violet-400/30 rounded-full text-xs font-bold tracking-wider uppercase text-violet-300 group-hover:text-violet-200 transition-colors duration-300">
-                          Exclusif
-                        </span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* RESSOURCES Section */}
-                <div>
-                  <h3 className="font-montserrat font-bold text-white text-sm tracking-[0.2em] uppercase mb-6 border-b border-white/10 pb-3">
-                    Ressources
-                  </h3>
-                  <ul className="space-y-4">
-                    <li>
-                      <a
-                        href="/proposer-histoire"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Proposer mon histoire
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/media-kit"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Télécharger notre Média Kit
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/formats-concepts"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Nos Formats & Concepts
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* À PROPOS Section - ✅ CORRIGÉ */}
-                <div>
-                  <h3 className="font-montserrat font-bold text-white text-sm tracking-[0.2em] uppercase mb-6 border-b border-white/10 pb-3">
-                    À Propos
-                  </h3>
-                  <ul className="space-y-4">
-                    <li>
-                      <a
-                        href="/a-propos"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Notre histoire
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/equipe"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        L'équipe
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/partenariats"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Partenariats (Annonceurs)
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/contact"
-                        className="font-inter text-white/70 hover:text-white transition-colors duration-300 text-sm leading-relaxed hover:translate-x-1 transform transition-transform"
-                      >
-                        Contact
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* ✨ NOUVEAU : Section Réseaux Sociaux */}
-              <div className="pt-8 border-t border-white/10">
-                <h3 className="font-montserrat font-bold text-white text-sm tracking-[0.2em] uppercase mb-6">
-                  Suivez-nous
-                </h3>
-                
-                <div className="flex flex-wrap gap-4">
-                  <a
-                    href="https://instagram.com/originesmedia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-gradient-to-br hover:from-pink-500/20 hover:to-purple-500/20 hover:border-pink-400/30 hover:scale-110 transition-all duration-300"
-                    title="Instagram"
-                  >
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                  
-                  <a
-                    href="https://twitter.com/originesmedia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-gradient-to-br hover:from-blue-500/20 hover:to-cyan-500/20 hover:border-blue-400/30 hover:scale-110 transition-all duration-300"
-                    title="Twitter"
-                  >
-                    <Twitter className="w-5 h-5" />
-                  </a>
-                  
-                  <a
-                    href="https://youtube.com/originesmedia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-gradient-to-br hover:from-red-500/20 hover:to-red-600/20 hover:border-red-400/30 hover:scale-110 transition-all duration-300"
-                    title="YouTube"
-                  >
-                    <Youtube className="w-5 h-5" />
-                  </a>
-                  
-                  <a
-                    href="https://snapchat.com/add/originesmedia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-gradient-to-br hover:from-yellow-400/20 hover:to-yellow-500/20 hover:border-yellow-400/30 hover:scale-110 transition-all duration-300"
-                    title="Snapchat"
-                  >
-                    <SnapchatIcon />
-                  </a>
-                  
-                  <a
-                    href="https://facebook.com/originesmedia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-gradient-to-br hover:from-blue-600/20 hover:to-blue-800/20 hover:border-blue-600/30 hover:scale-110 transition-all duration-300"
-                    title="Facebook"
-                  >
-                    <Facebook className="w-5 h-5" />
-                  </a>
-                  
-                  <a
-                    href="https://wa.me/33123456789"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-gradient-to-br hover:from-green-500/20 hover:to-green-600/20 hover:border-green-400/30 hover:scale-110 transition-all duration-300"
-                    title="WhatsApp"
-                  >
-                    <WhatsAppIcon />
-                  </a>
-                </div>
-              </div>
+      {/* Newsletter Section - Top */}
+      <div className="border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-6 lg:px-8 py-12">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+            {/* Left - Text */}
+            <div className="lg:max-w-md">
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
+                Restez inspirés
+              </h3>
+              <p className="text-gray-500 text-sm">
+                Recevez nos meilleurs récits et recommandations directement dans votre boîte mail.
+              </p>
             </div>
 
-            {/* Right Column (60%) - Newsletter Box */}
-            <div className="lg:col-span-3">
-              <div className="bg-[#0F0F0F] border border-white/10 rounded-3xl p-8 lg:p-12 h-full flex flex-col justify-center">
-                
-                {!isSubmitted ? (
-                  <>
-                    {/* Newsletter Header */}
-                    <div className="mb-8">
-                      <h3 className="font-montserrat font-bold text-3xl lg:text-4xl xl:text-5xl text-white mb-6 tracking-wider uppercase leading-tight">
-                        Devenir
-                        <br />
-                        <span className="gradient-text-animated">Initié</span>
-                      </h3>
-                      
-                      <p className="font-inter text-white/80 text-lg lg:text-xl leading-relaxed max-w-2xl">
-                        Rejoignez le cercle privé d'Origines. Recevez chaque semaine une analyse exclusive, 
-                        les coulisses de nos productions et nos meilleures lectures.
-                      </p>
-                    </div>
-
-                    {/* Newsletter Form */}
-                    <form onSubmit={handleNewsletterSubmit} className="space-y-6">
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Votre adresse email"
-                          required
-                          className="flex-1 px-6 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 font-inter focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all duration-300 backdrop-blur-sm"
-                        />
-                        
-                        <button
-                          type="submit"
-                          disabled={isSubmitting || !email.trim()}
-                          className="group relative px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-inter font-bold tracking-widest uppercase text-sm rounded-xl transition-all duration-500 hover:from-violet-500 hover:to-fuchsia-500 hover:scale-105 hover:shadow-2xl hover:shadow-violet-500/25 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden whitespace-nowrap"
-                        >
-                          {/* Background Animation */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-600 to-violet-600 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
-                          
-                          {/* Content */}
-                          <div className="relative z-10 flex items-center gap-3">
-                            {isSubmitting ? (
-                              <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                <span>Envoi...</span>
-                              </>
-                            ) : (
-                              <>
-                                <span>Je Rejoins</span>
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                              </>
-                            )}
-                          </div>
-                        </button>
-                      </div>
-
-                      {/* Privacy Notice */}
-                      <p className="text-white/50 text-xs leading-relaxed">
-                        En vous inscrivant, vous acceptez de recevoir nos emails. Désabonnement possible à tout moment. 
-                        Vos données sont protégées et ne seront jamais partagées.
-                      </p>
-                    </form>
-                  </>
-                ) : (
-                  /* Success State */
-                  <div className="text-center py-8">
-                    <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <CheckCircle className="w-8 h-8 text-emerald-400" />
-                    </div>
-                    
-                    <h3 className="font-montserrat font-bold text-2xl lg:text-3xl text-white mb-4">
-                      Bienvenue dans le cercle !
-                    </h3>
-                    
-                    <p className="font-inter text-white/80 text-lg leading-relaxed">
-                      Votre première analyse exclusive vous attend dans votre boîte mail. 
-                      Vérifiez également vos spams si vous ne la voyez pas.
-                    </p>
+            {/* Right - Form */}
+            <div className="flex-1 lg:max-w-md">
+              {!isSubmitted ? (
+                <form onSubmit={handleNewsletterSubmit} className="flex gap-3">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="votre@email.com"
+                    required
+                    className="flex-1 px-5 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-100 transition-all text-sm"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!email.trim() || isSubmitting}
+                    className="px-6 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white"
+                  >
+                    {isSubmitting ? (
+                      'Envoi...'
+                    ) : (
+                      <>
+                        S'inscrire
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </form>
+              ) : (
+                <div className="flex items-center gap-3 px-5 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-4 h-4 text-white" />
                   </div>
-                )}
-              </div>
+                  <p className="text-emerald-700 text-sm">
+                    Merci ! Vous recevrez bientôt nos récits inspirants.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sub-Footer - Legal Line */}
-      <div className="border-t border-white/10 py-6 px-8 lg:px-16">
-        <div className="max-w-7xl mx-auto">
-          <p className="font-inter text-white/50 text-xs text-center leading-relaxed">
-            © 2025 Origines Media 
-            <span className="mx-2">|</span>
-            <a href="/mentions-legales" className="hover:text-white/70 transition-colors duration-300">
-              Mentions Légales
-            </a>
-            <span className="mx-2">|</span>
-            <a href="/cgu" className="hover:text-white/70 transition-colors duration-300">
-              CGU
-            </a>
-            <span className="mx-2">|</span>
-            <a href="/politique-confidentialite" className="hover:text-white/70 transition-colors duration-300">
-              Politique de confidentialité
-            </a>
-          </p>
+      {/* Main Footer Content */}
+      <div className="max-w-5xl mx-auto px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
+
+          {/* Left - Brand & Social */}
+          <div className="lg:col-span-4">
+            <Link to="/" className="inline-block mb-6">
+              <img
+                src="/logo-origines.png"
+                alt="Origines Media"
+                className="h-12 w-auto"
+              />
+            </Link>
+
+            <p className="text-gray-500 mb-8 max-w-xs leading-relaxed">
+              Des récits qui inspirent, transforment et éclairent. Rejoignez notre communauté de lecteurs passionnés.
+            </p>
+
+            {/* Social Links - avec couleurs de marque au hover */}
+            <div className="flex items-center gap-1">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 text-gray-400 hover:bg-gray-100 transition-all rounded-lg"
+                  aria-label={social.label}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = social.color;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '';
+                  }}
+                >
+                  <social.icon />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Right - Navigation Columns */}
+          <div className="lg:col-span-8">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+              {navigationColumns.map((column) => (
+                <div key={column.title}>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-5 uppercase tracking-wider">
+                    {column.title}
+                  </h4>
+                  <ul className="space-y-3">
+                    {column.links.map((link) => (
+                      <li key={link.href}>
+                        <Link
+                          to={link.href}
+                          className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-block"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-gray-200">
+        <div className="max-w-5xl mx-auto px-6 lg:px-8 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Copyright */}
+            <p className="text-sm text-gray-400">
+              © {currentYear} Origines Media. Tous droits réservés.
+            </p>
+
+            {/* Legal Links */}
+            <div className="flex items-center gap-6 text-sm">
+              <Link to="/mentions-legales" className="text-gray-400 hover:text-gray-600 transition-colors">
+                Mentions légales
+              </Link>
+              <Link to="/cgu" className="text-gray-400 hover:text-gray-600 transition-colors">
+                CGU
+              </Link>
+              <Link to="/politique-confidentialite" className="text-gray-400 hover:text-gray-600 transition-colors">
+                Confidentialité
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

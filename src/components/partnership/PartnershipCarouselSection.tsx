@@ -1,5 +1,176 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Coffee, Users, TrendingUp, Zap, Calendar, Target, Heart, Share2, DollarSign, Package, Home, Brain, BarChart3, Rocket, Film, Globe, Shield } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Coffee, Users, TrendingUp, Zap, Calendar, Target, Heart, Share2, DollarSign, Package, Home, Brain, BarChart3, Rocket, Film, Globe, Shield, type LucideIcon } from 'lucide-react';
+
+// ============ SLIDE TYPES ============
+
+interface SlideBase {
+  id: number;
+  title: string;
+  subtitle: string;
+  bgGradient: string;
+  icon: LucideIcon;
+}
+
+interface SlideComponent {
+  icon: LucideIcon;
+  label: string;
+  desc: string;
+}
+
+interface SlideVerticale {
+  name: string;
+  metric: string;
+  sponsor: string;
+  color: string;
+}
+
+interface SlideEcosystemStep {
+  step: string;
+  desc: string;
+  icon: LucideIcon;
+}
+
+interface SlideFlowStep {
+  source: string;
+  action: string;
+  result: string;
+  icon: LucideIcon;
+}
+
+interface SlideOutput {
+  format: string;
+  detail: string;
+}
+
+interface SlideFeature {
+  name: string;
+  desc: string;
+  icon: LucideIcon;
+}
+
+interface SlideRevenue {
+  name: string;
+  amount: string;
+  color: string;
+}
+
+interface SlideMetric {
+  label: string;
+  value: string;
+  growth: string;
+}
+
+interface SlidePhase {
+  name: string;
+  goal: string;
+  desc: string;
+  icon: LucideIcon;
+}
+
+interface SlideStat {
+  role: string;
+  detail: string;
+}
+
+interface SlideProjection {
+  timeline: string;
+  metric: string;
+  equivalent: string;
+}
+
+interface SlideAction {
+  text: string;
+}
+
+interface CoverSlide extends SlideBase {
+  type: 'cover';
+  punchline: string;
+}
+
+interface ProblemSlide extends SlideBase {
+  type: 'problem';
+  points: string[];
+  conclusion: string;
+}
+
+interface SolutionSlide extends SlideBase {
+  type: 'solution';
+  components: SlideComponent[];
+  flow: string;
+}
+
+interface VerticalesSlide extends SlideBase {
+  type: 'verticales';
+  verticales: SlideVerticale[];
+  total: string;
+}
+
+interface TrocSlide extends SlideBase {
+  type: 'troc';
+  ecosystem: SlideEcosystemStep[];
+  stats: {
+    monthly: string;
+    value: string;
+    impact: string;
+  };
+}
+
+interface OrchestrationSlide extends SlideBase {
+  type: 'orchestration';
+  flow: SlideFlowStep[];
+  magic: string;
+}
+
+interface ProductionSlide extends SlideBase {
+  type: 'production';
+  formula: {
+    input: string;
+    outputs: SlideOutput[];
+  };
+  stats: string;
+}
+
+interface TechSlide extends SlideBase {
+  type: 'tech';
+  features: SlideFeature[];
+  result: string;
+}
+
+interface BusinessSlide extends SlideBase {
+  type: 'business';
+  revenues: SlideRevenue[];
+  distribution: string;
+}
+
+interface TractionSlide extends SlideBase {
+  type: 'traction';
+  metrics: SlideMetric[];
+  highlight: string;
+}
+
+interface RoadmapSlide extends SlideBase {
+  type: 'roadmap';
+  phases: SlidePhase[];
+}
+
+interface TeamSlide extends SlideBase {
+  type: 'team';
+  stats: SlideStat[];
+  culture: string;
+}
+
+interface ImpactSlide extends SlideBase {
+  type: 'impact';
+  projections: SlideProjection[];
+}
+
+interface CtaSlide extends SlideBase {
+  type: 'cta';
+  actions: SlideAction[];
+  punchline: string;
+}
+
+type Slide = CoverSlide | ProblemSlide | SolutionSlide | VerticalesSlide | TrocSlide | OrchestrationSlide | ProductionSlide | TechSlide | BusinessSlide | TractionSlide | RoadmapSlide | TeamSlide | ImpactSlide | CtaSlide;
 
 const PartnershipCarouselSection: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -9,7 +180,7 @@ const PartnershipCarouselSection: React.FC = () => {
   const [touchEnd, setTouchEnd] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
 
-  const slides = [
+  const slides: Slide[] = [
     {
       id: 1,
       type: 'cover',
@@ -287,7 +458,7 @@ const PartnershipCarouselSection: React.FC = () => {
     setIsAutoPlaying(false);
   };
 
-  const renderSlideContent = (slide: any) => {
+  const renderSlideContent = (slide: Slide) => {
     switch (slide.type) {
       case 'cover':
         return (
@@ -302,7 +473,7 @@ const PartnershipCarouselSection: React.FC = () => {
               />
               
               {/* Symbole × */}
-              <span className="font-bold text-2xl md:text-4xl lg:text-5xl text-white/80">×</span>
+              <span className="font-bold text-2xl md:text-4xl lg:text-5xl text-gray-600">×</span>
               
               {/* Logo Origines */}
               <img 
@@ -312,8 +483,8 @@ const PartnershipCarouselSection: React.FC = () => {
               />
             </div>
             
-            <p className="text-base md:text-xl text-white/80 mb-4 md:mb-8">{slide.subtitle}</p>
-            <p className="text-sm md:text-lg text-white/60 max-w-3xl italic px-4">{slide.punchline}</p>
+            <p className="text-base md:text-xl text-gray-600 mb-4 md:mb-8">{slide.subtitle}</p>
+            <p className="text-sm md:text-lg text-gray-500 max-w-3xl italic px-4">{slide.punchline}</p>
           </div>
         );
 
@@ -321,13 +492,13 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-red-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-red-300 mb-4 md:mb-8">{slide.subtitle}</p>
             <div className="space-y-2 md:space-y-4 mb-4 md:mb-8">
               {slide.points.map((point: string, idx: number) => (
                 <div key={idx} className="flex items-start gap-2 md:gap-3">
                   <span className="text-red-400 mt-0.5 md:mt-1">•</span>
-                  <p className="text-sm md:text-base text-white/80">{point}</p>
+                  <p className="text-sm md:text-base text-gray-600">{point}</p>
                 </div>
               ))}
             </div>
@@ -341,14 +512,14 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-violet-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-violet-300 mb-4 md:mb-8">{slide.subtitle}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-8">
-              {slide.components.map((comp: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4 hover:border-violet-500/30 transition-all">
+              {slide.components.map((comp, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4 hover:border-violet-500/30 transition-all">
                   <comp.icon className="w-6 h-6 md:w-8 md:h-8 text-violet-400 mb-1 md:mb-2" />
-                  <h4 className="font-bold text-white text-xs md:text-sm mb-0.5 md:mb-1">{comp.label}</h4>
-                  <p className="text-xs text-white/60">{comp.desc}</p>
+                  <h4 className="font-bold text-gray-900 text-xs md:text-sm mb-0.5 md:mb-1">{comp.label}</h4>
+                  <p className="text-xs text-gray-500">{comp.desc}</p>
                 </div>
               ))}
             </div>
@@ -362,21 +533,21 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-blue-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-blue-300 mb-4 md:mb-8">{slide.subtitle}</p>
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-              {slide.verticales.map((vert: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4">
+              {slide.verticales.map((vert, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="mb-2 sm:mb-0">
-                      <h4 className="font-bold text-sm md:text-base text-white" style={{ color: vert.color }}>
+                      <h4 className="font-bold text-sm md:text-base text-gray-900" style={{ color: vert.color }}>
                         {vert.name}
                       </h4>
-                      <p className="text-xs md:text-sm text-white/60">{vert.metric}</p>
+                      <p className="text-xs md:text-sm text-gray-500">{vert.metric}</p>
                     </div>
                     <div className="sm:text-right">
-                      <p className="text-xs text-white/40">Sponsor type</p>
-                      <p className="text-xs md:text-sm font-semibold text-white/80">{vert.sponsor}</p>
+                      <p className="text-xs text-gray-400">Sponsor type</p>
+                      <p className="text-xs md:text-sm font-semibold text-gray-600">{vert.sponsor}</p>
                     </div>
                   </div>
                 </div>
@@ -392,16 +563,16 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-green-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-green-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-              {slide.ecosystem.map((step: any, idx: number) => (
-                <div key={idx} className="flex items-center gap-2 md:gap-4 bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3">
+              {slide.ecosystem.map((step, idx) => (
+                <div key={idx} className="flex items-center gap-2 md:gap-4 bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-2 md:p-3">
                   <step.icon className="w-5 h-5 md:w-6 md:h-6 text-green-400 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-white text-xs md:text-sm truncate">{step.step}</h4>
-                    <p className="text-xs text-white/60 truncate">{step.desc}</p>
+                    <h4 className="font-bold text-gray-900 text-xs md:text-sm truncate">{step.step}</h4>
+                    <p className="text-xs text-gray-500 truncate">{step.desc}</p>
                   </div>
                   {idx < slide.ecosystem.length - 1 && (
                     <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-green-400/50 flex-shrink-0" />
@@ -414,15 +585,15 @@ const PartnershipCarouselSection: React.FC = () => {
               <div className="grid grid-cols-3 gap-2 md:gap-4 text-center">
                 <div>
                   <p className="font-bold text-xs md:text-base text-green-400">{slide.stats.monthly}</p>
-                  <p className="text-xs text-white/60">Volume</p>
+                  <p className="text-xs text-gray-500">Volume</p>
                 </div>
                 <div>
                   <p className="font-bold text-xs md:text-base text-emerald-400">{slide.stats.value}</p>
-                  <p className="text-xs text-white/60">Valeur</p>
+                  <p className="text-xs text-gray-500">Valeur</p>
                 </div>
                 <div>
                   <p className="font-bold text-xs md:text-base text-cyan-400">{slide.stats.impact}</p>
-                  <p className="text-xs text-white/60">Impact</p>
+                  <p className="text-xs text-gray-500">Impact</p>
                 </div>
               </div>
             </div>
@@ -433,21 +604,21 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-orange-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-orange-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
-              {slide.flow.map((step: any, idx: number) => (
+              {slide.flow.map((step, idx) => (
                 <div key={idx} className="relative">
                   <div className="flex items-center gap-2 md:gap-4">
                     <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-orange-500/20 to-purple-500/20 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0">
-                      <step.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                      <step.icon className="w-5 h-5 md:w-6 md:h-6 text-gray-900" />
                     </div>
-                    <div className="flex-1 bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4">
+                    <div className="flex-1 bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
-                          <h4 className="font-bold text-white text-xs md:text-sm">{step.source}</h4>
-                          <p className="text-xs text-white/60">{step.action}</p>
+                          <h4 className="font-bold text-gray-900 text-xs md:text-sm">{step.source}</h4>
+                          <p className="text-xs text-gray-500">{step.action}</p>
                         </div>
                         <div className="sm:text-right">
                           <p className="font-bold text-xs md:text-sm text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400">
@@ -465,7 +636,7 @@ const PartnershipCarouselSection: React.FC = () => {
             </div>
             
             <div className="bg-gradient-to-r from-orange-500/20 to-purple-500/20 rounded-lg md:rounded-xl p-3 md:p-4">
-              <p className="text-sm md:text-base text-center text-white font-semibold">{slide.magic}</p>
+              <p className="text-sm md:text-base text-center text-gray-900 font-semibold">{slide.magic}</p>
             </div>
           </div>
         );
@@ -474,19 +645,19 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-pink-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-pink-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
-            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-4 md:p-6 mb-4 md:mb-6">
-              <p className="text-sm md:text-base text-white/80 mb-3 md:mb-4 text-center">{slide.formula.input}</p>
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-4 md:p-6 mb-4 md:mb-6">
+              <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4 text-center">{slide.formula.input}</p>
               <div className="flex justify-center mb-3 md:mb-4">
                 <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-pink-400 animate-pulse" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
-                {slide.formula.outputs.map((output: any, idx: number) => (
+                {slide.formula.outputs.map((output, idx) => (
                   <div key={idx} className="bg-pink-500/10 rounded-lg p-2 md:p-3">
                     <p className="font-bold text-xs md:text-sm text-pink-400">{output.format}</p>
-                    <p className="text-xs text-white/60">{output.detail}</p>
+                    <p className="text-xs text-gray-500">{output.detail}</p>
                   </div>
                 ))}
               </div>
@@ -502,15 +673,15 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-cyan-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-cyan-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
-              {slide.features.map((feature: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4">
+              {slide.features.map((feature, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4">
                   <feature.icon className="w-6 h-6 md:w-8 md:h-8 text-cyan-400 mb-1 md:mb-2" />
-                  <h4 className="font-bold text-white text-xs md:text-sm mb-0.5 md:mb-1">{feature.name}</h4>
-                  <p className="text-xs text-white/60">{feature.desc}</p>
+                  <h4 className="font-bold text-gray-900 text-xs md:text-sm mb-0.5 md:mb-1">{feature.name}</h4>
+                  <p className="text-xs text-gray-500">{feature.desc}</p>
                 </div>
               ))}
             </div>
@@ -525,14 +696,14 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-emerald-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-emerald-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-              {slide.revenues.map((revenue: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4">
+              {slide.revenues.map((revenue, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm md:text-base font-semibold text-white">{revenue.name}</h4>
+                    <h4 className="text-sm md:text-base font-semibold text-gray-900">{revenue.name}</h4>
                     <span className="font-bold text-sm md:text-lg" style={{ color: revenue.color }}>
                       {revenue.amount}
                     </span>
@@ -551,13 +722,13 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-orange-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-orange-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
-              {slide.metrics.map((metric: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4 text-center">
-                  <p className="text-xs md:text-sm text-white/60 mb-0.5 md:mb-1">{metric.label}</p>
+              {slide.metrics.map((metric, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4 text-center">
+                  <p className="text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1">{metric.label}</p>
                   <p className="font-black text-lg md:text-2xl text-orange-400">{metric.value}</p>
                   <p className="text-xs text-green-400">{metric.growth}</p>
                 </div>
@@ -574,20 +745,20 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-violet-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-violet-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="space-y-3 md:space-y-4">
-              {slide.phases.map((phase: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4">
+              {slide.phases.map((phase, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4">
                   <div className="flex items-center gap-3 md:gap-4">
                     <phase.icon className="w-8 h-8 md:w-10 md:h-10 text-violet-400 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 md:gap-2">
-                        <h4 className="font-bold text-white text-sm md:text-base">{phase.name}</h4>
+                        <h4 className="font-bold text-gray-900 text-sm md:text-base">{phase.name}</h4>
                         <span className="text-xs md:text-sm text-violet-400">{phase.goal}</span>
                       </div>
-                      <p className="text-xs text-white/60">{phase.desc}</p>
+                      <p className="text-xs text-gray-500">{phase.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -600,13 +771,13 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-indigo-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-indigo-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-              {slide.stats.map((stat: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4">
-                  <h4 className="font-bold text-white text-sm md:text-base mb-0.5 md:mb-1">{stat.role}</h4>
+              {slide.stats.map((stat, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4">
+                  <h4 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{stat.role}</h4>
                   <p className="text-xs md:text-sm text-indigo-300">{stat.detail}</p>
                 </div>
               ))}
@@ -622,15 +793,15 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col justify-center h-full p-6 md:p-12">
             <slide.icon className="w-8 h-8 md:w-12 md:h-12 text-green-400 mb-4 md:mb-6" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-1 md:mb-2">{slide.title}</h2>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-1 md:mb-2">{slide.title}</h2>
             <p className="text-sm md:text-lg text-green-300 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="space-y-3 md:space-y-4">
-              {slide.projections.map((proj: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-3 md:p-4">
+              {slide.projections.map((proj, idx) => (
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-lg md:rounded-xl p-3 md:p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-0.5 md:mb-1">
                     <span className="font-bold text-green-400 text-sm md:text-base">{proj.timeline}</span>
-                    <span className="font-bold text-base md:text-xl text-white">{proj.metric}</span>
+                    <span className="font-bold text-base md:text-xl text-gray-900">{proj.metric}</span>
                   </div>
                   <p className="text-xs md:text-sm text-green-300">{proj.equivalent}</p>
                 </div>
@@ -643,20 +814,20 @@ const PartnershipCarouselSection: React.FC = () => {
         return (
           <div className="flex flex-col items-center justify-center h-full text-center p-6 md:p-12">
             <slide.icon className="w-12 h-12 md:w-16 md:h-16 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400 mb-4 md:mb-8" />
-            <h2 className="font-bold text-xl md:text-3xl text-white mb-2 md:mb-4">{slide.title}</h2>
-            <p className="text-sm md:text-lg text-white/80 mb-4 md:mb-8">{slide.subtitle}</p>
+            <h2 className="font-bold text-xl md:text-3xl text-gray-900 mb-2 md:mb-4">{slide.title}</h2>
+            <p className="text-sm md:text-lg text-gray-600 mb-4 md:mb-8">{slide.subtitle}</p>
             
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-8 text-left w-full max-w-md">
-              {slide.actions.map((action: any, idx: number) => (
+              {slide.actions.map((action, idx) => (
                 <div key={idx} className="flex items-center gap-2 md:gap-3">
                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400 flex-shrink-0" />
-                  <p className="text-sm md:text-base text-white/80">{action.text}</p>
+                  <p className="text-sm md:text-base text-gray-600">{action.text}</p>
                 </div>
               ))}
             </div>
             
-            <div className="bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 rounded-lg md:rounded-xl p-4 md:p-6 border border-white/20">
-              <p className="text-base md:text-xl text-white font-semibold">{slide.punchline}</p>
+            <div className="bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 rounded-lg md:rounded-xl p-4 md:p-6 border border-gray-300">
+              <p className="text-base md:text-xl text-gray-900 font-semibold">{slide.punchline}</p>
             </div>
           </div>
         );
@@ -690,13 +861,13 @@ const PartnershipCarouselSection: React.FC = () => {
             <div className="w-12 md:w-24 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
           </div>
           
-          <h2 className="font-black text-2xl md:text-4xl lg:text-6xl uppercase tracking-tight text-white mb-2 md:mb-4">
+          <h2 className="font-black text-2xl md:text-4xl lg:text-6xl uppercase tracking-tight text-gray-900 mb-2 md:mb-4">
             La transformation
             <br />
             <span className="gradient-text-animated text-3xl md:text-5xl lg:text-7xl">en {slides.length} slides</span>
           </h2>
           
-          <p className="text-white/60 text-sm md:text-lg max-w-2xl mx-auto px-4">
+          <p className="text-gray-500 text-sm md:text-lg max-w-2xl mx-auto px-4">
             Comment transformer 1.5M de membres Facebook en empire média de l'entraide
           </p>
         </div>
@@ -718,7 +889,7 @@ const PartnershipCarouselSection: React.FC = () => {
               onTouchEnd={handleTouchEnd}
             >
               {/* Shadow - Simplified on mobile */}
-              <div className="hidden md:block absolute -bottom-8 left-1/2 -translate-x-1/2 w-4/5 h-24 bg-black/40 blur-2xl rounded-full" />
+              <div className="hidden md:block absolute -bottom-8 left-1/2 -translate-x-1/2 w-4/5 h-24 bg-gray-50 blur-2xl rounded-full" />
               
               {/* Card Container */}
               <div className="relative h-full group">
@@ -727,7 +898,7 @@ const PartnershipCarouselSection: React.FC = () => {
                 
                 {/* Main card */}
                 <div 
-                  className={`relative h-full bg-gradient-to-br ${slides[currentSlide].bgGradient} backdrop-blur-xl md:backdrop-blur-2xl rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-500`}
+                  className={`relative h-full bg-gradient-to-br ${slides[currentSlide].bgGradient} shadow-sm md:backdrop-blur-2xl rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-500`}
                   style={{
                     boxShadow: `
                       0 10px 25px -5px rgba(0, 0, 0, 0.3),
@@ -745,10 +916,10 @@ const PartnershipCarouselSection: React.FC = () => {
                   </div>
                   
                   {/* Slide number indicator */}
-                  <div className="absolute top-3 right-3 md:top-6 md:right-6 flex items-center gap-1 md:gap-2 bg-black/20 backdrop-blur-sm rounded-full px-2 py-1 md:px-3 md:py-1.5">
-                    <span className="text-xs text-white/40">Slide</span>
-                    <span className="font-bold text-sm md:text-xl text-white">{currentSlide + 1}</span>
-                    <span className="text-xs text-white/40">/ {slides.length}</span>
+                  <div className="absolute top-3 right-3 md:top-6 md:right-6 flex items-center gap-1 md:gap-2 bg-gray-50 shadow-sm rounded-full px-2 py-1 md:px-3 md:py-1.5">
+                    <span className="text-xs text-gray-400">Slide</span>
+                    <span className="font-bold text-sm md:text-xl text-gray-900">{currentSlide + 1}</span>
+                    <span className="text-xs text-gray-400">/ {slides.length}</span>
                   </div>
                 </div>
               </div>
@@ -756,15 +927,15 @@ const PartnershipCarouselSection: React.FC = () => {
               {/* Navigation Arrows - Hidden on mobile (using swipe) */}
               <button
                 onClick={prevSlide}
-                className="hidden md:flex absolute -left-16 lg:-left-20 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl items-center justify-center hover:bg-white/20 transition-all duration-300 group hover:scale-110"
+                className="hidden md:flex absolute -left-16 lg:-left-20 top-1/2 -translate-y-1/2 w-14 h-14 bg-gray-100 shadow-sm border border-gray-300 rounded-2xl items-center justify-center hover:bg-white/20 transition-all duration-300 group hover:scale-110"
               >
-                <ChevronLeft className="w-7 h-7 text-white group-hover:text-orange-300 transition-colors" />
+                <ChevronLeft className="w-7 h-7 text-gray-900 group-hover:text-orange-300 transition-colors" />
               </button>
               <button
                 onClick={nextSlide}
-                className="hidden md:flex absolute -right-16 lg:-right-20 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl items-center justify-center hover:bg-white/20 transition-all duration-300 group hover:scale-110"
+                className="hidden md:flex absolute -right-16 lg:-right-20 top-1/2 -translate-y-1/2 w-14 h-14 bg-gray-100 shadow-sm border border-gray-300 rounded-2xl items-center justify-center hover:bg-white/20 transition-all duration-300 group hover:scale-110"
               >
-                <ChevronRight className="w-7 h-7 text-white group-hover:text-purple-300 transition-colors" />
+                <ChevronRight className="w-7 h-7 text-gray-900 group-hover:text-purple-300 transition-colors" />
               </button>
             </div>
           </div>
@@ -773,15 +944,15 @@ const PartnershipCarouselSection: React.FC = () => {
           <div className="flex md:hidden justify-center gap-4 mb-6">
             <button
               onClick={prevSlide}
-              className="w-12 h-12 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl flex items-center justify-center"
+              className="w-12 h-12 bg-gray-100 shadow-sm border border-gray-300 rounded-xl flex items-center justify-center"
             >
-              <ChevronLeft className="w-6 h-6 text-white" />
+              <ChevronLeft className="w-6 h-6 text-gray-900" />
             </button>
             <button
               onClick={nextSlide}
-              className="w-12 h-12 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl flex items-center justify-center"
+              className="w-12 h-12 bg-gray-100 shadow-sm border border-gray-300 rounded-xl flex items-center justify-center"
             >
-              <ChevronRight className="w-6 h-6 text-white" />
+              <ChevronRight className="w-6 h-6 text-gray-900" />
             </button>
           </div>
 
@@ -801,7 +972,7 @@ const PartnershipCarouselSection: React.FC = () => {
                   }`} />
                   {/* Tooltip - Hidden on mobile */}
                   <div className="hidden md:block absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                    <div className="bg-black/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                    <div className="bg-white shadow-sm text-gray-900 text-xs px-2 py-1 rounded whitespace-nowrap">
                       {slide.title}
                     </div>
                   </div>
@@ -815,10 +986,10 @@ const PartnershipCarouselSection: React.FC = () => {
             {/* Auto-play toggle */}
             <button
               onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              className={`text-xs md:text-sm px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border backdrop-blur-sm transition-all duration-300 flex items-center gap-2 md:gap-3 ${
+              className={`text-xs md:text-sm px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border shadow-sm transition-all duration-300 flex items-center gap-2 md:gap-3 ${
                 isAutoPlaying 
-                  ? 'bg-gradient-to-r from-orange-500/20 to-purple-500/20 border-orange-500/50 text-white' 
-                  : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20 hover:text-white/80'
+                  ? 'bg-gradient-to-r from-orange-500/20 to-purple-500/20 border-orange-500/50 text-gray-900' 
+                  : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100 hover:border-gray-300 hover:text-gray-600'
               }`}
             >
               <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${isAutoPlaying ? 'bg-green-400 animate-pulse' : 'bg-white/40'}`} />
@@ -826,7 +997,7 @@ const PartnershipCarouselSection: React.FC = () => {
             </button>
 
             {/* Swipe indicator for mobile */}
-            <p className="md:hidden text-xs text-white/40 flex items-center gap-2">
+            <p className="md:hidden text-xs text-gray-400 flex items-center gap-2">
               <ChevronLeft className="w-3 h-3" />
               Glissez pour naviguer
               <ChevronRight className="w-3 h-3" />
@@ -834,7 +1005,7 @@ const PartnershipCarouselSection: React.FC = () => {
 
             {/* Download/Share section */}
             <div className="flex items-center gap-4 text-center">
-              <p className="text-xs md:text-sm text-white/40">
+              <p className="text-xs md:text-sm text-gray-400">
                 Présentation optimisée pour convaincre en 5 minutes
               </p>
             </div>

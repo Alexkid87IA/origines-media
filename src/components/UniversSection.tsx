@@ -147,9 +147,10 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
   }, []);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A] py-20 relative overflow-hidden"
+      aria-labelledby="univers-section-title"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
@@ -170,7 +171,7 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
           <div className="w-12 h-px bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" />
         </div>
         
-        <h2 className="font-montserrat font-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase tracking-wider text-white mb-6 leading-[0.9]">
+        <h2 id="univers-section-title" className="font-montserrat font-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase tracking-wider text-white mb-6 leading-[0.9]">
           Explorer nos
           <br />
           <span className="gradient-text-animated">Univers</span>
@@ -193,14 +194,15 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
             className={`
               w-12 h-12 rounded-full border border-white/20 backdrop-blur-sm
               flex items-center justify-center transition-all duration-300
-              ${canScrollLeft 
-                ? 'text-white hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110 cursor-pointer' 
+              ${canScrollLeft
+                ? 'text-white hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110 cursor-pointer'
                 : 'text-white/30 cursor-not-allowed'
               }
             `}
             style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+            aria-label="Faire défiler vers la gauche"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-6 h-6" aria-hidden="true" />
           </button>
 
           {/* Instructions */}
@@ -217,14 +219,15 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
             className={`
               w-12 h-12 rounded-full border border-white/20 backdrop-blur-sm
               flex items-center justify-center transition-all duration-300
-              ${canScrollRight 
-                ? 'text-white hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110 cursor-pointer' 
+              ${canScrollRight
+                ? 'text-white hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110 cursor-pointer'
                 : 'text-white/30 cursor-not-allowed'
               }
             `}
             style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+            aria-label="Faire défiler vers la droite"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-6 h-6" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -239,14 +242,15 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
             absolute left-4 top-1/2 -translate-y-1/2 z-30
             w-16 h-16 rounded-full bg-black/60 backdrop-blur-md border border-white/20
             flex items-center justify-center transition-all duration-300
-            ${canScrollLeft 
-              ? 'text-white hover:bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 cursor-pointer shadow-2xl' 
+            ${canScrollLeft
+              ? 'text-white hover:bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 cursor-pointer shadow-2xl'
               : 'text-white/30 cursor-not-allowed opacity-50'
             }
           `}
           style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+          aria-label="Univers précédents"
         >
-          <ChevronLeft className="w-8 h-8" />
+          <ChevronLeft className="w-8 h-8" aria-hidden="true" />
         </button>
 
         {/* Large Navigation Arrows - Right */}
@@ -257,14 +261,15 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
             absolute right-4 top-1/2 -translate-y-1/2 z-30
             w-16 h-16 rounded-full bg-black/60 backdrop-blur-md border border-white/20
             flex items-center justify-center transition-all duration-300
-            ${canScrollRight 
-              ? 'text-white hover:bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 cursor-pointer shadow-2xl' 
+            ${canScrollRight
+              ? 'text-white hover:bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 cursor-pointer shadow-2xl'
               : 'text-white/30 cursor-not-allowed opacity-50'
             }
           `}
           style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+          aria-label="Univers suivants"
         >
-          <ChevronRight className="w-8 h-8" />
+          <ChevronRight className="w-8 h-8" aria-hidden="true" />
         </button>
 
         {/* Scroll Container */}
@@ -298,6 +303,15 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
                   onMouseEnter={() => setHoveredCard(univ.id)}
                   onMouseLeave={() => setHoveredCard(null)}
                   onClick={() => window.open(univ.url, '_blank')}
+                  role="article"
+                  aria-label={`Univers ${univ.nom}: ${univ.description}`}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      window.open(univ.url, '_blank');
+                    }
+                  }}
                 >
                   {/* Background - Différent pour la carte Séries */}
                   <div className="absolute inset-0">
@@ -369,7 +383,7 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
                   {isSeriesCard && (
                     <div className="absolute top-6 right-6 z-20">
                       <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/30 to-orange-500/30 border border-amber-400/50 rounded-full backdrop-blur-md">
-                        <Star className="w-3 h-3 text-amber-400" />
+                        <Star className="w-3 h-3 text-amber-400" aria-hidden="true" />
                         <span className="font-inter text-amber-300 text-xs font-bold tracking-wider uppercase">
                           Exclusif
                         </span>
@@ -432,17 +446,17 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
                           {isSeriesCard ? 'Découvrir nos séries' : 'Explorer l\'univers'}
                         </span>
                         <div className={`
-                          w-12 h-12 rounded-full flex items-center justify-center 
+                          w-12 h-12 rounded-full flex items-center justify-center
                           group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/20
-                          ${isSeriesCard 
-                            ? 'bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30' 
+                          ${isSeriesCard
+                            ? 'bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30'
                             : 'bg-gradient-to-r from-fuchsia-500/30 to-violet-500/30'
                           }
                         `}>
                           {isSeriesCard ? (
-                            <Video className="w-5 h-5 text-white" />
+                            <Video className="w-5 h-5 text-white" aria-hidden="true" />
                           ) : (
-                            <ArrowRight className="w-5 h-5 text-white" />
+                            <ArrowRight className="w-5 h-5 text-white" aria-hidden="true" />
                           )}
                         </div>
                       </div>
@@ -507,7 +521,16 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
               }}
               onMouseEnter={() => setHoveredCard('voir-tout')}
               onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => window.open('/univers', '_self')} // ✅ CORRIGÉ : Navigation vers /univers
+              onClick={() => window.open('/univers', '_self')}
+              role="article"
+              aria-label="Explorer les 10 univers - Découvrir toute la collection"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  window.open('/univers', '_self');
+                }
+              }}
             >
               {/* Gradient Background - Signature Violet-Fuchsia */}
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-violet-800">
@@ -531,12 +554,12 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
               <div className="absolute inset-0 flex flex-col items-center justify-center p-8 z-20">
                 {/* Large Arrow Icon */}
                 <div className={`
-                  w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 
+                  w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30
                   flex items-center justify-center mb-8
                   transition-all duration-500 group-hover:scale-110 group-hover:bg-white/30
                   ${hoveredCard === 'voir-tout' ? 'animate-pulse' : ''}
                 `}>
-                  <ArrowRight className="w-10 h-10 text-white" />
+                  <ArrowRight className="w-10 h-10 text-white" aria-hidden="true" />
                 </div>
 
                 {/* Text Content */}
@@ -616,7 +639,7 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
           className="group inline-flex items-center gap-4 px-8 py-4 border border-white/20 text-white font-inter font-medium tracking-widest uppercase text-sm hover:border-white/40 hover:bg-white/5 transition-all duration-500 backdrop-blur-sm rounded-full"
         >
           <span>Découvrir tous nos univers</span>
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" />
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" aria-hidden="true" />
         </a>
       </div>
     </section>

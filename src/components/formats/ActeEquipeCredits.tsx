@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Award, Film, Music, Palette, Edit3, Camera, Headphones, Twitter, Instagram, Linkedin, Globe, Mail, Star, TrendingUp, Users, Heart, MessageCircle, Share2, ChevronRight, Sparkles, Zap, Trophy, Target, Coffee, Layers } from 'lucide-react';
+import { User, Award, Film, Music, Palette, Edit3, Camera, Headphones, Twitter, Instagram, Linkedin, Globe, Mail, Star, TrendingUp, Users, Heart, MessageCircle, Share2, ChevronRight, Sparkles, Zap, Trophy, Target, Coffee, Layers, type LucideIcon } from 'lucide-react';
 
 interface Animateur {
   nom: string;
@@ -65,7 +65,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
     {
       nom: 'Emma Chen',
       role: 'Directrice Artistique',
-      avatar: 'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg',
+      avatar: '/placeholder.svg',
       specialite: 'Visual Storytelling',
       episodesContribution: 45,
       reseaux: { twitter: '@emmachen', instagram: '@emma.chen' }
@@ -73,7 +73,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
     {
       nom: 'Lucas Bernard',
       role: 'Sound Designer',
-      avatar: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg',
+      avatar: '/placeholder.svg',
       specialite: 'Audio Immersif',
       episodesContribution: 38,
       reseaux: { linkedin: 'lucas-bernard' }
@@ -81,8 +81,8 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
   ],
   awards = ['Emmy Digital 2024', 'Prix Innovation Media', 'Best Format Award'],
   partenaires = [
-    { nom: 'Netflix', logo: 'https://images.pexels.com/photos/2148216/pexels-photo-2148216.jpeg' },
-    { nom: 'Arte', logo: 'https://images.pexels.com/photos/2148217/pexels-photo-2148217.jpeg' }
+    { nom: 'Netflix', logo: '/placeholder.svg' },
+    { nom: 'Arte', logo: '/placeholder.svg' }
   ]
 }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -90,9 +90,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'team' | 'credits' | 'awards'>('team');
   const sectionRef = useRef<HTMLElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -110,23 +108,8 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
     return () => observer.disconnect();
   }, []);
 
-  // Mouse tracking for parallax
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      setMousePosition({
-        x: (clientX / innerWidth - 0.5) * 2,
-        y: (clientY / innerHeight - 0.5) * 2
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  const getRoleIcon = (role: string) => {
-    const roleMap: { [key: string]: any } = {
+  const getRoleIcon = (role: string): LucideIcon => {
+    const roleMap: Record<string, LucideIcon> = {
       'producteur': Film,
       'realisateur': Camera,
       'montage': Edit3,
@@ -151,96 +134,46 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
   };
 
   return (
-    <section 
+    <section
       ref={sectionRef}
-      className="relative py-24 overflow-hidden"
-      style={{
-        background: `linear-gradient(180deg, #0F0F0F 0%, #0A0A0A 50%, #0F0F0F 100%)`
-      }}
+      className="relative py-24 overflow-hidden bg-gray-50"
     >
-      {/* Animated Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at ${50 + mousePosition.x * 10}% ${50 + mousePosition.y * 10}%, ${formatColor}20 0%, transparent 50%)`,
-            transition: 'all 0.3s ease'
-          }}
-        />
-      </div>
-
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-float-slow"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 10}s`,
-              animationDuration: `${20 + Math.random() * 10}s`
-            }}
-          >
-            <div 
-              className="w-2 h-2 rounded-full"
-              style={{
-                backgroundColor: formatColor,
-                opacity: 0.3 + Math.random() * 0.3,
-                filter: `blur(${Math.random() * 2}px)`
-              }}
-            />
-          </div>
-        ))}
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-8 lg:px-16">
-        
+
         {/* Section Header */}
         <div className={`text-center mb-16 transform transition-all duration-1000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex items-center gap-4 mb-6">
-            <div 
-              className="w-16 h-px bg-gradient-to-r from-transparent to-transparent"
+            <div
+              className="w-16 h-px"
               style={{
                 background: `linear-gradient(to right, transparent, ${formatColor}, transparent)`
               }}
             />
-            <span 
+            <span
               className="font-inter text-sm tracking-[0.3em] uppercase font-medium flex items-center gap-2"
               style={{ color: formatColor }}
             >
               <Users className="w-4 h-4" />
               Acte 4
             </span>
-            <div 
-              className="w-16 h-px bg-gradient-to-r from-transparent to-transparent"
+            <div
+              className="w-16 h-px"
               style={{
                 background: `linear-gradient(to right, transparent, ${formatColor}, transparent)`
               }}
             />
           </div>
-          
-          <h2 className="font-montserrat font-black text-4xl lg:text-5xl text-white mb-6">
-            L'Équipe &
-            <br />
-            <span 
-              className="gradient-text-animated inline-block"
-              style={{
-                background: `linear-gradient(-45deg, ${formatColor}, #EC4899, #F59E0B, ${formatColor})`,
-                backgroundSize: '400% 400%',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                animation: 'gradientShift 3s ease infinite'
-              }}
-            >
+
+          <h2 className="font-montserrat font-black text-4xl lg:text-5xl text-gray-900 mb-6">
+            L'Équipe &{' '}
+            <span style={{ color: formatColor }}>
               Crédits
             </span>
           </h2>
-          
-          <p className="font-inter text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
+
+          <p className="font-inter text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Les talents créatifs derrière {formatName}
           </p>
         </div>
@@ -249,7 +182,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
         <div className={`flex justify-center mb-12 transform transition-all duration-1000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="inline-flex items-center bg-black/40 backdrop-blur-sm border border-white/20 rounded-full p-1">
+          <div className="inline-flex items-center bg-white border border-gray-200 rounded-full p-1 shadow-sm">
             {[
               { id: 'team', label: 'Équipe', icon: Users },
               { id: 'credits', label: 'Crédits', icon: Film },
@@ -261,9 +194,9 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`px-6 py-3 rounded-full flex items-center gap-2 transition-all duration-300 ${
-                    activeTab === tab.id 
-                      ? 'text-white shadow-lg' 
-                      : 'text-white/60 hover:text-white'
+                    activeTab === tab.id
+                      ? 'text-white shadow-md'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                   style={{
                     backgroundColor: activeTab === tab.id ? formatColor : 'transparent'
@@ -281,55 +214,41 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
         <div className={`transform transition-all duration-1000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          
+
           {/* Team Tab */}
           {activeTab === 'team' && (
             <div className="space-y-12">
               {/* Animateur Principal - Hero Card */}
-              <div 
+              <div
                 className="relative group"
                 onMouseEnter={() => setHoveredCard('animateur')}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                <div 
-                  className="relative overflow-hidden rounded-3xl backdrop-blur-md border transition-all duration-700"
+                <div
+                  className="relative overflow-hidden rounded-3xl border transition-all duration-700 bg-white"
                   style={{
-                    backgroundColor: hoveredCard === 'animateur' ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
-                    borderColor: hoveredCard === 'animateur' ? `${formatColor}60` : 'rgba(255,255,255,0.1)',
-                    transform: hoveredCard === 'animateur' ? 'scale(1.02)' : 'scale(1)',
-                    boxShadow: hoveredCard === 'animateur' ? `0 20px 60px ${formatColor}30` : 'none'
+                    borderColor: hoveredCard === 'animateur' ? `${formatColor}60` : 'rgb(229, 231, 235)',
+                    transform: hoveredCard === 'animateur' ? 'scale(1.01)' : 'scale(1)',
+                    boxShadow: hoveredCard === 'animateur' ? `0 20px 60px ${formatColor}15` : '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }}
                 >
                   <div className="p-8 lg:p-12">
                     <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
-                      {/* Avatar avec effet 3D */}
+                      {/* Avatar */}
                       <div className="relative group-hover:scale-105 transition-transform duration-700">
-                        <div 
-                          className="w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden relative"
-                          style={{
-                            transform: `perspective(1000px) rotateY(${mousePosition.x * 5}deg) rotateX(${-mousePosition.y * 5}deg)`,
-                            transition: 'transform 0.3s ease'
-                          }}
-                        >
+                        <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 border-gray-100 shadow-lg">
                           <img
                             src={animateur.avatar}
                             alt={animateur.nom}
                             className="w-full h-full object-cover"
                           />
-                          <div 
-                            className="absolute inset-0 rounded-full"
-                            style={{
-                              background: `radial-gradient(circle at 30% 30%, transparent 30%, ${formatColor}20 100%)`,
-                              mixBlendMode: 'overlay'
-                            }}
-                          />
                         </div>
-                        
+
                         {/* Badge de rôle flottant */}
-                        <div 
-                          className="absolute -bottom-2 -right-2 px-4 py-2 rounded-full backdrop-blur-md border flex items-center gap-2 animate-pulse-subtle"
+                        <div
+                          className="absolute -bottom-2 -right-2 px-4 py-2 rounded-full border flex items-center gap-2 shadow-md"
                           style={{
-                            backgroundColor: `${formatColor}20`,
+                            backgroundColor: `${formatColor}15`,
                             borderColor: `${formatColor}40`
                           }}
                         >
@@ -342,11 +261,11 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
 
                       {/* Content */}
                       <div className="flex-1 text-center lg:text-left">
-                        <h3 className="font-montserrat font-black text-3xl lg:text-4xl text-white mb-4">
+                        <h3 className="font-montserrat font-black text-3xl lg:text-4xl text-gray-900 mb-4">
                           {animateur.nom}
                         </h3>
-                        
-                        <p className="font-inter text-lg text-white/80 leading-relaxed mb-6 max-w-2xl">
+
+                        <p className="font-inter text-lg text-gray-600 leading-relaxed mb-6 max-w-2xl">
                           {animateur.bio}
                         </p>
 
@@ -355,60 +274,60 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                           <div className="flex flex-wrap items-center gap-6 mb-8">
                             {animateur.stats.episodesAnimes && (
                               <div className="flex items-center gap-3">
-                                <div 
+                                <div
                                   className="w-12 h-12 rounded-xl flex items-center justify-center"
                                   style={{
-                                    backgroundColor: `${formatColor}20`,
-                                    border: `1px solid ${formatColor}40`
+                                    backgroundColor: `${formatColor}15`,
+                                    border: `1px solid ${formatColor}30`
                                   }}
                                 >
                                   <Film className="w-5 h-5" style={{ color: formatColor }} />
                                 </div>
                                 <div>
-                                  <div className="font-montserrat font-bold text-xl text-white">
+                                  <div className="font-montserrat font-bold text-xl text-gray-900">
                                     {animateur.stats.episodesAnimes}
                                   </div>
-                                  <div className="text-white/60 text-sm">Épisodes animés</div>
+                                  <div className="text-gray-500 text-sm">Épisodes animés</div>
                                 </div>
                               </div>
                             )}
-                            
+
                             {animateur.stats.anneeDebut && (
                               <div className="flex items-center gap-3">
-                                <div 
+                                <div
                                   className="w-12 h-12 rounded-xl flex items-center justify-center"
                                   style={{
-                                    backgroundColor: `${formatColor}20`,
-                                    border: `1px solid ${formatColor}40`
+                                    backgroundColor: `${formatColor}15`,
+                                    border: `1px solid ${formatColor}30`
                                   }}
                                 >
                                   <Trophy className="w-5 h-5" style={{ color: formatColor }} />
                                 </div>
                                 <div>
-                                  <div className="font-montserrat font-bold text-xl text-white">
+                                  <div className="font-montserrat font-bold text-xl text-gray-900">
                                     {new Date().getFullYear() - animateur.stats.anneeDebut} ans
                                   </div>
-                                  <div className="text-white/60 text-sm">D'expérience</div>
+                                  <div className="text-gray-500 text-sm">D'expérience</div>
                                 </div>
                               </div>
                             )}
-                            
+
                             {animateur.stats.specialite && (
                               <div className="flex items-center gap-3">
-                                <div 
+                                <div
                                   className="w-12 h-12 rounded-xl flex items-center justify-center"
                                   style={{
-                                    backgroundColor: `${formatColor}20`,
-                                    border: `1px solid ${formatColor}40`
+                                    backgroundColor: `${formatColor}15`,
+                                    border: `1px solid ${formatColor}30`
                                   }}
                                 >
                                   <Target className="w-5 h-5" style={{ color: formatColor }} />
                                 </div>
                                 <div>
-                                  <div className="font-montserrat font-bold text-xl text-white">
+                                  <div className="font-montserrat font-bold text-xl text-gray-900">
                                     {animateur.stats.specialite}
                                   </div>
-                                  <div className="text-white/60 text-sm">Spécialité</div>
+                                  <div className="text-gray-500 text-sm">Spécialité</div>
                                 </div>
                               </div>
                             )}
@@ -426,24 +345,12 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                                   href={`https://${platform}.com/${handle}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="group/social relative w-12 h-12 rounded-full backdrop-blur-md border flex items-center justify-center transition-all duration-300 hover:scale-110"
-                                  style={{
-                                    backgroundColor: 'rgba(255,255,255,0.05)',
-                                    borderColor: 'rgba(255,255,255,0.2)'
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = `${formatColor}30`;
-                                    e.currentTarget.style.borderColor = formatColor;
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
-                                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
-                                  }}
+                                  className="group/social relative w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-300 hover:scale-110 bg-gray-50 border-gray-200 hover:bg-gray-100"
                                 >
-                                  <Icon className="w-5 h-5 text-white/70 group-hover/social:text-white transition-colors" />
-                                  
+                                  <Icon className="w-5 h-5 text-gray-500 group-hover/social:text-gray-700 transition-colors" />
+
                                   {/* Tooltip */}
-                                  <div className="absolute bottom-full mb-2 px-3 py-1 bg-black/90 text-white text-xs rounded-lg opacity-0 group-hover/social:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
+                                  <div className="absolute bottom-full mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover/social:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
                                     {handle}
                                   </div>
                                 </a>
@@ -454,26 +361,16 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                       </div>
                     </div>
                   </div>
-
-                  {/* Animated Border Gradient */}
-                  <div 
-                    className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-                    style={{
-                      background: `linear-gradient(45deg, transparent 30%, ${formatColor}40 50%, transparent 70%)`,
-                      backgroundSize: '200% 200%',
-                      animation: 'gradientMove 3s ease infinite'
-                    }}
-                  />
                 </div>
               </div>
 
               {/* Team Members Grid */}
               {teamMembers.length > 0 && (
                 <div>
-                  <h3 className="font-montserrat font-bold text-2xl text-white mb-8 text-center">
+                  <h3 className="font-montserrat font-bold text-2xl text-gray-900 mb-8 text-center">
                     L'Équipe Créative
                   </h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {teamMembers.map((member, index) => (
                       <div
@@ -482,20 +379,19 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                         onMouseEnter={() => setHoveredCard(member.nom)}
                         onMouseLeave={() => setHoveredCard(null)}
                       >
-                        <div 
-                          className="relative overflow-hidden rounded-2xl backdrop-blur-md border p-6 transition-all duration-500"
+                        <div
+                          className="relative overflow-hidden rounded-2xl border p-6 transition-all duration-500 bg-white"
                           style={{
-                            backgroundColor: hoveredCard === member.nom ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
-                            borderColor: hoveredCard === member.nom ? `${formatColor}40` : 'rgba(255,255,255,0.1)',
+                            borderColor: hoveredCard === member.nom ? `${formatColor}40` : 'rgb(229, 231, 235)',
                             transform: hoveredCard === member.nom ? 'translateY(-5px)' : 'translateY(0)',
-                            boxShadow: hoveredCard === member.nom ? `0 20px 40px ${formatColor}20` : 'none'
+                            boxShadow: hoveredCard === member.nom ? `0 20px 40px ${formatColor}10` : '0 1px 3px rgba(0, 0, 0, 0.1)'
                           }}
                         >
                           <div className="flex items-start gap-4">
                             {/* Avatar */}
                             {member.avatar && (
                               <div className="relative flex-shrink-0">
-                                <div className="w-16 h-16 rounded-full overflow-hidden">
+                                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-100">
                                   <img
                                     src={member.avatar}
                                     alt={member.nom}
@@ -503,8 +399,8 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                                   />
                                 </div>
                                 {index === 0 && (
-                                  <div 
-                                    className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center animate-pulse"
+                                  <div
+                                    className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center"
                                     style={{
                                       backgroundColor: formatColor,
                                       boxShadow: `0 0 20px ${formatColor}60`
@@ -518,16 +414,16 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
 
                             {/* Content */}
                             <div className="flex-1">
-                              <h4 className="font-montserrat font-bold text-lg text-white mb-1">
+                              <h4 className="font-montserrat font-bold text-lg text-gray-900 mb-1">
                                 {member.nom}
                               </h4>
-                              <p className="text-white/60 text-sm mb-3">{member.role}</p>
-                              
+                              <p className="text-gray-500 text-sm mb-3">{member.role}</p>
+
                               {member.specialite && (
-                                <div 
+                                <div
                                   className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-3"
                                   style={{
-                                    backgroundColor: `${formatColor}20`,
+                                    backgroundColor: `${formatColor}10`,
                                     color: formatColor
                                   }}
                                 >
@@ -535,9 +431,9 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                                   {member.specialite}
                                 </div>
                               )}
-                              
+
                               {member.episodesContribution && (
-                                <div className="text-white/50 text-xs">
+                                <div className="text-gray-400 text-xs">
                                   {member.episodesContribution} épisodes
                                 </div>
                               )}
@@ -553,9 +449,9 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                                         href={`https://${platform}.com/${handle}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300"
+                                        className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all duration-300"
                                       >
-                                        <Icon className="w-4 h-4 text-white/70" />
+                                        <Icon className="w-4 h-4 text-gray-500" />
                                       </a>
                                     );
                                   })}
@@ -563,14 +459,6 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                               )}
                             </div>
                           </div>
-
-                          {/* Hover Effect */}
-                          <div 
-                            className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                            style={{
-                              background: `radial-gradient(circle at 50% 0%, ${formatColor}20 0%, transparent 70%)`
-                            }}
-                          />
                         </div>
                       </div>
                     ))}
@@ -585,7 +473,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Object.entries(credits).map(([role, nom]) => {
                 const Icon = getRoleIcon(role);
-                
+
                 return (
                   <div
                     key={role}
@@ -593,22 +481,20 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                     onMouseEnter={() => setHoveredCard(role)}
                     onMouseLeave={() => setHoveredCard(null)}
                   >
-                    <div 
-                      className="relative overflow-hidden rounded-2xl backdrop-blur-md border p-6 transition-all duration-500"
+                    <div
+                      className="relative overflow-hidden rounded-2xl border p-6 transition-all duration-500 bg-white"
                       style={{
-                        backgroundColor: hoveredCard === role ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
-                        borderColor: hoveredCard === role ? `${formatColor}40` : 'rgba(255,255,255,0.1)',
-                        transform: hoveredCard === role ? 'translateY(-5px) rotateX(-2deg)' : 'translateY(0) rotateX(0)',
-                        transformStyle: 'preserve-3d',
-                        boxShadow: hoveredCard === role ? `0 20px 40px ${formatColor}20` : 'none'
+                        borderColor: hoveredCard === role ? `${formatColor}40` : 'rgb(229, 231, 235)',
+                        transform: hoveredCard === role ? 'translateY(-5px)' : 'translateY(0)',
+                        boxShadow: hoveredCard === role ? `0 20px 40px ${formatColor}10` : '0 1px 3px rgba(0, 0, 0, 0.1)'
                       }}
                     >
                       {/* Icon */}
-                      <div 
+                      <div
                         className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-all duration-500"
                         style={{
-                          backgroundColor: `${formatColor}20`,
-                          border: `1px solid ${formatColor}40`,
+                          backgroundColor: `${formatColor}10`,
+                          border: `1px solid ${formatColor}30`,
                           transform: hoveredCard === role ? 'scale(1.1) rotate(5deg)' : 'scale(1) rotate(0)'
                         }}
                       >
@@ -616,40 +502,24 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                       </div>
 
                       {/* Role */}
-                      <h4 className="font-inter font-medium text-white/60 text-sm uppercase tracking-wider mb-2">
+                      <h4 className="font-inter font-medium text-gray-500 text-sm uppercase tracking-wider mb-2">
                         {role.replace(/_/g, ' ')}
                       </h4>
 
                       {/* Name */}
-                      <p className="font-montserrat font-bold text-xl text-white">
+                      <p className="font-montserrat font-bold text-xl text-gray-900">
                         {nom}
                       </p>
-
-                      {/* Decorative Element */}
-                      <div 
-                        className="absolute top-4 right-4 w-20 h-20 rounded-full opacity-10 transition-all duration-700"
-                        style={{
-                          backgroundColor: formatColor,
-                          filter: 'blur(20px)',
-                          transform: hoveredCard === role ? 'scale(1.5)' : 'scale(1)'
-                        }}
-                      />
                     </div>
                   </div>
                 );
               })}
-              
+
               {/* Additional Credits */}
               <div className="md:col-span-2 lg:col-span-3">
-                <div 
-                  className="relative overflow-hidden rounded-2xl backdrop-blur-md border p-8 text-center"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.02)',
-                    borderColor: 'rgba(255,255,255,0.1)'
-                  }}
-                >
-                  <Coffee className="w-12 h-12 text-white/40 mx-auto mb-4" />
-                  <p className="font-inter text-white/60 text-lg">
+                <div className="relative overflow-hidden rounded-2xl border p-8 text-center bg-white border-gray-200">
+                  <Coffee className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="font-inter text-gray-600 text-lg">
                     Un grand merci à toute l'équipe technique et créative qui rend ce format possible
                   </p>
                 </div>
@@ -669,48 +539,39 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                     onMouseEnter={() => setHoveredCard(award)}
                     onMouseLeave={() => setHoveredCard(null)}
                   >
-                    <div 
-                      className="relative overflow-hidden rounded-2xl backdrop-blur-md border p-6 text-center transition-all duration-500"
+                    <div
+                      className="relative overflow-hidden rounded-2xl border p-6 text-center transition-all duration-500 bg-white"
                       style={{
-                        backgroundColor: hoveredCard === award ? 'rgba(255,236,64,0.1)' : 'rgba(255,255,255,0.02)',
-                        borderColor: hoveredCard === award ? 'rgba(255,236,64,0.4)' : 'rgba(255,255,255,0.1)',
+                        borderColor: hoveredCard === award ? 'rgba(234, 179, 8, 0.4)' : 'rgb(229, 231, 235)',
                         transform: hoveredCard === award ? 'translateY(-5px) scale(1.02)' : 'translateY(0) scale(1)',
-                        boxShadow: hoveredCard === award ? '0 20px 40px rgba(255,236,64,0.2)' : 'none'
+                        boxShadow: hoveredCard === award ? '0 20px 40px rgba(234, 179, 8, 0.15)' : '0 1px 3px rgba(0, 0, 0, 0.1)'
                       }}
                     >
                       {/* Trophy Icon */}
                       <div className="relative inline-block mb-4">
-                        <Trophy 
-                          className="w-16 h-16 text-yellow-400 transition-all duration-500"
+                        <Trophy
+                          className="w-16 h-16 text-yellow-500 transition-all duration-500"
                           style={{
                             transform: hoveredCard === award ? 'rotate(15deg) scale(1.1)' : 'rotate(0) scale(1)',
-                            filter: hoveredCard === award ? 'drop-shadow(0 0 20px rgba(255,236,64,0.5))' : 'none'
+                            filter: hoveredCard === award ? 'drop-shadow(0 0 20px rgba(234, 179, 8, 0.5))' : 'none'
                           }}
                         />
                         {index === 0 && (
-                          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-pulse">
+                          <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
                             <span className="text-xs font-bold text-white">1</span>
                           </div>
                         )}
                       </div>
 
                       {/* Award Name */}
-                      <h4 className="font-montserrat font-bold text-lg text-white mb-2">
+                      <h4 className="font-montserrat font-bold text-lg text-gray-900 mb-2">
                         {award}
                       </h4>
 
                       {/* Year */}
-                      <p className="text-white/60 text-sm">
+                      <p className="text-gray-500 text-sm">
                         {award.includes('2024') ? '2024' : '2023'}
                       </p>
-
-                      {/* Glow Effect */}
-                      <div 
-                        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                        style={{
-                          background: 'radial-gradient(circle at center, rgba(255,236,64,0.2) 0%, transparent 70%)'
-                        }}
-                      />
                     </div>
                   </div>
                 ))}
@@ -719,10 +580,10 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
               {/* Partners Section */}
               {partenaires && partenaires.length > 0 && (
                 <div>
-                  <h3 className="font-montserrat font-bold text-2xl text-white mb-6 text-center">
+                  <h3 className="font-montserrat font-bold text-2xl text-gray-900 mb-6 text-center">
                     Partenaires & Sponsors
                   </h3>
-                  
+
                   <div className="flex flex-wrap items-center justify-center gap-8">
                     {partenaires.map((partenaire) => (
                       <div
@@ -731,12 +592,12 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
                         onMouseEnter={() => setHoveredCard(partenaire.nom)}
                         onMouseLeave={() => setHoveredCard(null)}
                       >
-                        <div 
-                          className="relative w-32 h-32 rounded-2xl backdrop-blur-md border p-4 flex items-center justify-center transition-all duration-500"
+                        <div
+                          className="relative w-32 h-32 rounded-2xl border p-4 flex items-center justify-center transition-all duration-500 bg-white"
                           style={{
-                            backgroundColor: hoveredCard === partenaire.nom ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
-                            borderColor: hoveredCard === partenaire.nom ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)',
-                            transform: hoveredCard === partenaire.nom ? 'scale(1.1)' : 'scale(1)'
+                            borderColor: hoveredCard === partenaire.nom ? 'rgb(209, 213, 219)' : 'rgb(229, 231, 235)',
+                            transform: hoveredCard === partenaire.nom ? 'scale(1.1)' : 'scale(1)',
+                            boxShadow: hoveredCard === partenaire.nom ? '0 10px 30px rgba(0, 0, 0, 0.1)' : '0 1px 3px rgba(0, 0, 0, 0.1)'
                           }}
                         >
                           <img
@@ -761,61 +622,22 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
         <div className={`text-center mt-16 transform transition-all duration-1000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <p className="font-inter text-white/60 text-lg mb-8">
+          <p className="font-inter text-gray-600 text-lg mb-8">
             Envie de rejoindre l'aventure {formatName} ?
           </p>
-          
+
           <a
             href="/contact"
-            className="group inline-flex items-center gap-4 px-8 py-4 border text-white font-inter font-medium tracking-wider uppercase text-sm transition-all duration-500 backdrop-blur-sm rounded-full hover:scale-105"
-            style={{
-              borderColor: `${formatColor}40`,
-              backgroundColor: `${formatColor}10`,
-              boxShadow: `0 0 40px ${formatColor}20`
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = `${formatColor}60`;
-              e.currentTarget.style.backgroundColor = `${formatColor}20`;
-              e.currentTarget.style.boxShadow = `0 0 60px ${formatColor}40`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${formatColor}40`;
-              e.currentTarget.style.backgroundColor = `${formatColor}10`;
-              e.currentTarget.style.boxShadow = `0 0 40px ${formatColor}20`;
-            }}
+            className="group inline-flex items-center gap-4 px-8 py-4 bg-white border border-gray-200 text-gray-700 font-inter font-medium tracking-wider uppercase text-sm transition-all duration-500 rounded-full hover:scale-105 hover:shadow-lg hover:border-gray-300"
           >
             <span>Nous contacter</span>
-            <ChevronRight 
+            <ChevronRight
               className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500"
               style={{ color: formatColor }}
             />
           </a>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          33% { transform: translateY(-30px) translateX(10px); }
-          66% { transform: translateY(20px) translateX(-10px); }
-        }
-
-        @keyframes gradientMove {
-          0% { background-position: 0% 0%; }
-          100% { background-position: 200% 200%; }
-        }
-
-        @keyframes pulse-subtle {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.05); }
-        }
-      `}</style>
     </section>
   );
 };

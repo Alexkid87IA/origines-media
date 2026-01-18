@@ -131,7 +131,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8 xl:px-16 bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A] overflow-hidden"
+      className="relative py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8 xl:px-16 bg-gray-50 overflow-hidden"
     >
       {/* Background effet */}
       <div className="absolute inset-0">
@@ -152,13 +152,13 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
             <div className="w-12 sm:w-16 lg:w-20 h-px bg-gradient-to-r from-transparent via-violet-500 to-transparent" />
           </div>
           
-          <h2 className="font-montserrat font-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-wider text-white mb-3 sm:mb-6">
+          <h2 className="font-montserrat font-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-wider text-gray-900 mb-3 sm:mb-6">
             La Machine à
             <br />
             <span className="gradient-text-animated text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Impact Origines</span>
           </h2>
           
-          <p className="font-inter text-sm sm:text-base lg:text-xl text-white/70 max-w-3xl mx-auto px-4">
+          <p className="font-inter text-sm sm:text-base lg:text-xl text-gray-500 max-w-3xl mx-auto px-4">
             Nous transformons chaque geste d'entraide en onde de choc médiatique
           </p>
         </div>
@@ -168,19 +168,19 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="text-center mb-6 sm:mb-8 lg:mb-12">
-            <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white mb-2 sm:mb-4">
+            <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-900 mb-2 sm:mb-4">
               Une action = 4 formats viraux
             </h3>
-            <p className="font-inter text-white/60 text-sm sm:text-base max-w-2xl mx-auto px-4">
+            <p className="font-inter text-gray-500 text-sm sm:text-base max-w-2xl mx-auto px-4">
               Exemple : "Marie donne un canapé" devient une machine à contenus
             </p>
           </div>
 
           {/* Action initiale - Simplifiée */}
           <div className="mb-8 sm:mb-12 lg:mb-16">
-            <div className="bg-gradient-to-br from-violet-600/20 to-orange-600/20 backdrop-blur-xl border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 max-w-sm sm:max-w-md mx-auto">
-              <h4 className="font-montserrat font-bold text-white text-sm sm:text-base mb-1 sm:mb-2">Action filmée</h4>
-              <p className="font-inter text-white/70 text-xs sm:text-sm">Marie donne son canapé via Wanted</p>
+            <div className="bg-gradient-to-br from-violet-600/20 to-orange-600/20 shadow-sm border border-gray-300 rounded-xl sm:rounded-2xl p-4 sm:p-6 max-w-sm sm:max-w-md mx-auto">
+              <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-1 sm:mb-2">Action filmée</h4>
+              <p className="font-inter text-gray-500 text-xs sm:text-sm">Marie donne son canapé via Wanted</p>
             </div>
           </div>
 
@@ -194,7 +194,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
                   isActive ? 'scale-105' : 'scale-100 opacity-80'
                 }`}>
                   <div 
-                    className="bg-black/40 backdrop-blur-xl border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:bg-black/60 transition-all duration-300"
+                    className="bg-gray-50 shadow-sm border rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:bg-white transition-all duration-300"
                     style={{
                       borderColor: isActive ? format.color : 'rgba(255,255,255,0.1)',
                       boxShadow: isActive ? `0 10px 20px ${format.color}30` : 'none'
@@ -213,14 +213,14 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 sm:gap-3 mb-1">
-                          <h4 className="font-montserrat font-bold text-white text-sm sm:text-base">{format.name}</h4>
-                          <span className="text-xs text-white/50 bg-white/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                          <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base">{format.name}</h4>
+                          <span className="text-xs text-gray-400 bg-gray-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
                             {format.duration}
                           </span>
                         </div>
-                        <p className="font-inter text-white/60 text-xs sm:text-sm mb-1 sm:mb-2">{format.description}</p>
+                        <p className="font-inter text-gray-500 text-xs sm:text-sm mb-1 sm:mb-2">{format.description}</p>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-white/40 truncate mr-2">{format.platform}</span>
+                          <span className="text-xs text-gray-400 truncate mr-2">{format.platform}</span>
                           <span className="text-xs font-bold whitespace-nowrap" style={{ color: format.color }}>
                             {format.metrics}
                           </span>
@@ -238,18 +238,18 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
         <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1000 delay-500 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white text-center mb-6 sm:mb-8 lg:mb-12">
+          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-900 text-center mb-6 sm:mb-8 lg:mb-12">
             Le Growth Engine Origines
           </h3>
 
           <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3">
             {/* Data Storytelling */}
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 sm:p-8">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-6 sm:p-8">
               <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center mb-4 sm:mb-6">
                 <BarChart3 className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-violet-400" />
               </div>
-              <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Data-Storytelling</h4>
-              <ul className="space-y-1.5 sm:space-y-2 font-inter text-white/70 text-xs sm:text-sm">
+              <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-2 sm:mb-3">Data-Storytelling</h4>
+              <ul className="space-y-1.5 sm:space-y-2 font-inter text-gray-500 text-xs sm:text-sm">
                 <li className="flex items-start gap-2">
                   <span className="text-violet-400 mt-0.5 sm:mt-1">•</span>
                   <span>Overlays temps réel</span>
@@ -266,12 +266,12 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
             </div>
 
             {/* Optimisation Algo */}
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 sm:p-8">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-6 sm:p-8">
               <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center mb-4 sm:mb-6">
                 <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-orange-400" />
               </div>
-              <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Science des Algos</h4>
-              <ul className="space-y-1.5 sm:space-y-2 font-inter text-white/70 text-xs sm:text-sm">
+              <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-2 sm:mb-3">Science des Algos</h4>
+              <ul className="space-y-1.5 sm:space-y-2 font-inter text-gray-500 text-xs sm:text-sm">
                 <li className="flex items-start gap-2">
                   <span className="text-orange-400 mt-0.5 sm:mt-1">•</span>
                   <span>A/B testing titres</span>
@@ -288,12 +288,12 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
             </div>
 
             {/* Kit Mobile */}
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-6 sm:p-8">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-6 sm:p-8">
               <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-fuchsia-500/20 to-pink-500/20 flex items-center justify-center mb-4 sm:mb-6">
                 <Camera className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-fuchsia-400" />
               </div>
-              <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-2 sm:mb-3">Kit Pro Mobile</h4>
-              <ul className="space-y-1.5 sm:space-y-2 font-inter text-white/70 text-xs sm:text-sm">
+              <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-2 sm:mb-3">Kit Pro Mobile</h4>
+              <ul className="space-y-1.5 sm:space-y-2 font-inter text-gray-500 text-xs sm:text-sm">
                 <li className="flex items-start gap-2">
                   <span className="text-fuchsia-400 mt-0.5 sm:mt-1">•</span>
                   <span>4 caméras + 5 phones</span>
@@ -315,7 +315,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
         <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1000 delay-700 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white text-center mb-6 sm:mb-8 lg:mb-12">
+          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-900 text-center mb-6 sm:mb-8 lg:mb-12">
             Modèle économique hybride
           </h3>
 
@@ -394,8 +394,8 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
               {revenueStreams.map((stream) => (
                 <div
                   key={stream.id}
-                  className={`relative bg-black/40 backdrop-blur-sm border rounded-xl sm:rounded-2xl p-4 sm:p-6 cursor-pointer transition-all duration-300 ${
-                    activeRevenue === stream.id ? 'bg-black/60 scale-105' : 'hover:bg-black/50'
+                  className={`relative bg-gray-50 shadow-sm border rounded-xl sm:rounded-2xl p-4 sm:p-6 cursor-pointer transition-all duration-300 ${
+                    activeRevenue === stream.id ? 'bg-white scale-105' : 'hover:bg-white'
                   }`}
                   style={{
                     borderColor: activeRevenue === stream.id ? stream.color : 'rgba(255,255,255,0.1)'
@@ -412,7 +412,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
                         <stream.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: stream.color }} />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-montserrat font-bold text-white text-sm sm:text-base truncate">{stream.name}</h4>
+                        <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base truncate">{stream.name}</h4>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
@@ -431,7 +431,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
         <div className={`transform transition-all duration-1000 delay-900 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white text-center mb-6 sm:mb-8 lg:mb-12">
+          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-900 text-center mb-6 sm:mb-8 lg:mb-12">
             L'équipe fusion : 6 rôles clés
           </h3>
 
@@ -439,7 +439,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
             {teamRoles.map((role, index) => (
               <div
                 key={index}
-                className="group bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:bg-black/60 transition-all duration-500 hover:scale-105"
+                className="group bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:bg-white transition-all duration-500 hover:scale-105"
               >
                 <div className="flex items-start gap-3 sm:gap-4">
                   <div 
@@ -453,10 +453,10 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
                   </div>
                   
                   <div className="min-w-0">
-                    <h4 className="font-montserrat font-bold text-white text-sm sm:text-base mb-1 sm:mb-2">
+                    <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-1 sm:mb-2">
                       {role.title}
                     </h4>
-                    <p className="font-inter text-white/60 text-xs sm:text-sm">
+                    <p className="font-inter text-gray-500 text-xs sm:text-sm">
                       {role.description}
                     </p>
                   </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
+import Button from './ui/Button';
 
 interface Portrait {
   id: number;
@@ -224,13 +225,16 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
   }
 
   return (
-    <section 
+    <section
       className="relative h-screen w-full overflow-hidden group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      role="region"
+      aria-roledescription="carrousel"
+      aria-label={`Portraits: ${currentPortrait.titre}`}
     >
       {/* Background Layers - AMÉLIORÉ */}
       <div className="absolute inset-0">
@@ -352,37 +356,19 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
                 transform: 'translateY(30px)'
               }}
             >
-              {/* Primary CTA - SPECTACULAIRE */}
-              <a
+              {/* Primary CTA */}
+              <Button
+                as="a"
                 href={currentPortrait.url}
-                className={`group relative inline-flex items-center gap-3 border-2 text-white font-inter font-bold tracking-widest uppercase transition-all duration-500 backdrop-blur-md overflow-hidden rounded-xl ${categoryColors.border} hover:scale-105`}
-                style={{
-                  padding: 'clamp(12px, 1.5vw, 16px) clamp(24px, 3vw, 32px)',
-                  fontSize: 'clamp(0.75rem, 1vw, 0.875rem)',
-                  background: `linear-gradient(135deg, ${categoryColors.primary}20 0%, ${categoryColors.primary}10 100%)`,
-                  boxShadow: `0 12px 40px ${categoryColors.primary}30`
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = categoryColors.primary;
-                  e.currentTarget.style.boxShadow = `0 20px 60px ${categoryColors.primary}50`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '';
-                  e.currentTarget.style.boxShadow = `0 12px 40px ${categoryColors.primary}30`;
-                }}
+                variant="cta-outline"
+                size="lg"
+                color={categoryColors.primary}
+                withArrow
+                className="uppercase tracking-widest"
+                aria-label={`Plonger dans l'histoire de ${currentPortrait.titre}`}
               >
-                <span className="relative z-10">Plonger dans cette Histoire</span>
-                <ChevronRight 
-                  className="group-hover:translate-x-2 transition-transform duration-500 relative z-10"
-                  style={{
-                    width: 'clamp(16px, 1.2vw, 20px)',
-                    height: 'clamp(16px, 1.2vw, 20px)'
-                  }}
-                />
-                
-                {/* Hover Effect Background */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${categoryColors.accent} opacity-30 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500`} />
-              </a>
+                Plonger dans cette Histoire
+              </Button>
             </div>
           </div>
         </div>
@@ -402,13 +388,15 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
             boxShadow: '0 12px 40px rgba(0,0,0,0.4)'
           }}
           disabled={isTransitioning}
+          aria-label="Portrait précédent"
         >
-          <ChevronLeft 
+          <ChevronLeft
             className="group-hover:-translate-x-1 transition-all duration-300"
             style={{
               width: 'clamp(20px, 2vw, 28px)',
               height: 'clamp(20px, 2vw, 28px)'
             }}
+            aria-hidden="true"
           />
         </button>
 
@@ -423,13 +411,15 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
             boxShadow: '0 12px 40px rgba(0,0,0,0.4)'
           }}
           disabled={isTransitioning}
+          aria-label="Portrait suivant"
         >
-          <ChevronRight 
+          <ChevronRight
             className="group-hover:translate-x-1 transition-all duration-300"
             style={{
               width: 'clamp(20px, 2vw, 28px)',
               height: 'clamp(20px, 2vw, 28px)'
             }}
+            aria-hidden="true"
           />
         </button>
 
@@ -442,28 +432,36 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
             height: 'clamp(40px, 3vw, 48px)',
             boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
           }}
+          aria-label={isPaused ? 'Reprendre le défilement automatique' : 'Mettre en pause le défilement automatique'}
+          aria-pressed={isPaused}
         >
           {isPaused ? (
-            <Play 
+            <Play
               className="ml-0.5"
               style={{
                 width: 'clamp(14px, 1.5vw, 18px)',
                 height: 'clamp(14px, 1.5vw, 18px)'
               }}
+              aria-hidden="true"
             />
           ) : (
-            <Pause 
+            <Pause
               style={{
                 width: 'clamp(14px, 1.5vw, 18px)',
                 height: 'clamp(14px, 1.5vw, 18px)'
               }}
+              aria-hidden="true"
             />
           )}
         </button>
       </div>
 
       {/* Progress Indicators - RÉVOLUTIONNÉS */}
-      <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+      <div
+        className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30"
+        role="tablist"
+        aria-label="Sélection de portrait"
+      >
         {portraits.map((portrait, index) => {
           const indicatorColors = getCategoryColor(portrait.categorie);
           return (
@@ -479,6 +477,9 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
                 boxShadow: '0 4px 16px rgba(0,0,0,0.3)'
               }}
               disabled={isTransitioning}
+              role="tab"
+              aria-selected={index === currentSlide}
+              aria-label={`Voir portrait ${index + 1}: ${portrait.titre}`}
             >
               {/* Progress Fill */}
               <div 
@@ -515,11 +516,16 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
 
       {/* Enhanced Loading Indicator */}
       <div className={`absolute top-0 left-0 bg-gradient-to-r ${categoryColors.accent} transition-all duration-100 z-30 ${!isPaused && !isHovered ? 'opacity-80' : 'opacity-0'}`}
-           style={{ 
+           style={{
              width: `${progress}%`,
              height: 'clamp(2px, 0.3vw, 4px)',
              boxShadow: `0 0 10px ${categoryColors.primary}60`
            }} />
+
+      {/* Screen reader announcements */}
+      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        Portrait {currentSlide + 1} sur {portraits.length}: {currentPortrait.titre}, catégorie {currentPortrait.categorie}
+      </div>
     </section>
   );
 };

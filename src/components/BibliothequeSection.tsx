@@ -25,12 +25,6 @@ interface BibliothequeSectionProps {
 }
 
 const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales }) => {
-   // Debug - Ajoutez ces lignes
-   console.log('Verticales reçues dans BibliothequeSection:', verticales);
-   console.log('Couleurs des verticales:', JSON.stringify(verticales.map(v => ({
-    nom: v.verticale.nom,
-    couleur: v.verticale.couleurDominante
-  })), null, 2));
   const [activeTab, setActiveTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
@@ -83,21 +77,14 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
     }, 400);
   };
 
-  // ✅ FONCTION DE NAVIGATION CORRIGÉE
   const handleNavigateToBibliotheque = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🔍 Navigation vers /bibliotheque avec React Router...');
     navigate('/bibliotheque');
   };
 
   const currentVerticale = verticales[activeTab];
   const currentColor = currentVerticale?.verticale.couleurDominante || '#8B5CF6';
-
-  // Debug - Ajoutez ces lignes
-console.log('Onglet actif:', activeTab);
-console.log('Verticale actuelle:', currentVerticale);
-console.log('Couleur actuelle:', currentColor);
 
   // Convert hex to RGB for CSS custom properties
   const hexToRgb = (hex: string) => {
@@ -116,9 +103,10 @@ console.log('Couleur actuelle:', currentColor);
   }
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="min-h-screen bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A] py-20 px-4 sm:px-6 lg:px-12 xl:px-16 relative overflow-hidden transition-all duration-500"
+      aria-labelledby="bibliotheque-section-title"
       style={{
         // Dynamic theme color as CSS custom properties
         '--theme-color': currentColor,
@@ -147,7 +135,7 @@ console.log('Couleur actuelle:', currentColor);
           <div className="w-12 h-px bg-gradient-to-r from-transparent via-violet-500 to-transparent" />
         </div>
         
-        <h2 className="font-montserrat font-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase tracking-wider text-white mb-6 leading-[0.9]">
+        <h2 id="bibliotheque-section-title" className="font-montserrat font-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase tracking-wider text-white mb-6 leading-[0.9]">
           Les
           <br />
           <span className="gradient-text-animated">Essentiels</span>
@@ -163,11 +151,11 @@ console.log('Couleur actuelle:', currentColor);
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         {/* Desktop Tabs */}
-        <div className="hidden lg:flex justify-center gap-3 flex-wrap">
+        <div className="hidden lg:flex justify-center gap-3 flex-wrap" role="tablist" aria-label="Sélection de verticale">
           {verticales.map((verticaleData, index) => {
             const isActive = index === activeTab;
             const tabColor = verticaleData.verticale.couleurDominante;
-            
+
             return (
               <button
                 key={verticaleData.verticale.id}
@@ -175,8 +163,8 @@ console.log('Couleur actuelle:', currentColor);
                 className={`
                   relative px-6 py-3 rounded-full font-inter font-medium tracking-wider uppercase text-sm
                   transition-all duration-500 border backdrop-blur-sm
-                  ${isActive 
-                    ? 'text-white scale-105 shadow-lg' 
+                  ${isActive
+                    ? 'text-white scale-105 shadow-lg'
                     : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
                   }
                   ${isTransitioning ? 'pointer-events-none' : 'cursor-pointer'}
@@ -187,6 +175,10 @@ console.log('Couleur actuelle:', currentColor);
                   boxShadow: `0 8px 25px ${tabColor}40`
                 } : {}}
                 disabled={isTransitioning}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`tabpanel-${verticaleData.verticale.id}`}
+                id={`tab-${verticaleData.verticale.id}`}
               >
                 <span className="relative z-10">{verticaleData.verticale.nom}</span>
               </button>
@@ -195,11 +187,11 @@ console.log('Couleur actuelle:', currentColor);
         </div>
 
         {/* Tablet Tabs */}
-        <div className="hidden md:flex lg:hidden justify-center gap-2 flex-wrap">
+        <div className="hidden md:flex lg:hidden justify-center gap-2 flex-wrap" role="tablist" aria-label="Sélection de verticale">
           {verticales.map((verticaleData, index) => {
             const isActive = index === activeTab;
             const tabColor = verticaleData.verticale.couleurDominante;
-            
+
             return (
               <button
                 key={verticaleData.verticale.id}
@@ -207,8 +199,8 @@ console.log('Couleur actuelle:', currentColor);
                 className={`
                   relative px-4 py-2 rounded-full font-inter font-medium tracking-wider uppercase text-xs
                   transition-all duration-500 border backdrop-blur-sm
-                  ${isActive 
-                    ? 'text-white scale-105 shadow-lg' 
+                  ${isActive
+                    ? 'text-white scale-105 shadow-lg'
                     : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
                   }
                   ${isTransitioning ? 'pointer-events-none' : 'cursor-pointer'}
@@ -219,6 +211,8 @@ console.log('Couleur actuelle:', currentColor);
                   boxShadow: `0 8px 25px ${tabColor}40`
                 } : {}}
                 disabled={isTransitioning}
+                role="tab"
+                aria-selected={isActive}
               >
                 <span className="relative z-10">{verticaleData.verticale.nom}</span>
               </button>
@@ -227,12 +221,12 @@ console.log('Couleur actuelle:', currentColor);
         </div>
 
         {/* Mobile Tabs - Scrollable */}
-        <div className="md:hidden overflow-x-auto scrollbar-hide">
+        <div className="md:hidden overflow-x-auto scrollbar-hide" role="tablist" aria-label="Sélection de verticale">
           <div className="flex gap-3 px-4 pb-2" style={{ width: 'max-content' }}>
             {verticales.map((verticaleData, index) => {
               const isActive = index === activeTab;
               const tabColor = verticaleData.verticale.couleurDominante;
-              
+
               return (
                 <button
                   key={verticaleData.verticale.id}
@@ -240,8 +234,8 @@ console.log('Couleur actuelle:', currentColor);
                   className={`
                     relative px-5 py-2.5 rounded-full font-inter font-medium tracking-wider uppercase text-xs
                     transition-all duration-500 border backdrop-blur-sm whitespace-nowrap
-                    ${isActive 
-                      ? 'text-white scale-105 shadow-lg' 
+                    ${isActive
+                      ? 'text-white scale-105 shadow-lg'
                       : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
                     }
                     ${isTransitioning ? 'pointer-events-none' : 'cursor-pointer'}
@@ -252,6 +246,8 @@ console.log('Couleur actuelle:', currentColor);
                     boxShadow: `0 8px 25px ${tabColor}40`
                   } : {}}
                   disabled={isTransitioning}
+                  role="tab"
+                  aria-selected={isActive}
                 >
                   <span className="relative z-10">{verticaleData.verticale.nom}</span>
                 </button>
@@ -263,12 +259,15 @@ console.log('Couleur actuelle:', currentColor);
 
       {/* Content Grid - NOUVEAU DESIGN PREMIUM */}
       <div className="max-w-7xl mx-auto">
-        <div 
+        <div
           className={`
             grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10
             transition-all duration-400 ease-in-out
             ${isTransitioning ? 'opacity-0 transform translate-y-8' : 'opacity-100 transform translate-y-0'}
           `}
+          role="tabpanel"
+          id={`tabpanel-${currentVerticale.verticale.id}`}
+          aria-labelledby={`tab-${currentVerticale.verticale.id}`}
         >
           {currentVerticale.productions.map((production, index) => (
             <div
@@ -284,7 +283,17 @@ console.log('Couleur actuelle:', currentColor);
               }}
               onMouseEnter={() => setHoveredCard(production.id)}
               onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => navigate(production.url)}              >
+              onClick={() => navigate(production.url)}
+              role="article"
+              aria-label={`Article: ${production.titre} - ${currentVerticale.verticale.nom}`}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(production.url);
+                }
+              }}
+              >
               {/* Image Container - IMAGES NETTES */}
               <div className="absolute inset-0">
                 {loadedImages.has(production.id) ? (
@@ -355,17 +364,18 @@ console.log('Couleur actuelle:', currentColor);
                   </div>
 
                   {/* Play Icon - Appears on Hover */}
-                  <div 
+                  <div
                     className={`
-                      w-12 h-12 rounded-full backdrop-blur-md border border-white/20 
+                      w-12 h-12 rounded-full backdrop-blur-md border border-white/20
                       flex items-center justify-center transition-all duration-500
-                      ${hoveredCard === production.id 
-                        ? 'opacity-100 scale-110 bg-white/10' 
+                      ${hoveredCard === production.id
+                        ? 'opacity-100 scale-110 bg-white/10'
                         : 'opacity-0 scale-90'
                       }
                     `}
+                    aria-hidden="true"
                   >
-                    <BookOpen className="w-5 h-5 text-white" />
+                    <BookOpen className="w-5 h-5 text-white" aria-hidden="true" />
                   </div>
                 </div>
 
@@ -395,7 +405,7 @@ console.log('Couleur actuelle:', currentColor);
                       
                       {/* Reading Time Estimate */}
                       <div className="flex items-center gap-2 text-white/60 text-xs">
-                        <Clock className="w-3 h-3" />
+                        <Clock className="w-3 h-3" aria-hidden="true" />
                         <span>{Math.floor(Math.random() * 5) + 3} min de lecture</span>
                       </div>
                     </div>
@@ -415,11 +425,12 @@ console.log('Couleur actuelle:', currentColor);
                         boxShadow: hoveredCard === production.id ? `0 12px 30px ${currentColor}40` : 'none'
                       }}
                     >
-                      <ArrowRight 
+                      <ArrowRight
                         className={`w-5 h-5 transition-all duration-500 ${
                           hoveredCard === production.id ? 'translate-x-1' : ''
                         }`}
                         style={{ color: hoveredCard === production.id ? currentColor : 'white' }}
+                        aria-hidden="true"
                       />
                     </div>
                   </div>
@@ -480,9 +491,10 @@ console.log('Couleur actuelle:', currentColor);
           }}
         >
           <span>Explorer toute la bibliothèque</span>
-          <ArrowRight 
+          <ArrowRight
             className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500"
             style={{ color: currentColor }}
+            aria-hidden="true"
           />
         </button>
       </div>

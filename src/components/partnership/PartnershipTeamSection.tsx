@@ -134,7 +134,7 @@ const PartnershipTeamSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-32 bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden"
+      className="relative py-32 bg-white overflow-hidden"
     >
       {/* Background effects */}
       <div className="absolute inset-0">
@@ -147,10 +147,10 @@ const PartnershipTeamSection: React.FC = () => {
         <div className={`text-center mb-16 transition-all duration-1000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
-          <h2 className="font-montserrat font-black text-3xl lg:text-5xl text-white mb-4">
+          <h2 className="font-montserrat font-black text-3xl lg:text-5xl text-gray-900 mb-4">
             L'Équipe derrière l'Empire
           </h2>
-          <p className="text-xl text-white/60 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-500 max-w-3xl mx-auto">
             50+ créateurs passionnés, 12 experts verticales, 2 fondateurs visionnaires. 
             Unis pour transformer l'entraide en média d'impact.
           </p>
@@ -160,25 +160,25 @@ const PartnershipTeamSection: React.FC = () => {
         <div className={`grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16 transition-all duration-1000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+          <div className="text-center p-6 bg-gray-50 shadow-sm rounded-2xl border border-gray-200">
             <Users className="w-8 h-8 text-violet-400 mx-auto mb-2" />
-            <div className="font-montserrat font-bold text-3xl text-white">120+</div>
-            <div className="text-white/60 text-sm">Équipe totale</div>
+            <div className="font-montserrat font-bold text-3xl text-gray-900">120+</div>
+            <div className="text-gray-500 text-sm">Équipe totale</div>
           </div>
-          <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+          <div className="text-center p-6 bg-gray-50 shadow-sm rounded-2xl border border-gray-200">
             <Camera className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-            <div className="font-montserrat font-bold text-3xl text-white">50</div>
-            <div className="text-white/60 text-sm">Créateurs</div>
+            <div className="font-montserrat font-bold text-3xl text-gray-900">50</div>
+            <div className="text-gray-500 text-sm">Créateurs</div>
           </div>
-          <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+          <div className="text-center p-6 bg-gray-50 shadow-sm rounded-2xl border border-gray-200">
             <Target className="w-8 h-8 text-pink-400 mx-auto mb-2" />
-            <div className="font-montserrat font-bold text-3xl text-white">12</div>
-            <div className="text-white/60 text-sm">Experts verticales</div>
+            <div className="font-montserrat font-bold text-3xl text-gray-900">12</div>
+            <div className="text-gray-500 text-sm">Experts verticales</div>
           </div>
-          <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+          <div className="text-center p-6 bg-gray-50 shadow-sm rounded-2xl border border-gray-200">
             <Award className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-            <div className="font-montserrat font-bold text-3xl text-white">15</div>
-            <div className="text-white/60 text-sm">Années d'XP moyenne</div>
+            <div className="font-montserrat font-bold text-3xl text-gray-900">15</div>
+            <div className="text-gray-500 text-sm">Années d'XP moyenne</div>
           </div>
         </div>
 
@@ -186,13 +186,13 @@ const PartnershipTeamSection: React.FC = () => {
         <div className={`flex justify-center mb-12 transition-all duration-1000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="inline-flex bg-white/5 backdrop-blur-sm rounded-full p-1 border border-white/10">
+          <div className="inline-flex bg-gray-50 shadow-sm rounded-full p-1 border border-gray-200">
             <button
               onClick={() => setActiveTab('founders')}
               className={`px-8 py-3 rounded-full font-medium transition-all ${
                 activeTab === 'founders'
-                  ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white'
-                  : 'text-white/60 hover:text-white'
+                  ? 'bg-gradient-to-r from-orange-600 to-red-600 text-gray-900'
+                  : 'text-gray-500 hover:text-gray-900'
               }`}
             >
               <Star className="w-5 h-5 inline mr-2" />
@@ -202,8 +202,8 @@ const PartnershipTeamSection: React.FC = () => {
               onClick={() => setActiveTab('creators')}
               className={`px-8 py-3 rounded-full font-medium transition-all ${
                 activeTab === 'creators'
-                  ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white'
-                  : 'text-white/60 hover:text-white'
+                  ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-gray-900'
+                  : 'text-gray-500 hover:text-gray-900'
               }`}
             >
               <Users className="w-5 h-5 inline mr-2" />
@@ -213,8 +213,8 @@ const PartnershipTeamSection: React.FC = () => {
               onClick={() => setActiveTab('advisory')}
               className={`px-8 py-3 rounded-full font-medium transition-all ${
                 activeTab === 'advisory'
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                  : 'text-white/60 hover:text-white'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-gray-900'
+                  : 'text-gray-500 hover:text-gray-900'
               }`}
             >
               <Shield className="w-5 h-5 inline mr-2" />
@@ -239,14 +239,14 @@ const PartnershipTeamSection: React.FC = () => {
                   onMouseLeave={() => setHoveredMember(null)}
                 >
                   <div className={`absolute -inset-1 bg-gradient-to-r ${founder.color} rounded-3xl blur opacity-25 group-hover:opacity-40 transition-opacity`} />
-                  <div className="relative bg-black/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 h-full">
+                  <div className="relative bg-white shadow-sm rounded-3xl p-8 border border-gray-200 h-full">
                     {/* Header avec avatar placeholder */}
                     <div className="flex items-start gap-6 mb-6">
-                      <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${founder.color} flex items-center justify-center text-white text-3xl font-bold`}>
+                      <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${founder.color} flex items-center justify-center text-gray-900 text-3xl font-bold`}>
                         {founder.nom.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-montserrat font-bold text-2xl text-white mb-1">
+                        <h3 className="font-montserrat font-bold text-2xl text-gray-900 mb-1">
                           {founder.nom}
                         </h3>
                         <p className={`font-semibold text-transparent bg-clip-text bg-gradient-to-r ${founder.color}`}>
@@ -254,10 +254,10 @@ const PartnershipTeamSection: React.FC = () => {
                         </p>
                         {/* Social links */}
                         <div className="flex gap-3 mt-3">
-                          <a href={founder.linkedin} className="text-white/40 hover:text-white transition-colors">
+                          <a href={founder.linkedin} className="text-gray-400 hover:text-gray-900 transition-colors">
                             <LinkedinIcon className="w-5 h-5" />
                           </a>
-                          <a href={founder.twitter} className="text-white/40 hover:text-white transition-colors">
+                          <a href={founder.twitter} className="text-gray-400 hover:text-gray-900 transition-colors">
                             <Twitter className="w-5 h-5" />
                           </a>
                         </div>
@@ -265,16 +265,16 @@ const PartnershipTeamSection: React.FC = () => {
                     </div>
 
                     {/* Bio */}
-                    <p className="text-white/80 mb-6">
+                    <p className="text-gray-600 mb-6">
                       {founder.bio}
                     </p>
 
                     {/* Expertise */}
                     <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-white/60 mb-3">Expertise</h4>
+                      <h4 className="text-sm font-semibold text-gray-500 mb-3">Expertise</h4>
                       <div className="flex flex-wrap gap-2">
                         {founder.expertise.map((skill, index) => (
-                          <span key={index} className="px-3 py-1 bg-white/10 rounded-full text-sm text-white/80">
+                          <span key={index} className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
                             {skill}
                           </span>
                         ))}
@@ -283,12 +283,12 @@ const PartnershipTeamSection: React.FC = () => {
 
                     {/* Achievements */}
                     <div>
-                      <h4 className="text-sm font-semibold text-white/60 mb-3">Réalisations clés</h4>
+                      <h4 className="text-sm font-semibold text-gray-500 mb-3">Réalisations clés</h4>
                       <div className="space-y-2">
                         {founder.achievements.map((achievement, index) => (
                           <div key={index} className="flex items-center gap-2">
                             <ChevronRight className={`w-4 h-4 text-transparent bg-clip-text bg-gradient-to-r ${founder.color}`} />
-                            <span className="text-white/80 text-sm">{achievement}</span>
+                            <span className="text-gray-600 text-sm">{achievement}</span>
                           </div>
                         ))}
                       </div>
@@ -304,33 +304,33 @@ const PartnershipTeamSection: React.FC = () => {
             <div>
               <div className="grid lg:grid-cols-2 gap-8">
                 {Object.entries(teams).map(([key, team]) => (
-                  <div key={key} className="bg-black/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+                  <div key={key} className="bg-white shadow-sm rounded-3xl p-8 border border-gray-200">
                     <div className="flex items-center gap-4 mb-6">
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${team.color} flex items-center justify-center`}>
-                        <team.icon className="w-6 h-6 text-white" />
+                        <team.icon className="w-6 h-6 text-gray-900" />
                       </div>
-                      <h3 className="font-montserrat font-bold text-xl text-white">
+                      <h3 className="font-montserrat font-bold text-xl text-gray-900">
                         {team.title}
                       </h3>
                     </div>
 
                     <div className="space-y-4">
                       {team.members.map((member, index) => (
-                        <div key={index} className="flex items-start justify-between p-4 bg-white/5 rounded-xl">
+                        <div key={index} className="flex items-start justify-between p-4 bg-gray-50 rounded-xl">
                           <div className="flex-1">
-                            <h4 className="font-semibold text-white mb-1">{member.role}</h4>
-                            <p className="text-sm text-white/60">{member.skills}</p>
+                            <h4 className="font-semibold text-gray-900 mb-1">{member.role}</h4>
+                            <p className="text-sm text-gray-500">{member.skills}</p>
                           </div>
                           <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${team.color} bg-opacity-20`}>
-                            <span className="font-bold text-white">{member.count}</span>
+                            <span className="font-bold text-gray-900">{member.count}</span>
                           </div>
                         </div>
                       ))}
                     </div>
 
                     {/* Total par équipe */}
-                    <div className="mt-6 pt-6 border-t border-white/10 text-center">
-                      <p className="text-sm text-white/60">Total équipe</p>
+                    <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+                      <p className="text-sm text-gray-500">Total équipe</p>
                       <p className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${team.color}`}>
                         {team.members.reduce((acc, m) => acc + m.count, 0)} personnes
                       </p>
@@ -340,25 +340,25 @@ const PartnershipTeamSection: React.FC = () => {
               </div>
 
               {/* Culture d'équipe */}
-              <div className="mt-12 bg-gradient-to-r from-violet-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-xl rounded-3xl p-10 border border-white/20">
-                <h3 className="font-montserrat font-bold text-2xl text-white text-center mb-8">
+              <div className="mt-12 bg-gradient-to-r from-violet-600/10 via-purple-600/10 to-pink-600/10 shadow-sm rounded-3xl p-10 border border-gray-300">
+                <h3 className="font-montserrat font-bold text-2xl text-gray-900 text-center mb-8">
                   Notre Culture
                 </h3>
                 <div className="grid lg:grid-cols-3 gap-6 text-center">
                   <div>
                     <Rocket className="w-10 h-10 text-violet-400 mx-auto mb-3" />
-                    <h4 className="font-semibold text-white mb-2">Impact First</h4>
-                    <p className="text-white/60 text-sm">Chaque décision est prise en fonction de l'impact réel généré</p>
+                    <h4 className="font-semibold text-gray-900 mb-2">Impact First</h4>
+                    <p className="text-gray-500 text-sm">Chaque décision est prise en fonction de l'impact réel généré</p>
                   </div>
                   <div>
                     <Heart className="w-10 h-10 text-purple-400 mx-auto mb-3" />
-                    <h4 className="font-semibold text-white mb-2">Authenticité</h4>
-                    <p className="text-white/60 text-sm">Les vraies histoires, les vraies émotions, pas de bullshit</p>
+                    <h4 className="font-semibold text-gray-900 mb-2">Authenticité</h4>
+                    <p className="text-gray-500 text-sm">Les vraies histoires, les vraies émotions, pas de bullshit</p>
                   </div>
                   <div>
                     <Sparkles className="w-10 h-10 text-pink-400 mx-auto mb-3" />
-                    <h4 className="font-semibold text-white mb-2">Excellence</h4>
-                    <p className="text-white/60 text-sm">On vise Netflix, pas YouTube. Qualité sur quantité</p>
+                    <h4 className="font-semibold text-gray-900 mb-2">Excellence</h4>
+                    <p className="text-gray-500 text-sm">On vise Netflix, pas YouTube. Qualité sur quantité</p>
                   </div>
                 </div>
               </div>
@@ -370,19 +370,19 @@ const PartnershipTeamSection: React.FC = () => {
             <div>
               <div className="grid lg:grid-cols-2 gap-8 mb-12">
                 {advisors.map((advisor, index) => (
-                  <div key={index} className="bg-black/60 backdrop-blur-xl rounded-2xl p-8 border border-white/10 hover:border-white/20 transition-all">
+                  <div key={index} className="bg-white shadow-sm rounded-2xl p-8 border border-gray-200 hover:border-gray-300 transition-all">
                     <div className="flex items-start gap-4">
                       <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
-                        <advisor.icon className="w-7 h-7 text-white" />
+                        <advisor.icon className="w-7 h-7 text-gray-900" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-montserrat font-bold text-xl text-white mb-1">
+                        <h4 className="font-montserrat font-bold text-xl text-gray-900 mb-1">
                           {advisor.nom}
                         </h4>
                         <p className="text-blue-400 font-semibold mb-3">
                           {advisor.expertise}
                         </p>
-                        <p className="text-white/70">
+                        <p className="text-gray-500">
                           <span className="font-semibold">Apporte :</span> {advisor.apport}
                         </p>
                       </div>
@@ -392,16 +392,16 @@ const PartnershipTeamSection: React.FC = () => {
               </div>
 
               {/* Pourquoi ils nous conseillent */}
-              <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 backdrop-blur-xl rounded-3xl p-10 border border-blue-500/20 text-center">
-                <h3 className="font-montserrat font-bold text-2xl text-white mb-6">
+              <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 shadow-sm rounded-3xl p-10 border border-blue-500/20 text-center">
+                <h3 className="font-montserrat font-bold text-2xl text-gray-900 mb-6">
                   Pourquoi ils croient au projet
                 </h3>
-                <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
+                <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
                   "C'est la première fois qu'on voit un modèle média où 
                   <span className="font-bold text-blue-400"> 100% de la valeur créée retourne à l'impact social</span>. 
                   Wanted × Origines ne fait pas dans le charity washing, ils créent un nouveau standard."
                 </p>
-                <p className="text-white/60">
+                <p className="text-gray-500">
                   - Citation collective de l'Advisory Board
                 </p>
               </div>
@@ -413,16 +413,16 @@ const PartnershipTeamSection: React.FC = () => {
         <div className={`text-center mt-20 transition-all duration-1000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <div className="bg-gradient-to-r from-green-600/10 to-emerald-600/10 backdrop-blur-xl rounded-3xl p-10 border border-green-500/20">
+          <div className="bg-gradient-to-r from-green-600/10 to-emerald-600/10 shadow-sm rounded-3xl p-10 border border-green-500/20">
             <Megaphone className="w-12 h-12 text-green-400 mx-auto mb-4" />
-            <h3 className="font-montserrat font-bold text-2xl text-white mb-4">
+            <h3 className="font-montserrat font-bold text-2xl text-gray-900 mb-4">
               On recrute les meilleurs
             </h3>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto mb-6">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
               Si tu veux créer du contenu qui a du sens, rejoins-nous. 
               On cherche des créateurs, des monteurs, des growth hackers qui veulent changer le game.
             </p>
-            <button className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full text-white font-bold hover:scale-105 transition-transform">
+            <button className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full text-gray-900 font-bold hover:scale-105 transition-transform">
               Voir les postes ouverts
               <ChevronRight className="w-5 h-5 inline ml-2" />
             </button>

@@ -1,1095 +1,683 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Search, Filter, Grid, List, Clock, Play, ArrowRight, TrendingUp, Calendar, Eye, Heart, Share2, X, ChevronDown, Video } from 'lucide-react';
-import Sidebar from '../components/Sidebar';
-import Footer from '../components/Footer';
+// src/pages/SeriesPage.tsx
+// Design Netflix - Navigation par séries avec rows horizontales
 
-interface VideoProduction {
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Info, ChevronLeft, ChevronRight, X, Clock, Calendar, Eye, Heart } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { typo } from '../lib/typography';
+
+// Types
+interface Episode {
   id: string;
   titre: string;
   description: string;
   thumbnailUrl: string;
-  videoUrl: string;
-  format: string;
-  datePublication: string;
   duree: string;
+  numeroEpisode: number;
+  saison: number;
+  datePublication: string;
   vues: number;
-  likes: number;
-  isPopular?: boolean;
-  isRecent?: boolean;
-  tags: string[];
-  episode?: number;
-  saison?: number;
 }
 
-interface FormatVideo {
+interface Serie {
   id: string;
-  nom: string;
-  couleur: string;
-  count: number;
+  titre: string;
   description: string;
+  posterUrl: string;
+  bannerUrl: string;
+  couleur: string;
+  nombreEpisodes: number;
+  nombreSaisons: number;
+  annee: string;
+  episodes: Episode[];
 }
 
-const SeriesPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFormat, setSelectedFormat] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'recent' | 'popular' | 'alphabetical' | 'duration'>('recent');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [isVisible, setIsVisible] = useState(false);
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const sectionRef = useRef<HTMLElement>(null);
+// Données des séries avec leurs épisodes
+const seriesData: Serie[] = [
+  {
+    id: 'transmission',
+    titre: 'Transmission',
+    description: 'Quand les savoirs ancestraux rencontrent les innovations modernes. Une exploration des traditions qui façonnent notre présent.',
+    posterUrl: '/series/01_transmission_poster.jpg',
+    bannerUrl: '/series/01_transmission.jpg',
+    couleur: '#6366F1', // Bleu violet
+    nombreEpisodes: 15,
+    nombreSaisons: 2,
+    annee: '2024',
+    episodes: [
+      { id: 't-1', titre: 'L\'art ancestral de la méditation zen', description: 'Un maître zen partage les secrets d\'une pratique millénaire.', thumbnailUrl: '/placeholder.svg', duree: '18:27', numeroEpisode: 1, saison: 1, datePublication: '2024-01-12', vues: 14560 },
+      { id: 't-2', titre: 'Les secrets du savoir-faire japonais', description: 'Un maître artisan transmet 40 ans d\'expertise.', thumbnailUrl: '/placeholder.svg', duree: '26:15', numeroEpisode: 2, saison: 1, datePublication: '2024-01-03', vues: 11230 },
+      { id: 't-3', titre: 'L\'héritage des maîtres verriers', description: 'Voyage au cœur d\'un atelier de soufflage de verre centenaire.', thumbnailUrl: '/placeholder.svg', duree: '22:45', numeroEpisode: 3, saison: 1, datePublication: '2024-02-15', vues: 9870 },
+      { id: 't-4', titre: 'La voie du thé', description: 'Cérémonie et philosophie autour du thé japonais.', thumbnailUrl: '/placeholder.svg', duree: '19:30', numeroEpisode: 4, saison: 1, datePublication: '2024-03-01', vues: 12340 },
+      { id: 't-5', titre: 'Les gardiens du savoir culinaire', description: 'Recettes familiales transmises de génération en génération.', thumbnailUrl: '/placeholder.svg', duree: '24:18', numeroEpisode: 5, saison: 1, datePublication: '2024-03-20', vues: 15680 },
+    ]
+  },
+  {
+    id: 'etat-esprit',
+    titre: 'État d\'Esprit',
+    description: 'Explorez les mindsets gagnants et les philosophies de vie qui transforment. Des conversations profondes sur la psychologie du succès.',
+    posterUrl: '/series/02_etat_esprit_poster.jpg',
+    bannerUrl: '/series/02_etat_esprit.jpg',
+    couleur: '#0EA5E9', // Bleu ciel
+    nombreEpisodes: 19,
+    nombreSaisons: 2,
+    annee: '2024',
+    episodes: [
+      { id: 'e-1', titre: 'Transformer l\'échec en opportunité', description: 'Comment les plus grands entrepreneurs utilisent leurs échecs.', thumbnailUrl: '/placeholder.svg', duree: '12:45', numeroEpisode: 1, saison: 1, datePublication: '2024-01-10', vues: 16780 },
+      { id: 'e-2', titre: 'La mentalité des champions olympiques', description: 'Plongée dans la psychologie des athlètes de haut niveau.', thumbnailUrl: '/placeholder.svg', duree: '19:33', numeroEpisode: 2, saison: 1, datePublication: '2024-01-01', vues: 15670 },
+      { id: 'e-3', titre: 'L\'art de la résilience', description: 'Rebondir face à l\'adversité avec force et sagesse.', thumbnailUrl: '/placeholder.svg', duree: '21:15', numeroEpisode: 3, saison: 1, datePublication: '2024-02-05', vues: 18920 },
+      { id: 'e-4', titre: 'Cultiver la discipline quotidienne', description: 'Les rituels des personnes hautement performantes.', thumbnailUrl: '/placeholder.svg', duree: '16:42', numeroEpisode: 4, saison: 1, datePublication: '2024-02-20', vues: 14350 },
+      { id: 'e-5', titre: 'La puissance de la visualisation', description: 'Techniques mentales pour atteindre vos objectifs.', thumbnailUrl: '/placeholder.svg', duree: '14:28', numeroEpisode: 5, saison: 1, datePublication: '2024-03-10', vues: 11240 },
+    ]
+  },
+  {
+    id: 'il-etait-une-fois',
+    titre: 'Il était une fois',
+    description: 'Les histoires extraordinaires qui ont marqué notre époque, racontées par ceux qui les ont vécues. Des récits captivants et inspirants.',
+    posterUrl: '/series/03_il_etait_une_fois_poster.jpg',
+    bannerUrl: '/series/03_il_etait_une_fois.jpg',
+    couleur: '#EAB308', // Or
+    nombreEpisodes: 32,
+    nombreSaisons: 3,
+    annee: '2023',
+    episodes: [
+      { id: 'i-1', titre: 'Steve Jobs et la révolution Apple', description: 'L\'histoire méconnue des premiers pas d\'Apple.', thumbnailUrl: '/placeholder.svg', duree: '28:33', numeroEpisode: 1, saison: 1, datePublication: '2024-01-18', vues: 25670 },
+      { id: 'i-2', titre: 'La naissance de Netflix', description: 'Comment deux entrepreneurs ont révolutionné le divertissement.', thumbnailUrl: '/placeholder.svg', duree: '32:15', numeroEpisode: 2, saison: 1, datePublication: '2023-12-18', vues: 28940 },
+      { id: 'i-3', titre: 'L\'épopée SpaceX', description: 'De la faillite à la conquête spatiale.', thumbnailUrl: '/placeholder.svg', duree: '35:42', numeroEpisode: 3, saison: 1, datePublication: '2024-01-25', vues: 31200 },
+      { id: 'i-4', titre: 'Wikipedia : l\'encyclopédie du peuple', description: 'Comment un rêve utopique est devenu réalité.', thumbnailUrl: '/placeholder.svg', duree: '24:18', numeroEpisode: 4, saison: 1, datePublication: '2024-02-08', vues: 19450 },
+      { id: 'i-5', titre: 'Airbnb : de la colocation à l\'empire', description: 'Trois amis et une idée qui a changé le voyage.', thumbnailUrl: '/placeholder.svg', duree: '27:55', numeroEpisode: 5, saison: 1, datePublication: '2024-02-22', vues: 22180 },
+    ]
+  },
+  {
+    id: 'secrets-pro',
+    titre: 'Secrets professionnels',
+    description: 'Immersion dans les coulisses des métiers d\'exception et des expertises rares. Découvrez ce qui se cache derrière l\'excellence.',
+    posterUrl: '/series/04_secrets_professionnels_poster.jpg',
+    bannerUrl: '/series/04_secrets_professionnels.jpg',
+    couleur: '#EC4899', // Rose/Pink
+    nombreEpisodes: 18,
+    nombreSaisons: 2,
+    annee: '2024',
+    episodes: [
+      { id: 's-1', titre: 'Dans les coulisses d\'un chef étoilé', description: 'Immersion dans la cuisine de Thomas Keller.', thumbnailUrl: '/placeholder.svg', duree: '22:15', numeroEpisode: 1, saison: 1, datePublication: '2024-01-20', vues: 12340 },
+      { id: 's-2', titre: 'Dans l\'atelier d\'un maître horloger', description: 'L\'art millénaire de l\'horlogerie suisse.', thumbnailUrl: '/placeholder.svg', duree: '25:47', numeroEpisode: 2, saison: 1, datePublication: '2023-12-20', vues: 15670 },
+      { id: 's-3', titre: 'Les secrets d\'un sommelier', description: 'L\'art de la dégustation et du service du vin.', thumbnailUrl: '/placeholder.svg', duree: '18:32', numeroEpisode: 3, saison: 1, datePublication: '2024-01-28', vues: 9870 },
+      { id: 's-4', titre: 'Chirurgien cardiaque : 24h en bloc', description: 'Une journée aux côtés d\'un chirurgien d\'exception.', thumbnailUrl: '/placeholder.svg', duree: '31:20', numeroEpisode: 4, saison: 1, datePublication: '2024-02-12', vues: 21340 },
+      { id: 's-5', titre: 'L\'œil du directeur artistique', description: 'Dans les coulisses de la création visuelle.', thumbnailUrl: '/placeholder.svg', duree: '20:45', numeroEpisode: 5, saison: 1, datePublication: '2024-03-05', vues: 11560 },
+    ]
+  },
+  {
+    id: 'la-lettre',
+    titre: 'La Lettre',
+    description: 'Chaque semaine, une analyse approfondie des tendances et idées qui façonnent notre monde. Décryptage et perspectives.',
+    posterUrl: '/series/05_la_lettre_poster.jpg',
+    bannerUrl: '/series/05_la_lettre.jpg',
+    couleur: '#10B981', // Vert
+    nombreEpisodes: 24,
+    nombreSaisons: 2,
+    annee: '2024',
+    episodes: [
+      { id: 'l-1', titre: 'Les 7 habitudes des leaders exceptionnels', description: 'Rituels et principes des vrais leaders.', thumbnailUrl: '/placeholder.svg', duree: '15:42', numeroEpisode: 1, saison: 1, datePublication: '2024-01-22', vues: 18450 },
+      { id: 'l-2', titre: 'Décryptage de l\'économie créative', description: 'Analyse des nouveaux modèles économiques.', thumbnailUrl: '/placeholder.svg', duree: '17:22', numeroEpisode: 2, saison: 1, datePublication: '2023-12-22', vues: 11230 },
+      { id: 'l-3', titre: 'L\'IA et l\'avenir du travail', description: 'Comment l\'intelligence artificielle transforme nos métiers.', thumbnailUrl: '/placeholder.svg', duree: '19:15', numeroEpisode: 3, saison: 1, datePublication: '2024-02-01', vues: 24560 },
+      { id: 'l-4', titre: 'La révolution du bien-être au travail', description: 'Nouvelles approches du management humain.', thumbnailUrl: '/placeholder.svg', duree: '14:48', numeroEpisode: 4, saison: 1, datePublication: '2024-02-15', vues: 13780 },
+      { id: 'l-5', titre: 'Tendances 2024 : ce qui va changer', description: 'Les grandes mutations à anticiper.', thumbnailUrl: '/placeholder.svg', duree: '21:33', numeroEpisode: 5, saison: 1, datePublication: '2024-03-01', vues: 19240 },
+    ]
+  },
+  {
+    id: 'imagine',
+    titre: 'Imagine',
+    description: 'Et si on imaginait ensemble un monde différent ? Explorations créatives et visionnaires pour réinventer demain.',
+    posterUrl: '/series/06_imagine_poster.jpg',
+    bannerUrl: '/series/06_imagine.jpg',
+    couleur: '#8B5CF6', // Violet
+    nombreEpisodes: 12,
+    nombreSaisons: 1,
+    annee: '2024',
+    episodes: [
+      { id: 'im-1', titre: 'Les villes de demain', description: 'Comment nos espaces urbains vont évoluer.', thumbnailUrl: '/placeholder.svg', duree: '23:45', numeroEpisode: 1, saison: 1, datePublication: '2024-01-15', vues: 17890 },
+      { id: 'im-2', titre: 'L\'école du futur', description: 'Réinventer l\'éducation pour les générations à venir.', thumbnailUrl: '/placeholder.svg', duree: '19:22', numeroEpisode: 2, saison: 1, datePublication: '2024-01-29', vues: 14560 },
+      { id: 'im-3', titre: 'Vivre sans argent', description: 'Expériences d\'économie alternative.', thumbnailUrl: '/placeholder.svg', duree: '25:18', numeroEpisode: 3, saison: 1, datePublication: '2024-02-12', vues: 21340 },
+      { id: 'im-4', titre: 'La fin du travail ?', description: 'Repenser notre rapport au labeur.', thumbnailUrl: '/placeholder.svg', duree: '22:55', numeroEpisode: 4, saison: 1, datePublication: '2024-02-26', vues: 18790 },
+      { id: 'im-5', titre: 'Habiter Mars', description: 'Les défis de la colonisation spatiale.', thumbnailUrl: '/placeholder.svg', duree: '28:12', numeroEpisode: 5, saison: 1, datePublication: '2024-03-11', vues: 25670 },
+    ]
+  }
+];
 
-  const itemsPerPage = 12;
+// Composant Row horizontale (style Netflix)
+const SeriesRow: React.FC<{
+  serie: Serie;
+  onSelectEpisode: (episode: Episode, serie: Serie) => void;
+}> = ({ serie, onSelectEpisode }) => {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
 
-  // ✅ CORRECTION : Données complètes des 8 formats vidéos exclusifs
-  const formatsVideo: FormatVideo[] = [
-    { id: 'all', nom: 'Tous les formats', couleur: '#EC4899', count: 156, description: 'Tous nos contenus vidéos exclusifs' },
-    { id: 'la-lettre', nom: 'La Lettre', couleur: '#8B5CF6', count: 24, description: 'Analyses hebdomadaires approfondies' },
-    { id: 'secrets-pro', nom: 'Secrets Pro', couleur: '#EC4899', count: 18, description: 'Coulisses des métiers et expertises' },
-    { id: 'il-etait-une-fois', nom: 'Il était une fois', couleur: '#F59E0B', count: 32, description: 'Récits narratifs immersifs' },
-    { id: 'connexion', nom: 'Connexion', couleur: '#10B981', count: 21, description: 'Rencontres inspirantes' },
-    { id: 'transmission', nom: 'Transmission', couleur: '#3B82F6', count: 15, description: 'Savoirs ancestraux et modernes' },
-    { id: 'etat-esprit', nom: 'État d\'Esprit', couleur: '#EF4444', count: 19, description: 'Mindset et philosophie de vie' },
-    { id: 'apparence', nom: 'Apparence', couleur: '#8B5CF6', count: 12, description: 'Image et authenticité' },
-    { id: 'je-suis', nom: 'Je Suis', couleur: '#06B6D4', count: 15, description: 'Identité et transformation personnelle' }
-  ];
-
-  // Tags populaires pour les vidéos
-  const allTags = [
-    'Développement personnel', 'Leadership', 'Créativité', 'Entrepreneuriat', 'Mindset',
-    'Communication', 'Résilience', 'Innovation', 'Productivité', 'Bien-être',
-    'Storytelling', 'Coaching', 'Motivation', 'Stratégie', 'Vision',
-    'Transformation', 'Inspiration', 'Excellence', 'Performance', 'Authenticité'
-  ];
-
-  // ✅ CORRECTION : Données étendues avec les 4 formats manquants
-  const allVideos: VideoProduction[] = [
-    {
-      id: 'video-001',
-      titre: 'Les 7 habitudes des leaders exceptionnels',
-      description: 'Découvrez les rituels quotidiens et les principes fondamentaux qui distinguent les vrais leaders des simples managers.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
-      videoUrl: '/video/7-habitudes-leaders',
-      format: 'la-lettre',
-      datePublication: '2024-01-22',
-      duree: '15:42',
-      vues: 18450,
-      likes: 1203,
-      isPopular: true,
-      isRecent: true,
-      tags: ['Leadership', 'Habitudes', 'Excellence'],
-      episode: 12,
-      saison: 2
-    },
-    {
-      id: 'video-002',
-      titre: 'Dans les coulisses d\'un chef étoilé',
-      description: 'Immersion exclusive dans la cuisine de Thomas Keller pour comprendre l\'obsession de la perfection culinaire.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
-      videoUrl: '/video/coulisses-chef-etoile',
-      format: 'secrets-pro',
-      datePublication: '2024-01-20',
-      duree: '22:15',
-      vues: 12340,
-      likes: 892,
-      isPopular: true,
-      tags: ['Gastronomie', 'Excellence', 'Passion'],
-      episode: 8,
-      saison: 1
-    },
-    {
-      id: 'video-003',
-      titre: 'Il était une fois... Steve Jobs et la révolution Apple',
-      description: 'L\'histoire méconnue des premiers pas d\'Apple, racontée par ceux qui ont vécu cette aventure extraordinaire.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg',
-      videoUrl: '/video/steve-jobs-apple',
-      format: 'il-etait-une-fois',
-      datePublication: '2024-01-18',
-      duree: '28:33',
-      vues: 25670,
-      likes: 1876,
-      isPopular: true,
-      tags: ['Innovation', 'Entrepreneuriat', 'Technologie'],
-      episode: 5,
-      saison: 3
-    },
-    {
-      id: 'video-004',
-      titre: 'Connexion avec Yuval Noah Harari',
-      description: 'Une conversation profonde avec l\'historien sur l\'avenir de l\'humanité et les défis du 21ème siècle.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3771089/pexels-photo-3771089.jpeg',
-      videoUrl: '/video/yuval-harari-connexion',
-      format: 'connexion',
-      datePublication: '2024-01-15',
-      duree: '45:12',
-      vues: 31200,
-      likes: 2134,
-      isPopular: true,
-      tags: ['Philosophie', 'Futur', 'Société'],
-      episode: 15,
-      saison: 2
-    },
-    {
-      id: 'video-005',
-      titre: 'L\'art ancestral de la méditation zen',
-      description: 'Transmission millénaire : un maître zen partage les secrets d\'une pratique qui transforme l\'esprit.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg',
-      videoUrl: '/video/meditation-zen-transmission',
-      format: 'transmission',
-      datePublication: '2024-01-12',
-      duree: '18:27',
-      vues: 14560,
-      likes: 1045,
-      tags: ['Méditation', 'Spiritualité', 'Tradition'],
-      episode: 3,
-      saison: 1
-    },
-    {
-      id: 'video-006',
-      titre: 'État d\'esprit : Transformer l\'échec en opportunité',
-      description: 'Comment les plus grands entrepreneurs utilisent leurs échecs comme tremplin vers le succès.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg',
-      videoUrl: '/video/echec-opportunite-mindset',
-      format: 'etat-esprit',
-      datePublication: '2024-01-10',
-      duree: '12:45',
-      vues: 16780,
-      likes: 1234,
-      isRecent: true,
-      tags: ['Mindset', 'Résilience', 'Entrepreneuriat'],
-      episode: 7,
-      saison: 1
-    },
-    {
-      id: 'video-007',
-      titre: 'Apparence : L\'authenticité comme force',
-      description: 'Pourquoi être soi-même est la stratégie la plus puissante dans un monde d\'apparences.',
-      thumbnailUrl: 'https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg',
-      videoUrl: '/video/authenticite-apparence',
-      format: 'apparence',
-      datePublication: '2024-01-08',
-      duree: '14:18',
-      vues: 9876,
-      likes: 723,
-      tags: ['Authenticité', 'Image', 'Confiance'],
-      episode: 4,
-      saison: 1
-    },
-    {
-      id: 'video-008',
-      titre: 'Je suis... une femme qui a révolutionné la tech',
-      description: 'Portrait intime d\'une pionnière qui a brisé les codes dans l\'univers masculin de la technologie.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg',
-      videoUrl: '/video/femme-tech-revolution',
-      format: 'je-suis',
-      datePublication: '2024-01-05',
-      duree: '20:33',
-      vues: 13450,
-      likes: 967,
-      tags: ['Technologie', 'Féminisme', 'Innovation'],
-      episode: 6,
-      saison: 2
-    },
-    // ✅ NOUVEAUX CONTENUS pour les 4 formats manquants
-    {
-      id: 'video-009',
-      titre: 'Transmission : Les secrets du savoir-faire japonais',
-      description: 'Un maître artisan japonais transmet 40 ans d\'expertise dans l\'art de la céramique traditionnelle.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3769999/pexels-photo-3769999.jpeg',
-      videoUrl: '/video/savoir-faire-japonais',
-      format: 'transmission',
-      datePublication: '2024-01-03',
-      duree: '26:15',
-      vues: 11230,
-      likes: 834,
-      tags: ['Artisanat', 'Tradition', 'Japon'],
-      episode: 2,
-      saison: 1
-    },
-    {
-      id: 'video-010',
-      titre: 'État d\'esprit : La mentalité des champions olympiques',
-      description: 'Plongée dans la psychologie des athlètes de haut niveau et leurs stratégies mentales.',
-      thumbnailUrl: 'https://images.pexels.com/photos/416778/pexels-photo-416778.jpeg',
-      videoUrl: '/video/mentalite-champions',
-      format: 'etat-esprit',
-      datePublication: '2024-01-01',
-      duree: '19:33',
-      vues: 15670,
-      likes: 1156,
-      isPopular: true,
-      tags: ['Sport', 'Performance', 'Mindset'],
-      episode: 6,
-      saison: 1
-    },
-    {
-      id: 'video-011',
-      titre: 'Apparence : Déconstruire les codes de beauté',
-      description: 'Comment redéfinir sa relation à l\'image et s\'affranchir des diktats esthétiques.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg',
-      videoUrl: '/video/deconstruire-beaute',
-      format: 'apparence',
-      datePublication: '2023-12-28',
-      duree: '16:42',
-      vues: 12940,
-      likes: 987,
-      tags: ['Beauté', 'Société', 'Confiance'],
-      episode: 3,
-      saison: 1
-    },
-    {
-      id: 'video-012',
-      titre: 'Je suis... un ancien détenu devenu entrepreneur',
-      description: 'Récit bouleversant d\'une rédemption par l\'entrepreneuriat social et la seconde chance.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg',
-      videoUrl: '/video/detenu-entrepreneur',
-      format: 'je-suis',
-      datePublication: '2023-12-25',
-      duree: '24:18',
-      vues: 19560,
-      likes: 1423,
-      isPopular: true,
-      tags: ['Rédemption', 'Entrepreneuriat', 'Société'],
-      episode: 5,
-      saison: 2
-    },
-    // Contenus supplémentaires pour enrichir
-    {
-      id: 'video-013',
-      titre: 'La Lettre : Décryptage de l\'économie créative',
-      description: 'Analyse approfondie des nouveaux modèles économiques dans les industries créatives.',
-      thumbnailUrl: 'https://images.pexels.com/photos/1269968/pexels-photo-1269968.jpeg',
-      videoUrl: '/video/economie-creative-analyse',
-      format: 'la-lettre',
-      datePublication: '2023-12-22',
-      duree: '17:22',
-      vues: 11230,
-      likes: 834,
-      tags: ['Économie', 'Créativité', 'Innovation'],
-      episode: 11,
-      saison: 2
-    },
-    {
-      id: 'video-014',
-      titre: 'Secrets Pro : Dans l\'atelier d\'un maître horloger',
-      description: 'L\'art millénaire de l\'horlogerie suisse révélé par un artisan d\'exception.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3769999/pexels-photo-3769999.jpeg',
-      videoUrl: '/video/maitre-horloger-secrets',
-      format: 'secrets-pro',
-      datePublication: '2023-12-20',
-      duree: '25:47',
-      vues: 15670,
-      likes: 1156,
-      isPopular: true,
-      tags: ['Artisanat', 'Tradition', 'Excellence'],
-      episode: 7,
-      saison: 1
-    },
-    {
-      id: 'video-015',
-      titre: 'Il était une fois... La naissance de Netflix',
-      description: 'Comment deux entrepreneurs ont révolutionné l\'industrie du divertissement mondial.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg',
-      videoUrl: '/video/naissance-netflix',
-      format: 'il-etait-une-fois',
-      datePublication: '2023-12-18',
-      duree: '32:15',
-      vues: 28940,
-      likes: 2187,
-      isPopular: true,
-      tags: ['Entrepreneuriat', 'Disruption', 'Streaming'],
-      episode: 4,
-      saison: 3
-    },
-    {
-      id: 'video-016',
-      titre: 'Connexion avec un moine tibétain',
-      description: 'Sagesse millénaire et vision moderne : dialogue entre tradition et contemporanéité.',
-      thumbnailUrl: 'https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg',
-      videoUrl: '/video/moine-tibetain-connexion',
-      format: 'connexion',
-      datePublication: '2023-12-15',
-      duree: '38:42',
-      vues: 19560,
-      likes: 1423,
-      tags: ['Spiritualité', 'Sagesse', 'Tradition'],
-      episode: 14,
-      saison: 2
+  const scroll = (direction: 'left' | 'right') => {
+    if (rowRef.current) {
+      const scrollAmount = rowRef.current.clientWidth * 0.8;
+      rowRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
     }
-  ];
-
-  // Intersection Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Preload images
-  useEffect(() => {
-    allVideos.forEach((video) => {
-      const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => new Set([...prev, video.id]));
-      };
-      img.src = video.thumbnailUrl;
-    });
-  }, []);
-
-  // Filtrage et tri des vidéos
-  const filteredAndSortedVideos = React.useMemo(() => {
-    let filtered = allVideos.filter(video => {
-      const matchesSearch = video.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           video.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchesFormat = selectedFormat === 'all' || video.format === selectedFormat;
-      
-      const matchesTags = selectedTags.length === 0 || 
-                         selectedTags.some(tag => video.tags.includes(tag));
-      
-      return matchesSearch && matchesFormat && matchesTags;
-    });
-
-    // Tri
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'recent':
-          return new Date(b.datePublication).getTime() - new Date(a.datePublication).getTime();
-        case 'popular':
-          return b.vues - a.vues;
-        case 'alphabetical':
-          return a.titre.localeCompare(b.titre);
-        case 'duration':
-          const aDuration = a.duree.split(':').reduce((acc, time) => (60 * acc) + +time, 0);
-          const bDuration = b.duree.split(':').reduce((acc, time) => (60 * acc) + +time, 0);
-          return aDuration - bDuration;
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [searchTerm, selectedFormat, selectedTags, sortBy]);
-
-  // Pagination
-  const totalPages = Math.ceil(filteredAndSortedVideos.length / itemsPerPage);
-  const currentVideos = filteredAndSortedVideos.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedFormat, selectedTags, sortBy]);
-
-  const getFormatColor = (formatId: string) => {
-    const format = formatsVideo.find(f => f.id === formatId);
-    return format?.couleur || '#EC4899';
   };
 
-  const getFormatName = (formatId: string) => {
-    const format = formatsVideo.find(f => f.id === formatId);
-    return format?.nom || formatId;
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
-    });
-  };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
+  const handleScroll = () => {
+    if (rowRef.current) {
+      setShowLeftArrow(rowRef.current.scrollLeft > 0);
+      setShowRightArrow(
+        rowRef.current.scrollLeft < rowRef.current.scrollWidth - rowRef.current.clientWidth - 10
+      );
     }
-    return num.toString();
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F5F5] overflow-x-hidden">
-      {/* Sidebar Desktop */}
-      <Sidebar />
+    <div id={`serie-${serie.id}`} className="mb-10 group/row scroll-mt-24">
+      {/* Row Header */}
+      <div className="flex items-center gap-3 mb-4 px-4 sm:px-8 lg:px-12">
+        <div
+          className="w-1 h-6 rounded-full"
+          style={{ backgroundColor: serie.couleur }}
+        />
+        <h2 className="text-xl lg:text-2xl font-bold text-white">
+          {typo(serie.titre)}
+        </h2>
+        <span className="text-white/50 text-sm">
+          {serie.nombreEpisodes} épisodes
+        </span>
+      </div>
 
-      {/* Main Content */}
-      <main className="min-h-screen md:ml-[280px]">
-        
-        {/* Hero Section */}
-        <section 
-          ref={sectionRef}
-          className="relative bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A] py-20 px-8 lg:px-16 overflow-hidden"
+      {/* Row Content */}
+      <div className="relative">
+        {/* Left Arrow */}
+        <button
+          onClick={() => scroll('left')}
+          aria-label="Épisodes précédents"
+          className={`
+            absolute left-0 top-0 bottom-0 z-20 w-12 lg:w-16
+            bg-gradient-to-r from-gray-950 to-transparent
+            flex items-center justify-start pl-2
+            transition-opacity duration-300
+            ${showLeftArrow ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+          `}
         >
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23EC4899' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }} />
-          </div>
+          <ChevronLeft className="w-8 h-8 text-white" />
+        </button>
 
-          {/* Header Content */}
-          <div className={`text-center mb-16 transform transition-all duration-1000 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-          }`}>
-            <div className="inline-flex items-center gap-4 mb-6">
-              <div className="w-12 h-px bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" />
-              <span className="font-inter text-fuchsia-400 text-sm tracking-[0.2em] uppercase">
-                Formats Exclusifs
-              </span>
-              <div className="w-12 h-px bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" />
-            </div>
-            
-            <h1 className="font-montserrat font-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase tracking-wider text-white mb-6 leading-[0.9]">
-              Nos
-              <br />
-              <span className="gradient-text-animated">Séries</span>
-            </h1>
-            
-            <p className="font-inter text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
-              Découvrez nos collections exclusives de contenus vidéos organisés en formats uniques
-            </p>
-
-            {/* Stats */}
-            <div className="flex items-center justify-center gap-8 mt-12">
-              <div className="text-center">
-                <div className="font-montserrat font-bold text-3xl text-fuchsia-400 mb-2">156</div>
-                <div className="font-inter text-white/60 text-sm uppercase tracking-wider">Épisodes</div>
-              </div>
-              <div className="w-px h-12 bg-white/20" />
-              <div className="text-center">
-                <div className="font-montserrat font-bold text-3xl text-violet-400 mb-2">8</div>
-                <div className="font-inter text-white/60 text-sm uppercase tracking-wider">Formats</div>
-              </div>
-              <div className="w-px h-12 bg-white/20" />
-              <div className="text-center">
-                <div className="font-montserrat font-bold text-3xl text-emerald-400 mb-2">1.8M</div>
-                <div className="font-inter text-white/60 text-sm uppercase tracking-wider">Vues</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Filters & Search Section */}
-        <section className="bg-[#0F0F0F] border-t border-white/10 py-8 px-8 lg:px-16 sticky top-0 z-40 backdrop-blur-xl">
-          <div className="max-w-7xl mx-auto">
-            
-            {/* Search Bar */}
-            <div className="mb-6">
-              <div className="relative max-w-2xl mx-auto">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="text"
-                  placeholder="Rechercher par titre, description ou tag..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-black/40 border border-white/20 rounded-xl text-white placeholder-white/50 font-inter focus:outline-none focus:border-fuchsia-500/50 focus:bg-black/60 transition-all duration-300 backdrop-blur-sm"
+        {/* Episodes Row */}
+        <div
+          ref={rowRef}
+          onScroll={handleScroll}
+          className="flex gap-2 overflow-x-auto scrollbar-hide px-4 sm:px-8 lg:px-12 pb-4"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {serie.episodes.map((episode, index) => (
+            <motion.div
+              key={episode.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.05 }}
+              onClick={() => onSelectEpisode(episode, serie)}
+              className="flex-shrink-0 w-[280px] lg:w-[320px] group cursor-pointer"
+            >
+              {/* Thumbnail */}
+              <div className="relative aspect-video rounded-lg overflow-hidden mb-2 ring-2 ring-transparent group-hover:ring-white transition-all duration-300">
+                <img
+                  src={episode.thumbnailUrl}
+                  alt={episode.titre}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-              </div>
-            </div>
 
-            {/* Filters Row */}
-            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-              
-              {/* ✅ CORRECTION : Formats Filter avec les 8 formats (6 visibles + bouton "Plus") */}
-              <div className="flex items-center gap-4 flex-wrap">
-                <span className="font-inter text-white/70 text-sm font-medium">Formats:</span>
-                <div className="flex gap-2 flex-wrap">
-                  {formatsVideo.slice(0, 6).map((format) => (
-                    <button
-                      key={format.id}
-                      onClick={() => setSelectedFormat(format.id)}
-                      className={`
-                        px-4 py-2 rounded-full font-inter font-medium text-sm transition-all duration-300 border backdrop-blur-sm flex items-center gap-2
-                        ${selectedFormat === format.id
-                          ? 'text-white scale-105 shadow-lg'
-                          : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
-                        }
-                      `}
-                      style={selectedFormat === format.id ? {
-                        backgroundColor: format.couleur,
-                        borderColor: `${format.couleur}80`,
-                        boxShadow: `0 8px 25px ${format.couleur}40`
-                      } : {}}
-                    >
-                      <Video className="w-3 h-3" />
-                      {format.nom} ({format.count})
-                    </button>
-                  ))}
-                  
-                  {/* More Formats Button */}
-                  <button
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="px-4 py-2 rounded-full font-inter font-medium text-sm text-white/70 bg-black/20 border border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white transition-all duration-300 backdrop-blur-sm flex items-center gap-2"
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: serie.couleur }}
                   >
-                    <Filter className="w-4 h-4" />
-                    Plus de filtres
-                    <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isFilterOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Sort & View Controls */}
-              <div className="flex items-center gap-4">
-                {/* Sort Dropdown */}
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-4 py-2 bg-black/40 border border-white/20 rounded-xl text-white font-inter text-sm focus:outline-none focus:border-fuchsia-500/50 transition-all duration-300 backdrop-blur-sm"
-                >
-                  <option value="recent">Plus récents</option>
-                  <option value="popular">Plus populaires</option>
-                  <option value="alphabetical">Alphabétique</option>
-                  <option value="duration">Durée</option>
-                </select>
-
-                {/* View Mode Toggle */}
-                <div className="flex items-center bg-black/40 border border-white/20 rounded-xl p-1 backdrop-blur-sm">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'grid' 
-                        ? 'bg-fuchsia-600 text-white' 
-                        : 'text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Grid className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'list' 
-                        ? 'bg-fuchsia-600 text-white' 
-                        : 'text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* ✅ CORRECTION : Extended Filters Panel avec TOUS les 8 formats */}
-            {isFilterOpen && (
-              <div className="mt-6 p-6 bg-black/40 border border-white/20 rounded-xl backdrop-blur-sm">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  
-                  {/* All Formats - MAINTENANT AVEC LES 8 FORMATS COMPLETS */}
-                  <div>
-                    <h3 className="font-inter font-medium text-white mb-4">Tous les formats</h3>
-                    <div className="flex gap-2 flex-wrap">
-                      {formatsVideo.map((format) => (
-                        <button
-                          key={format.id}
-                          onClick={() => setSelectedFormat(format.id)}
-                          className={`
-                            px-3 py-1.5 rounded-full font-inter font-medium text-xs transition-all duration-300 border backdrop-blur-sm flex items-center gap-2
-                            ${selectedFormat === format.id
-                              ? 'text-white scale-105'
-                              : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
-                            }
-                          `}
-                          style={selectedFormat === format.id ? {
-                            backgroundColor: format.couleur,
-                            borderColor: `${format.couleur}80`
-                          } : {}}
-                        >
-                          <Video className="w-3 h-3" />
-                          {format.nom} ({format.count})
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Tags Filter */}
-                  <div>
-                    <h3 className="font-inter font-medium text-white mb-4">Tags populaires</h3>
-                    <div className="flex gap-2 flex-wrap">
-                      {allTags.slice(0, 12).map((tag) => (
-                        <button
-                          key={tag}
-                          onClick={() => {
-                            if (selectedTags.includes(tag)) {
-                              setSelectedTags(selectedTags.filter(t => t !== tag));
-                            } else {
-                              setSelectedTags([...selectedTags, tag]);
-                            }
-                          }}
-                          className={`
-                            px-3 py-1.5 rounded-full font-inter font-medium text-xs transition-all duration-300 border backdrop-blur-sm
-                            ${selectedTags.includes(tag)
-                              ? 'bg-fuchsia-600 border-fuchsia-500 text-white'
-                              : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
-                            }
-                          `}
-                        >
-                          {tag}
-                        </button>
-                      ))}
-                    </div>
+                    <Play className="w-6 h-6 text-white ml-1" fill="white" />
                   </div>
                 </div>
 
-                {/* Clear Filters */}
-                {(selectedTags.length > 0 || selectedFormat !== 'all') && (
-                  <div className="mt-4 pt-4 border-t border-white/10">
-                    <button
-                      onClick={() => {
-                        setSelectedTags([]);
-                        setSelectedFormat('all');
+                {/* Episode number badge */}
+                <div className="absolute top-2 left-2">
+                  <span
+                    className="px-2 py-1 rounded text-xs font-bold text-white"
+                    style={{ backgroundColor: serie.couleur }}
+                  >
+                    Ép. {episode.numeroEpisode}
+                  </span>
+                </div>
+
+                {/* Duration badge */}
+                <div className="absolute bottom-2 right-2">
+                  <span className="px-2 py-1 bg-black/80 rounded text-xs text-white flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {episode.duree}
+                  </span>
+                </div>
+              </div>
+
+              {/* Episode Info */}
+              <h3 className="text-white font-semibold text-sm leading-tight line-clamp-1 group-hover:text-white/90 transition-colors">
+                {typo(episode.titre)}
+              </h3>
+              <p className="text-white/50 text-xs line-clamp-2 mt-1">
+                {episode.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Right Arrow */}
+        <button
+          onClick={() => scroll('right')}
+          aria-label="Épisodes suivants"
+          className={`
+            absolute right-0 top-0 bottom-0 z-20 w-12 lg:w-16
+            bg-gradient-to-l from-gray-950 to-transparent
+            flex items-center justify-end pr-2
+            transition-opacity duration-300
+            ${showRightArrow ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+          `}
+        >
+          <ChevronRight className="w-8 h-8 text-white" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Page principale
+const SeriesPage: React.FC = () => {
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [selectedEpisode, setSelectedEpisode] = useState<{ episode: Episode; serie: Serie } | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const featuredSerie = seriesData[featuredIndex];
+
+  // Auto-rotation toutes les 6 secondes
+  useEffect(() => {
+    if (isPaused) return;
+
+    const interval = setInterval(() => {
+      setFeaturedIndex((prev) => (prev + 1) % seriesData.length);
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, featuredIndex]);
+
+  const handleSelectEpisode = (episode: Episode, serie: Serie) => {
+    setSelectedEpisode({ episode, serie });
+  };
+
+  const handleSelectSerie = (index: number) => {
+    setFeaturedIndex(index);
+    setIsPaused(true);
+    // Reprend l'auto-rotation après 10 secondes
+    setTimeout(() => setIsPaused(false), 10000);
+  };
+
+  const handleMoreInfo = () => {
+    // Scroll vers la row de la série featured
+    const targetElement = document.getElementById(`serie-${featuredSerie.id}`);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white">
+      <Navbar />
+
+      <main>
+        {/* Hero Banner - Série à la une */}
+        <section className="relative h-[70vh] lg:h-[80vh] overflow-hidden">
+          {/* Background Image */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={featuredSerie.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0"
+            >
+              <img
+                src={featuredSerie.bannerUrl}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+              {/* Gradients */}
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-gray-950/30" />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Content : Gauche (texte) + Droite (poster en grand) */}
+          <div className="absolute inset-0 flex items-center pb-32">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between gap-8">
+
+              {/* Left: Content */}
+              <div className="flex-1 max-w-xl">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={featuredSerie.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {/* Badge avec couleur de la série */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <span
+                        className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                        style={{ backgroundColor: featuredSerie.couleur }}
+                      >
+                        Série Origines
+                      </span>
+                      <span className="text-white/50 text-xs">
+                        {featuredSerie.nombreSaisons} saison{featuredSerie.nombreSaisons > 1 ? 's' : ''} • {featuredSerie.nombreEpisodes} épisodes
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+                      {typo(featuredSerie.titre)}
+                    </h1>
+
+                    {/* Description */}
+                    <p className="text-base text-white/70 mb-5 max-w-lg leading-relaxed">
+                      {featuredSerie.description}
+                    </p>
+
+                    {/* Buttons */}
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleSelectEpisode(featuredSerie.episodes[0], featuredSerie)}
+                        aria-label={`Regarder ${featuredSerie.titre}`}
+                        className="flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-md font-semibold text-sm hover:bg-white/90 transition-colors"
+                      >
+                        <Play className="w-4 h-4" fill="currentColor" />
+                        Lecture
+                      </button>
+                      <button
+                        onClick={handleMoreInfo}
+                        aria-label={`Voir les épisodes de ${featuredSerie.titre}`}
+                        className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm text-white rounded-md font-medium text-sm hover:bg-white/25 transition-colors"
+                      >
+                        <Info className="w-4 h-4" />
+                        Plus d'infos
+                      </button>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Right: Poster de la série active en grand avec glassmorphism */}
+              <div className="hidden lg:block">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={featuredSerie.id}
+                    initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, x: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative"
+                  >
+                    {/* Glassmorphism container */}
+                    <div
+                      className="relative p-4 xl:p-5 rounded-2xl backdrop-blur-xl"
+                      style={{
+                        background: `linear-gradient(135deg, ${featuredSerie.couleur}15 0%, ${featuredSerie.couleur}08 50%, rgba(255,255,255,0.05) 100%)`,
+                        boxShadow: `
+                          0 0 0 1px ${featuredSerie.couleur}30,
+                          0 0 40px ${featuredSerie.couleur}20,
+                          inset 0 1px 0 rgba(255,255,255,0.1)
+                        `
                       }}
-                      className="inline-flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-colors duration-300 font-inter text-sm"
                     >
-                      <X className="w-4 h-4" />
-                      Effacer tous les filtres
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+                      {/* Glow effect derrière le poster */}
+                      <div
+                        className="absolute inset-0 rounded-2xl blur-3xl opacity-40 -z-10"
+                        style={{ backgroundColor: featuredSerie.couleur }}
+                      />
 
-            {/* Results Count */}
-            <div className="mt-6 text-center">
-              <span className="font-inter text-white/60 text-sm">
-                {filteredAndSortedVideos.length} épisode{filteredAndSortedVideos.length > 1 ? 's' : ''} trouvé{filteredAndSortedVideos.length > 1 ? 's' : ''}
-              </span>
+                      {/* Decorative corner accents */}
+                      <div
+                        className="absolute top-2 left-2 w-8 h-8 border-l-2 border-t-2 rounded-tl-lg opacity-50"
+                        style={{ borderColor: featuredSerie.couleur }}
+                      />
+                      <div
+                        className="absolute bottom-2 right-2 w-8 h-8 border-r-2 border-b-2 rounded-br-lg opacity-50"
+                        style={{ borderColor: featuredSerie.couleur }}
+                      />
+
+                      {/* Poster */}
+                      <div
+                        className="relative w-44 xl:w-52 rounded-lg overflow-hidden shadow-2xl"
+                        style={{
+                          boxShadow: `0 20px 40px -12px ${featuredSerie.couleur}50, 0 0 0 1px ${featuredSerie.couleur}40`
+                        }}
+                      >
+                        <img
+                          src={featuredSerie.posterUrl}
+                          alt={featuredSerie.titre}
+                          className="w-full h-auto"
+                        />
+
+                        {/* Shine effect on poster */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
+                      </div>
+
+                      {/* Series badge under poster */}
+                      <div className="mt-3 text-center">
+                        <span
+                          className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
+                          style={{ backgroundColor: featuredSerie.couleur }}
+                        >
+                          {featuredSerie.nombreEpisodes} épisodes
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
           </div>
-        </section>
 
-        {/* Content Grid/List */}
-        <section className="py-16 px-8 lg:px-16 bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A]">
-          <div className="max-w-7xl mx-auto">
-            
-            {viewMode === 'grid' ? (
-              /* Grid View */
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {currentVideos.map((video, index) => {
-                  const formatColor = getFormatColor(video.format);
-                  
-                  return (
-                    <div
-                      key={video.id}
-                      className={`
-                        group relative overflow-hidden rounded-3xl cursor-pointer
-                        h-[500px] transform transition-all duration-700 hover:scale-[1.02] hover:z-10
-                        ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}
-                      `}
-                      style={{
-                        transitionDelay: `${index * 100}ms`,
-                      }}
-                      onMouseEnter={() => setHoveredCard(video.id)}
-                      onMouseLeave={() => setHoveredCard(null)}
-                      onClick={() => window.open(video.videoUrl, '_blank')}
-                      >
-                      {/* Thumbnail Container */}
-                      <div className="absolute inset-0">
-                        {loadedImages.has(video.id) ? (
-                          <div
-                            className="w-full h-full bg-cover bg-center transition-all duration-700 group-hover:scale-110"
-                            style={{
-                              backgroundImage: `url(${video.thumbnailUrl})`,
-                              filter: hoveredCard === video.id 
-                                ? 'brightness(0.3) contrast(1.3) saturate(1.2)' 
-                                : 'brightness(0.5) contrast(1.2) saturate(1.1)'
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
-                        )}
-                        
-                        {/* Strategic Gradient Overlays */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/20" />
-                      </div>
-
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center z-10">
-                        <div 
-                          className={`
-                            w-20 h-20 rounded-full backdrop-blur-md border-2 flex items-center justify-center
-                            transition-all duration-500
-                            ${hoveredCard === video.id 
-                              ? 'scale-110 opacity-100' 
-                              : 'scale-100 opacity-80'
-                            }
-                          `}
-                          style={{
-                            backgroundColor: `${formatColor}30`,
-                            borderColor: formatColor
-                          }}
-                        >
-                          <Play 
-                            className="w-8 h-8 ml-1"
-                            style={{ color: formatColor }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Badges */}
-                      <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-20">
-                        {/* Format Badge */}
-                        <div 
-                          className="px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-500 flex items-center gap-2"
-                          style={{
-                            backgroundColor: `${formatColor}20`,
-                            borderColor: `${formatColor}40`
-                          }}
-                        >
-                          <Video className="w-3 h-3" style={{ color: formatColor }} />
-                          <span 
-                            className="font-inter font-bold text-xs tracking-[0.15em] uppercase"
-                            style={{ color: formatColor }}
-                          >
-                            {getFormatName(video.format)}
-                          </span>
-                        </div>
-
-                        {/* Episode Badge */}
-                        {video.episode && (
-                          <div className="px-3 py-1.5 bg-black/60 backdrop-blur-md border border-white/20 rounded-full">
-                            <span className="font-inter text-white text-xs font-bold">
-                              S{video.saison}E{video.episode}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Duration Badge */}
-                      <div className="absolute top-4 right-4 z-20">
-                        <div className="px-3 py-1.5 bg-black/60 backdrop-blur-md border border-white/20 rounded-full">
-                          <span className="font-inter text-white text-xs font-medium flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {video.duree}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Content Overlay */}
-                      <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
-                        {/* Title */}
-                        <h3 className="font-montserrat font-bold text-xl text-white mb-3 leading-tight line-clamp-2">
-                          {video.titre}
-                        </h3>
-                        
-                        {/* Description */}
-                        <p className="font-inter text-white/80 text-sm leading-relaxed mb-4 line-clamp-2">
-                          {video.description}
-                        </p>
-
-                        {/* Meta Info */}
-                        <div className="flex items-center justify-between text-white/60 text-xs mb-4">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1">
-                              <Eye className="w-3 h-3" />
-                              <span>{formatNumber(video.vues)}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Heart className="w-3 h-3" />
-                              <span>{formatNumber(video.likes)}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* CTA */}
-                        <div className="flex items-center justify-between">
-                          <span className="font-inter text-white/90 text-sm tracking-wide uppercase font-medium">
-                            Regarder l'épisode
-                          </span>
-                          <div 
-                            className={`
-                              w-12 h-12 rounded-full flex items-center justify-center 
-                              transition-all duration-500 backdrop-blur-md border
-                              ${hoveredCard === video.id 
-                                ? 'scale-110 shadow-lg' 
-                                : 'scale-100'
-                              }
-                            `}
-                            style={{
-                              backgroundColor: hoveredCard === video.id ? `${formatColor}40` : `${formatColor}20`,
-                              borderColor: hoveredCard === video.id ? `${formatColor}60` : `${formatColor}30`
-                            }}
-                          >
-                            <ArrowRight 
-                              className={`w-5 h-5 transition-all duration-500 ${
-                                hoveredCard === video.id ? 'translate-x-1' : ''
-                              }`}
-                              style={{ color: hoveredCard === video.id ? formatColor : 'white' }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Hover Glow Effect */}
-                      <div 
-                        className={`
-                          absolute inset-0 rounded-3xl transition-all duration-500 pointer-events-none
-                          ${hoveredCard === video.id ? 'ring-2 shadow-2xl' : ''}
-                        `}
-                        style={{
-                          ringColor: hoveredCard === video.id ? `${formatColor}60` : 'transparent',
-                          boxShadow: hoveredCard === video.id ? `0 25px 50px ${formatColor}25` : 'none'
-                        }}
+          {/* Sélecteur de séries en bas avec miniatures */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent pt-8 pb-5">
+            <div className="max-w-3xl mx-auto px-4 sm:px-8 lg:px-12">
+              {/* Miniatures */}
+              <div className="flex items-end justify-center gap-3 py-2">
+                {seriesData.map((serie, index) => (
+                  <button
+                    key={serie.id}
+                    onClick={() => handleSelectSerie(index)}
+                    aria-label={`Voir ${serie.titre}`}
+                    aria-current={index === featuredIndex ? 'true' : undefined}
+                    className={`
+                      flex-shrink-0 relative rounded overflow-hidden transition-all duration-300
+                      ${index === featuredIndex
+                        ? 'scale-110 z-10'
+                        : 'opacity-50 hover:opacity-90 hover:scale-105'
+                      }
+                    `}
+                    style={{
+                      boxShadow: index === featuredIndex
+                        ? `0 0 0 2px ${serie.couleur}, 0 4px 12px -2px ${serie.couleur}50`
+                        : '0 2px 8px rgba(0,0,0,0.3)'
+                    }}
+                  >
+                    <div className="w-10 sm:w-11 lg:w-12 aspect-[2/3]">
+                      <img
+                        src={serie.posterUrl}
+                        alt={serie.titre}
+                        className="w-full h-full object-cover"
                       />
                     </div>
-                  );
-                })}
+                  </button>
+                ))}
               </div>
-            ) : (
-              /* List View */
-              <div className="space-y-6">
-                {currentVideos.map((video, index) => {
-                  const formatColor = getFormatColor(video.format);
-                  
-                  return (
-                    <div
-                      key={video.id}
-                      className={`
-                        group relative overflow-hidden rounded-2xl cursor-pointer bg-black/40 border border-white/10 backdrop-blur-sm
-                        transform transition-all duration-700 hover:scale-[1.01] hover:bg-black/60 hover:border-white/20
-                        ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}
-                      `}
-                      style={{
-                        transitionDelay: `${index * 50}ms`,
-                      }}
-                      onClick={() => window.open(video.videoUrl, '_blank')}
-                    >
-                      <div className="flex items-center p-6 gap-6">
-                        {/* Thumbnail */}
-                        <div className="flex-shrink-0 w-40 h-24 rounded-xl overflow-hidden relative">
-                          {loadedImages.has(video.id) ? (
-                            <div
-                              className="w-full h-full bg-cover bg-center transition-all duration-500 group-hover:scale-110"
-                              style={{
-                                backgroundImage: `url(${video.thumbnailUrl})`,
-                                filter: 'brightness(0.8) contrast(1.1)'
-                              }}
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
-                          )}
-                          
-                          {/* Play Button Overlay */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div 
-                              className="w-10 h-10 rounded-full backdrop-blur-md border flex items-center justify-center"
-                              style={{
-                                backgroundColor: `${formatColor}30`,
-                                borderColor: formatColor
-                              }}
-                            >
-                              <Play 
-                                className="w-4 h-4 ml-0.5"
-                                style={{ color: formatColor }}
-                              />
-                            </div>
-                          </div>
 
-                          {/* Duration */}
-                          <div className="absolute bottom-2 right-2">
-                            <span className="px-2 py-1 bg-black/80 text-white text-xs rounded">
-                              {video.duree}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              {/* Format Badge */}
-                              <div 
-                                className="px-3 py-1 rounded-full flex items-center gap-2"
-                                style={{
-                                  backgroundColor: `${formatColor}20`,
-                                  color: formatColor
-                                }}
-                              >
-                                <Video className="w-3 h-3" />
-                                <span className="font-inter font-bold text-xs tracking-wider uppercase">
-                                  {getFormatName(video.format)}
-                                </span>
-                              </div>
-
-                              {/* Episode Badge */}
-                              {video.episode && (
-                                <div className="px-2 py-1 bg-white/10 text-white/80 rounded-full">
-                                  <span className="text-xs font-bold">S{video.saison}E{video.episode}</span>
-                                </div>
-                              )}
-
-                              {/* Badges */}
-                              {video.isPopular && (
-                                <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/20 text-amber-400 rounded-full">
-                                  <TrendingUp className="w-3 h-3" />
-                                  <span className="text-xs font-bold">Populaire</span>
-                                </div>
-                              )}
-                              {video.isRecent && (
-                                <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full">
-                                  <Calendar className="w-3 h-3" />
-                                  <span className="text-xs font-bold">Récent</span>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Date */}
-                            <span className="text-white/50 text-sm">
-                              {formatDate(video.datePublication)}
-                            </span>
-                          </div>
-
-                          {/* Title */}
-                          <h3 className="font-montserrat font-bold text-xl text-white mb-2 leading-tight group-hover:text-fuchsia-400 transition-colors duration-300">
-                            {video.titre}
-                          </h3>
-
-                          {/* Description */}
-                          <p className="font-inter text-white/70 text-sm leading-relaxed mb-4 line-clamp-2">
-                            {video.description}
-                          </p>
-
-                          {/* Meta & Tags */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-6 text-white/60 text-xs">
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                <span>{video.duree}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Eye className="w-3 h-3" />
-                                <span>{formatNumber(video.vues)}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Heart className="w-3 h-3" />
-                                <span>{formatNumber(video.likes)}</span>
-                              </div>
-                            </div>
-
-                            {/* Tags */}
-                            <div className="flex items-center gap-2">
-                              {video.tags.slice(0, 2).map((tag) => (
-                                <span 
-                                  key={tag}
-                                  className="px-2 py-1 bg-white/10 text-white/60 rounded-full text-xs"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* CTA Arrow */}
-                        <div className="flex-shrink-0">
-                          <div 
-                            className="w-12 h-12 rounded-full border flex items-center justify-center group-hover:scale-110 transition-all duration-300"
-                            style={{
-                              backgroundColor: `${formatColor}20`,
-                              borderColor: `${formatColor}30`
-                            }}
-                          >
-                            <ArrowRight 
-                              className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-                              style={{ color: formatColor }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              {/* Progress bar */}
+              <div className="flex gap-1 mt-3 max-w-[260px] mx-auto" role="tablist" aria-label="Sélecteur de série">
+                {seriesData.map((serie, index) => (
+                  <button
+                    key={serie.id}
+                    onClick={() => handleSelectSerie(index)}
+                    role="tab"
+                    aria-selected={index === featuredIndex}
+                    aria-label={`Série ${index + 1}: ${serie.titre}`}
+                    className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
+                  >
+                    {index === featuredIndex && (
+                      <motion.div
+                        className="h-full rounded-full"
+                        style={{ backgroundColor: serie.couleur }}
+                        initial={{ width: '0%' }}
+                        animate={{ width: '100%' }}
+                        transition={{ duration: 6, ease: 'linear' }}
+                        key={`progress-${featuredIndex}`}
+                      />
+                    )}
+                  </button>
+                ))}
               </div>
-            )}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-16 flex items-center justify-center gap-4">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 bg-black/40 border border-white/20 rounded-xl text-white font-inter text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/60 transition-all duration-300 backdrop-blur-sm"
-                >
-                  Précédent
-                </button>
-
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`
-                          w-10 h-10 rounded-xl font-inter font-medium text-sm transition-all duration-300
-                          ${currentPage === pageNum
-                            ? 'bg-fuchsia-600 text-white'
-                            : 'bg-black/40 border border-white/20 text-white/70 hover:bg-black/60 hover:text-white'
-                          }
-                        `}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 bg-black/40 border border-white/20 rounded-xl text-white font-inter text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/60 transition-all duration-300 backdrop-blur-sm"
-                >
-                  Suivant
-                </button>
-              </div>
-            )}
-
-            {/* No Results */}
-            {filteredAndSortedVideos.length === 0 && (
-              <div className="text-center py-20">
-                <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Video className="w-10 h-10 text-white/40" />
-                </div>
-                <h3 className="font-montserrat font-bold text-2xl text-white mb-4">
-                  Aucun épisode trouvé
-                </h3>
-                <p className="font-inter text-white/60 text-lg mb-8">
-                  Essayez de modifier vos critères de recherche ou vos filtres
-                </p>
-                <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedFormat('all');
-                    setSelectedTags([]);
-                  }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-fuchsia-600 text-white font-inter font-medium rounded-xl hover:bg-fuchsia-500 transition-all duration-300"
-                >
-                  <X className="w-4 h-4" />
-                  Réinitialiser les filtres
-                </button>
-              </div>
-            )}
+            </div>
           </div>
+        </section>
+
+        {/* Series Rows */}
+        <section className="py-8 -mt-20 relative z-10">
+          {seriesData.map((serie) => (
+            <SeriesRow
+              key={serie.id}
+              serie={serie}
+              onSelectEpisode={handleSelectEpisode}
+            />
+          ))}
         </section>
       </main>
 
-      {/* Footer */}
+      {/* Episode Modal */}
+      <AnimatePresence>
+        {selectedEpisode && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setSelectedEpisode(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 rounded-2xl overflow-hidden max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              {/* Video Preview */}
+              <div className="relative aspect-video">
+                <img
+                  src={selectedEpisode.episode.thumbnailUrl}
+                  alt={selectedEpisode.episode.titre}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <button
+                    aria-label={`Lire ${selectedEpisode.episode.titre}`}
+                    className="w-20 h-20 rounded-full flex items-center justify-center transition-transform hover:scale-110"
+                    style={{ backgroundColor: selectedEpisode.serie.couleur }}
+                  >
+                    <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                  </button>
+                </div>
+
+                {/* Close button */}
+                <button
+                  onClick={() => setSelectedEpisode(null)}
+                  aria-label="Fermer"
+                  className="absolute top-4 right-4 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 lg:p-8">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className="px-2 py-1 rounded text-xs font-bold"
+                        style={{ backgroundColor: selectedEpisode.serie.couleur }}
+                      >
+                        {selectedEpisode.serie.titre}
+                      </span>
+                      <span className="text-white/60 text-sm">
+                        Saison {selectedEpisode.episode.saison} • Épisode {selectedEpisode.episode.numeroEpisode}
+                      </span>
+                    </div>
+                    <h2 className="text-2xl lg:text-3xl font-bold text-white">
+                      {typo(selectedEpisode.episode.titre)}
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Meta */}
+                <div className="flex items-center gap-6 text-white/60 text-sm mb-6">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {selectedEpisode.episode.duree}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    {new Date(selectedEpisode.episode.datePublication).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-4 h-4" />
+                    {selectedEpisode.episode.vues.toLocaleString()} vues
+                  </span>
+                </div>
+
+                {/* Description */}
+                <p className="text-white/80 text-lg leading-relaxed mb-8">
+                  {selectedEpisode.episode.description}
+                </p>
+
+                {/* Actions */}
+                <div className="flex items-center gap-4">
+                  <button
+                    aria-label={`Regarder ${selectedEpisode.episode.titre}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold text-white transition-colors"
+                    style={{ backgroundColor: selectedEpisode.serie.couleur }}
+                  >
+                    <Play className="w-5 h-5" fill="white" />
+                    Regarder l'épisode
+                  </button>
+                  <button
+                    aria-label="Ajouter aux favoris"
+                    className="p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                  >
+                    <Heart className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );

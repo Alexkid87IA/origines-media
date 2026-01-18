@@ -60,7 +60,7 @@ const VideoPage: React.FC = () => {
     • La psychologie des couleurs en narration
     • L'utilisation du son comme élément narratif`,
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnailUrl: 'https://images.pexels.com/photos/1595391/pexels-photo-1595391.jpeg',
+    thumbnailUrl: '/placeholder.svg',
     duree: '45:32',
     vues: 125420,
     likes: 8921,
@@ -73,7 +73,7 @@ const VideoPage: React.FC = () => {
     createur: {
       nom: 'Marie Dubois',
       bio: 'Réalisatrice et formatrice en storytelling visuel avec 15 ans d\'expérience',
-      avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg',
+      avatar: '/placeholder.svg',
       role: 'Experte en narration visuelle'
     },
     chapitres: [

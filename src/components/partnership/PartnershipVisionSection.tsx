@@ -191,7 +191,7 @@ const PartnershipVisionSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8 xl:px-16 bg-gradient-to-br from-[#0A0A0A] via-[#0F0F0F] to-[#0A0A0A] overflow-hidden"
+      className="relative py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8 xl:px-16 bg-white overflow-hidden"
     >
       {/* Background effects */}
       <div className="absolute inset-0">
@@ -212,17 +212,17 @@ const PartnershipVisionSection: React.FC = () => {
             <div className="w-12 sm:w-16 lg:w-24 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
           </div>
           
-          <h2 className="font-montserrat font-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight text-white mb-2 sm:mb-4">
+          <h2 className="font-montserrat font-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight text-gray-900 mb-2 sm:mb-4">
             Wanted × Origines :
             <br />
             <span className="gradient-text-animated text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">La Machine Média</span>
           </h2>
           
-          <p className="font-inter text-white/60 text-sm sm:text-base lg:text-lg max-w-3xl mx-auto mb-2 sm:mb-4 px-4">
+          <p className="font-inter text-gray-500 text-sm sm:text-base lg:text-lg max-w-3xl mx-auto mb-2 sm:mb-4 px-4">
             Transformer 1,5M de membres en empire média
           </p>
           
-          <p className="font-playfair italic text-base sm:text-lg lg:text-xl text-white/80 px-4">
+          <p className="font-playfair italic text-base sm:text-lg lg:text-xl text-gray-600 px-4">
             "Chaque histoire vaut de l'or"
           </p>
         </div>
@@ -245,8 +245,8 @@ const PartnershipVisionSection: React.FC = () => {
                   onClick={() => setActiveSection(tab.id)}
                   className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 rounded-lg sm:rounded-xl font-inter font-medium transition-all duration-300 text-xs sm:text-sm whitespace-nowrap ${
                     activeSection === tab.id
-                      ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white'
-                      : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'
+                      ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-gray-900'
+                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-900'
                   }`}
                 >
                   <tab.icon className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -263,8 +263,8 @@ const PartnershipVisionSection: React.FC = () => {
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             {/* Timeline Slider */}
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
-              <p className="font-inter text-center text-white/60 text-xs sm:text-sm lg:text-base mb-4 sm:mb-6">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+              <p className="font-inter text-center text-gray-500 text-xs sm:text-sm lg:text-base mb-4 sm:mb-6">
                 Transformation en Netflix de la solidarité
               </p>
               
@@ -283,10 +283,10 @@ const PartnershipVisionSection: React.FC = () => {
                         <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full mb-1 sm:mb-2 transition-all duration-300 ${
                           currentTimeframe === idx 
                             ? 'bg-gradient-to-r from-violet-500 to-orange-500 shadow-lg shadow-violet-500/50' 
-                            : 'bg-white/30'
+                            : 'bg-gray-300'
                         }`} />
                         <span className={`font-inter text-[10px] sm:text-xs transition-all duration-300 ${
-                          currentTimeframe === idx ? 'text-white font-bold' : 'text-white/50'
+                          currentTimeframe === idx ? 'text-gray-900 font-bold' : 'text-gray-400'
                         }`}>
                           {timeframe.label}
                         </span>
@@ -296,7 +296,7 @@ const PartnershipVisionSection: React.FC = () => {
                 </div>
                 
                 {/* Progress bar */}
-                <div className="absolute top-1.5 sm:top-2 left-0 right-0 h-0.5 bg-white/10">
+                <div className="absolute top-1.5 sm:top-2 left-0 right-0 h-0.5 bg-gray-100">
                   <div 
                     className="h-full bg-gradient-to-r from-violet-500 to-orange-500 transition-all duration-700"
                     style={{ width: `${(currentTimeframe / (timeframes.length - 1)) * 100}%` }}
@@ -306,10 +306,10 @@ const PartnershipVisionSection: React.FC = () => {
 
               {/* Current timeframe info */}
               <div className="text-center mt-6 sm:mt-8">
-                <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-1 sm:mb-2">
+                <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900 mb-1 sm:mb-2">
                   {timeframes[currentTimeframe].title}
                 </h3>
-                <p className="font-inter text-white/60 text-xs sm:text-sm lg:text-base max-w-2xl mx-auto mb-4 sm:mb-6">
+                <p className="font-inter text-gray-500 text-xs sm:text-sm lg:text-base max-w-2xl mx-auto mb-4 sm:mb-6">
                   {timeframes[currentTimeframe].description}
                 </p>
                 
@@ -317,12 +317,12 @@ const PartnershipVisionSection: React.FC = () => {
                 <div className="hidden sm:block max-w-4xl mx-auto text-left space-y-4">
                   {currentTimeframe === 0 && (
                     <>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         1,5 million de membres. Des milliers d'histoires bouleversantes chaque jour. Un café qui pulse à Paris. 
                         Mais soyons francs : tout ça reste sous-exploité. Les plus belles actions disparaissent dans le flux Facebook, 
                         zéro monétisation média, impact réel non tracé.
                       </p>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         Origines apporte la machine industrielle qui manque : 200+ contenus/mois, ligne éditoriale béton, 
                         distribution multi-plateforme optimisée.
                       </p>
@@ -331,11 +331,11 @@ const PartnershipVisionSection: React.FC = () => {
                   
                   {currentTimeframe === 1 && (
                     <>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         On démarre par le brain-juice : toi, tes modérateurs stars, notre équipe créative. 48h pour tout poser : 
                         ton ADN, tes non-négociables, la vision commune.
                       </p>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         Plan de production : 8 formats longs (15-20 min), 40 formats moyens (3-5 min), 120 shorts (15-60s), 
                         32 carrousels. Total : 200 contenus/mois.
                       </p>
@@ -344,11 +344,11 @@ const PartnershipVisionSection: React.FC = () => {
                   
                   {currentTimeframe === 2 && (
                     <>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         Plus question de tout mélanger. Wanted devient 12 médias spécialisés : WantedAnimaux, WantedBusiness, 
                         WantedLogement... Chaque verticale a sa couleur, son rythme, ses créateurs dédiés.
                       </p>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         L'IA StoryCrafter habille automatiquement selon la charte. Cross-posting intelligent : 
                         un short Santé qui cartonne pousse un contenu Bien-être.
                       </p>
@@ -357,11 +357,11 @@ const PartnershipVisionSection: React.FC = () => {
                   
                   {currentTimeframe === 3 && (
                     <>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         Les chiffres parlent : 20M de vues mensuelles × 12 verticales = audience de média national. 
                         Mais contrairement aux médias classiques, chaque euro gagné retourne dans l'action.
                       </p>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         Production augmentée : 12 Hack-Trocs thématiques filmés, séries "7 jours pour s'en sortir", 
                         documentaires 52min sur les héros ordinaires, Wanted Daily (JT 5min).
                       </p>
@@ -370,11 +370,11 @@ const PartnershipVisionSection: React.FC = () => {
                   
                   {currentTimeframe === 4 && (
                     <>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         Wanted n'est plus une page Facebook avec un café. C'est LE média référence de l'impact positif : 
                         20 villes, 4 langues, 12 verticales autonomes, 5M d'users actifs.
                       </p>
-                      <p className="font-inter text-white/80 text-sm lg:text-base">
+                      <p className="font-inter text-gray-600 text-sm lg:text-base">
                         Wanted Studios : 50 créateurs permanents, IA génère 1000 variantes/jour, série fiction avec Canal+, 
                         API contenus pour médias traditionnels, WantedFest façon Coachella du bien.
                       </p>
@@ -389,34 +389,34 @@ const PartnershipVisionSection: React.FC = () => {
               {/* Stats & Actions - En premier sur mobile */}
               <div className="space-y-4 sm:space-y-6 lg:order-2">
                 {/* KPIs */}
-                <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
-                  <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-4 sm:mb-6">Indicateurs clés</h4>
+                <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
+                  <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-4 sm:mb-6">Indicateurs clés</h4>
                   
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <div className="bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-violet-500/20">
                       <p className="font-inter text-violet-300 text-xs sm:text-sm mb-1">Membres</p>
-                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-white">
+                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-gray-900">
                         {timeframes[currentTimeframe].stats.members}
                       </p>
                     </div>
                     
                     <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-orange-500/20">
                       <p className="font-inter text-orange-300 text-xs sm:text-sm mb-1">Échanges</p>
-                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-white">
+                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-gray-900">
                         {timeframes[currentTimeframe].stats.exchanges}
                       </p>
                     </div>
                     
                     <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-green-500/20">
                       <p className="font-inter text-green-300 text-xs sm:text-sm mb-1">Villes</p>
-                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-white">
+                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-gray-900">
                         {timeframes[currentTimeframe].stats.cities}
                       </p>
                     </div>
                     
                     <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-blue-500/20">
                       <p className="font-inter text-blue-300 text-xs sm:text-sm mb-1">Impact</p>
-                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-white">
+                      <p className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-gray-900">
                         {timeframes[currentTimeframe].stats.impact}
                       </p>
                     </div>
@@ -424,15 +424,15 @@ const PartnershipVisionSection: React.FC = () => {
                 </div>
 
                 {/* Actions - Caché sur mobile pour gagner de l'espace */}
-                <div className="hidden sm:block bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 lg:p-8">
-                  <h4 className="font-montserrat font-bold text-lg lg:text-xl text-white mb-6">Actions clés</h4>
+                <div className="hidden sm:block bg-gray-50 shadow-sm border border-gray-200 rounded-2xl p-6 lg:p-8">
+                  <h4 className="font-montserrat font-bold text-lg lg:text-xl text-gray-900 mb-6">Actions clés</h4>
                   
                   <div className="space-y-3">
                     {currentTimeframe === 0 && (
                       <>
                         <div className="flex items-start gap-3">
                           <Users className="w-5 h-5 text-violet-400 mt-1 flex-shrink-0" />
-                          <p className="font-inter text-white/80 text-sm">1,5 million de membres Facebook non monétisés</p>
+                          <p className="font-inter text-gray-600 text-sm">1,5 million de membres Facebook non monétisés</p>
                         </div>
                       </>
                     )}
@@ -441,8 +441,8 @@ const PartnershipVisionSection: React.FC = () => {
               </div>
 
               {/* Metro Map - Caché sur très petit mobile */}
-              <div className="hidden sm:block bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 lg:p-8 lg:order-1">
-                <h4 className="font-montserrat font-bold text-lg lg:text-xl text-white mb-6">Le Réseau Wanted</h4>
+              <div className="hidden sm:block bg-gray-50 shadow-sm border border-gray-200 rounded-2xl p-6 lg:p-8 lg:order-1">
+                <h4 className="font-montserrat font-bold text-lg lg:text-xl text-gray-900 mb-6">Le Réseau Wanted</h4>
                 
                 {/* SVG simplifié pour mobile */}
                 <div className="relative h-[300px] lg:h-[400px] overflow-hidden">
@@ -454,15 +454,15 @@ const PartnershipVisionSection: React.FC = () => {
                   {metroLines.map((line) => (
                     <div 
                       key={line.id}
-                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-black/40 border border-white/10"
+                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gray-50 border border-gray-200"
                     >
                       <div 
                         className="w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0"
                         style={{ backgroundColor: line.color }}
                       />
                       <div className="min-w-0">
-                        <p className="font-montserrat font-bold text-white text-xs sm:text-sm truncate">{line.name}</p>
-                        <p className="font-inter text-white/50 text-[10px] sm:text-xs truncate">{line.description}</p>
+                        <p className="font-montserrat font-bold text-gray-900 text-xs sm:text-sm truncate">{line.name}</p>
+                        <p className="font-inter text-gray-400 text-[10px] sm:text-xs truncate">{line.description}</p>
                       </div>
                     </div>
                   ))}
@@ -477,11 +477,11 @@ const PartnershipVisionSection: React.FC = () => {
           <div className={`transform transition-all duration-1000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
-              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-1 sm:mb-2 text-center">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900 mb-1 sm:mb-2 text-center">
                 200 contenus/mois
               </h3>
-              <p className="font-inter text-white/60 text-center text-xs sm:text-sm lg:text-base mb-6 sm:mb-8">
+              <p className="font-inter text-gray-500 text-center text-xs sm:text-sm lg:text-base mb-6 sm:mb-8">
                 La Machine de Production
               </p>
 
@@ -490,7 +490,7 @@ const PartnershipVisionSection: React.FC = () => {
                 {productionData.breakdown.map((item, idx) => (
                   <div key={idx} className="relative group">
                     <div 
-                      className="bg-black/60 backdrop-blur-sm border rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 hover:scale-105 transition-all duration-300"
+                      className="bg-white shadow-sm border rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 hover:scale-105 transition-all duration-300"
                       style={{ borderColor: item.color + '40' }}
                     >
                       <div 
@@ -499,19 +499,19 @@ const PartnershipVisionSection: React.FC = () => {
                       >
                         <item.icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" style={{ color: item.color }} />
                       </div>
-                      <h4 className="font-montserrat font-bold text-white text-xs sm:text-sm lg:text-base mb-1">{item.type}</h4>
+                      <h4 className="font-montserrat font-bold text-gray-900 text-xs sm:text-sm lg:text-base mb-1">{item.type}</h4>
                       <p className="font-montserrat font-black text-lg sm:text-2xl lg:text-3xl mb-1 sm:mb-2" style={{ color: item.color }}>
                         {item.count}
                       </p>
-                      <p className="font-inter text-white/60 text-[10px] sm:text-xs lg:text-sm">{item.desc}</p>
+                      <p className="font-inter text-gray-500 text-[10px] sm:text-xs lg:text-sm">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
               {/* Ligne éditoriale */}
-              <div className="bg-gradient-to-br from-violet-500/10 to-orange-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20">
-                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-4 sm:mb-6 text-center">
+              <div className="bg-gradient-to-br from-violet-500/10 to-orange-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-300">
+                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-4 sm:mb-6 text-center">
                   Formule Éditoriale
                 </h4>
                 
@@ -529,14 +529,14 @@ const PartnershipVisionSection: React.FC = () => {
                       >
                         {item.percentage}
                       </div>
-                      <h5 className="font-montserrat font-bold text-white text-xs sm:text-sm lg:text-base mb-0.5 sm:mb-1">{item.pilier}</h5>
-                      <p className="font-inter text-white/60 text-[10px] sm:text-xs">{item.desc}</p>
+                      <h5 className="font-montserrat font-bold text-gray-900 text-xs sm:text-sm lg:text-base mb-0.5 sm:mb-1">{item.pilier}</h5>
+                      <p className="font-inter text-gray-500 text-[10px] sm:text-xs">{item.desc}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/10">
-                  <p className="font-inter text-white/80 text-center text-xs sm:text-sm">
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+                  <p className="font-inter text-gray-600 text-center text-xs sm:text-sm">
                     <strong>Règles d'or :</strong> Action possible • Max 3 messages • Impact visible
                   </p>
                 </div>
@@ -545,46 +545,46 @@ const PartnershipVisionSection: React.FC = () => {
 
             {/* Production team - Stack sur mobile */}
             <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
-              <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
-                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-4 sm:mb-6">Équipe Production</h4>
+              <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
+                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-4 sm:mb-6">Équipe Production</h4>
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-sm">Créateurs Origines</span>
+                    <span className="font-inter text-gray-600 text-sm">Créateurs Origines</span>
                     <span className="font-montserrat font-bold text-violet-400 text-lg sm:text-xl">5</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-sm">Micro-reporters</span>
+                    <span className="font-inter text-gray-600 text-sm">Micro-reporters</span>
                     <span className="font-montserrat font-bold text-orange-400 text-lg sm:text-xl">12</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-sm">Showrunner</span>
+                    <span className="font-inter text-gray-600 text-sm">Showrunner</span>
                     <span className="font-montserrat font-bold text-green-400 text-lg sm:text-xl">1</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-sm">IA 24/7</span>
+                    <span className="font-inter text-gray-600 text-sm">IA 24/7</span>
                     <span className="font-montserrat font-bold text-blue-400 text-lg sm:text-xl">∞</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
-                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-4 sm:mb-6">Formats Signature</h4>
+              <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
+                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-4 sm:mb-6">Formats Signature</h4>
                 <div className="space-y-2 sm:space-y-3">
-                  <div className="bg-white/5 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
-                    <h5 className="font-montserrat font-bold text-white text-xs sm:text-sm">Wanted Daily</h5>
-                    <p className="font-inter text-white/60 text-[10px] sm:text-xs">JT de l'entraide 5min</p>
+                  <div className="bg-gray-50 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
+                    <h5 className="font-montserrat font-bold text-gray-900 text-xs sm:text-sm">Wanted Daily</h5>
+                    <p className="font-inter text-gray-500 text-[10px] sm:text-xs">JT de l'entraide 5min</p>
                   </div>
-                  <div className="bg-white/5 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
-                    <h5 className="font-montserrat font-bold text-white text-xs sm:text-sm">7 jours pour s'en sortir</h5>
-                    <p className="font-inter text-white/60 text-[10px] sm:text-xs">Série immersive</p>
+                  <div className="bg-gray-50 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
+                    <h5 className="font-montserrat font-bold text-gray-900 text-xs sm:text-sm">7 jours pour s'en sortir</h5>
+                    <p className="font-inter text-gray-500 text-[10px] sm:text-xs">Série immersive</p>
                   </div>
-                  <div className="bg-white/5 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
-                    <h5 className="font-montserrat font-bold text-white text-xs sm:text-sm">Du déchet au trésor</h5>
-                    <p className="font-inter text-white/60 text-[10px] sm:text-xs">Transformation hebdo</p>
+                  <div className="bg-gray-50 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
+                    <h5 className="font-montserrat font-bold text-gray-900 text-xs sm:text-sm">Du déchet au trésor</h5>
+                    <p className="font-inter text-gray-500 text-[10px] sm:text-xs">Transformation hebdo</p>
                   </div>
-                  <div className="bg-white/5 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
-                    <h5 className="font-montserrat font-bold text-white text-xs sm:text-sm">Mentor surprise</h5>
-                    <p className="font-inter text-white/60 text-[10px] sm:text-xs">Coaching bimensuel</p>
+                  <div className="bg-gray-50 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
+                    <h5 className="font-montserrat font-bold text-gray-900 text-xs sm:text-sm">Mentor surprise</h5>
+                    <p className="font-inter text-gray-500 text-[10px] sm:text-xs">Coaching bimensuel</p>
                   </div>
                 </div>
               </div>
@@ -597,11 +597,11 @@ const PartnershipVisionSection: React.FC = () => {
           <div className={`transform transition-all duration-1000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
-              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-1 sm:mb-2 text-center">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900 mb-1 sm:mb-2 text-center">
                 12 Verticales = 12 Médias
               </h3>
-              <p className="font-inter text-white/60 text-center text-xs sm:text-sm lg:text-base">
+              <p className="font-inter text-gray-500 text-center text-xs sm:text-sm lg:text-base">
                 12 langages, 12 publics, 12 business
               </p>
             </div>
@@ -612,7 +612,7 @@ const PartnershipVisionSection: React.FC = () => {
                 <button
                   key={verticale.id}
                   onClick={() => setSelectedVerticale(verticale.id)}
-                  className={`group relative bg-black/40 backdrop-blur-sm border rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 hover:scale-105 transition-all duration-300 ${
+                  className={`group relative bg-gray-50 shadow-sm border rounded-lg sm:rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-6 hover:scale-105 transition-all duration-300 ${
                     selectedVerticale === verticale.id ? 'scale-105' : ''
                   }`}
                   style={{
@@ -626,10 +626,10 @@ const PartnershipVisionSection: React.FC = () => {
                   >
                     <verticale.icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" style={{ color: verticale.color }} />
                   </div>
-                  <h4 className="font-montserrat font-bold text-white text-[10px] sm:text-xs lg:text-sm mb-0.5 sm:mb-1">
+                  <h4 className="font-montserrat font-bold text-gray-900 text-[10px] sm:text-xs lg:text-sm mb-0.5 sm:mb-1">
                     {verticale.name}
                   </h4>
-                  <p className="font-inter text-white/60 text-[8px] sm:text-[10px] lg:text-xs hidden sm:block">
+                  <p className="font-inter text-gray-500 text-[8px] sm:text-[10px] lg:text-xs hidden sm:block">
                     {verticale.desc}
                   </p>
                 </button>
@@ -638,7 +638,7 @@ const PartnershipVisionSection: React.FC = () => {
 
             {/* Détail de la verticale sélectionnée */}
             {selectedVerticale && (
-              <div className="bg-gradient-to-br from-violet-500/10 to-orange-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20">
+              <div className="bg-gradient-to-br from-violet-500/10 to-orange-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-300">
                 {(() => {
                   const v = verticales.find(v => v.id === selectedVerticale)!;
                   return (
@@ -651,32 +651,32 @@ const PartnershipVisionSection: React.FC = () => {
                           <v.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" style={{ color: v.color }} />
                         </div>
                         <div>
-                          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white">
+                          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900">
                             Wanted{v.name}
                           </h3>
-                          <p className="font-inter text-white/60 text-xs sm:text-sm">{v.desc}</p>
+                          <p className="font-inter text-gray-500 text-xs sm:text-sm">{v.desc}</p>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
                         <div>
-                          <h4 className="font-montserrat font-bold text-white text-sm sm:text-base mb-2 sm:mb-3">Ligne éditoriale</h4>
-                          <p className="font-playfair italic text-sm sm:text-base lg:text-lg text-white/80">{v.edito}</p>
+                          <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Ligne éditoriale</h4>
+                          <p className="font-playfair italic text-sm sm:text-base lg:text-lg text-gray-600">{v.edito}</p>
                         </div>
 
                         <div>
-                          <h4 className="font-montserrat font-bold text-white text-sm sm:text-base mb-2 sm:mb-3">Production</h4>
+                          <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Production</h4>
                           <ul className="space-y-1 sm:space-y-2">
-                            <li className="font-inter text-white/80 text-xs sm:text-sm">• 2 lives/mois</li>
-                            <li className="font-inter text-white/80 text-xs sm:text-sm">• 15 shorts</li>
-                            <li className="font-inter text-white/80 text-xs sm:text-sm">• 3 carrousels</li>
-                            <li className="font-inter text-white/80 text-xs sm:text-sm">• 1 newsletter</li>
+                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 2 lives/mois</li>
+                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 15 shorts</li>
+                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 3 carrousels</li>
+                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 1 newsletter</li>
                           </ul>
                         </div>
 
                         <div>
-                          <h4 className="font-montserrat font-bold text-white text-sm sm:text-base mb-2 sm:mb-3">Sponsors</h4>
-                          <p className="font-inter text-white/60 text-xs sm:text-sm">
+                          <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Sponsors</h4>
+                          <p className="font-inter text-gray-500 text-xs sm:text-sm">
                             {v.name === 'Animaux' && 'Purina, Royal Canin'}
                             {v.name === 'Business' && 'LinkedIn, Indeed'}
                             {v.name === 'Logement' && 'Nexity, Action Log.'}
@@ -705,11 +705,11 @@ const PartnershipVisionSection: React.FC = () => {
           <div className={`transform transition-all duration-1000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
-              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-1 sm:mb-2 text-center">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900 mb-1 sm:mb-2 text-center">
                 Setup Opérationnel
               </h3>
-              <p className="font-inter text-white/60 text-center text-xs sm:text-sm lg:text-base">
+              <p className="font-inter text-gray-500 text-center text-xs sm:text-sm lg:text-base">
                 Du Brain-Juice au Netflix
               </p>
             </div>
@@ -768,7 +768,7 @@ const PartnershipVisionSection: React.FC = () => {
                   color: '#3B82F6'
                 }
               ].map((phase, idx) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                <div key={idx} className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6">
                   <div className="flex items-start gap-3 sm:gap-4">
                     <div 
                       className="w-1.5 sm:w-2 h-full rounded-full flex-shrink-0"
@@ -782,15 +782,15 @@ const PartnershipVisionSection: React.FC = () => {
                         >
                           {phase.period}
                         </span>
-                        <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white">
+                        <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900">
                           {phase.title}
                         </h4>
                       </div>
                       <ul className="space-y-1.5 sm:space-y-2">
                         {phase.tasks.map((task, taskIdx) => (
                           <li key={taskIdx} className="flex items-start gap-2">
-                            <span className="text-white/40 mt-0.5 text-xs">•</span>
-                            <span className="font-inter text-white/80 text-xs sm:text-sm">{task}</span>
+                            <span className="text-gray-400 mt-0.5 text-xs">•</span>
+                            <span className="font-inter text-gray-600 text-xs sm:text-sm">{task}</span>
                           </li>
                         ))}
                       </ul>
@@ -807,11 +807,11 @@ const PartnershipVisionSection: React.FC = () => {
           <div className={`transform transition-all duration-1000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
-            <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
-              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-white mb-1 sm:mb-2 text-center">
+            <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+              <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900 mb-1 sm:mb-2 text-center">
                 Vision Éditoriale
               </h3>
-              <p className="font-inter text-white/60 text-center text-xs sm:text-sm lg:text-base">
+              <p className="font-inter text-gray-500 text-center text-xs sm:text-sm lg:text-base">
                 Le Netflix de la Solidarité
               </p>
             </div>
@@ -819,7 +819,7 @@ const PartnershipVisionSection: React.FC = () => {
             {/* Les 4 piliers - Stack sur mobile */}
             <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 lg:grid-cols-2">
               <div className="bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-violet-500/20">
-                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-4 sm:mb-6">
+                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-4 sm:mb-6">
                   4 Piliers de Contenu
                 </h4>
                 <div className="space-y-3 sm:space-y-4">
@@ -831,8 +831,8 @@ const PartnershipVisionSection: React.FC = () => {
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between">
                       <div>
-                        <h5 className="font-montserrat font-bold text-white text-sm sm:text-base">{item.pilier}</h5>
-                        <p className="font-inter text-white/60 text-xs sm:text-sm">{item.desc}</p>
+                        <h5 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base">{item.pilier}</h5>
+                        <p className="font-inter text-gray-500 text-xs sm:text-sm">{item.desc}</p>
                       </div>
                       <span className="font-montserrat font-black text-xl sm:text-2xl text-violet-400">
                         {item.percentage}
@@ -843,24 +843,24 @@ const PartnershipVisionSection: React.FC = () => {
               </div>
 
               <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-orange-500/20">
-                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-white mb-4 sm:mb-6">
+                <h4 className="font-montserrat font-bold text-base sm:text-lg lg:text-xl text-gray-900 mb-4 sm:mb-6">
                   KPIs Clés
                 </h4>
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-xs sm:text-sm">Vue → action</span>
+                    <span className="font-inter text-gray-600 text-xs sm:text-sm">Vue → action</span>
                     <span className="font-montserrat font-bold text-orange-400 text-sm sm:text-base">5%</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-xs sm:text-sm">Coût/impact</span>
+                    <span className="font-inter text-gray-600 text-xs sm:text-sm">Coût/impact</span>
                     <span className="font-montserrat font-bold text-orange-400 text-sm sm:text-base">&lt;1€</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-xs sm:text-sm">Rétention</span>
+                    <span className="font-inter text-gray-600 text-xs sm:text-sm">Rétention</span>
                     <span className="font-montserrat font-bold text-orange-400 text-sm sm:text-base">60%</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-inter text-white/80 text-xs sm:text-sm">NPS</span>
+                    <span className="font-inter text-gray-600 text-xs sm:text-sm">NPS</span>
                     <span className="font-montserrat font-bold text-orange-400 text-sm sm:text-base">&gt;70</span>
                   </div>
                 </div>
@@ -868,31 +868,31 @@ const PartnershipVisionSection: React.FC = () => {
             </div>
 
             {/* Vision finale */}
-            <div className="bg-gradient-to-br from-violet-600/10 to-orange-600/10 backdrop-blur-xl border border-white/20 rounded-xl sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
-              <h3 className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-white mb-4 sm:mb-6">
+            <div className="bg-gradient-to-br from-violet-600/10 to-orange-600/10 shadow-sm border border-gray-300 rounded-xl sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-12 text-center">
+              <h3 className="font-montserrat font-black text-xl sm:text-2xl lg:text-3xl text-gray-900 mb-4 sm:mb-6">
                 La Promesse 2030
               </h3>
               
               <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
                 <div>
                   <p className="font-montserrat font-black text-2xl sm:text-3xl lg:text-5xl text-violet-400 mb-1 sm:mb-2">0</p>
-                  <p className="font-inter text-white/80 text-[10px] sm:text-xs lg:text-base">objet dormant</p>
+                  <p className="font-inter text-gray-600 text-[10px] sm:text-xs lg:text-base">objet dormant</p>
                 </div>
                 <div>
                   <p className="font-montserrat font-black text-2xl sm:text-3xl lg:text-5xl text-orange-400 mb-1 sm:mb-2">0</p>
-                  <p className="font-inter text-white/80 text-[10px] sm:text-xs lg:text-base">talent gâché</p>
+                  <p className="font-inter text-gray-600 text-[10px] sm:text-xs lg:text-base">talent gâché</p>
                 </div>
                 <div>
                   <p className="font-montserrat font-black text-2xl sm:text-3xl lg:text-5xl text-green-400 mb-1 sm:mb-2">0</p>
-                  <p className="font-inter text-white/80 text-[10px] sm:text-xs lg:text-base">excuse</p>
+                  <p className="font-inter text-gray-600 text-[10px] sm:text-xs lg:text-base">excuse</p>
                 </div>
               </div>
               
-              <p className="font-playfair italic text-sm sm:text-base lg:text-xl text-white/80 max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
+              <p className="font-playfair italic text-sm sm:text-base lg:text-xl text-gray-600 max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
                 "Tes 1,5M de membres méritent mieux. Construisons ensemble la première plateforme où chaque clic finance une action."
               </p>
 
-              <button className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-violet-600 to-purple-600 rounded-xl sm:rounded-2xl font-inter font-bold text-white text-sm sm:text-base overflow-hidden transition-all duration-300 hover:scale-105">
+              <button className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-violet-600 to-purple-600 rounded-xl sm:rounded-2xl font-inter font-bold text-gray-900 text-sm sm:text-base overflow-hidden transition-all duration-300 hover:scale-105">
                 <span className="relative z-10">On commence quand ?</span>
               </button>
             </div>
@@ -903,7 +903,7 @@ const PartnershipVisionSection: React.FC = () => {
         <div className={`text-center mt-8 sm:mt-12 lg:mt-16 transform transition-all duration-1000 delay-900 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
-          <p className="font-playfair italic text-sm sm:text-base lg:text-lg text-white/60 px-4">
+          <p className="font-playfair italic text-sm sm:text-base lg:text-lg text-gray-500 px-4">
             "Wanted 3.0 × Origines : 1,5M membres → 12 médias qui changent le monde"
           </p>
         </div>

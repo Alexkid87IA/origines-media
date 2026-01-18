@@ -1,255 +1,586 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+// src/pages/ArticlePage.tsx
+// Design épuré - Style minimaliste blanc + Sidebar Premium
+
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowLeft, Clock, Eye, Heart, Share2, Bookmark, Calendar,
-  User, MessageCircle, ChevronUp, Twitter, Linkedin, Facebook,
-  Link2, Check, Sparkles, Quote, ArrowUpRight, Hash, Menu,
-  X, Mail, AlertCircle, TrendingUp, BookOpen, Star, Zap,
-  Award, Coffee, ChevronRight, BarChart3, Layers,
-  Globe, Shield, Flame, Diamond,
-  Lightbulb, Infinity, Gem, Target, Pause, Headphones
+  ArrowLeft, ArrowRight, Clock, Heart, Share2, Bookmark, Calendar,
+  ChevronUp, Link2, Check, PenLine, TrendingUp, Tag,
+  X, BookOpen, List, AlertCircle, Quote, ChevronDown,
+  CheckCircle, Lightbulb, Mail, Info, Sparkles, Play,
+  Target, Star, Key, MapPin, Zap, Plus
 } from 'lucide-react';
-import { client } from '../lib/sanity';
-import { ARTICLE_BY_SLUG_QUERY, RELATED_ARTICLES_QUERY } from '../lib/queries';
-import Layout from '../components/Layout';
+import { sanityFetch } from '../lib/sanity';
+import { getImageUrl } from '../lib/imageUrl';
+import { ARTICLE_BY_SLUG_QUERY, RELATED_ARTICLES_QUERY, POPULAR_ARTICLES_QUERY } from '../lib/queries';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { PortableText } from '@portabletext/react';
-import imageUrlBuilder from '@sanity/image-url';
-import './ArticlePage.css';
+import { typo } from '../lib/typography';
 
-// Créer le builder d'URL pour les images
-const builder = imageUrlBuilder(client);
+// ============ ICÔNES RÉSEAUX SOCIAUX (Style Footer/Navbar) ============
+const XIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
 
-function urlFor(source: any) {
-  return builder.image(source);
-}
+const FacebookIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
 
-// Types pour la table des matières
+const LinkedInIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+  </svg>
+);
+
+const WhatsAppIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+);
+
+const TelegramIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+  </svg>
+);
+
+const EmailIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+  </svg>
+);
+
+// Data des boutons de partage avec couleurs de marque
+const shareButtons = [
+  { id: 'twitter', icon: XIcon, label: 'X', color: '#000000' },
+  { id: 'facebook', icon: FacebookIcon, label: 'Facebook', color: '#1877F2' },
+  { id: 'linkedin', icon: LinkedInIcon, label: 'LinkedIn', color: '#0A66C2' },
+  { id: 'whatsapp', icon: WhatsAppIcon, label: 'WhatsApp', color: '#25D366' },
+  { id: 'telegram', icon: TelegramIcon, label: 'Telegram', color: '#0088CC' },
+  { id: 'email', icon: EmailIcon, label: 'Email', color: '#EA4335' },
+];
+
+// Helper to extract text from Sanity block or return string
+const extractText = (value: any): string => {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  // Object with text property: { text: "...", icon: "check" }
+  if (typeof value === 'object' && value.text && typeof value.text === 'string') {
+    return value.text;
+  }
+  // Sanity block structure: { _type: 'block', children: [{ text: '...' }] }
+  if (value?.children && Array.isArray(value.children)) {
+    return value.children.map((child: any) => child.text || '').join('');
+  }
+  // Array of blocks
+  if (Array.isArray(value)) {
+    return value.map((block: any) => {
+      if (typeof block === 'string') return block;
+      if (block?.text) return block.text;
+      if (block?.children && Array.isArray(block.children)) {
+        return block.children.map((child: any) => child.text || '').join('');
+      }
+      return '';
+    }).join(' ');
+  }
+  return '';
+};
+
+// Single Accordion Item Component
+const AccordionItem = ({
+  question,
+  answer,
+  defaultOpen = false,
+  index,
+  style = 'simple',
+  isLast = false,
+  themeColor = '#8B5CF6'
+}: {
+  question: string;
+  answer: any;
+  defaultOpen?: boolean;
+  index?: number;
+  style?: string;
+  isLast?: boolean;
+  themeColor?: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  // Render answer content (can be string or portable text)
+  const renderAnswer = () => {
+    if (!answer) return null;
+    if (typeof answer === 'string') {
+      return <p className="text-gray-600 leading-relaxed text-[15px]">{answer}</p>;
+    }
+    if (Array.isArray(answer)) {
+      const hasPortableText = answer.some((item: any) => item?._type);
+      if (hasPortableText) {
+        return (
+          <div className="text-gray-600 leading-relaxed prose prose-sm max-w-none">
+            <PortableText value={answer} />
+          </div>
+        );
+      }
+    }
+    if (answer?._type === 'block') {
+      return (
+        <div className="text-gray-600 leading-relaxed prose prose-sm max-w-none">
+          <PortableText value={[answer]} />
+        </div>
+      );
+    }
+    const text = extractText(answer);
+    return text ? <p className="text-gray-600 leading-relaxed text-[15px]">{text}</p> : null;
+  };
+
+  return (
+    <motion.div
+      className={`relative ${!isLast ? 'border-b border-gray-100' : ''}`}
+      initial={false}
+    >
+      {/* Colored accent line when open */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-1 rounded-full"
+        style={{ backgroundColor: themeColor }}
+        initial={{ opacity: 0, scaleY: 0 }}
+        animate={{
+          opacity: isOpen ? 1 : 0,
+          scaleY: isOpen ? 1 : 0
+        }}
+        transition={{ duration: 0.2 }}
+      />
+
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-200 ${
+          isOpen ? 'bg-gradient-to-r from-gray-50/80 to-transparent' : 'hover:bg-gray-50/50'
+        }`}
+      >
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          {style === 'numbered' && index !== undefined && (
+            <motion.span
+              className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm"
+              style={{
+                backgroundColor: isOpen ? themeColor : '#F3F4F6',
+                color: isOpen ? 'white' : '#6B7280'
+              }}
+              animate={{
+                scale: isOpen ? 1.05 : 1,
+                backgroundColor: isOpen ? themeColor : '#F3F4F6'
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              {index + 1}
+            </motion.span>
+          )}
+          <span className={`font-semibold text-[17px] transition-colors duration-200 ${
+            isOpen ? 'text-gray-900' : 'text-gray-700'
+          }`}>
+            {question}
+          </span>
+        </div>
+
+        {/* Animated icon */}
+        <motion.div
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+            isOpen ? 'bg-gray-900' : 'bg-gray-100'
+          }`}
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+            isOpen ? 'text-white' : 'text-gray-500'
+          }`} />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden"
+          >
+            <div className={`px-6 pb-6 ${style === 'numbered' ? 'pl-[72px]' : 'pl-6'}`}>
+              <div className="pt-1">
+                {renderAnswer()}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+// Single Accordion Fallback Component (for non-group accordions)
+const SingleAccordion = ({ value, themeColor = '#8B5CF6' }: { value: any; themeColor?: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const rawTitle = value.title || value.heading || value.question || value.label || 'Voir plus';
+  const rawContent = value.content || value.body || value.answer || value.text || value.description;
+  const title = typeof rawTitle === 'string' ? rawTitle : extractText(rawTitle);
+
+  const renderContent = () => {
+    if (!rawContent) return <p className="text-gray-400 italic">Contenu non disponible</p>;
+    if (typeof rawContent === 'string') return <p className="text-gray-600 leading-relaxed text-[15px]">{rawContent}</p>;
+    if (Array.isArray(rawContent)) {
+      const hasPortableText = rawContent.some((item: any) => item?._type);
+      if (hasPortableText) {
+        return (
+          <div className="text-gray-600 leading-relaxed prose prose-sm max-w-none">
+            <PortableText value={rawContent} />
+          </div>
+        );
+      }
+    }
+    const text = extractText(rawContent);
+    return text ? <p className="text-gray-600 leading-relaxed text-[15px]">{text}</p> : null;
+  };
+
+  return (
+    <motion.div
+      className="my-8 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100"
+      initial={false}
+      animate={{
+        boxShadow: isOpen
+          ? '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05)'
+          : '0 1px 3px 0 rgba(0, 0, 0, 0.05)'
+      }}
+      transition={{ duration: 0.3 }}
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-200 ${
+          isOpen ? 'bg-gradient-to-r from-gray-50 to-white' : 'hover:bg-gray-50/50'
+        }`}
+      >
+        <div className="flex items-center gap-4 flex-1">
+          <motion.div
+            className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ backgroundColor: `${themeColor}15` }}
+            animate={{ scale: isOpen ? 1.05 : 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              animate={{ rotate: isOpen ? 45 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Plus className="w-5 h-5" style={{ color: themeColor }} />
+            </motion.div>
+          </motion.div>
+          <span className={`font-semibold text-lg transition-colors duration-200 ${
+            isOpen ? 'text-gray-900' : 'text-gray-700'
+          }`}>
+            {title}
+          </span>
+        </div>
+
+        <motion.div
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+            isOpen ? 'bg-gray-900' : 'bg-gray-100'
+          }`}
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+            isOpen ? 'text-white' : 'text-gray-500'
+          }`} />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 pb-6 pl-[72px]">
+              <div className="pt-2 border-t border-gray-100">
+                <div className="pt-4">
+                  {renderContent()}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+// Accordion Group Component (handles multiple accordion items)
+const AccordionBlock = ({ value, themeColor = '#8B5CF6' }: { value: any; themeColor?: string }) => {
+  // Check if this is a group of accordions (has items array) or a single accordion
+  const items = value.items || value.accordions || value.sections || [];
+  const groupTitle = value.title || value.heading;
+  const style = value.style || 'simple'; // 'simple', 'numbered', 'cards'
+
+  // If it's a group with items
+  if (Array.isArray(items) && items.length > 0) {
+    return (
+      <div className="my-10">
+        {groupTitle && (
+          <div className="flex items-center gap-3 mb-6">
+            <div
+              className="w-1 h-8 rounded-full"
+              style={{ backgroundColor: themeColor }}
+            />
+            <h4 className="text-xl font-bold text-gray-900">{groupTitle}</h4>
+          </div>
+        )}
+        <div className="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
+          {items.map((item: any, index: number) => (
+            <AccordionItem
+              key={item._key || index}
+              question={item.question || item.title || item.heading || `Question ${index + 1}`}
+              answer={item.answer || item.content || item.body || item.text}
+              defaultOpen={item.defaultOpen || false}
+              index={index}
+              style={style}
+              isLast={index === items.length - 1}
+              themeColor={themeColor}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback: Single accordion item
+  return <SingleAccordion value={value} themeColor={themeColor} />;
+};
+
+// Types
 interface Heading {
   id: string;
   text: string;
   level: number;
-  children?: Heading[];
+}
+
+interface Article {
+  _id: string;
+  titre?: string;
+  title?: string;
+  description?: string;
+  excerpt?: string;
+  imageUrl?: string;
+  mainImage?: string;
+  datePublication?: string;
+  publishedAt?: string;
+  tempsLecture?: number;
+  readTime?: number;
+  contenu?: any[];
+  body?: any[];
+  auteur?: { nom: string; imageUrl?: string; bio?: string; twitter?: string; linkedin?: string; instagram?: string };
+  author?: { name: string; imageUrl?: string; bio?: string; twitter?: string; linkedin?: string; instagram?: string };
+  verticale?: { nom: string; couleurDominante?: string };
+  categories?: Array<{ _id: string; title?: string }>;
+  tags?: Array<{ _id: string; title?: string; color?: string; slug?: string }>;
+  videoUrl?: string;
+}
+
+interface PopularArticle {
+  _id: string;
+  title?: string;
+  slug: { current: string };
+  imageUrl?: string;
+  views?: number;
+}
+
+interface RelatedArticle {
+  _id: string;
+  titre?: string;
+  title?: string;
+  slug: { current: string };
+  imageUrl?: string;
+  verticale?: { nom: string; couleurDominante?: string };
 }
 
 export default function ArticlePage() {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  // States existants
-  const [article, setArticle] = useState<any>(null);
-  const [articlesLies, setArticlesLies] = useState<any[]>([]);
+  // States
+  const [article, setArticle] = useState<Article | null>(null);
+  const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
+  const [popularArticles, setPopularArticles] = useState<PopularArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [readingProgress, setReadingProgress] = useState(0);
-  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // States manquants ajoutés
-  const [readingMode, setReadingMode] = useState<'default' | 'focus' | 'dark'>('default');
-  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
-  const [audioPlaying, setAudioPlaying] = useState(false);
-
-  // Nouveaux states pour le design amélioré
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeHeading, setActiveHeading] = useState('');
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-  const [hoveredSection, setHoveredSection] = useState<string | null>(null);
-  const [isReading, setIsReading] = useState(false);
-  const [heroLoaded, setHeroLoaded] = useState(false);
-  const [imageReady, setImageReady] = useState(false);
-  const [showMilestone, setShowMilestone] = useState(false);
-  const [lastMilestone, setLastMilestone] = useState(0);
-  const [wordCount, setWordCount] = useState(0);
-  const [estimatedReadTime, setEstimatedReadTime] = useState(0);
-  const [toastMessage, setToastMessage] = useState('');
-  const [showToastState, setShowToastState] = useState(false);
-  
-  // NOTE: Ajout d'un état pour la position de la souris pour l'effet sur les cartes d'articles liés
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
+  const [showMobileToc, setShowMobileToc] = useState(false);
+  const [readingTimeLeft, setReadingTimeLeft] = useState(0);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [tocExpanded, setTocExpanded] = useState(false);
 
   // Refs
-  const heroRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const headingRefs = useRef<{ [key: string]: HTMLElement }>({});
-  const progressCircleRef = useRef<SVGCircleElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const sidebarContainerRef = useRef<HTMLDivElement>(null);
 
-  // Extraction des headings du contenu
+  // Sidebar sticky via JavaScript (plus fiable que CSS sticky)
+  const [sidebarStyle, setSidebarStyle] = useState<React.CSSProperties>({});
+
+  // Extract headings from content
   useEffect(() => {
     if (article?.contenu || article?.body) {
       const content = article.contenu || article.body;
-      const extractedHeadings: Heading[] = [];
-      let currentH2: Heading | null = null;
-      let totalWords = 0;
+      const extracted: Heading[] = [];
 
       content.forEach((block: any, index: number) => {
-        if (block._type === 'block') {
+        if (block._type === 'block' && (block.style === 'h2' || block.style === 'h3')) {
           const text = block.children?.map((child: any) => child.text).join('') || '';
           if (text) {
-            totalWords += text.split(/\s+/).filter(Boolean).length;
-          }
-
-          if (block.style) {
-            if (!text) return;
-
-            const id = `heading-${index}-${text.toLowerCase().replace(/\s+/g, '-').slice(0, 50)}`;
-
-            if (block.style === 'h2') {
-              currentH2 = {
-                id,
-                text,
-                level: 2,
-                children: []
-              };
-              extractedHeadings.push(currentH2);
-            } else if (block.style === 'h3' && currentH2) {
-              currentH2.children?.push({
-                id,
-                text,
-                level: 3
-              });
-            }
+            extracted.push({
+              id: `heading-${index}`,
+              text,
+              level: block.style === 'h2' ? 2 : 3
+            });
           }
         }
       });
 
-      setHeadings(extractedHeadings);
-      setWordCount(totalWords);
-      setEstimatedReadTime(Math.ceil(totalWords / 200));
+      setHeadings(extracted);
     }
   }, [article]);
 
-  // Observer pour la section active avec effets visuels
+  // Scroll progress + Reading time remaining
   useEffect(() => {
-    const observerOptions = {
-      rootMargin: '-20% 0px -70% 0px',
-      threshold: [0, 0.25, 0.5, 0.75, 1]
-    };
+    const totalReadTime = article?.tempsLecture || article?.readTime || 5;
 
-    const handleObserve = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveHeading(entry.target.id);
-
-          // Animation d'entrée pour les sections
-          entry.target.classList.add('section-visible');
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(handleObserve, observerOptions);
-
-    Object.values(headingRefs.current).forEach(element => {
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, [headings]);
-
-  // Milestones de lecture
-  useEffect(() => {
-    if (readingProgress > 0 && readingProgress % 25 === 0 && readingProgress > lastMilestone) {
-      setShowMilestone(true);
-      setLastMilestone(readingProgress);
-      setTimeout(() => setShowMilestone(false), 3000);
-    }
-  }, [readingProgress, lastMilestone]);
-
-  // Progress de lecture avec animations
-  useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setReadingProgress(Math.min(progress, 100));
+      setScrollProgress(Math.min(progress, 100));
       setShowScrollTop(scrollTop > 500);
 
-      // Mettre à jour le cercle de progression SVG
-      if (progressCircleRef.current) {
-        const circumference = 2 * Math.PI * 45;
-        const offset = circumference - (progress / 100) * circumference;
-        progressCircleRef.current.style.strokeDashoffset = offset.toString();
-      }
+      // Calculate remaining reading time
+      const remaining = Math.ceil(totalReadTime * (1 - progress / 100));
+      setReadingTimeLeft(Math.max(0, remaining));
 
-      // Activer le mode lecture après un certain scroll
-      if (scrollTop > 300 && !isReading) {
-        setIsReading(true);
-      }
+      // Active heading detection
+      headings.forEach(heading => {
+        const element = document.getElementById(heading.id);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 150 && rect.bottom >= 0) {
+            setActiveHeading(heading.id);
+          }
+        }
+      });
     };
+
+    // Initialize reading time
+    setReadingTimeLeft(totalReadTime);
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isReading]);
+  }, [headings, article]);
 
-  // Récupération des données
+  // Sidebar sticky via JavaScript - comportement "sticky bottom"
+  // La sidebar défile avec la page, puis se fixe quand son bas atteint le bas du viewport
+  useEffect(() => {
+    const handleSidebarScroll = () => {
+      if (!sidebarRef.current || !sidebarContainerRef.current) {
+        return;
+      }
+
+      const container = sidebarContainerRef.current;
+      const sidebar = sidebarRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const sidebarHeight = sidebar.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      // Position du bas de la sidebar si elle était en position relative (en haut du conteneur)
+      const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
+
+      if (sidebarBottomIfRelative > viewportHeight) {
+        // État 1: Le bas de la sidebar n'a pas encore atteint le bas du viewport
+        // → Scroll normal avec la page
+        setSidebarStyle({ position: 'relative', top: 0 });
+      } else if (containerRect.bottom > sidebarHeight) {
+        // État 2: Le bas de la sidebar a atteint le bas du viewport
+        // ET le conteneur n'est pas encore fini
+        // → Fixed avec le bas collé au bas du viewport
+        const topPosition = viewportHeight - sidebarHeight;
+        setSidebarStyle({ position: 'fixed', top: topPosition, width: container.offsetWidth });
+      } else {
+        // État 3: Le conteneur est presque fini
+        // → Absolute en bas du conteneur pour finir ensemble
+        setSidebarStyle({ position: 'absolute', bottom: 0, top: 'auto', width: '100%' });
+      }
+    };
+
+    window.addEventListener('scroll', handleSidebarScroll, { passive: true });
+    window.addEventListener('resize', handleSidebarScroll);
+
+    setTimeout(handleSidebarScroll, 100);
+
+    return () => {
+      window.removeEventListener('scroll', handleSidebarScroll);
+      window.removeEventListener('resize', handleSidebarScroll);
+    };
+  }, [article]);
+
+  // Fetch article data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setImageReady(false); // Reset l'état de l'image
-
-        const articleData = await client.fetch(ARTICLE_BY_SLUG_QUERY, { slug });
+        const articleData = await sanityFetch(ARTICLE_BY_SLUG_QUERY, { slug });
 
         if (!articleData) {
           navigate('/404');
           return;
         }
 
-        // Précharger l'image hero pour éviter le clignotement
-        if (articleData.imageUrl) {
-          const img = new Image();
-          img.src = articleData.imageUrl;
-          await new Promise((resolve) => {
-            img.onload = () => {
-              setImageReady(true);
-              resolve(true);
-            };
-            img.onerror = () => {
-              setImageReady(true); // On continue même si l'image échoue
-              resolve(true);
-            };
-            // Timeout de 3 secondes pour ne pas bloquer indéfiniment
-            setTimeout(() => {
-              if (!img.complete) {
-                setImageReady(true);
-                resolve(true);
-              }
-            }, 3000);
-          });
-        } else {
-          setImageReady(true);
-        }
-
         setArticle(articleData);
 
-        // Animation d'entrée du hero
-        setTimeout(() => setHeroLoaded(true), 100);
-
-        // Récupérer les articles liés
+        // Fetch related articles and popular articles in parallel
         try {
           const categoryIds = articleData.categories?.map((c: any) => c?._id).filter(Boolean) || [];
           const tagIds = articleData.tags?.map((t: any) => t?._id).filter(Boolean) || [];
 
-          const related = await client.fetch(RELATED_ARTICLES_QUERY, {
-            currentId: articleData._id,
-            categoryIds,
-            tagIds,
-            universId: articleData.univers?._id || null,
-            verticaleId: articleData.verticale?._id || null
-          });
+          const [related, popular] = await Promise.all([
+            sanityFetch(RELATED_ARTICLES_QUERY, {
+              currentId: articleData._id,
+              categoryIds,
+              tagIds,
+              universId: articleData.univers?._id || null,
+              verticaleId: articleData.verticale?._id || null
+            }),
+            sanityFetch(POPULAR_ARTICLES_QUERY)
+          ]);
 
-          setArticlesLies(related || []);
-        } catch (error) {
-          console.error('Erreur lors de la récupération des articles liés:', error);
-          setArticlesLies([]);
+          setRelatedArticles(related || []);
+          // Filter out current article from popular
+          setPopularArticles((popular || []).filter((p: any) => p._id !== articleData._id).slice(0, 4));
+        } catch {
+          setRelatedArticles([]);
+          setPopularArticles([]);
         }
-
-      } catch (error) {
-        console.error('Erreur:', error);
+      } catch {
         navigate('/404');
       } finally {
         setLoading(false);
@@ -258,1758 +589,1962 @@ export default function ArticlePage() {
 
     if (slug) {
       fetchData();
+      window.scrollTo(0, 0);
     }
   }, [slug, navigate]);
 
-  // Fonctions utilitaires
-  const formatDate = (dateString: string) => {
+  // Helpers
+  const formatDate = (dateString?: string) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
   };
 
+  const handleShare = async (platform: string) => {
+    const url = window.location.href;
+    const title = article?.titre || article?.title || '';
+
+    switch (platform) {
+      case 'twitter':
+        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+        break;
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'linkedin':
+        window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
+        break;
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
+        break;
+      case 'telegram':
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+        break;
+      case 'email':
+        window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('Je voulais partager cet article avec toi : ' + url)}`;
+        break;
+      case 'copy':
+        await navigator.clipboard.writeText(url);
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+        break;
+    }
+  };
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail.trim()) return;
+    setNewsletterSubmitting(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    setNewsletterSuccess(true);
+    setNewsletterSubmitting(false);
+  };
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const offset = 120;
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementPosition - offset,
-        behavior: 'smooth'
-      });
-      setShowMobileMenu(false);
+      const offset = 100;
+      const top = element.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+      setShowMobileToc(false);
     }
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    if (!isLiked) {
-      confettiAnimation();
-    }
-    if (navigator.vibrate) {
-      navigator.vibrate([50, 30, 50]);
-    }
-  };
+  // Get theme color for styled headings
+  const themeColorForHeadings = article?.verticale?.couleurDominante || '#8B5CF6';
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    showToast(isBookmarked ? 'Article retiré des favoris' : 'Article ajouté aux favoris');
-  };
+  // Helper function to convert URLs in text to clickable links
+  // Detects patterns like "Text : https://url.com" and makes "Text" the clickable link
+  const linkifyText = (text: string): React.ReactNode => {
+    // Pattern: "Some text : https://url" or "Some text: https://url"
+    const labeledUrlRegex = /([^•\n]+?)\s*:\s*(https?:\/\/[^\s]+)/g;
+    const simpleUrlRegex = /(https?:\/\/[^\s]+)/g;
 
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    setShowToastState(true);
-    setTimeout(() => {
-      setShowToastState(false);
-    }, 3000);
-  };
+    // First, try to find labeled URLs (text : url)
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
 
-  const confettiAnimation = (customColor?: string) => {
-    const colors = [customColor || '#8B5CF6', '#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F'];
-    const particles: HTMLDivElement[] = [];
+    // Reset regex
+    labeledUrlRegex.lastIndex = 0;
 
-    for (let i = 0; i < 30; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'confetti-particle';
-      particle.style.cssText = `
-        position: fixed;
-        width: 10px;
-        height: 10px;
-        background: ${colors[Math.floor(Math.random() * colors.length)]};
-        left: 50%;
-        top: 50%;
-        pointer-events: none;
-        z-index: 9999;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-      `;
-      document.body.appendChild(particle);
-      particles.push(particle);
+    while ((match = labeledUrlRegex.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        const beforeText = text.slice(lastIndex, match.index);
+        // Check for simple URLs in the before text
+        parts.push(...linkifySimpleUrls(beforeText, parts.length));
+      }
 
-      const angle = (Math.PI * 2 * i) / 30;
-      const velocity = 5 + Math.random() * 5;
-      const lifetime = 1000 + Math.random() * 1000;
+      const label = match[1].trim();
+      const url = match[2];
 
-      let start: number | null = null;
-      const animate = (timestamp: number) => {
-        if (!start) start = timestamp;
-        const progress = timestamp - start;
+      // Add the labeled link
+      parts.push(
+        <a
+          key={`labeled-${parts.length}`}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-violet-600 hover:text-violet-700 underline transition-colors"
+        >
+          {label}
+        </a>
+      );
 
-        if (progress < lifetime) {
-          const x = Math.cos(angle) * velocity * progress * 0.1;
-          const y = Math.sin(angle) * velocity * progress * 0.1 - progress * 0.1;
-          particle.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${progress}deg)`;
-          particle.style.opacity = (1 - progress / lifetime).toString();
-          requestAnimationFrame(animate);
-        } else {
-          particle.remove();
-        }
-      };
-      requestAnimationFrame(animate);
+      lastIndex = match.index + match[0].length;
     }
 
-    setTimeout(() => {
-      particles.forEach(p => {
-        if (p && p.parentNode) {
-          p.remove();
-        }
-      });
-    }, 3000);
-  };
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      const themeColor = article?.verticale?.couleurDominante || article?.verticale?.couleur || article?.univers?.couleur || '#8B5CF6';
-      confettiAnimation(themeColor);
-      setTimeout(() => {
-        setSubscribed(false);
-        setEmail('');
-      }, 3000);
+    // Add remaining text
+    if (lastIndex < text.length) {
+      const remainingText = text.slice(lastIndex);
+      parts.push(...linkifySimpleUrls(remainingText, parts.length));
     }
+
+    return parts.length > 0 ? parts : text;
   };
 
-  const shareOnSocial = (platform: string) => {
-    const url = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent(article?.title || '');
+  // Helper for simple URL detection (fallback)
+  const linkifySimpleUrls = (text: string, keyOffset: number): React.ReactNode[] => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
 
-    const shareUrls: { [key: string]: string } = {
-      twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`
-    };
-
-    if (shareUrls[platform]) {
-      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-    }
-  };
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopySuccess(true);
-      showToast('Lien copié !');
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error('Erreur lors de la copie:', err);
-    }
-  };
-
-  const toggleReadingMode = () => {
-    const modes: ('default' | 'focus' | 'dark')[] = ['default', 'focus', 'dark'];
-    const currentIndex = modes.indexOf(readingMode);
-    const nextMode = modes[(currentIndex + 1) % modes.length];
-    setReadingMode(nextMode);
-  };
-
-  // Thème couleur
-  const themeColor = article?.verticale?.couleurDominante || article?.verticale?.couleur || article?.univers?.couleur || '#8B5CF6';
-
-  // Composants personnalisés pour PortableText
-  const portableTextComponents = {
-    types: {
-      image: ({ value }: any) => {
-        if (!value?.asset) return null;
-
-        try {
-          const imageUrl = urlFor(value.asset).width(1400).url();
-
-          return (
-            <figure className="my-24 group relative">
-              <div className="relative overflow-hidden rounded-3xl">
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={imageUrl}
-                    alt={value.alt || ''}
-                    className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 image-initial"
-                    loading="lazy"
-                    onLoad={(e) => {
-                      e.currentTarget.classList.remove('image-initial');
-                      e.currentTarget.classList.add('image-loaded');
-                    }}
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700" />
-
-                  <button className="absolute top-4 right-4 p-3 bg-black/50 backdrop-blur-md rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/70">
-                    <Lightbulb className="w-5 h-5 text-white" />
-                  </button>
-                </div>
-
-                <div
-                  className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-4/5 h-20 blur-3xl opacity-30"
-                  style={{ backgroundColor: themeColor }}
-                />
-              </div>
-
-              {value.caption && (
-                <figcaption className="text-center mt-8 relative">
-                  <div className="inline-block">
-                    <p className="text-white/60 text-sm italic tracking-wide">
-                      {value.caption}
-                    </p>
-                    <div
-                      className="h-px mt-2 rounded-full opacity-30"
-                      style={{ backgroundColor: themeColor }}
-                    />
-                  </div>
-                </figcaption>
-              )}
-            </figure>
-          );
-        } catch (error) {
-          console.error('Erreur affichage image:', error);
-          return null;
-        }
-      },
-    },
-    block: {
-      normal: ({ children, value }: any) => {
-        const content = article?.contenu || article?.body;
-        const isFirstParagraph = content && value?._key === content[0]?._key;
-
-        if (isFirstParagraph) {
-          return (
-            <p className="mb-12 text-white/90 leading-[2.2] text-xl sm:text-2xl font-light tracking-wide first-letter:float-left first-letter:text-6xl sm:first-letter:text-8xl first-letter:font-black first-letter:mr-3 sm:first-letter:mr-4 first-letter:mt-1 sm:first-letter:mt-2 first-letter:bg-gradient-to-br first-letter:from-white first-letter:to-white/70 first-letter:bg-clip-text first-letter:text-transparent">
-              {children}
-            </p>
-          );
-        }
-
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        urlRegex.lastIndex = 0;
         return (
-          <p className={`mb-10 text-white/80 leading-[2] transition-all duration-300 text-lg font-light tracking-wide hover:text-white/90`}>
+          <a
+            key={`simple-${keyOffset}-${index}`}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-violet-600 hover:text-violet-700 underline transition-colors break-all"
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    }).filter(part => part !== '');
+  };
+
+  // Helper component to process children and linkify URLs
+  const LinkifyChildren: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const processNode = (node: React.ReactNode): React.ReactNode => {
+      if (typeof node === 'string') {
+        return linkifyText(node);
+      }
+      if (Array.isArray(node)) {
+        return node.map((child, i) => <React.Fragment key={i}>{processNode(child)}</React.Fragment>);
+      }
+      if (React.isValidElement(node) && node.props.children) {
+        return React.cloneElement(node, {}, processNode(node.props.children));
+      }
+      return node;
+    };
+    return <>{processNode(children)}</>;
+  };
+
+  // PortableText components - Light theme with clear hierarchy
+  const portableTextComponents = {
+    block: {
+      // H1: Main title with themed underline
+      h1: ({ children, value }: any) => {
+        const index = (article?.contenu || article?.body)?.findIndex((b: any) => b._key === value._key);
+        const id = `heading-${index}`;
+        return (
+          <h1 id={id} className="text-3xl md:text-4xl font-bold text-gray-900 mt-10 mb-6 scroll-mt-24">
             {children}
-          </p>
+          </h1>
         );
       },
+      // H2: Big section titles with themed underline
       h2: ({ children, value }: any) => {
-        const text = Array.isArray(children) ? children.join('') : String(children || '');
-        const index = value?._key || Math.random().toString();
-        const id = `heading-${index}-${text.toLowerCase().replace(/\s+/g, '-').slice(0, 50)}`;
-
+        const index = (article?.contenu || article?.body)?.findIndex((b: any) => b._key === value._key);
+        const id = `heading-${index}`;
         return (
-          <h2
-            id={id}
-            ref={el => { if (el) headingRefs.current[id] = el; }}
-            className="text-5xl lg:text-6xl font-black mb-12 mt-24 text-white relative group scroll-mt-32 section-heading"
-          >
-            <span className="relative inline-block">
-              <span
-                className="absolute -left-20 top-1/2 -translate-y-1/2 text-8xl font-black opacity-5 group-hover:opacity-10 transition-opacity duration-500"
-                style={{ color: themeColor }}
-              >
-                {headings.findIndex(h => h.id === id) + 1}
-              </span>
-
-              <span className="relative z-10 inline-block bg-gradient-to-r from-white via-white/95 to-white/90 bg-clip-text text-transparent">
-                {children}
-              </span>
-
-              <div className="absolute -bottom-6 left-0 w-full h-1 overflow-hidden rounded-full">
-                <div
-                  className="h-full transition-all duration-1000 ease-out relative"
-                  style={{
-                    width: activeHeading === id ? '100%' : '30%',
-                    background: `linear-gradient(90deg, ${themeColor} 0%, ${themeColor}80 100%)`
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
-                </div>
-              </div>
-
-              <div
-                className="absolute -inset-x-4 -inset-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
-                style={{ backgroundColor: `${themeColor}20` }}
-              />
-            </span>
+          <h2 id={id} className="mt-14 mb-6 scroll-mt-24">
+            <span className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight block">{children}</span>
+            <div
+              className="mt-3 h-1 w-16 rounded-full"
+              style={{ background: `linear-gradient(to right, ${themeColorForHeadings}, ${themeColorForHeadings}40)` }}
+            />
           </h2>
         );
       },
+      // H3: Subsection titles with themed underline
       h3: ({ children, value }: any) => {
-        const text = Array.isArray(children) ? children.join('') : String(children || '');
-        const index = value?._key || Math.random().toString();
-        const id = `heading-${index}-${text.toLowerCase().replace(/\s+/g, '-').slice(0, 50)}`;
-
+        const index = (article?.contenu || article?.body)?.findIndex((b: any) => b._key === value._key);
+        const id = `heading-${index}`;
         return (
-          <h3
-            id={id}
-            ref={el => { if (el) headingRefs.current[id] = el; }}
-            className="text-3xl lg:text-4xl font-bold mb-8 mt-16 text-white/90 scroll-mt-32 flex items-center gap-6 group"
-          >
-            <span
-              className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-              style={{
-                background: `linear-gradient(135deg, ${themeColor}20 0%, ${themeColor}10 100%)`,
-                border: `2px solid ${themeColor}30`
-              }}
-            >
-              <Diamond className="w-5 h-5" style={{ color: themeColor }} />
-            </span>
-            <span className="relative">
-              {children}
-              <div
-                className="absolute -bottom-2 left-0 h-px opacity-20 transition-all duration-500 group-hover:opacity-40"
-                style={{
-                  width: activeHeading === id ? '100%' : '0%',
-                  backgroundColor: themeColor
-                }}
-              />
-            </span>
+          <h3 id={id} className="mt-10 mb-4 scroll-mt-24">
+            <span className="text-xl md:text-2xl font-semibold text-gray-800">{children}</span>
+            <div
+              className="mt-2 h-0.5 w-10 rounded-full"
+              style={{ background: `linear-gradient(to right, ${themeColorForHeadings}80, ${themeColorForHeadings}20)` }}
+            />
           </h3>
         );
       },
+      // H4: Small titles for lists or minor sections
+      h4: ({ children }: any) => (
+        <h4 className="mt-8 mb-3 text-lg font-semibold text-gray-600">
+          {children}
+        </h4>
+      ),
+      normal: ({ children }: any) => (
+        <p className="text-gray-600 leading-relaxed mb-6 text-lg">
+          <LinkifyChildren>{children}</LinkifyChildren>
+        </p>
+      ),
       blockquote: ({ children }: any) => (
-        <div className="relative my-20 mx-0 lg:mx-8">
-          <div
-            className="absolute inset-0 rounded-3xl opacity-5"
-            style={{ backgroundColor: themeColor }}
-          />
-
-          <blockquote className="relative p-8 lg:p-12">
-            <Quote
-              className="absolute -left-4 -top-4 w-16 h-16 opacity-10"
-              style={{ color: themeColor }}
-            />
-
-            <div
-              className="relative border-l-4 pl-8 lg:pl-12 py-2"
-              style={{ borderColor: themeColor }}
-            >
-              <p className="text-2xl lg:text-3xl text-white/80 leading-relaxed font-light italic">
-                {children}
-              </p>
-            </div>
-
-            <Quote
-              className="absolute -right-4 -bottom-4 w-16 h-16 opacity-10 rotate-180"
-              style={{ color: themeColor }}
-            />
-
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 rounded-full animate-float"
-                style={{
-                  backgroundColor: themeColor,
-                  left: `${20 + i * 30}%`,
-                  top: `${20 + i * 20}%`,
-                  animationDelay: `${i * 0.5}s`,
-                  opacity: 0.3
-                }}
-              />
-            ))}
-          </blockquote>
-        </div>
+        <blockquote className="border-l-4 pl-6 py-4 my-8 bg-gray-50 rounded-r-xl" style={{ borderColor: themeColorForHeadings }}>
+          <p className="text-gray-700 italic text-lg">{children}</p>
+        </blockquote>
       ),
     },
     marks: {
-      strong: ({ children }: any) => (
-        <strong className="font-bold text-white relative inline-block group">
-          <span className="relative z-10">{children}</span>
-          <span
-            className="absolute inset-x-0 bottom-0 h-3 -mb-1 opacity-20 group-hover:opacity-30 transition-opacity duration-300"
-            style={{ backgroundColor: themeColor }}
-          />
-        </strong>
-      ),
-      em: ({ children }: any) => (
-        <em className="italic relative inline-block text-white/90 px-1">
-          <span className="relative z-10">{children}</span>
-          <span
-            className="absolute inset-0 -mx-2 -my-1 rounded-lg opacity-5 group-hover:opacity-10 transition-opacity duration-300"
-            style={{ backgroundColor: themeColor }}
-          />
-        </em>
-      ),
-      code: ({ children }: any) => (
-        <code
-          className="relative px-4 py-2 mx-1 rounded-xl text-sm font-mono inline-block border backdrop-blur-sm transition-all duration-300 hover:scale-105"
-          style={{
-            borderColor: `${themeColor}30`,
-            color: themeColor,
-            backgroundColor: `${themeColor}10`
-          }}
-        >
-          <span className="relative z-10">{children}</span>
-          <div
-            className="absolute inset-0 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300"
-            style={{
-              background: `radial-gradient(circle at center, ${themeColor}10, transparent)`
-            }}
-          />
-        </code>
-      ),
-      link: ({ value, children }: any) => {
-        const target = value?.blank ? '_blank' : undefined;
+      strong: ({ children }: any) => <strong className="font-bold text-gray-900">{children}</strong>,
+      em: ({ children }: any) => <em className="italic text-violet-600">{children}</em>,
+      link: ({ children, value }: any) => {
+        const href = value?.href || value?.url || '';
+        if (!href) {
+          return <span className="text-violet-600">{children}</span>;
+        }
+        return (
+          <a href={href} className="text-violet-600 hover:text-violet-700 underline transition-colors" target="_blank" rel="noopener noreferrer">
+            {children}
+          </a>
+        );
+      },
+      internalLink: ({ children, value }: any) => {
+        const slug = value?.slug;
+        if (!slug) {
+          return <span>{children}</span>;
+        }
         return (
           <a
-            href={value?.href}
-            target={target}
-            rel={target === '_blank' ? 'noopener noreferrer' : undefined}
-            className="relative inline-flex items-center gap-1 transition-all duration-300 hover:text-white group"
-            style={{ color: themeColor }}
+            href={`/article/${slug}`}
+            className="text-violet-600 hover:text-violet-700 underline decoration-violet-300 hover:decoration-violet-500 transition-colors"
           >
-            <span className="relative z-10">
-              {children}
-            </span>
-            {target === '_blank' && (
-              <ArrowUpRight className="w-4 h-4 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all duration-300" />
-            )}
-            <span
-              className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-              style={{ backgroundColor: themeColor }}
-            />
+            {children}
           </a>
         );
       },
     },
     list: {
       bullet: ({ children }: any) => (
-        <ul className="list-none mb-12 space-y-6 pl-4">
-          {React.Children.map(children, (child) => (
-            <li className="flex items-start gap-5 group">
-              <span className="flex-shrink-0 mt-2 relative">
-                <span
-                  className="block w-3 h-3 rounded-full transition-all duration-500 group-hover:scale-150"
-                  style={{
-                    backgroundColor: themeColor,
-                    boxShadow: `0 0 20px ${themeColor}40`
-                  }}
-                />
-                <span
-                  className="absolute inset-0 rounded-full animate-ping"
-                  style={{
-                    backgroundColor: themeColor,
-                    opacity: 0.2
-                  }}
-                />
-              </span>
-              <span className="text-white/80 text-lg leading-relaxed font-light group-hover:text-white/90 transition-colors duration-300">
-                {child}
-              </span>
-            </li>
-          ))}
+        <ul className="space-y-3 mb-6 pl-0 list-none">
+          {children}
         </ul>
       ),
       number: ({ children }: any) => (
-        <ol className="list-none mb-12 space-y-8">
-          {React.Children.map(children, (child: any, index: number) => (
-            <li key={index} className="flex items-start gap-6 group">
-              <span
-                className="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
-                style={{
-                  background: `linear-gradient(135deg, ${themeColor}20 0%, ${themeColor}10 100%)`,
-                  border: `2px solid ${themeColor}30`,
-                  color: themeColor
-                }}
-              >
-                {index + 1}
-              </span>
-              <span className="text-white/80 text-lg leading-relaxed font-light pt-2.5 group-hover:text-white/90 transition-colors duration-300">
-                {child}
-              </span>
-            </li>
-          ))}
+        <ol className="space-y-3 mb-6 pl-0 list-none">
+          {children}
         </ol>
       ),
     },
-  };
+    listItem: {
+      bullet: ({ children }: any) => (
+        <li className="flex items-start gap-3 text-gray-700 text-lg leading-relaxed">
+          <span className="flex-shrink-0 w-2 h-2 mt-2.5 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500" />
+          <span className="flex-1"><LinkifyChildren>{children}</LinkifyChildren></span>
+        </li>
+      ),
+      number: ({ children, index }: any) => (
+        <li className="flex items-start gap-3 text-gray-700 text-lg leading-relaxed">
+          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-bold mt-0.5">
+            {(index ?? 0) + 1}
+          </span>
+          <span className="flex-1"><LinkifyChildren>{children}</LinkifyChildren></span>
+        </li>
+      ),
+    },
+    types: {
+      // Image (avec limite de hauteur pour les images verticales)
+      image: ({ value }: any) => {
+        const imageUrl = value.asset?._ref
+          ? getImageUrl(value.asset)
+          : (value.asset?.url || value.url);
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-purple-900/20 to-fuchsia-900/20"></div>
+        if (!imageUrl) return null;
+
+        return (
+          <figure className="my-8 flex justify-center">
+            <img
+              src={imageUrl}
+              alt={value.alt || ''}
+              className="max-h-[400px] w-auto max-w-full rounded-2xl object-contain"
+            />
+            {value.caption && (
+              <figcaption className="text-center text-gray-500 text-sm mt-3">{value.caption}</figcaption>
+            )}
+          </figure>
+        );
+      },
+
+      // Image Gallery - Galerie d'images
+      imageGallery: ({ value }: any) => {
+        if (!value?.images?.length) return null;
+
+        const layout = value.layout || 'single';
+
+        // Grille responsive selon le layout
+        const gridClasses: Record<string, string> = {
+          'single': 'grid-cols-1',
+          'grid-2': 'grid-cols-1 md:grid-cols-2 gap-4',
+          'grid-3': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4',
+          'carousel': 'grid-cols-1',
+          'masonry': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
+        };
+
+        return (
+          <div className={`my-10 grid ${gridClasses[layout] || gridClasses.single}`}>
+            {value.images.map((img: any) => (
+              <figure key={img._key} className="relative group">
+                <div className="overflow-hidden rounded-xl">
+                  <img
+                    src={img.imageUrl || img.asset?.url}
+                    alt={img.caption || img.alt || ''}
+                    loading="lazy"
+                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                {img.caption && (
+                  <figcaption className="text-center text-gray-500 text-sm mt-3 italic">
+                    {img.caption}
+                  </figcaption>
+                )}
+              </figure>
+            ))}
           </div>
+        );
+      },
 
-          <div className="text-center relative z-10">
-            <div className="relative">
-              <div className="w-32 h-32 mx-auto mb-8 relative">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-600 to-purple-600"></div>
-                <div className="absolute inset-2 rounded-full bg-black flex items-center justify-center">
-                  <Infinity className="w-12 h-12 text-white" />
+      // Callout - Encadré d'information/alerte
+      callout: ({ value }: any) => {
+        const types: Record<string, { icon: any; bg: string; border: string; text: string; iconBg: string }> = {
+          info: { icon: Info, bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', iconBg: 'bg-blue-100' },
+          warning: { icon: AlertCircle, bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', iconBg: 'bg-amber-100' },
+          success: { icon: CheckCircle, bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-800', iconBg: 'bg-emerald-100' },
+          tip: { icon: Lightbulb, bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-800', iconBg: 'bg-violet-100' },
+          remember: { icon: BookOpen, bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-800', iconBg: 'bg-indigo-100' },
+          didyouknow: { icon: Sparkles, bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-800', iconBg: 'bg-pink-100' },
+          key: { icon: Zap, bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-800', iconBg: 'bg-orange-100' },
+          testimonial: { icon: Heart, bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-800', iconBg: 'bg-rose-100' },
+          stat: { icon: TrendingUp, bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-800', iconBg: 'bg-cyan-100' },
+        };
+        const style = types[value.type] || types.info;
+        const Icon = style.icon;
+        const content = value.text || value.content || value.body;
+        const isRichText = Array.isArray(content);
+
+        // Style spécial pour les stats
+        if (value.type === 'stat') {
+          return (
+            <div className="my-10 p-8 rounded-2xl bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 border border-violet-200/50 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-sm">
+                  <TrendingUp className="w-5 h-5 text-white" />
+                </div>
+                {value.title && (
+                  <h4 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">{value.title}</h4>
+                )}
+              </div>
+              <div className="text-gray-700 leading-relaxed pl-13">
+                {isRichText ? <PortableText value={content} /> : <p>{content}</p>}
+              </div>
+              {value.source && (
+                <p className="mt-4 text-sm text-violet-600/70 italic pl-13">Source : {value.source}</p>
+              )}
+            </div>
+          );
+        }
+
+        return (
+          <div className={`my-8 p-6 rounded-xl border ${style.bg} ${style.border}`}>
+            <div className="flex items-start gap-4">
+              <div className={`w-10 h-10 rounded-xl ${style.iconBg} flex items-center justify-center flex-shrink-0`}>
+                <Icon className={`w-5 h-5 ${style.text}`} />
+              </div>
+              <div className={`${style.text} text-base leading-relaxed flex-1`}>
+                {value.title && <p className="font-bold mb-2 text-lg">{value.title}</p>}
+                {isRichText ? (
+                  <PortableText value={content} />
+                ) : content ? (
+                  <p>{content}</p>
+                ) : null}
+                {value.source && (
+                  <p className="mt-3 text-sm opacity-70 italic">Source : {value.source}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      },
+
+      // Styled Quote - Citation stylisée
+      styledQuote: ({ value }: any) => {
+        const quoteStyle = value.style || 'classic';
+
+        // Helper pour rendre la source avec lien cliquable si sourceUrl existe
+        const renderSource = () => {
+          if (!value.source) return null;
+          if (value.sourceUrl) {
+            return (
+              <a
+                href={value.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-violet-500 transition-colors underline underline-offset-2"
+              >
+                {value.source}
+              </a>
+            );
+          }
+          return <>{value.source}</>;
+        };
+
+        // Style Testimonial - avec photo et rôle
+        if (quoteStyle === 'testimonial' || value.image) {
+          return (
+            <figure className="my-10 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+              <div className="flex flex-col md:flex-row gap-6">
+                {value.image?.asset?.url && (
+                  <div className="flex-shrink-0">
+                    <img
+                      src={value.image.asset.url}
+                      alt={value.author || ''}
+                      className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <Quote className="w-8 h-8 text-violet-300 mb-3" />
+                  <blockquote className="text-lg md:text-xl text-gray-700 leading-relaxed italic mb-4">
+                    "{value.quote}"
+                  </blockquote>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-0.5 bg-violet-300" />
+                    <div>
+                      {value.author && <p className="font-bold text-gray-900">{value.author}</p>}
+                      {value.role && <p className="text-sm text-gray-500">{value.role}</p>}
+                      {value.source && <p className="text-xs text-gray-400 mt-1">{renderSource()}</p>}
+                    </div>
+                  </div>
                 </div>
               </div>
+            </figure>
+          );
+        }
 
-              <h2 className="text-2xl font-light text-white/80 mb-4">
-                Préparation de votre lecture
-              </h2>
+        // Style Large - grande citation mise en avant
+        if (quoteStyle === 'large') {
+          return (
+            <figure className="my-12 py-8 border-y border-gray-200">
+              <blockquote className="text-center">
+                <p className="text-2xl md:text-4xl font-medium text-gray-800 leading-relaxed italic max-w-3xl mx-auto">
+                  "{value.quote}"
+                </p>
+              </blockquote>
+              {(value.author || value.source) && (
+                <figcaption className="mt-6 text-center text-gray-500">
+                  {value.author && <span className="font-semibold text-gray-700">{value.author}</span>}
+                  {value.role && <span className="text-gray-500">, {value.role}</span>}
+                  {value.source && <span className="text-gray-400"> — {renderSource()}</span>}
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
 
-              <div className="w-64 h-1 bg-white/10 rounded-full mx-auto overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full w-2/3"></div>
-              </div>
+        // Style Filled - avec fond coloré
+        if (quoteStyle === 'filled') {
+          return (
+            <figure className="my-10 p-8 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white">
+              <Quote className="w-10 h-10 text-white/30 mb-4" />
+              <blockquote>
+                <p className="text-xl md:text-2xl font-medium leading-relaxed">
+                  "{value.quote}"
+                </p>
+              </blockquote>
+              {(value.author || value.source) && (
+                <figcaption className="mt-6 flex items-center gap-3">
+                  <div className="w-10 h-0.5 bg-white/50" />
+                  <div>
+                    {value.author && <span className="font-semibold">{value.author}</span>}
+                    {value.role && <span className="opacity-80">, {value.role}</span>}
+                  </div>
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
 
-              <p className="text-white/40 text-sm mt-8 italic">
-                "La lecture est une conversation silencieuse"
+        // Style Bordered - encadré élégant
+        if (quoteStyle === 'bordered') {
+          return (
+            <figure className="my-10 p-6 md:p-8 border-2 border-gray-200 rounded-2xl relative">
+              <Quote className="absolute -top-4 left-6 w-8 h-8 text-violet-400 bg-white px-1" />
+              <blockquote>
+                <p className="text-lg md:text-xl text-gray-700 leading-relaxed italic">
+                  "{value.quote}"
+                </p>
+              </blockquote>
+              {(value.author || value.source) && (
+                <figcaption className="mt-4 pt-4 border-t border-gray-100 text-gray-500">
+                  {value.author && <span className="font-semibold text-gray-700">{value.author}</span>}
+                  {value.role && <span className="text-gray-500">, {value.role}</span>}
+                  {value.source && <span className="text-gray-400"> — {renderSource()}</span>}
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
+
+        // Style Classic (défaut)
+        return (
+          <figure className="my-12 relative">
+            <Quote className="absolute -top-4 -left-2 w-12 h-12 text-violet-200" />
+            <blockquote className="pl-8 pr-4">
+              <p className="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed italic">
+                "{value.quote}"
               </p>
+            </blockquote>
+            {(value.author || value.source) && (
+              <figcaption className="mt-4 pl-8 text-gray-500">
+                {value.author && <span className="font-semibold text-gray-700">{value.author}</span>}
+                {value.role && <span className="text-gray-500">, {value.role}</span>}
+                {value.source && <span className="text-gray-400"> — {renderSource()}</span>}
+              </figcaption>
+            )}
+          </figure>
+        );
+      },
+
+      // Accordion - Section dépliable
+      accordion: ({ value }: any) => <AccordionBlock value={value} themeColor={themeColorForHeadings} />,
+
+      // Key Takeaways - Points clés à retenir
+      keyTakeaways: ({ value }: any) => {
+        // Handle different field names for items
+        const items = value.items || value.points || value.takeaways || value.list || value.content || value.bullets || [];
+
+        // Fonction pour extraire le contenu portable text ou texte simple
+        const renderPortableTextOrString = (content: any) => {
+          if (!content) return null;
+          if (typeof content === 'string') return <p>{content}</p>;
+          if (Array.isArray(content)) {
+            // Si c'est un array avec des objets qui ont _type, c'est du portable text
+            const hasPortableText = content.some((item: any) => item?._type);
+            if (hasPortableText) {
+              return <PortableText value={content} />;
+            }
+            // Sinon c'est un array de strings ou autre
+            return content.map((item: any, i: number) => {
+              if (typeof item === 'string') return <p key={i}>{item}</p>;
+              if (item?.text) return <p key={i}>{item.text}</p>;
+              return null;
+            });
+          }
+          if (content?._type === 'block') {
+            return <PortableText value={[content]} />;
+          }
+          if (content?.text) return <p>{content.text}</p>;
+          return null;
+        };
+
+        // Helper to get the right icon based on item.icon value
+        const getIcon = (iconName?: string, size: string = 'w-5 h-5') => {
+          switch (iconName) {
+            case 'bulb':
+            case 'lightbulb':
+              return <Lightbulb className={`${size} text-amber-500 flex-shrink-0`} />;
+            case 'check':
+            case 'checkmark':
+              return <CheckCircle className={`${size} text-emerald-500 flex-shrink-0`} />;
+            case 'target':
+              return <Target className={`${size} text-rose-500 flex-shrink-0`} />;
+            case 'star':
+              return <Star className={`${size} text-yellow-500 flex-shrink-0`} />;
+            case 'key':
+              return <Key className={`${size} text-indigo-500 flex-shrink-0`} />;
+            case 'pin':
+              return <MapPin className={`${size} text-red-500 flex-shrink-0`} />;
+            case 'info':
+              return <Info className={`${size} text-blue-500 flex-shrink-0`} />;
+            case 'alert':
+            case 'warning':
+              return <AlertCircle className={`${size} text-amber-500 flex-shrink-0`} />;
+            case 'sparkle':
+            case 'sparkles':
+              return <Sparkles className={`${size} text-violet-500 flex-shrink-0`} />;
+            default:
+              return <CheckCircle className={`${size} text-violet-500 flex-shrink-0`} />;
+          }
+        };
+
+        // Get the style from Sanity (list, cards, boxed, timeline)
+        const style = value.style || 'boxed';
+
+        const renderItem = (item: any, index: number) => {
+          // Get the icon for this item
+          const itemIcon = item?.icon;
+
+          // CAS 1: L'item est un objet avec title/heading ET content/body/description
+          // Structure: { title: "...", content: [...] } ou { heading: "...", body: [...] }
+          const itemTitle = item?.title || item?.heading || item?.label || item?.name;
+          const itemContent = item?.content || item?.body || item?.description || item?.text || item?.details || item?.answer;
+
+          if (itemTitle && itemContent) {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-1">{getIcon(itemIcon)}</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900 mb-1">{typeof itemTitle === 'string' ? itemTitle : extractText(itemTitle)}</p>
+                  <div className="text-gray-600 text-sm">
+                    {renderPortableTextOrString(itemContent)}
+                  </div>
+                </div>
+              </li>
+            );
+          }
+
+          // CAS 2: L'item a seulement un titre (sans contenu séparé)
+          if (itemTitle && !itemContent) {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                <span className="text-gray-700">{typeof itemTitle === 'string' ? itemTitle : extractText(itemTitle)}</span>
+              </li>
+            );
+          }
+
+          // CAS 2.5: L'item a seulement un contenu (text/content/description) sans titre
+          // Structure: { text: "...", icon: "bulb" } ou { content: "..." } ou { text: [...portableText] }
+          if (!itemTitle && itemContent) {
+            // Si c'est une string simple
+            if (typeof itemContent === 'string' && itemContent.length > 0) {
+              return (
+                <li key={index} className="flex items-start gap-3">
+                  <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                  <span className="text-gray-700">{itemContent}</span>
+                </li>
+              );
+            }
+            // Si c'est un array (portable text)
+            if (Array.isArray(itemContent) && itemContent.length > 0) {
+              return (
+                <li key={index} className="flex items-start gap-3">
+                  <span className="mt-1">{getIcon(itemIcon)}</span>
+                  <div className="text-gray-700 flex-1">
+                    <PortableText value={itemContent} />
+                  </div>
+                </li>
+              );
+            }
+            // Sinon essayer d'extraire le texte
+            const contentText = extractText(itemContent);
+            if (contentText) {
+              return (
+                <li key={index} className="flex items-start gap-3">
+                  <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                  <span className="text-gray-700">{contentText}</span>
+                </li>
+              );
+            }
+          }
+
+          // CAS 3: L'item est directement du portable text (array)
+          if (Array.isArray(item)) {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-1">{getIcon(itemIcon)}</span>
+                <div className="text-gray-700 flex-1">
+                  <PortableText value={item} />
+                </div>
+              </li>
+            );
+          }
+
+          // CAS 4: L'item est un bloc portable text unique
+          if (item?._type === 'block') {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-1">{getIcon(itemIcon)}</span>
+                <div className="text-gray-700 flex-1">
+                  <PortableText value={[item]} />
+                </div>
+              </li>
+            );
+          }
+
+          // CAS 5: L'item est une string simple
+          if (typeof item === 'string') {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                <span className="text-gray-700">{item}</span>
+              </li>
+            );
+          }
+
+          // CAS 6: L'item a des children (bloc Sanity avec texte)
+          if (item?.children && Array.isArray(item.children)) {
+            const text = item.children.map((child: any) => child.text || '').join('');
+            if (text) {
+              return (
+                <li key={index} className="flex items-start gap-3">
+                  <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                  <span className="text-gray-700">{text}</span>
+                </li>
+              );
+            }
+          }
+
+          // CAS 7: Fallback - essayer d'extraire n'importe quel texte
+          const text = extractText(item);
+          if (text) {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                <span className="text-gray-700">{text}</span>
+              </li>
+            );
+          }
+
+          // CAS 8: Dernier recours - chercher dans les propriétés connues
+          if (item && typeof item === 'object') {
+            // Liste des propriétés à ignorer (internes Sanity)
+            const ignoredKeys = ['_key', '_type', '_ref', '_id', 'icon', 'style', 'defaultOpen'];
+            // Liste des propriétés de contenu à privilégier
+            const contentKeys = ['text', 'content', 'body', 'description', 'title', 'heading', 'answer', 'question', 'label', 'value', 'point'];
+
+            // Chercher d'abord dans les propriétés de contenu connues
+            for (const key of contentKeys) {
+              const val = item[key];
+              if (val) {
+                // String simple
+                if (typeof val === 'string' && val.length > 0) {
+                  return (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                      <span className="text-gray-700">{val}</span>
+                    </li>
+                  );
+                }
+                // Array (portable text)
+                if (Array.isArray(val) && val.length > 0) {
+                  return (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="mt-1">{getIcon(itemIcon)}</span>
+                      <div className="text-gray-700 flex-1">
+                        <PortableText value={val} />
+                      </div>
+                    </li>
+                  );
+                }
+                // Essayer d'extraire le texte
+                const extracted = extractText(val);
+                if (extracted) {
+                  return (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                      <span className="text-gray-700">{extracted}</span>
+                    </li>
+                  );
+                }
+              }
+            }
+
+            // Sinon, chercher n'importe quelle string valide (pas les clés internes)
+            for (const [key, val] of Object.entries(item)) {
+              if (!ignoredKeys.includes(key) && typeof val === 'string' && val.length > 0) {
+                return (
+                  <li key={index} className="flex items-start gap-3">
+                    <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                    <span className="text-gray-700">{val}</span>
+                  </li>
+                );
+              }
+            }
+          }
+
+          return null;
+        };
+
+        // Render based on style
+        // Style: LIST - Liste simple sans background
+        if (style === 'list') {
+          return (
+            <div className="my-8">
+              {value.title && (
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">{value.title}</h4>
+              )}
+              <ul className="space-y-3">
+                {Array.isArray(items) && items.map((item: any, index: number) => renderItem(item, index))}
+              </ul>
+            </div>
+          );
+        }
+
+        // Style: CARDS - Chaque item dans une card séparée
+        if (style === 'cards') {
+          return (
+            <div className="my-10">
+              {value.title && (
+                <h4 className="text-xl font-bold text-gray-900 mb-6">{value.title}</h4>
+              )}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {Array.isArray(items) && items.map((item: any, index: number) => {
+                  const itemIcon = item?.icon;
+                  const itemText = item?.text || item?.content || extractText(item);
+                  return (
+                    <div
+                      key={index}
+                      className="p-5 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-violet-200 transition-all duration-300"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center">
+                          {getIcon(itemIcon, 'w-5 h-5')}
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed flex-1">{itemText}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
+        // Style: TIMELINE - Affichage vertical simple avec icônes
+        if (style === 'timeline') {
+          return (
+            <div className="my-10">
+              {value.title && (
+                <h4 className="text-xl font-bold text-gray-900 mb-6">{value.title}</h4>
+              )}
+              <div className="space-y-4">
+                {Array.isArray(items) && items.map((item: any, index: number) => {
+                  const itemIcon = item?.icon;
+                  const itemText = item?.text || item?.content || extractText(item);
+                  return (
+                    <div key={index} className="flex items-start gap-3 bg-gray-50 p-4 rounded-xl">
+                      {getIcon(itemIcon, 'w-5 h-5 mt-0.5')}
+                      <p className="text-gray-700 flex-1">{itemText}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
+        // Style: BOXED (default) - Encadré avec fond gradient
+        return (
+          <div className="my-10 p-6 bg-gradient-to-br from-violet-50 to-fuchsia-50 border border-violet-100 rounded-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <CheckCircle className="w-6 h-6 text-violet-600" />
+              <h4 className="text-lg font-bold text-gray-900">{value.title || 'Points clés à retenir'}</h4>
+            </div>
+            <ul className="space-y-3">
+              {Array.isArray(items) && items.map((item: any, index: number) => renderItem(item, index))}
+            </ul>
+          </div>
+        );
+      },
+
+      // Progress Steps - Étapes numérotées
+      progressSteps: ({ value }: any) => (
+        <div className="my-10">
+          {value.title && (
+            <h4 className="text-xl font-bold text-gray-900 mb-6">{value.title}</h4>
+          )}
+          <div className="space-y-4">
+            {value.steps?.map((step: { title: string; description: string }, index: number) => (
+              <div key={index} className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold">
+                  {index + 1}
+                </div>
+                <div className="flex-1 pt-1">
+                  <h5 className="font-semibold text-gray-900 mb-1">{step.title}</h5>
+                  <p className="text-gray-600">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+
+      // Newsletter CTA - Appel à l'inscription newsletter
+      newsletterCta: ({ value }: any) => (
+        <div className="my-12 relative overflow-hidden">
+          <div className="relative bg-white border border-gray-200 rounded-3xl p-8 md:p-10 shadow-xl shadow-gray-100/50">
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-violet-400/20 to-fuchsia-400/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-violet-400/20 rounded-full blur-3xl" />
+            <div className="relative flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/25">
+                  <Mail className="w-10 h-10 text-white" />
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h4 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                  {value.title || 'Restez informé'}
+                </h4>
+                <p className="text-gray-500 mb-0 max-w-lg">
+                  {value.description || 'Inscrivez-vous à notre newsletter.'}
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <Link
+                  to="/newsletter"
+                  className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold rounded-2xl hover:from-violet-600 hover:to-fuchsia-600 transition-all shadow-lg"
+                >
+                  <span>{value.buttonText || "S'abonner"}</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </Layout>
+      ),
+
+      // YouTube / Video Embed
+      youtube: ({ value }: any) => {
+        const videoId = value.url?.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
+        return videoId ? (
+          <div className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900">
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title={value.title || 'Vidéo'}
+              className="absolute inset-0 w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        ) : null;
+      },
+      videoEmbed: ({ value }: any) => {
+        const url = value.url || value.videoUrl;
+        return url ? (
+          <div className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900">
+            <iframe
+              src={url}
+              title={value.title || 'Vidéo'}
+              className="absolute inset-0 w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        ) : null;
+      },
+      video: ({ value }: any) => {
+        const url = value.url || value.asset?.url;
+        return url ? (
+          <div className="my-10 rounded-2xl overflow-hidden">
+            <video controls className="w-full" poster={value.poster}>
+              <source src={url} type="video/mp4" />
+            </video>
+            {value.caption && <p className="text-center text-gray-500 text-sm mt-3">{value.caption}</p>}
+          </div>
+        ) : null;
+      },
+
+      // Audio
+      audio: ({ value }: any) => {
+        const url = value.url || value.asset?.url;
+        return url ? (
+          <div className="my-8 p-6 bg-gray-50 rounded-2xl border border-gray-200">
+            {value.title && <h4 className="font-semibold text-gray-900 mb-3">{value.title}</h4>}
+            <audio controls className="w-full">
+              <source src={url} type="audio/mpeg" />
+            </audio>
+          </div>
+        ) : null;
+      },
+
+      // Code Block
+      code: ({ value }: any) => (
+        <div className="my-8 rounded-2xl overflow-hidden bg-gray-900">
+          {value.filename && (
+            <div className="px-4 py-2 bg-gray-800 text-gray-400 text-sm font-mono border-b border-gray-700">
+              {value.filename}
+            </div>
+          )}
+          <pre className="p-4 overflow-x-auto">
+            <code className="text-sm text-gray-100 font-mono">{value.code}</code>
+          </pre>
+        </div>
+      ),
+
+      // Table
+      table: ({ value }: any) => (
+        <div className="my-8 overflow-x-auto">
+          <table className="w-full border-collapse rounded-xl overflow-hidden">
+            <thead>
+              <tr className="bg-gray-100">
+                {value.rows?.[0]?.cells?.map((cell: string, i: number) => (
+                  <th key={i} className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b border-gray-200">
+                    {cell}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {value.rows?.slice(1).map((row: any, i: number) => (
+                <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  {row.cells?.map((cell: string, j: number) => (
+                    <td key={j} className="px-4 py-3 text-sm text-gray-600 border-b border-gray-100">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ),
+
+      // Gallery
+      gallery: ({ value }: any) => (
+        <div className="my-10">
+          {value.title && <h4 className="text-lg font-semibold text-gray-900 mb-4">{value.title}</h4>}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {value.images?.map((img: any, i: number) => (
+              <figure key={i} className="relative aspect-square rounded-xl overflow-hidden">
+                <img
+                  src={img.asset?.url || img.url}
+                  alt={img.alt || ''}
+                  className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform"
+                />
+              </figure>
+            ))}
+          </div>
+          {value.caption && <p className="text-center text-gray-500 text-sm mt-4">{value.caption}</p>}
+        </div>
+      ),
+
+      // Divider / Break
+      divider: () => (
+        <hr className="my-12 border-none h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+      ),
+      break: () => (
+        <hr className="my-12 border-none h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+      ),
+
+      // Button / CTA
+      button: ({ value }: any) => (
+        <div className="my-8 text-center">
+          <a
+            href={value.url || value.link}
+            target={value.external ? '_blank' : undefined}
+            rel={value.external ? 'noopener noreferrer' : undefined}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-colors"
+          >
+            {value.text || value.label}
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      ),
+      cta: ({ value }: any) => (
+        <div className="my-10 p-8 bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-2xl border border-violet-100 text-center">
+          {value.title && <h4 className="text-xl font-bold text-gray-900 mb-2">{value.title}</h4>}
+          {value.description && <p className="text-gray-600 mb-6">{value.description}</p>}
+          <Link
+            to={value.url || value.link || '/'}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 text-white font-semibold rounded-full hover:bg-violet-700 transition-colors"
+          >
+            {value.buttonText || value.text || 'En savoir plus'}
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      ),
+
+      // Social Embed (Twitter, Instagram, etc.)
+      socialEmbed: ({ value }: any) => (
+        <div className="my-8 flex justify-center">
+          <div className="w-full max-w-lg" dangerouslySetInnerHTML={{ __html: value.embed || value.html || '' }} />
+        </div>
+      ),
+      tweet: ({ value }: any) => (
+        <div className="my-8 flex justify-center">
+          <blockquote className="twitter-tweet" data-theme="light">
+            <a href={value.url}></a>
+          </blockquote>
+        </div>
+      ),
+
+      // File Download
+      file: ({ value }: any) => (
+        <a
+          href={value.asset?.url || value.url}
+          download
+          className="my-6 flex items-center gap-4 p-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
+        >
+          <div className="w-12 h-12 rounded-lg bg-violet-100 flex items-center justify-center">
+            <BookOpen className="w-6 h-6 text-violet-600" />
+          </div>
+          <div className="flex-1">
+            <p className="font-medium text-gray-900">{value.title || value.filename || 'Télécharger le fichier'}</p>
+            {value.description && <p className="text-sm text-gray-500">{value.description}</p>}
+          </div>
+          <ArrowRight className="w-5 h-5 text-gray-400" />
+        </a>
+      ),
+
+      // Embed générique (iframes)
+      embed: ({ value }: any) => (
+        <div className="my-8 rounded-2xl overflow-hidden aspect-video bg-gray-100">
+          <iframe
+            src={value.url}
+            title={value.title || 'Contenu intégré'}
+            className="w-full h-full"
+            allowFullScreen
+          />
+        </div>
+      ),
+
+      // Person / Author highlight
+      person: ({ value }: any) => (
+        <div className="my-8 flex items-center gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-200">
+          {value.image && (
+            <img src={value.image.asset?.url || value.image} alt="" className="w-16 h-16 rounded-full object-cover" />
+          )}
+          <div>
+            <p className="font-semibold text-gray-900">{value.name}</p>
+            {value.role && <p className="text-sm text-gray-500">{value.role}</p>}
+            {value.bio && <p className="text-sm text-gray-600 mt-2">{value.bio}</p>}
+          </div>
+        </div>
+      ),
+
+      // Related Articles - Articles liés (inline)
+      relatedArticles: ({ value }: any) => {
+        const articles = value.articles || value.items || [];
+        if (!articles.length) return null;
+
+        return (
+          <div className="my-10 p-6 bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl">
+            <h4 className="text-lg font-bold text-gray-900 mb-4">
+              {value.title || 'Articles recommandés'}
+            </h4>
+            <div className="grid gap-4">
+              {articles.slice(0, 3).map((article: any, index: number) => {
+                const slug = article.slug?.current || article.slug;
+                const title = article.title || article.titre;
+                const image = article.imageUrl || article.mainImage?.asset?.url;
+
+                if (!slug || !title) return null;
+
+                return (
+                  <Link
+                    key={index}
+                    to={`/article/${slug}`}
+                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+                  >
+                    {image && (
+                      <img
+                        src={image}
+                        alt={title}
+                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h5 className="font-medium text-gray-900 group-hover:text-violet-600 transition-colors line-clamp-2">
+                        {title}
+                      </h5>
+                      {article.excerpt && (
+                        <p className="text-sm text-gray-500 line-clamp-1 mt-1">{article.excerpt}</p>
+                      )}
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-violet-500 flex-shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        );
+      },
+
+      // Fallback pour types inconnus
+      unknown: ({ value }: any) => {
+        // Essayer de rendre le contenu texte s'il existe
+        if (value.text || value.content) {
+          return <p className="text-gray-600 mb-6">{value.text || value.content}</p>;
+        }
+        return null;
+      },
+    },
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
+          <span className="text-gray-600">Chargement...</span>
+        </div>
+      </div>
     );
   }
 
   if (!article) return null;
 
-  const imageUrl = article.imageUrl || 'https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg';
-  const readingTime = estimatedReadTime || Math.max(1, Math.ceil((article.contenu?.length || 10) / 5));
+  const title = article.titre || article.title || '';
+  const description = article.description || article.excerpt || '';
+  const imageUrl = article.imageUrl || article.mainImage || '';
+  const date = article.datePublication || article.publishedAt;
+  const readTime = article.tempsLecture || article.readTime || 5;
+  const content = article.contenu || article.body || [];
+  const authorName = article.auteur?.nom || article.author?.name || 'Origines Media';
+  const authorImage = article.auteur?.imageUrl || article.author?.imageUrl;
+  const verticale = article.verticale;
+  const themeColor = verticale?.couleurDominante || '#8B5CF6';
 
   return (
-    <Layout>
-      {/* Progress Bar Ultra-Premium */}
-      <div className="fixed top-0 left-0 w-full h-2 sm:h-1 bg-black/20 z-50 backdrop-blur-sm">
-        <div
-          className="h-full transition-all duration-300 ease-out relative overflow-hidden shadow-lg"
-          style={{
-            width: `${readingProgress}%`,
-            backgroundColor: themeColor,
-            boxShadow: `0 0 10px ${themeColor}`
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
-        </div>
-      </div>
+    <div className="min-h-screen bg-white text-gray-900">
+      <SEO title={title} description={description} url={`/article/${slug}`} />
 
-      {/* Progress Circle flottant */}
-      <div className="fixed bottom-8 left-8 z-40 hidden lg:block">
-        <svg className="w-24 h-24 -rotate-90">
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke="rgba(255,255,255,0.1)"
-            strokeWidth="6"
-            fill="none"
-          />
-          <circle
-            ref={progressCircleRef}
-            cx="50"
-            cy="50"
-            r="45"
-            stroke={themeColor}
-            strokeWidth="6"
-            fill="none"
-            strokeDasharray={`${2 * Math.PI * 45}`}
-            strokeDashoffset={`${2 * Math.PI * 45}`}
-            strokeLinecap="round"
-            className="transition-all duration-300"
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-white/60 text-sm font-mono">{Math.round(readingProgress)}%</span>
-        </div>
-      </div>
+      {/* Progress Bar */}
+      <div
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 z-[60] transition-all duration-150"
+        style={{ width: `${scrollProgress}%` }}
+      />
 
-      {/* Hero Section Cinématographique */}
-      <div className="relative">
-        <section ref={heroRef} className={`relative h-screen min-h-[800px] overflow-hidden transition-opacity duration-1000 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          {/* Background avec effet cinématique */}
-          <div className="absolute inset-0">
-            <div
-              className="absolute inset-0 w-full h-full bg-cover bg-center hero-image"
-              style={{
-                backgroundImage: `url(${imageUrl})`,
-                filter: 'brightness(0.7) contrast(1.2) saturate(1.2)',
-                transform: 'scale(1.05) translateZ(0)',
-                willChange: 'transform'
-              }}
-            />
+      <Navbar />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `radial-gradient(circle at 30% 50%, ${themeColor}20 0%, transparent 50%)`
-              }}
-            />
-
-            <div className="absolute inset-0" style={{
-              boxShadow: 'inset 0 0 200px rgba(0,0,0,0.8)'
-            }} />
-
-            <div className="absolute inset-0 opacity-5" style={{
-              backgroundImage: `linear-gradient(${themeColor}20 1px, transparent 1px), linear-gradient(90deg, ${themeColor}20 1px, transparent 1px)`,
-              backgroundSize: '50px 50px',
-              transform: 'translateZ(0)'
-            }} />
+      <main>
+        {/* Hero Section - Split Layout comme PortraitDetailPage */}
+        <section className="relative">
+          {/* Header de navigation flottant */}
+          <div className="absolute top-0 left-0 right-0 z-20 p-6 lg:p-10">
+            <button
+              onClick={() => navigate(-1)}
+              className="group flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full shadow-xl hover:bg-gray-800 hover:scale-105 transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Retour</span>
+            </button>
           </div>
 
-          {/* Navigation améliorée */}
-          <nav className="absolute top-0 left-0 right-0 z-20 p-8">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <button
-                onClick={() => navigate(-1)}
-                className="group flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300"
-              >
-                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                <span className="font-medium">Retour</span>
-              </button>
-
-              {/* Contrôles de lecture */}
-              <div className="flex items-center gap-4">
-                {/* Mode de lecture */}
-                <button
-                  onClick={toggleReadingMode}
-                  className="p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all duration-300 group"
-                  title="Changer le mode de lecture"
-                >
-                  {readingMode === 'focus' ? (
-                    <Target className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
-                  ) : readingMode === 'dark' ? (
-                    <Shield className="w-5 h-5" />
-                  ) : (
-                    <Lightbulb className="w-5 h-5" />
-                  )}
-                </button>
-
-                {/* Taille de police */}
-                <div className="flex items-center gap-1 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
-                  <button
-                    onClick={() => setFontSize('small')}
-                    className={`px-3 py-2 rounded-xl text-sm transition-all ${fontSize === 'small' ? 'bg-white/20 text-white' : 'text-white/60 hover:text-white'}`}
-                  >
-                    A
-                  </button>
-                  <button
-                    onClick={() => setFontSize('medium')}
-                    className={`px-3 py-2 rounded-xl text-base transition-all ${fontSize === 'medium' ? 'bg-white/20 text-white' : 'text-white/60 hover:text-white'}`}
-                  >
-                    A
-                  </button>
-                  <button
-                    onClick={() => setFontSize('large')}
-                    className={`px-3 py-2 rounded-xl text-lg transition-all ${fontSize === 'large' ? 'bg-white/20 text-white' : 'text-white/60 hover:text-white'}`}
-                  >
-                    A
-                  </button>
-                </div>
-
-                {/* Audio */}
-                <button
-                  onClick={() => setAudioPlaying(!audioPlaying)}
-                  className="p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all duration-300 group"
-                  title="Écouter l'article"
-                >
-                  {audioPlaying ? (
-                    <Pause className="w-5 h-5" />
-                  ) : (
-                    <Headphones className="w-5 h-5 group-hover:animate-pulse" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </nav>
-
-          {/* Content avec animations */}
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="w-full px-8 max-w-7xl mx-auto text-center">
-              {/* Badges ultra-premium */}
-              <div className="mb-12 flex flex-wrap justify-center gap-3 sm:gap-4 animate-fade-in-up px-4 lg:px-0">
-                {article.verticale && (
-                  <div
-                    className="group relative inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl backdrop-blur-xl border-2 transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden"
-                    style={{
-                      backgroundColor: `${article.verticale.couleurDominante || themeColor}10`,
-                      borderColor: `${article.verticale.couleurDominante || themeColor}30`,
-                    }}
-                  >
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{
-                        background: `linear-gradient(45deg, ${article.verticale.couleurDominante || themeColor}20 0%, transparent 100%)`
-                      }}
-                    />
-                    <Layers className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3" style={{ color: article.verticale.couleurDominante || themeColor }} />
-                    <span className="font-bold text-xs sm:text-sm uppercase tracking-wider relative z-10" style={{ color: article.verticale.couleurDominante || themeColor }}>
-                      {article.verticale.nom}
-                    </span>
-                  </div>
-                )}
-
-                {article.univers && (
-                  <div
-                    className="group relative inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl backdrop-blur-xl border-2 transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden"
-                    style={{
-                      backgroundColor: `${article.univers.couleur || '#9F7AEA'}10`,
-                      borderColor: `${article.univers.couleur || '#9F7AEA'}30`,
-                    }}
-                  >
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{
-                        background: `linear-gradient(45deg, ${article.univers.couleur || '#9F7AEA'}20 0%, transparent 100%)`
-                      }}
-                    />
-                    <Hash className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3" style={{ color: article.univers.couleur || '#9F7AEA' }} />
-                    <span className="font-bold text-xs sm:text-sm uppercase tracking-wider relative z-10" style={{ color: article.univers.couleur || '#9F7AEA' }}>
-                      {article.univers.nom}
-                    </span>
-                  </div>
-                )}
-
-                {article.isEssential && (
-                  <div className="relative inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 opacity-20"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
-                    <Award className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3 text-amber-400" />
-                    <span className="font-bold text-xs sm:text-sm uppercase tracking-wider text-amber-400">Article Essentiel</span>
-                  </div>
-                )}
-
-                {article.difficulty && (
-                  <div className="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-white/5 backdrop-blur-xl border-2 border-white/10 text-white/80">
-                    <Coffee className="w-4 sm:w-5 h-4 sm:h-5 mr-2 sm:mr-3" />
-                    <span className="text-xs sm:text-sm capitalize font-medium">{article.difficulty}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Titre avec animation simple */}
-              <h1 className="font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl text-white mb-8 leading-[0.9] animate-fade-in-up animation-delay-200 px-4 lg:px-0 max-w-6xl mx-auto drop-shadow-2xl"
+          {/* Layout en deux colonnes */}
+          <div className="grid lg:grid-cols-2 min-h-[70vh] lg:min-h-[80vh]">
+            {/* Colonne image */}
+            <div className="relative h-[45vh] lg:h-auto order-1 lg:order-1">
+              <div
+                className="absolute inset-0 bg-cover bg-center"
                 style={{
-                  textShadow: '0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)'
+                  backgroundImage: `url(${imageUrl || '/placeholder.svg'})`,
                 }}
               >
-                {article.title}
-              </h1>
-
-              {/* Ligne décorative animée */}
-              <div className="flex justify-center mb-8 animate-fade-in-up animation-delay-400">
-                <div
-                  className="h-2 w-40 sm:w-48 rounded-full relative overflow-hidden"
-                  style={{
-                    background: `linear-gradient(90deg, ${themeColor} 0%, ${themeColor}dd 100%)`
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
-                </div>
-              </div>
-
-              {/* Description avec effet de machine à écrire */}
-              {article.excerpt && (
-                <p className="text-xl lg:text-2xl xl:text-3xl text-white/80 mb-16 leading-relaxed max-w-4xl mx-auto font-light animate-fade-in-up animation-delay-600 px-4 lg:px-0 drop-shadow-xl"
-                  style={{
-                    textShadow: '0 2px 10px rgba(0,0,0,0.6)'
-                  }}
-                >
-                  {article.excerpt}
-                </p>
-              )}
-
-              {/* Meta Info premium */}
-              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 animate-fade-in-up animation-delay-800 px-4 lg:px-0">
-                {article.author && (
-                  <div className="flex items-center gap-4 group cursor-pointer">
-                    <div className="relative">
-                      <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 p-0.5 group-hover:rotate-6 transition-transform duration-300">
-                        <div className="w-full h-full rounded-2xl bg-black flex items-center justify-center overflow-hidden">
-                          {article.author.image ? (
-                            <img
-                              src={urlFor(article.author.image).width(100).url()}
-                              alt={article.author.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <User className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
-                          )}
-                        </div>
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 w-4 sm:w-5 h-4 sm:h-5 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full border-2 border-black flex items-center justify-center">
-                        <Check className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-black" />
-                      </div>
-                    </div>
-                    <div className="text-left">
-                      <p className="text-white font-semibold text-base sm:text-lg group-hover:text-violet-400 transition-colors">
-                        {article.author.name}
-                      </p>
-                      <p className="text-xs text-white/50 flex items-center gap-1">
-                        <Shield className="w-3 h-3" />
-                        Auteur vérifié
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-4 sm:gap-8 text-white/60 text-sm sm:text-base">
-                  {article.publishedAt && (
-                    <div className="flex items-center gap-2 group">
-                      <Calendar className="w-4 sm:w-5 h-4 sm:h-5 group-hover:text-white transition-colors" />
-                      <span className="group-hover:text-white transition-colors">{formatDate(article.publishedAt)}</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2 group">
-                    <Clock className="w-4 sm:w-5 h-4 sm:h-5 group-hover:text-white transition-colors" />
-                    <span className="group-hover:text-white transition-colors">{readingTime} min</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 group">
-                    <Eye className="w-4 sm:w-5 h-4 sm:h-5 group-hover:text-white transition-colors" />
-                    <span className="group-hover:text-white transition-colors font-mono">{(article.vues || 0).toLocaleString()}</span>
-                  </div>
-
-                  {wordCount > 0 && (
-                    <div className="hidden sm:flex items-center gap-2 group">
-                      <Globe className="w-4 sm:w-5 h-4 sm:h-5 group-hover:text-white transition-colors" />
-                      <span className="group-hover:text-white transition-colors">{wordCount.toLocaleString()} mots</span>
-                    </div>
-                  )}
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-black/20 lg:to-white" />
               </div>
             </div>
-          </div>
 
-          {/* Indicateur de scroll ultra-stylisé */}
-          <div className="absolute bottom-8 sm:bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <div className="relative">
-              <div className="w-12 h-20 border-2 border-white/40 rounded-full flex justify-center p-2 backdrop-blur-sm">
-                <div
-                  className="w-2 h-5 rounded-full animate-scroll"
-                  style={{ backgroundColor: themeColor }}
-                />
-              </div>
-              <div className="absolute -inset-6 border-2 border-white/20 rounded-full animate-ping"></div>
+            {/* Colonne contenu */}
+            <div className="flex flex-col justify-center p-6 lg:p-12 xl:p-16 bg-white order-2 lg:order-2">
+              {/* Catégorie */}
+              {verticale && (
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs uppercase tracking-[0.2em] font-semibold mb-4"
+                  style={{ color: themeColor }}
+                >
+                  {verticale.nom}
+                </motion.p>
+              )}
+
+              {/* Titre */}
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="font-bold text-3xl md:text-4xl lg:text-5xl text-gray-900 mb-6 leading-[1.1]"
+              >
+                {typo(title)}
+              </motion.h1>
+
+              {/* Description */}
+              {description && (
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="text-lg text-gray-600 leading-relaxed mb-8"
+                >
+                  {typo(description)}
+                </motion.p>
+              )}
+
+              {/* Métadonnées */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex flex-wrap items-center gap-4 text-gray-500 text-sm"
+              >
+                {authorImage && (
+                  <img src={authorImage} alt={authorName} className="w-10 h-10 rounded-full object-cover border-2 border-gray-100" />
+                )}
+                <div className="flex flex-col">
+                  <span className="text-gray-900 font-medium">{authorName}</span>
+                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {formatDate(date)}
+                    </span>
+                    <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {readTime} min
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Tags */}
+              {article.tags && article.tags.filter((t: any) => t && t.title).length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                  className="flex flex-wrap gap-2 mt-6"
+                >
+                  {article.tags.filter((t: any) => t && t.title).slice(0, 4).map((tag: any) => (
+                    <span
+                      key={tag._id}
+                      className="px-3 py-1 text-xs font-medium rounded-full"
+                      style={{
+                        backgroundColor: tag.color ? `${tag.color}15` : '#F3F4F6',
+                        color: tag.color || '#6B7280',
+                      }}
+                    >
+                      {tag.title}
+                    </span>
+                  ))}
+                </motion.div>
+              )}
             </div>
           </div>
         </section>
-      </div>
 
-      {/* Milestone Notification */}
-      {showMilestone && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-slide-down">
-          <div className="px-8 py-4 bg-black/90 backdrop-blur-xl rounded-2xl border border-white/20 flex items-center gap-4">
-            <Flame className="w-6 h-6" style={{ color: themeColor }} />
-            <p className="text-white font-medium">
-              {Math.round(readingProgress)}% de l'article lu ! Continuez comme ça 🔥
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content avec design futuriste */}
-      <div className="max-w-[1800px] mx-auto px-4 sm:px-8 py-16 sm:py-24 transition-all duration-500">
-        <div className="flex gap-10 lg:gap-20">
-          
-          {/* Article Content */}
-          <article className="flex-1 max-w-5xl mx-auto px-4 sm:px-0">
-            {/* Chapô premium */}
-            {article.excerpt && (
-              <div className="mb-20 pb-20 border-b border-white/5 relative px-4 sm:px-0">
-                <p className="text-2xl sm:text-3xl lg:text-4xl font-light leading-relaxed text-white/90 tracking-wide">
-                  {article.excerpt}
-                </p>
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-px"
-                  style={{
-                    background: `linear-gradient(90deg, transparent 0%, ${themeColor}40 50%, transparent 100%)`
-                  }}
-                />
-              </div>
-            )}
-
-            <div ref={contentRef} className={`prose prose-invert max-w-none article-content ${fontSize === 'small' ? 'prose-sm' : fontSize === 'large' ? 'prose-lg' : 'prose-base'
-              } ${readingMode === 'focus' ? 'reading-mode-focus' : readingMode === 'dark' ? 'reading-mode-dark' : ''
-              }`}>
-              {(() => {
-                const content = article.body || article.contenu;
-                if (content && Array.isArray(content)) {
-                  return <PortableText value={content} components={portableTextComponents} />;
-                }
-
-                return (
-                  <div className="relative bg-gradient-to-br from-gray-800/30 to-gray-900/30 backdrop-blur-xl border border-white/10 rounded-3xl p-16 text-center overflow-hidden">
-                    <div
-                      className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20"
-                      style={{ backgroundColor: themeColor }}
-                    />
-                    <AlertCircle className="w-20 h-20 text-white/30 mx-auto mb-6" />
-                    <p className="text-gray-400 text-2xl font-light">Cet article n'a pas encore de contenu.</p>
-                  </div>
-                );
-              })()}
-            </div>
-
-            {/* Tags ultra-modernes */}
-            {article.tags && article.tags.length > 0 && (
-              <div className="mt-32 pt-24 border-t border-white/5 relative">
-                <div
-                  className="absolute top-0 left-0 right-0 h-px"
-                  style={{
-                    background: `linear-gradient(90deg, transparent 0%, ${themeColor}40 50%, transparent 100%)`
-                  }}
-                />
-
-                <div className="flex items-center gap-6 mb-10">
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                    style={{
-                      background: `linear-gradient(135deg, ${themeColor}20 0%, ${themeColor}10 100%)`,
-                      border: `2px solid ${themeColor}30`
-                    }}
-                  >
-                    <Hash className="w-6 h-6" style={{ color: themeColor }} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white">
-                    Thèmes explorés
-                  </h3>
+        {/* Content Section */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+              {/* Article Content */}
+              <div ref={contentRef} className="lg:col-span-8">
+                {/* Main Content */}
+                <div className="prose prose-lg max-w-none">
+                  <PortableText value={content} components={portableTextComponents} />
                 </div>
 
-                <div className="flex flex-wrap gap-4">
-                  {article.tags.filter((tag: any) => tag && tag.title).map((tag: any) => (
-                    <button
-                      key={tag._id}
-                      className="group relative px-8 py-4 backdrop-blur-xl border-2 text-white/70 rounded-2xl hover:text-white transition-all duration-500 overflow-hidden hover:scale-105"
-                      style={{
-                        backgroundColor: `${tag.color || themeColor}05`,
-                        borderColor: `${tag.color || themeColor}20`
-                      }}
-                    >
-                      <span className="relative z-10 font-medium text-sm uppercase tracking-wider">{tag.title}</span>
-                      <div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
-                        style={{
-                          background: `radial-gradient(circle at center, ${tag.color || themeColor}20 0%, transparent 70%)`
-                        }}
-                      />
-                      <div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        style={{
-                          background: `linear-gradient(45deg, transparent 30%, ${tag.color || themeColor}10 50%, transparent 70%)`,
-                          animation: 'shimmer 2s ease-out'
-                        }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Actions section redesignée */}
-            <div className="mt-24 relative">
-              <div
-                className="absolute inset-0 rounded-3xl blur-3xl opacity-30"
-                style={{
-                  background: `radial-gradient(circle at center, ${themeColor}40 0%, transparent 70%)`
-                }}
-              />
-
-              <div className="relative flex flex-wrap items-center justify-between gap-6 p-12 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl">
-                <div className="flex flex-wrap items-center gap-4">
-                  <button
-                    onClick={handleLike}
-                    className={`group flex items-center gap-3 px-8 py-4 rounded-2xl transition-all duration-500 transform hover:scale-105 relative overflow-hidden ${isLiked
-                        ? 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400'
-                        : 'bg-white/10 text-white/70 hover:bg-white/20'
-                      }`}
-                    style={isLiked ? {
-                      border: '2px solid rgba(239, 68, 68, 0.5)'
-                    } : {
-                      border: '2px solid rgba(255,255,255,0.2)'
-                    }}
-                  >
-                    <Heart className={`w-6 h-6 transition-transform group-hover:scale-110 ${isLiked ? 'fill-current' : ''}`} />
-                    <span className="font-semibold text-lg">{(article.likes || 0) + (isLiked ? 1 : 0)}</span>
-                    {isLiked && (
-                      <>
-                        <Sparkles className="w-5 h-5 animate-pulse" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-pink-500/20 animate-pulse" />
-                      </>
+                {/* Author Box */}
+                <div className="mt-12 p-6 bg-gray-50 border border-gray-200 rounded-2xl">
+                  <div className="flex items-start gap-4">
+                    {authorImage && (
+                      <img src={authorImage} alt={authorName} className="w-16 h-16 rounded-full object-cover" />
                     )}
-                  </button>
-
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowShareMenu(!showShareMenu)}
-                      className="group flex items-center gap-3 px-8 py-4 bg-white/10 border-2 border-white/20 text-white/70 rounded-2xl hover:bg-white/20 transition-all duration-500 transform hover:scale-105"
-                    >
-                      <Share2 className="w-6 h-6 transition-transform group-hover:rotate-12" />
-                      <span className="font-semibold text-lg">Partager</span>
-                    </button>
-
-                    {showShareMenu && (
-                      <div className="absolute bottom-full mb-4 left-0 bg-black/95 backdrop-blur-2xl border border-white/20 rounded-3xl p-3 min-w-[280px] animate-fade-in shadow-2xl">
-                        <button
-                          onClick={copyToClipboard}
-                          className="w-full text-left px-6 py-4 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all flex items-center gap-4 group"
-                        >
-                          {copySuccess ? <Check className="w-6 h-6 text-green-400" /> : <Link2 className="w-6 h-6" />}
-                          <span className="font-medium">{copySuccess ? 'Lien copié !' : 'Copier le lien'}</span>
-                        </button>
-                        <button
-                          onClick={() => shareOnSocial('twitter')}
-                          className="w-full text-left px-6 py-4 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all flex items-center gap-4 group"
-                        >
-                          <Twitter className="w-6 h-6 group-hover:text-[#1DA1F2] transition-colors" />
-                          <span className="font-medium">Twitter</span>
-                        </button>
-                        <button
-                          onClick={() => shareOnSocial('linkedin')}
-                          className="w-full text-left px-6 py-4 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all flex items-center gap-4 group"
-                        >
-                          <Linkedin className="w-6 h-6 group-hover:text-[#0A66C2] transition-colors" />
-                          <span className="font-medium">LinkedIn</span>
-                        </button>
-                        <button
-                          onClick={() => shareOnSocial('facebook')}
-                          className="w-full text-left px-6 py-4 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all flex items-center gap-4 group"
-                        >
-                          <Facebook className="w-6 h-6 group-hover:text-[#1877F2] transition-colors" />
-                          <span className="font-medium">Facebook</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={handleBookmark}
-                    className={`group flex items-center gap-3 px-8 py-4 rounded-2xl transition-all duration-500 transform hover:scale-105 relative overflow-hidden ${isBookmarked
-                        ? 'text-white'
-                        : 'bg-white/10 text-white/70 hover:bg-white/20'
-                      }`}
-                    style={isBookmarked ? {
-                      backgroundColor: `${themeColor}20`,
-                      border: `2px solid ${themeColor}40`,
-                      color: themeColor
-                    } : {
-                      border: '2px solid rgba(255,255,255,0.2)'
-                    }}
-                  >
-                    <Bookmark className={`w-6 h-6 transition-transform group-hover:scale-110 ${isBookmarked ? 'fill-current' : ''}`} />
-                    <span className="font-semibold text-lg">{isBookmarked ? 'Sauvegardé' : 'Sauvegarder'}</span>
-                    {isBookmarked && (
-                      <div
-                        className="absolute inset-0 animate-pulse"
-                        style={{ backgroundColor: `${themeColor}10` }}
-                      />
-                    )}
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-6 text-white/50 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Eye className="w-5 h-5" />
-                    <span className="font-mono font-medium">{(article.vues || 0).toLocaleString()}</span>
-                  </div>
-                  <div className="w-px h-6 bg-white/20" />
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    <span className="font-medium">{Math.round(readingProgress)}% lu</span>
-                  </div>
-                  <div className="w-px h-6 bg-white/20" />
-                  <div className="flex items-center gap-2">
-                    <Gem className="w-5 h-5" style={{ color: themeColor }} />
-                    <span className="font-medium">Premium</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* Sidebar Ultra-Premium - Desktop */}
-          <aside className="hidden 2xl:block w-96 shrink-0">
-            <div className="sticky top-32 space-y-10">
-              {/* Table des matières futuriste */}
-              {headings.length > 0 && (
-                <div className="relative bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl overflow-hidden">
-                  <div
-                    className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-20"
-                    style={{ backgroundColor: themeColor }}
-                  />
-
-                  <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-8 flex items-center gap-3">
-                    <BookOpen className="w-5 h-5" style={{ color: themeColor }} />
-                    Navigation
-                  </h3>
-
-                  {/* Progress circulaire avec stats */}
-                  <div className="mb-10 flex items-center justify-between">
-                    <div className="relative w-24 h-24">
-                      <svg className="w-full h-full -rotate-90">
-                        <circle
-                          cx="48"
-                          cy="48"
-                          r="40"
-                          stroke="rgba(255,255,255,0.1)"
-                          strokeWidth="8"
-                          fill="none"
-                        />
-                        <circle
-                          cx="48"
-                          cy="48"
-                          r="40"
-                          stroke={themeColor}
-                          strokeWidth="8"
-                          fill="none"
-                          strokeDasharray={`${2 * Math.PI * 40}`}
-                          strokeDashoffset={`${2 * Math.PI * 40 * (1 - readingProgress / 100)}`}
-                          strokeLinecap="round"
-                          className="transition-all duration-500"
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-2xl font-bold text-white">{Math.round(readingProgress)}%</span>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="text-white/40 text-sm mb-1">Temps restant</p>
-                      <p className="text-white font-mono text-xl">{Math.max(1, Math.ceil(readingTime * (1 - readingProgress / 100)))} min</p>
-                    </div>
-                  </div>
-
-                  {/* Sections interactives */}
-                  <nav className="space-y-3">
-                    {headings.map((heading, index) => (
-                      <div key={heading.id}>
-                        <button
-                          onClick={() => scrollToSection(heading.id)}
-                          onMouseEnter={() => setHoveredSection(heading.id)}
-                          onMouseLeave={() => setHoveredSection(null)}
-                          className={`w-full text-left px-5 py-4 rounded-2xl text-sm transition-all duration-500 relative overflow-hidden group ${activeHeading === heading.id
-                              ? 'text-white shadow-lg'
-                              : 'text-white/60 hover:text-white hover:bg-white/5'
-                            }`}
-                          style={activeHeading === heading.id ? {
-                            backgroundColor: `${themeColor}15`,
-                            borderLeft: `4px solid ${themeColor}`
-                          } : {}}
-                        >
-                          <div
-                            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                            style={{
-                              background: `linear-gradient(90deg, ${themeColor}10 0%, transparent 100%)`
-                            }}
-                          />
-
-                          <div className="relative z-10 flex items-center gap-4">
-                            <span
-                              className="flex-shrink-0 w-8 h-8 rounded-xl text-xs font-bold flex items-center justify-center transition-all duration-300"
-                              style={{
-                                backgroundColor: activeHeading === heading.id ? `${themeColor}30` : 'rgba(255,255,255,0.05)',
-                                color: activeHeading === heading.id ? themeColor : 'rgba(255,255,255,0.6)',
-                                border: activeHeading === heading.id ? `2px solid ${themeColor}50` : '2px solid rgba(255,255,255,0.1)'
-                              }}
-                            >
-                              {index + 1}
-                            </span>
-
-                            <span className="flex-1 line-clamp-2">{heading.text}</span>
-
-                            {activeHeading === heading.id && (
-                              <Zap
-                                className="w-4 h-4 flex-shrink-0 animate-pulse"
-                                style={{ color: themeColor }}
-                              />
-                            )}
-                          </div>
-                        </button>
-
-                        {heading.children && heading.children.map((child) => (
-                          <button
-                            key={child.id}
-                            onClick={() => scrollToSection(child.id)}
-                            className={`w-full text-left pl-16 pr-5 py-3 text-xs transition-all duration-300 ${activeHeading === child.id
-                                ? 'text-white/80'
-                                : 'text-white/40 hover:text-white/60'
-                              }`}
-                            style={activeHeading === child.id ? { color: themeColor } : {}}
-                          >
-                            <span className="flex items-center gap-2">
-                              <ChevronRight className="w-3 h-3" />
-                              {child.text}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    ))}
-                  </nav>
-                </div>
-              )}
-
-              {/* Newsletter futuriste */}
-              <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: `linear-gradient(135deg, ${themeColor}30 0%, ${themeColor}10 50%, ${themeColor}30 100%)`,
-                    animation: 'gradient-shift 10s ease infinite'
-                  }}
-                />
-
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: `radial-gradient(circle at 2px 2px, ${themeColor} 1px, transparent 1px)`,
-                    backgroundSize: '20px 20px'
-                  }} />
-                </div>
-
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-20 h-20 rounded-full blur-xl animate-float"
-                    style={{
-                      backgroundColor: themeColor,
-                      opacity: 0.1,
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                      animationDelay: `${i * 2}s`,
-                      animationDuration: `${10 + i * 2}s`
-                    }}
-                  />
-                ))}
-
-                <div className="relative z-10 p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
-                      style={{
-                        background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}dd 100%)`
-                      }}
-                    >
-                      <Mail className="w-7 h-7 text-white" />
-                    </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white">
-                        Newsletter Premium
-                      </h3>
-                      <p className="text-xs text-white/60 flex items-center gap-1">
-                        <Star className="w-3 h-3" />
-                        Contenu exclusif
-                      </p>
+                      <p className="text-sm text-violet-600 mb-1">Écrit par</p>
+                      <h4 className="text-xl font-bold text-gray-900 mb-2">{authorName}</h4>
+                      {(article.auteur?.bio || article.author?.bio) && (
+                        <p className="text-gray-500 text-sm leading-relaxed">
+                          {article.auteur?.bio || article.author?.bio}
+                        </p>
+                      )}
                     </div>
-                  </div>
-
-                  <p className="text-sm text-white/80 mb-8 leading-relaxed">
-                    Rejoignez notre communauté et recevez des analyses approfondies chaque semaine.
-                  </p>
-
-                  <form onSubmit={handleNewsletterSubmit} className="space-y-4">
-                    <div className="relative group">
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="votre@email.com"
-                        className="w-full px-5 py-4 bg-black/30 backdrop-blur-sm border-2 border-white/20 rounded-2xl text-white placeholder-white/40 focus:outline-none focus:border-white/40 transition-all duration-300"
-                        required
-                      />
-                      <Mail className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-white/60 transition-colors" />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full px-5 py-4 text-white rounded-2xl font-semibold transition-all duration-500 transform hover:scale-[1.02] shadow-xl relative overflow-hidden group"
-                      style={{
-                        background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}dd 100%)`
-                      }}
-                    >
-                      <span className="relative z-10">
-                        {subscribed ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <Check className="w-5 h-5" />
-                            Inscription confirmée !
-                          </span>
-                        ) : (
-                          'Rejoindre la communauté'
-                        )}
-                      </span>
-                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                    </button>
-                  </form>
-
-                  <div className="mt-6 flex items-center justify-between text-xs text-white/50">
-                    <span className="flex items-center gap-1">
-                      <Zap className="w-3 h-3" />
-                      +10K lecteurs actifs
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Shield className="w-3 h-3" />
-                      Sans spam
-                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Widget de statistiques */}
-              <div className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-8">
-                <h4 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-6">
-                  Statistiques de lecture
-                </h4>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/60 text-sm">Mots lus</span>
-                    <span className="text-white font-mono">{Math.round(wordCount * readingProgress / 100)}</span>
+              {/* Sidebar Premium - sticky via JavaScript */}
+              <aside
+                ref={sidebarContainerRef}
+                className="hidden lg:block lg:col-span-4 relative"
+              >
+                <div
+                  ref={sidebarRef}
+                  className="space-y-4"
+                  style={sidebarStyle}
+                >
+                  {/* 1. Table of Contents - Repliée par défaut */}
+                  {headings.length > 0 && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+                      <button
+                        onClick={() => setTocExpanded(!tocExpanded)}
+                        className="w-full p-4 flex items-center justify-between text-left"
+                      >
+                        <span className="text-gray-900 font-bold flex items-center gap-2 text-sm">
+                          <List className="w-4 h-4 text-violet-500" />
+                          Sommaire
+                        </span>
+                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${tocExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                      <AnimatePresence>
+                        {tocExpanded && (
+                          <motion.nav
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="px-4 pb-4 overflow-hidden"
+                          >
+                            {(() => {
+                              let h2Index = 0;
+                              return headings.map((heading) => {
+                                const isH2 = heading.level === 2;
+                                const isActive = activeHeading === heading.id;
+                                if (isH2) h2Index++;
+
+                                return (
+                                  <button
+                                    key={heading.id}
+                                    onClick={() => scrollToSection(heading.id)}
+                                    className={`group flex items-start gap-2.5 w-full text-left transition-all duration-200 ${
+                                      isH2 ? 'py-2.5' : 'py-1.5 ml-7'
+                                    }`}
+                                  >
+                                    {isH2 ? (
+                                      <>
+                                        <span
+                                          className={`flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold transition-all ${
+                                            isActive
+                                              ? 'bg-violet-500 text-white'
+                                              : 'bg-violet-100 text-violet-600 group-hover:bg-violet-200'
+                                          }`}
+                                        >
+                                          {h2Index}
+                                        </span>
+                                        <span
+                                          className={`text-xs leading-tight transition-colors ${
+                                            isActive
+                                              ? 'text-violet-600 font-semibold'
+                                              : 'text-gray-700 group-hover:text-gray-900 font-medium'
+                                          }`}
+                                        >
+                                          {heading.text}
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <span
+                                          className={`flex-shrink-0 w-1.5 h-1.5 rounded-full mt-1.5 transition-all ${
+                                            isActive
+                                              ? 'bg-violet-500'
+                                              : 'bg-gray-300 group-hover:bg-gray-400'
+                                          }`}
+                                        />
+                                        <span
+                                          className={`text-[11px] leading-tight transition-colors ${
+                                            isActive
+                                              ? 'text-violet-600 font-medium'
+                                              : 'text-gray-500 group-hover:text-gray-700'
+                                          }`}
+                                        >
+                                          {heading.text}
+                                        </span>
+                                      </>
+                                    )}
+                                  </button>
+                                );
+                              });
+                            })()}
+                          </motion.nav>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
+
+                  {/* 2. Share Widget - Logos uniquement, grille 4x2 */}
+                  <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+                    <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
+                      <Share2 className="w-4 h-4 text-violet-500" />
+                      Partager
+                    </h4>
+                    <div className="grid grid-cols-4 gap-2">
+                      {shareButtons.map((btn) => (
+                        <button
+                          key={btn.id}
+                          onClick={() => handleShare(btn.id)}
+                          className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:border-transparent hover:text-white hover:scale-105"
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = btn.color;
+                            e.currentTarget.style.color = 'white';
+                            e.currentTarget.style.borderColor = 'transparent';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'white';
+                            e.currentTarget.style.color = '#6B7280';
+                            e.currentTarget.style.borderColor = '#E5E7EB';
+                          }}
+                          title={btn.label}
+                        >
+                          <btn.icon />
+                        </button>
+                      ))}
+                      {/* Threads */}
+                      <button
+                        onClick={() => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(article?.titre || article?.title || '')} ${encodeURIComponent(window.location.href)}`, '_blank')}
+                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:bg-black hover:text-white hover:border-transparent hover:scale-105"
+                        title="Threads"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.182.408-2.256 1.33-3.022.942-.783 2.264-1.217 3.727-1.223h.036c1.26.005 2.378.296 3.322.864.376.226.706.493.99.796.03-.317.043-.636.036-.957-.05-2.358-.756-4.022-2.098-4.942-1.135-.778-2.704-1.18-4.663-1.194-.964.008-1.87.1-2.694.28l-.485-1.947c.985-.216 2.07-.326 3.227-.334 2.431.018 4.396.567 5.844 1.632 1.72 1.266 2.614 3.394 2.674 6.33.003.165.003.33-.001.495.404.252.773.546 1.106.88 1.01 1.016 1.674 2.37 1.885 3.878.257 1.838-.168 3.878-1.282 5.28-1.692 2.131-4.381 3.31-7.57 3.322zm-1.25-8.063c-.06 0-.12.001-.18.003-1.347.06-2.28.537-2.547 1.303-.13.372-.12.784.028 1.16.242.615.857 1.108 1.739 1.392.525.168 1.09.244 1.678.224 1.073-.057 1.896-.453 2.449-1.178.476-.625.78-1.487.902-2.565-.724-.383-1.578-.586-2.534-.59h-.036c-.51.001-1.003.083-1.5.25z"/>
+                        </svg>
+                      </button>
+                      {/* Copy Link */}
+                      <button
+                        onClick={() => handleShare('copy')}
+                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:bg-violet-500 hover:text-white hover:border-transparent hover:scale-105"
+                        title="Copier le lien"
+                      >
+                        {copySuccess ? <Check className="w-4 h-4 text-emerald-500" /> : <Link2 className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/60 text-sm">Vitesse moyenne</span>
-                    <span className="text-white font-mono">200 mots/min</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/60 text-sm">Score d'engagement</span>
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className="w-4 h-4"
+
+                  {/* 3. Video Widget (if article has video) */}
+                  {article?.videoUrl && (
+                    <div className="bg-gray-900 rounded-2xl overflow-hidden">
+                      <div className="relative aspect-video">
+                        <img
+                          src={imageUrl || '/placeholder.svg'}
+                          alt=""
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                          <a
+                            href={article.videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-xl hover:scale-110 transition-transform"
+                          >
+                            <Play className="w-5 h-5 text-gray-900 ml-0.5" fill="currentColor" />
+                          </a>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <p className="text-white/70 text-[10px] font-medium">Voir en vidéo</p>
+                        <p className="text-white text-xs font-bold mt-0.5 line-clamp-1">{title}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 4. Tags Widget */}
+                  {article?.tags && article.tags.filter(t => t && t.title).length > 0 && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+                      <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
+                        <Tag className="w-4 h-4 text-violet-500" />
+                        Thématiques
+                      </h4>
+                      <div className="flex flex-wrap gap-1.5">
+                        {article.tags.filter(t => t && t.title).map((tag) => (
+                          <Link
+                            key={tag._id}
+                            to={`/bibliotheque?tag=${tag.slug || tag._id}`}
+                            className="px-2.5 py-1 text-[10px] font-medium rounded-full transition-all duration-200 hover:scale-105"
                             style={{
-                              color: i < Math.round(readingProgress / 20) ? themeColor : 'rgba(255,255,255,0.2)',
-                              fill: i < Math.round(readingProgress / 20) ? themeColor : 'none'
+                              backgroundColor: tag.color ? `${tag.color}15` : '#F3F4F6',
+                              color: tag.color || '#6B7280',
+                              border: `1px solid ${tag.color ? `${tag.color}30` : '#E5E7EB'}`
                             }}
-                          />
+                          >
+                            {tag.title}
+                          </Link>
                         ))}
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </aside>
-          
-        </div>
-      </div>
+                  )}
 
-      {/* Mobile Controls - Barre flottante */}
-      <div className="2xl:hidden fixed bottom-0 left-0 right-0 z-40 p-4 pb-safe">
-        <div className="bg-black/90 backdrop-blur-2xl border border-white/20 rounded-3xl p-4 flex items-center justify-between gap-4">
-          <button
-            onClick={() => setShowMobileMenu(true)}
-            className="p-3 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors relative"
-          >
-            <Menu className="w-6 h-6 text-white" />
-            {headings.length > 0 && (
-              <span className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-red-500 to-pink-500 rounded-full text-xs flex items-center justify-center font-bold text-white">
-                {headings.length}
-              </span>
-            )}
-          </button>
+                  {/* 5. Newsletter / Lead Magnet - Design élégant */}
+                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 via-fuchsia-50 to-rose-50 border border-violet-100/50">
+                    {/* Decorative elements */}
+                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-violet-200/40 to-fuchsia-200/40 rounded-full blur-2xl" />
+                    <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-br from-rose-200/40 to-pink-200/40 rounded-full blur-2xl" />
 
-          <div className="flex-1 flex items-center justify-center gap-3">
-            <span className="text-white/60 text-sm">Progression</span>
-            <div className="w-32 h-2 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full transition-all duration-300 relative"
-                style={{
-                  width: `${readingProgress}%`,
-                  backgroundColor: themeColor
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-              </div>
-            </div>
-            <span className="text-white font-mono text-sm">{Math.round(readingProgress)}%</span>
-          </div>
+                    <div className="relative p-5">
+                      {!newsletterSuccess ? (
+                        <>
+                          {/* Header avec image */}
+                          <div className="text-center mb-4">
+                            <img
+                              src="/kit-introspection.jpg"
+                              alt="Kit d'Introspection"
+                              className="w-20 h-auto mx-auto rounded-xl shadow-lg shadow-violet-500/20 mb-3 -rotate-3 hover:rotate-0 transition-transform"
+                            />
+                            <h4 className="text-gray-900 font-bold text-base">Kit d'Introspection</h4>
+                            <p className="text-violet-600/70 text-[11px] font-medium mt-1">Guide gratuit • 24 pages</p>
+                          </div>
 
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="p-3 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors"
-          >
-            <ChevronUp className="w-6 h-6 text-white" />
-          </button>
-        </div>
-      </div>
+                          <p className="text-gray-600 text-xs text-center mb-4 leading-relaxed">
+                            Les meilleurs outils de développement personnel de nos intervenants.
+                          </p>
 
-      {/* Mobile Menu - Full Screen */}
-      {showMobileMenu && (
-        <div className="2xl:hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl">
-          <div className="h-full flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h3 className="text-2xl font-bold text-white">Navigation</h3>
-              <button
-                onClick={() => setShowMobileMenu(false)}
-                className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center hover:bg-white/20 transition-colors"
-              >
-                <X className="w-6 h-6 text-white" />
-              </button>
-            </div>
+                          <form onSubmit={handleNewsletterSubmit} className="space-y-2.5">
+                            <input
+                              type="email"
+                              value={newsletterEmail}
+                              onChange={(e) => setNewsletterEmail(e.target.value)}
+                              placeholder="votre@email.com"
+                              required
+                              className="w-full px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-violet-200/50 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all"
+                            />
+                            <button
+                              type="submit"
+                              disabled={!newsletterEmail.trim() || newsletterSubmitting}
+                              className="w-full px-4 py-2.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-semibold rounded-xl hover:from-violet-600 hover:to-fuchsia-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 hover:-translate-y-0.5"
+                            >
+                              {newsletterSubmitting ? 'Envoi...' : 'Recevoir mon guide'}
+                              {!newsletterSubmitting && <ArrowRight className="w-3.5 h-3.5" />}
+                            </button>
+                          </form>
 
-            {/* Progress circle mobile */}
-            <div className="p-6">
-              <div className="flex items-center justify-between p-6 bg-white/5 rounded-3xl">
-                <div className="relative w-20 h-20">
-                  <svg className="w-full h-full -rotate-90">
-                    <circle
-                      cx="40"
-                      cy="40"
-                      r="35"
-                      stroke="rgba(255,255,255,0.1)"
-                      strokeWidth="6"
-                      fill="none"
-                    />
-                    <circle
-                      cx="40"
-                      cy="40"
-                      r="35"
-                      stroke={themeColor}
-                      strokeWidth="6"
-                      fill="none"
-                      strokeDasharray={`${2 * Math.PI * 35}`}
-                      strokeDashoffset={`${2 * Math.PI * 35 * (1 - readingProgress / 100)}`}
-                      strokeLinecap="round"
-                      className="transition-all duration-500"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold text-white">{Math.round(readingProgress)}%</span>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-white/60 text-sm mb-1">Temps restant</p>
-                  <p className="text-white font-mono text-lg">{Math.max(1, Math.ceil(readingTime * (1 - readingProgress / 100)))} min</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Sections */}
-            <div className="flex-1 overflow-y-auto px-6 pb-6">
-              <div className="space-y-3">
-                {headings.map((heading, index) => (
-                  <div key={heading.id}>
-                    <button
-                      onClick={() => scrollToSection(heading.id)}
-                      className={`w-full text-left px-6 py-5 rounded-3xl transition-all flex items-center gap-4 ${activeHeading === heading.id
-                          ? 'text-white'
-                          : 'text-white/70 active:bg-white/10'
-                        }`}
-                      style={activeHeading === heading.id ? {
-                        backgroundColor: `${themeColor}20`,
-                        borderLeft: `4px solid ${themeColor}`
-                      } : {}}
-                    >
-                      <span
-                        className="flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold"
-                        style={{
-                          backgroundColor: activeHeading === heading.id ? `${themeColor}30` : 'rgba(255,255,255,0.1)',
-                          color: activeHeading === heading.id ? themeColor : 'rgba(255,255,255,0.7)'
-                        }}
-                      >
-                        {index + 1}
-                      </span>
-                      <span className="flex-1 text-lg">{heading.text}</span>
-                      {activeHeading === heading.id && (
-                        <Zap className="w-5 h-5" style={{ color: themeColor }} />
+                          <p className="text-[10px] text-gray-400 text-center mt-3">
+                            Pas de spam. Désabonnement en 1 clic.
+                          </p>
+                        </>
+                      ) : (
+                        <div className="text-center py-4">
+                          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/25">
+                            <Check className="w-7 h-7 text-white" />
+                          </div>
+                          <p className="text-gray-900 font-bold text-base">Merci !</p>
+                          <p className="text-gray-500 text-xs mt-1">Vérifiez votre boîte mail</p>
+                        </div>
                       )}
-                    </button>
-
-                    {heading.children && heading.children.map((child) => (
-                      <button
-                        key={child.id}
-                        onClick={() => scrollToSection(child.id)}
-                        className={`w-full text-left pl-20 pr-6 py-4 text-base transition-all ${activeHeading === child.id
-                            ? 'text-white/80'
-                            : 'text-white/50 active:text-white/70'
-                          }`}
-                        style={activeHeading === child.id ? { color: themeColor } : {}}
-                      >
-                        <span className="flex items-center gap-2">
-                          <ChevronRight className="w-4 h-4" />
-                          {child.text}
-                        </span>
-                      </button>
-                    ))}
+                    </div>
                   </div>
+
+                  {/* 6. Popular Articles - Avec images */}
+                  {popularArticles.filter(p => p && p.title).length > 0 && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+                      <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
+                        <TrendingUp className="w-4 h-4 text-rose-500" />
+                        Les plus lus
+                      </h4>
+                      <div className="space-y-3">
+                        {popularArticles.filter(p => p && p.title).slice(0, 4).map((pop, idx) => (
+                          <Link
+                            key={pop._id}
+                            to={`/article/${pop.slug?.current || pop._id}`}
+                            className="group flex items-center gap-3"
+                          >
+                            <div className="relative flex-shrink-0">
+                              <img
+                                src={pop.imageUrl || '/placeholder.svg'}
+                                alt=""
+                                className="w-12 h-12 rounded-lg object-cover"
+                              />
+                              <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
+                                {idx + 1}
+                              </span>
+                            </div>
+                            <span className="text-gray-700 text-xs font-medium line-clamp-2 group-hover:text-rose-600 transition-colors flex-1">
+                              {pop.title}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 7. Related Articles */}
+                  {relatedArticles.filter(r => r && r.slug?.current).length > 0 && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+                      <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
+                        <BookOpen className="w-4 h-4 text-violet-500" />
+                        À lire aussi
+                      </h4>
+                      <div className="space-y-3">
+                        {relatedArticles.filter(r => r && r.slug?.current).slice(0, 3).map((related) => (
+                          <Link
+                            key={related._id}
+                            to={`/article/${related.slug.current}`}
+                            className="group flex gap-3"
+                          >
+                            <img
+                              src={related.imageUrl || '/placeholder.svg'}
+                              alt=""
+                              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <h5 className="text-gray-900 text-xs font-medium line-clamp-2 group-hover:text-violet-600 transition-colors">
+                                {related.titre || related.title}
+                              </h5>
+                              {related.verticale && (
+                                <span className="text-[10px] text-gray-500 mt-0.5 block">{related.verticale.nom}</span>
+                              )}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 8. CTA Racontez votre histoire - Style épuré */}
+                  <Link
+                    to="/racontez-votre-histoire"
+                    className="group block border border-gray-200 bg-white rounded-2xl p-4 hover:border-violet-300 hover:shadow-lg hover:shadow-violet-500/10 transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center group-hover:bg-violet-500 transition-colors">
+                        <PenLine className="w-5 h-5 text-violet-600 group-hover:text-white transition-colors" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-gray-900 font-bold text-sm group-hover:text-violet-600 transition-colors">
+                          Racontez votre histoire
+                        </p>
+                        <p className="text-gray-500 text-[10px]">
+                          Partagez et inspirez
+                        </p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-violet-500 group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </Link>
+
+                  {/* 9. Espace publicitaire */}
+                  <div className="bg-gray-100 border border-dashed border-gray-300 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[250px]">
+                    <p className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">
+                      Publicité
+                    </p>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        {/* Related Articles Section (Full Width) */}
+        {relatedArticles.length > 0 && (
+          <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 border-t border-gray-200">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+                Articles{' '}
+                <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                  recommandés
+                </span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {relatedArticles.slice(0, 6).map((related) => (
+                  <Link
+                    key={related._id}
+                    to={`/article/${related.slug.current}`}
+                    className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
+                  >
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={related.imageUrl || '/placeholder.svg'}
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-5">
+                      {related.verticale && (
+                        <span
+                          className="inline-block px-2 py-1 rounded text-xs font-bold mb-3"
+                          style={{
+                            backgroundColor: `${related.verticale.couleurDominante || '#8B5CF6'}15`,
+                            color: related.verticale.couleurDominante || '#8B5CF6'
+                          }}
+                        >
+                          {related.verticale.nom}
+                        </span>
+                      )}
+                      <h3 className="text-gray-900 font-bold line-clamp-2 group-hover:text-violet-600 transition-colors">
+                        {related.titre || related.title}
+                      </h3>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </section>
+        )}
+      </main>
 
-      {/* Scroll to Top - Version premium */}
-      {showScrollTop && (
+      {/* Mobile Floating Action Bar */}
+      <div className="fixed bottom-4 left-4 right-4 lg:hidden z-50">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
+          {/* Like */}
+          <button
+            onClick={() => setIsLiked(!isLiked)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+              isLiked
+                ? 'bg-pink-100 text-pink-500'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}
+          >
+            <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+          </button>
+
+          {/* Share */}
+          <button
+            onClick={() => setShowShareModal(true)}
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-xl text-white font-medium transition-all"
+          >
+            <Share2 className="w-5 h-5" />
+            <span>Partager</span>
+          </button>
+
+          {/* Bookmark */}
+          <button
+            onClick={() => setIsBookmarked(!isBookmarked)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
+              isBookmarked
+                ? 'bg-violet-100 text-violet-500'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}
+          >
+            <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile TOC Button */}
+      {headings.length > 0 && (
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-24 right-8 z-30 w-14 h-14 bg-white/10 backdrop-blur-2xl text-white rounded-2xl flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110 shadow-2xl border border-white/20 group"
+          onClick={() => setShowMobileToc(true)}
+          className="fixed bottom-24 right-4 lg:hidden z-50 w-12 h-12 bg-violet-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-violet-500/30"
         >
-          <ChevronUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform" />
+          <List className="w-6 h-6" />
         </button>
       )}
 
-      {/* Author Section - Ultra Premium */}
-      {article.author && (
-        <section className="max-w-7xl mx-auto px-8 py-32">
-          <div className="max-w-5xl mx-auto">
-            <div className="relative group">
-              <div
-                className="absolute inset-0 rounded-3xl blur-3xl transition-all duration-700 opacity-20 group-hover:opacity-30"
-                style={{
-                  background: `radial-gradient(circle at 30% 50%, ${themeColor}40 0%, transparent 50%), radial-gradient(circle at 70% 50%, ${themeColor}30 0%, transparent 50%)`
-                }}
-              />
-
-              <div className="relative p-10 lg:p-12 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden">
-                <div className="absolute inset-0 opacity-5">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: `radial-gradient(circle at 2px 2px, ${themeColor} 1px, transparent 1px)`,
-                    backgroundSize: '30px 30px'
-                  }} />
+      {/* Mobile TOC Modal */}
+      <AnimatePresence>
+        {showMobileToc && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm lg:hidden"
+            onClick={() => setShowMobileToc(false)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25 }}
+              className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 rounded-t-3xl max-h-[70vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-gray-900 font-bold text-lg">Sommaire</h3>
+                  <button onClick={() => setShowMobileToc(false)} className="text-gray-400">
+                    <X className="w-6 h-6" />
+                  </button>
                 </div>
-
-                <div className="relative flex flex-col lg:flex-row items-start gap-10">
-                  <div className="flex-shrink-0">
-                    <div className="relative group">
-                      <div
-                        className="w-32 h-32 rounded-3xl p-1 group-hover:rotate-3 transition-transform duration-500"
-                        style={{
-                          background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}dd 50%, ${themeColor} 100%)`
-                        }}
-                      >
-                        <div className="w-full h-full rounded-3xl bg-black overflow-hidden">
-                          {article.author.image ? (
-                            <img
-                              src={urlFor(article.author.image).width(300).url()}
-                              alt={article.author.name}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <User className="w-16 h-16 text-white" />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center border-4 border-black shadow-xl">
-                        <Check className="w-6 h-6 text-black" />
-                      </div>
-
-                      <div
-                        className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
-                        style={{ backgroundColor: themeColor }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex-1">
-                    <h3 className="text-3xl font-black text-white mb-3 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-                      {article.author.name}
-                    </h3>
-
-                    <div className="flex flex-wrap items-center gap-4 mb-6">
-                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
-                        style={{
-                          backgroundColor: `${themeColor}20`,
-                          color: themeColor,
-                          border: `2px solid ${themeColor}30`
-                        }}>
-                        <Award className="w-4 h-4" />
-                        Expert Contributeur
-                      </span>
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl text-sm text-white/70">
-                        <Flame className="w-4 h-4" />
-                        Top Writer 2024
-                      </span>
-                    </div>
-
-                    <p className="text-white/80 text-lg leading-relaxed mb-8">
-                      {article.author.bio || 'Créateur de contenu passionné, je partage mes découvertes et analyses pour enrichir notre communauté. Chaque article est une invitation à explorer de nouvelles perspectives.'}
-                    </p>
-
-                    <div className="grid grid-cols-3 gap-6 mb-8">
-                      <div className="text-center p-4 bg-white/5 rounded-2xl">
-                        <p className="text-3xl font-bold text-white mb-1">42</p>
-                        <p className="text-sm text-white/60">Articles</p>
-                      </div>
-                      <div className="text-center p-4 bg-white/5 rounded-2xl">
-                        <p className="text-3xl font-bold text-white mb-1">15K</p>
-                        <p className="text-sm text-white/60">Lecteurs</p>
-                      </div>
-                      <div className="text-center p-4 bg-white/5 rounded-2xl">
-                        <p className="text-3xl font-bold text-white mb-1">4.9</p>
-                        <p className="text-sm text-white/60">Note</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-4">
-                      <button
-                        className="px-8 py-3 text-white rounded-2xl font-semibold transition-all duration-500 transform hover:scale-105 shadow-xl relative overflow-hidden group"
-                        style={{
-                          background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}dd 100%)`
-                        }}
-                      >
-                        <span className="relative z-10">Découvrir ses articles</span>
-                        <div className="absolute inset-0 bg-white/20 translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
-                      </button>
-
-                      <button className="px-8 py-3 bg-white/10 backdrop-blur-xl text-white rounded-2xl font-semibold hover:bg-white/20 transition-all duration-300 border-2 border-white/20">
-                        Suivre l'auteur
-                      </button>
-
-                      <div className="ml-auto flex items-center gap-4">
-                        <button className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors">
-                          <Twitter className="w-5 h-5 text-white/70" />
-                        </button>
-                        <button className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors">
-                          <Linkedin className="w-5 h-5 text-white/70" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <nav className="space-y-3">
+                  {headings.map((heading) => (
+                    <button
+                      key={heading.id}
+                      onClick={() => scrollToSection(heading.id)}
+                      className={`block w-full text-left py-2 px-4 rounded-xl transition-all ${
+                        heading.level === 3 ? 'pl-8' : ''
+                      } ${
+                        activeHeading === heading.id
+                          ? 'bg-violet-100 text-violet-600'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      }`}
+                    >
+                      {heading.text}
+                    </button>
+                  ))}
+                </nav>
               </div>
-            </div>
-          </div>
-        </section>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Related Articles - Design Bento Grid */}
-      {articlesLies.length > 0 && (
-        <section className="relative py-32 overflow-hidden">
-          <div className="absolute inset-0">
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                background: `linear-gradient(180deg, transparent 0%, ${themeColor}10 50%, transparent 100%)`,
-                animation: 'gradient-y 20s ease infinite'
-              }}
-            />
-          </div>
-
-          <div className="max-w-7xl mx-auto px-8 relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl font-black text-white mb-6 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-                Continuez l'exploration
-              </h2>
-              <p className="text-xl text-white/60 max-w-2xl mx-auto">
-                Articles sélectionnés spécialement pour vous
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {articlesLies.slice(0, 6).map((articleLie, index) => {
-                const articleSlug = articleLie.slug?.current || articleLie.slug || '';
-                const isLarge = index === 0 || index === 3;
-
-                return (
-                  <Link
-                    key={articleLie._id}
-                    to={`/article/${articleSlug}`}
-                    className={`group relative ${isLarge ? 'md:col-span-2 lg:col-span-2' : ''}`}
-                    onMouseMove={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      {/* Share Modal */}
+      <AnimatePresence>
+        {showShareModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setShowShareModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white border border-gray-200 rounded-2xl p-6 max-w-sm w-full shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-gray-900 font-bold text-lg">Partager</h3>
+                <button onClick={() => setShowShareModal(false)} className="text-gray-400">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="grid grid-cols-5 gap-3">
+                {shareButtons.map((btn) => (
+                  <button
+                    key={btn.id}
+                    onClick={() => handleShare(btn.id)}
+                    className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-200"
+                    style={{ backgroundColor: `${btn.color}10` }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = btn.color;
+                      (e.currentTarget.querySelector('span') as HTMLElement).style.color = 'white';
+                      (e.currentTarget.querySelector('svg') as SVGElement).style.color = 'white';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = `${btn.color}10`;
+                      (e.currentTarget.querySelector('span') as HTMLElement).style.color = '#6B7280';
+                      (e.currentTarget.querySelector('svg') as SVGElement).style.color = btn.color;
                     }}
                   >
-                    <div className="relative h-full min-h-[400px] rounded-3xl overflow-hidden bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-                      {articleLie.imageUrl && (
-                        <div className="absolute inset-0">
-                          <div
-                            className="absolute inset-0 bg-cover bg-center transition-all duration-700 group-hover:scale-110"
-                            style={{
-                              backgroundImage: `url(${articleLie.imageUrl})`,
-                              filter: 'brightness(0.6)'
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-                        </div>
-                      )}
-
-                      <div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700"
-                        style={{
-                          background: `radial-gradient(circle at 50% 50%, ${themeColor}20 0%, transparent 70%)`
-                        }}
-                      />
-
-                      <div className="absolute top-6 left-6 z-10">
-                        <div
-                          className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold backdrop-blur-xl transition-all duration-300 group-hover:scale-110"
-                          style={{
-                            backgroundColor: `${themeColor}20`,
-                            border: `2px solid ${themeColor}40`,
-                            color: themeColor
-                          }}
-                        >
-                          {index + 1}
-                        </div>
-                      </div>
-
-                      {new Date(articleLie.publishedAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
-                        <div className="absolute top-6 right-6 z-10">
-                          <span className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full uppercase tracking-wider animate-pulse">
-                            Nouveau
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="absolute inset-x-0 bottom-0 p-8 z-10">
-                        <h3 className={`font-bold text-white mb-3 line-clamp-2 transition-all duration-300 group-hover:text-white/90 ${isLarge ? 'text-3xl' : 'text-2xl'
-                          }`}>
-                          {articleLie.title}
-                        </h3>
-
-                        {articleLie.excerpt && (
-                          <p className="text-white/70 text-base mb-6 line-clamp-2">
-                            {articleLie.excerpt}
-                          </p>
-                        )}
-
-                        <div className="flex items-center justify-between">
-                          <span
-                            className="text-sm font-semibold flex items-center gap-2 transition-all duration-300 group-hover:gap-3"
-                            style={{ color: themeColor }}
-                          >
-                            Découvrir
-                            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                          </span>
-
-                          <div className="flex items-center gap-4 text-white/50 text-sm">
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {Math.ceil((articleLie.contenu?.length || 10) / 5)} min
-                            </span>
-                            {articleLie.vues && (
-                              <span className="flex items-center gap-1">
-                                <Eye className="w-4 h-4" />
-                                {articleLie.vues.toLocaleString()}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <div
-                          className="absolute inset-0"
-                          style={{
-                            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.1) 0%, transparent 40%)`
-                          }}
-                        />
-                      </div>
+                    <div style={{ color: btn.color }}>
+                      <btn.icon />
                     </div>
-                  </Link>
-                );
-              })}
-            </div>
+                    <span className="text-[10px] text-gray-500 font-medium">{btn.label}</span>
+                  </button>
+                ))}
+                <button
+                  onClick={() => handleShare('copy')}
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-violet-50 hover:bg-violet-500 transition-all duration-200 group"
+                >
+                  {copySuccess ? (
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  ) : (
+                    <Link2 className="w-4 h-4 text-violet-500 group-hover:text-white" />
+                  )}
+                  <span className="text-[10px] text-gray-500 group-hover:text-white font-medium">
+                    {copySuccess ? 'Copié' : 'Lien'}
+                  </span>
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            <div className="text-center mt-16">
-              <Link
-                to="/articles"
-                className="inline-flex items-center gap-3 px-10 py-5 bg-white/10 backdrop-blur-xl border-2 border-white/20 rounded-3xl text-white font-semibold text-lg hover:bg-white/20 hover:border-white/30 transition-all duration-300 group"
-              >
-                Explorer tous les articles
-                <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Scroll to Top - Bouton en bas de page */}
+      <div className="py-8 flex justify-center bg-gray-50 border-t border-gray-200">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-gray-600 hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all shadow-sm"
+        >
+          <ChevronUp className="w-5 h-5" />
+          <span className="text-sm font-medium">Retour en haut</span>
+        </button>
+      </div>
 
-      {/* Toast Notification */}
-      {showToastState && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-3 bg-black/90 backdrop-blur-xl text-white rounded-full z-50 animate-slide-up">
-          {toastMessage}
-        </div>
-      )}
-    </Layout>
+      <Footer />
+    </div>
   );
 }

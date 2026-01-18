@@ -1,3 +1,6 @@
+// src/components/univers/ActeAutresUnivers.tsx
+// Design épuré - Style minimaliste blanc
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
@@ -7,14 +10,13 @@ interface ActeAutresUniversProps {
   universColor: string;
 }
 
-const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({ 
-  universId, 
-  universName, 
-  universColor 
+const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
+  universId,
+  universName,
+  universColor
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -34,22 +36,7 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        setMousePos({
-          x: (e.clientX - rect.left) / rect.width,
-          y: (e.clientY - rect.top) / rect.height
-        });
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  // Données simplifiées des univers
+  // Données des univers
   const tousLesUnivers = {
     'psychologie': {
       id: 'psychologie',
@@ -113,7 +100,6 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
     }
   };
 
-  // Suggestions intelligentes - 4 univers par défaut
   const suggestionsPourUnivers = {
     'psychologie': ['relations', 'spiritualite', 'sante', 'carriere'],
     'societe': ['relations', 'environnement', 'technologie', 'art-creativite'],
@@ -131,51 +117,31 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
   const autresUnivers = suggestionsIds.map(id => tousLesUnivers[id as keyof typeof tousLesUnivers]).filter(Boolean);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
-      className="relative min-h-screen bg-black py-24 lg:py-32 overflow-hidden"
+      className="relative min-h-screen bg-gray-50 py-24 lg:py-32 overflow-hidden"
     >
-      {/* Fond subtil */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-black to-gray-950" />
-        
-        {/* Effet de lumière douce */}
-        <div 
-          className="absolute w-[800px] h-[800px] rounded-full opacity-5"
-          style={{
-            top: '50%',
-            left: '50%',
-            transform: `translate(-50%, -50%) translate(${(mousePos.x - 0.5) * 50}px, ${(mousePos.y - 0.5) * 50}px)`,
-            background: `radial-gradient(circle, ${universColor}40 0%, transparent 70%)`,
-            filter: 'blur(100px)',
-            transition: 'transform 2s cubic-bezier(0.33, 1, 0.68, 1)'
-          }}
-        />
-      </div>
-
       <div className="relative z-10 px-6 lg:px-12 xl:px-16">
-        {/* Header de section */}
+        {/* Header */}
         <div className={`max-w-7xl mx-auto mb-20 text-center transition-all duration-1000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
           <div className="space-y-6">
-            {/* Indicateur */}
             <div className="flex items-center justify-center gap-2">
-              <div className="w-8 h-[1px] bg-white/30" />
-              <span className="text-white/50 text-xs font-light tracking-[0.2em] uppercase">
+              <div className="w-8 h-[1px] bg-gray-300" />
+              <span className="text-gray-500 text-xs font-medium tracking-[0.2em] uppercase">
                 Continuez l'exploration
               </span>
-              <div className="w-8 h-[1px] bg-white/30" />
+              <div className="w-8 h-[1px] bg-gray-300" />
             </div>
-            
-            {/* Titre */}
-            <h2 className="font-bold text-5xl lg:text-6xl xl:text-7xl text-white leading-none">
+
+            <h2 className="font-bold text-5xl lg:text-6xl xl:text-7xl text-gray-900 leading-none">
               Autres
               <br />
-              <span 
+              <span
                 className="inline-block mt-2"
                 style={{
-                  background: `linear-gradient(135deg, white 0%, ${universColor} 100%)`,
+                  background: `linear-gradient(135deg, ${universColor} 0%, #EC4899 100%)`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text'
@@ -184,15 +150,14 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
                 univers
               </span>
             </h2>
-            
-            {/* Description */}
-            <p className="text-lg lg:text-xl text-white/60 max-w-2xl mx-auto font-light">
+
+            <p className="text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto font-light">
               Explorez d'autres thématiques qui pourraient vous intéresser.
             </p>
           </div>
         </div>
 
-        {/* Grille d'univers - 4 cartes */}
+        {/* Grille d'univers */}
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {autresUnivers.map((univers, index) => (
@@ -205,86 +170,77 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
                 onMouseEnter={() => setHoveredCard(univers.id)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                <a 
+                <a
                   href={`/univers/${univers.id}`}
-                  className="block relative p-6 lg:p-8 rounded-2xl bg-gradient-to-b from-gray-900/30 to-gray-900/50 backdrop-blur-sm border border-white/5 hover:border-white/10 transition-all duration-500 h-full min-h-[280px]"
+                  className="block relative p-6 lg:p-8 rounded-2xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-500 h-full min-h-[280px]"
                 >
                   {/* Fond coloré au hover */}
-                  <div 
+                  <div
                     className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{
-                      background: `radial-gradient(circle at 30% 30%, ${univers.color}10 0%, transparent 70%)`
+                      background: `radial-gradient(circle at 30% 30%, ${univers.color}08 0%, transparent 70%)`
                     }}
                   />
-                  
+
                   {/* Contenu */}
                   <div className="relative z-10 flex flex-col h-full">
                     {/* Indicateur coloré */}
-                    <div 
+                    <div
                       className="w-12 h-1 rounded-full mb-6 transition-all duration-500"
                       style={{
                         backgroundColor: univers.color,
                         width: hoveredCard === univers.id ? '48px' : '24px'
                       }}
                     />
-                    
-                    {/* Titre - Gérer les mots longs */}
-                    <h3 
+
+                    {/* Titre */}
+                    <h3
                       className={`font-bold mb-4 transition-all duration-500 ${
                         univers.nom.length > 12 ? 'text-2xl' : 'text-3xl lg:text-4xl'
                       }`}
                       style={{
-                        color: hoveredCard === univers.id ? univers.color : 'white',
+                        color: hoveredCard === univers.id ? univers.color : '#1F2937',
                         wordBreak: 'break-word',
                         hyphens: 'auto'
                       }}
                     >
                       {univers.nom}
                     </h3>
-                    
+
                     {/* Description */}
-                    <p className="text-white/60 text-sm lg:text-base mb-6 flex-grow line-clamp-2">
+                    <p className="text-gray-600 text-sm lg:text-base mb-6 flex-grow line-clamp-2">
                       {univers.description}
                     </p>
-                    
+
                     {/* CTA */}
                     <div className="flex items-center justify-between mt-auto">
-                      <span className="text-white/80 text-sm font-medium">
+                      <span className="text-gray-700 text-sm font-medium">
                         Explorer
                       </span>
-                      
-                      <div 
+
+                      <div
                         className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500"
                         style={{
-                          backgroundColor: hoveredCard === univers.id 
-                            ? univers.color 
-                            : 'rgba(255,255,255,0.05)',
-                          transform: hoveredCard === univers.id 
-                            ? 'scale(1.1)' 
+                          backgroundColor: hoveredCard === univers.id
+                            ? univers.color
+                            : '#F3F4F6',
+                          transform: hoveredCard === univers.id
+                            ? 'scale(1.1)'
                             : 'scale(1)'
                         }}
                       >
-                        <ArrowRight 
-                          className="w-5 h-5 text-white transition-transform duration-500"
+                        <ArrowRight
+                          className="w-5 h-5 transition-transform duration-500"
                           style={{
-                            transform: hoveredCard === univers.id 
-                              ? 'translateX(2px)' 
+                            color: hoveredCard === univers.id ? 'white' : '#6B7280',
+                            transform: hoveredCard === univers.id
+                              ? 'translateX(2px)'
                               : 'translateX(0)'
                           }}
                         />
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Bordure au hover */}
-                  <div 
-                    className="absolute inset-0 rounded-2xl pointer-events-none transition-all duration-500"
-                    style={{
-                      boxShadow: hoveredCard === univers.id 
-                        ? `inset 0 0 0 1px ${univers.color}40` 
-                        : 'none'
-                    }}
-                  />
                 </a>
               </article>
             ))}
@@ -295,15 +251,15 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
         <div className={`text-center mt-20 transition-all duration-1000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
-          <p className="text-white/60 text-lg mb-8 max-w-2xl mx-auto">
-            Vous avez exploré l'univers <span style={{ color: universColor }} className="font-medium">{universName}</span>. 
+          <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+            Vous avez exploré l'univers <span style={{ color: universColor }} className="font-medium">{universName}</span>.
             Continuez votre voyage à travers nos autres thématiques.
           </p>
-          
-          {/* CTA principal */}
+
+          {/* CTA */}
           <a
             href="/univers"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-medium rounded-lg transition-all duration-300 hover:scale-105 group"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-gray-900 text-white font-medium rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg group"
           >
             <Sparkles className="w-5 h-5" />
             Voir tous les univers
