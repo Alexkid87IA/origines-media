@@ -6,11 +6,12 @@
 // HOME PAGE
 // ========================================
 
-// Articles vedettes pour le Hero (1 article par verticale, max 6)
+// Articles vedettes pour le Hero (1 article par verticale, max 7)
 // On récupère le dernier article de chaque verticale pour avoir de la diversité
+// 7 articles = 1 featured + 5 sidebar desktop + 1 extra pour mobile (grille 2 colonnes)
 // Extrait: extrait > description > texte extrait du contenu
 export const FEATURED_ARTICLES_QUERY = `
-  *[_type == "verticale"] | order(ordre asc) [0...6] {
+  *[_type == "verticale"] | order(ordre asc) [0...7] {
     "article": *[_type == "production" && references(^._id) && defined(image.asset)] | order(datePublication desc) [0] {
       _id,
       titre,
@@ -85,7 +86,9 @@ export const VERTICALES_WITH_PRODUCTIONS_QUERY = `
     "productions": *[_type == "production" && references(^._id)] | order(datePublication desc) {
       _id,
       titre,
+      extrait,
       description,
+      "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
       "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
       "slug": slug.current,
       datePublication,

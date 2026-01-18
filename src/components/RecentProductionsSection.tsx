@@ -4,13 +4,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { getUniversColors } from '../lib/universColors';
 import { typo } from '../lib/typography';
 
 interface Production {
   id: string;
   titre: string;
+  extrait?: string;
   description?: string;
+  contenuTexte?: string;
   imageUrl?: string;
   url: string;
   datePublication?: string;
@@ -19,6 +22,17 @@ interface Production {
     couleurDominante?: string;
   };
 }
+
+// Helper: récupère l'extrait avec fallback (50 premiers caractères)
+const getExtrait = (production: Production): string => {
+  if (production.extrait) return production.extrait;
+  if (production.description) return production.description;
+  if (production.contenuTexte) {
+    const text = production.contenuTexte.substring(0, 80);
+    return text.length === 80 ? text + '...' : text;
+  }
+  return '';
+};
 
 interface Verticale {
   verticale: {
@@ -79,16 +93,18 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
     <section className="bg-gray-50 py-6 lg:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-4">
-          <div>
-            <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
-            <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-              Par univers
-            </h2>
-            <p className="text-gray-500 text-xs">
-              Explorez nos récits organisés par thématiques
-            </p>
+        {/* Header avec introduction étoffée */}
+        <div className="mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+            <div className="max-w-xl">
+              <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-3" />
+              <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
+                Par univers
+              </h2>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {typo("Chaque univers est un monde à explorer : psychologie, carrière, famille, spiritualité... Trouvez les récits qui résonnent avec vos questionnements du moment et laissez-vous guider par vos centres d'intérêt.")}
+              </p>
+            </div>
           </div>
 
           {/* Tabs - Style outline sobre */}
@@ -138,35 +154,46 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
         </div>
 
         {/* Productions Grid - Glassmorphism Premium */}
+        {/* Responsive: 6 sur mobile (3×2), 9 sur tablette (3×3), 8 sur desktop (2×4) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-3 mb-5">
-          {filteredProductions.slice(0, 8).map((production, index) => {
+          {filteredProductions.slice(0, 9).map((production, index) => {
             const colors = getUniversColors(production.verticale?.nom);
+
+            // Gestion visibilité responsive pour éviter les trous
+            // Cartes 1-6: visibles partout
+            // Cartes 7-8: cachées sur mobile
+            // Carte 9: visible tablette uniquement
+            const visibilityClass = index === 8
+              ? 'hidden sm:block lg:hidden' // 9ème carte: tablette uniquement
+              : index >= 6
+              ? 'hidden sm:block' // 7ème et 8ème: cachées sur mobile
+              : ''; // 1-6: partout
 
             return (
               <motion.article
                 key={production.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="group"
+                transition={{ delay: Math.min(index, 6) * 0.05 }}
+                className={`group ${visibilityClass}`}
               >
                 <Link to={production.url} className="block">
                   {/* Card avec glassmorphism */}
                   <div
-                    className="relative rounded-2xl p-[1.5px] transition-all duration-500 group-hover:-translate-y-2"
+                    className="relative rounded-2xl p-[1.5px] transition-all duration-500 group-hover:-translate-y-2 lg:group-hover:-translate-y-4"
                     style={{
                       background: `linear-gradient(145deg, rgba(255,255,255,0.5), rgba(255,255,255,0.1))`,
                     }}
                   >
                     {/* Inner card */}
                     <div
-                      className="relative rounded-[14px] overflow-hidden"
+                      className="relative rounded-[14px] overflow-visible"
                       style={{
                         boxShadow: `0 20px 40px -15px ${colors.shadow}, 0 8px 20px -8px rgba(0,0,0,0.1)`,
                       }}
                     >
                       {/* Image */}
-                      <div className="relative aspect-[4/5] overflow-hidden">
+                      <div className="relative aspect-[4/5] overflow-hidden rounded-[14px]">
                         <img
                           src={production.imageUrl || '/placeholder.svg'}
                           alt={production.titre}
@@ -178,7 +205,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
                         {/* Badge - Dot coloré + texte blanc */}
                         {production.verticale?.nom && (
-                          <div className="absolute top-1.5 left-1.5">
+                          <div className="absolute top-1.5 left-1.5 z-10">
                             <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider text-white bg-black/40 backdrop-blur-sm">
                               <span
                                 className="w-1 h-1 rounded-full"
@@ -189,9 +216,9 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                           </div>
                         )}
 
-                        {/* Titre en bas de l'image avec overlay dédié */}
-                        <div className="absolute inset-x-0 bottom-0 p-2 pt-8 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
-                          <h3 className="text-white font-bold text-[10px] lg:text-xs leading-tight drop-shadow-lg line-clamp-2">
+                        {/* Titre en bas de l'image - Version tablette simple */}
+                        <div className="hidden sm:block lg:hidden absolute inset-x-0 bottom-0 p-2 pt-8 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
+                          <h3 className="text-white font-bold text-[10px] leading-tight drop-shadow-lg line-clamp-2">
                             {typo(production.titre)}
                           </h3>
                         </div>
@@ -203,6 +230,36 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
                         {/* Bordure intérieure subtile */}
                         <div className="absolute inset-0 rounded-[14px] ring-1 ring-inset ring-white/20 group-hover:ring-white/40 transition-all duration-300" />
+                      </div>
+
+                      {/* OVERLAY COMPLET - Mobile (par défaut) + Desktop (au hover) */}
+                      <div
+                        className="block sm:hidden lg:block absolute inset-x-0 bottom-0 rounded-b-[14px] overflow-hidden lg:opacity-0 lg:translate-y-2 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300 lg:pointer-events-none lg:group-hover:pointer-events-auto"
+                      >
+                        <div
+                          className="p-2.5 sm:p-3 pt-8 sm:pt-10 bg-gradient-to-t from-black/95 via-black/90 to-transparent"
+                        >
+                          {/* Titre plus gros */}
+                          <h3 className="text-white font-bold text-[11px] sm:text-sm leading-tight mb-1.5 sm:mb-2 drop-shadow-lg line-clamp-2">
+                            {typo(production.titre)}
+                          </h3>
+
+                          {/* Extrait (avec fallback sur contenu) */}
+                          {getExtrait(production) && (
+                            <p className="text-white/70 text-[9px] sm:text-[10px] leading-relaxed mb-1.5 sm:mb-2 line-clamp-2">
+                              {typo(getExtrait(production))}
+                            </p>
+                          )}
+
+                          {/* Bouton Lire plus */}
+                          <span
+                            className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-semibold transition-all"
+                            style={{ color: colors.bg }}
+                          >
+                            Lire l'article
+                            <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>

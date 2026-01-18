@@ -87,12 +87,12 @@ const EngagementSection: React.FC = () => {
                 Ressource gratuite
               </span>
 
-              <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-1.5">
+              <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-2">
                 Le Kit d'Introspection
               </h2>
 
-              <p className="text-gray-600 text-xs mb-3 leading-relaxed">
-                Nous avons compilé les outils et les questions les plus puissantes de nos intervenants dans un guide pratique et exclusif.
+              <p className="text-gray-600 text-xs sm:text-sm mb-3 leading-relaxed">
+                Nous avons compilé les outils et les questions les plus puissantes de nos intervenants dans un guide pratique et exclusif. 24 pages pour mieux vous connaître, identifier vos blocages et tracer votre chemin.
               </p>
 
               {/* Features - avec icônes colorées */}

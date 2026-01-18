@@ -86,8 +86,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [expandedSidebar, expandedReco]);
 
-  const allItems = portraits.slice(0, 6); // 1 featured + 5 sidebar
-  const sidebarItems = allItems.slice(1, 6); // 5 items for sidebar
+  const allItems = portraits.slice(0, 7); // 1 featured + 6 sidebar (6ème visible uniquement sur mobile)
+  const sidebarItems = allItems.slice(1, 7); // 6 items for sidebar (dernier hidden on desktop)
 
   // Auto-slide every 5 seconds
   useEffect(() => {
@@ -211,13 +211,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
               const isActive = activeIndex === index + 1;
               const isExpanded = expandedSidebar === index;
 
+              // Le 6ème article (index 5) est visible uniquement sur mobile
+              const isLastItem = index === 5;
+
               return (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.08 }}
-                  className="relative group"
+                  className={`relative group ${isLastItem ? 'lg:hidden' : ''}`}
                 >
                   <div
                     className={`relative rounded-2xl overflow-hidden transition-all duration-300 bg-white ${

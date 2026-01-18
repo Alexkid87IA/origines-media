@@ -65,24 +65,24 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
     <section className="bg-white py-6 lg:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header - même style que les autres sections */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-4">
-          <div>
-            <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
-            <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
+        {/* Header avec introduction étoffée */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
+          <div className="max-w-xl">
+            <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-3" />
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">
               Nos séries
             </h2>
-            <p className="text-gray-500 text-xs">
-              Des récits en plusieurs épisodes pour explorer en profondeur
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {typo("Plongez dans des récits en plusieurs épisodes, conçus pour explorer un thème en profondeur. Chaque série est une invitation à prendre le temps, à réfléchir et à grandir au fil des chapitres.")}
             </p>
           </div>
 
           <Link
             to="/series"
-            className="group inline-flex items-center gap-1 text-gray-900 font-medium text-xs hover:text-violet-600 transition-colors"
+            className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
           >
             <span>Toutes les séries</span>
-            <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 

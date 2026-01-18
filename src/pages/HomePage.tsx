@@ -59,7 +59,9 @@ interface SanityVerticaleRaw {
   productions?: Array<{
     _id: string;
     titre: string;
+    extrait?: string;
     description?: string;
+    contenuTexte?: string;
     imageUrl?: string;
     slug?: string;
   }>;
@@ -117,7 +119,9 @@ function HomePage() {
               productions: v.productions?.map((p) => ({
                 id: p._id,
                 titre: p.titre,
+                extrait: p.extrait,
                 description: p.description,
+                contenuTexte: p.contenuTexte,
                 imageUrl: p.imageUrl || "/placeholder.svg",
                 url: `/article/${p.slug || 'default'}`
               })) || []
