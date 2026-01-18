@@ -374,7 +374,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
         </div>
 
         {/* Bottom row - 2 Recommendations - Style sobre */}
-        <div ref={recoRef} className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 lg:gap-3 mt-3 sm:mt-4">
+        <div ref={recoRef} className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 lg:gap-3 mt-3 sm:mt-4 items-stretch">
           {recommendations.map((reco, index) => {
             const accentColor = recommendationColors[index];
             const isExpanded = expandedReco === reco.id;
@@ -385,10 +385,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="relative group h-full"
+                className="relative group"
+                style={{ height: '100%' }}
               >
                 <div
-                  className={`h-full rounded-2xl overflow-hidden transition-all duration-300 bg-white ${
+                  className={`h-full flex flex-col rounded-2xl overflow-hidden transition-all duration-300 bg-white ${
                     isExpanded ? 'ring-2' : 'ring-1 hover:ring-2'
                   }`}
                   style={{
@@ -401,7 +402,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                   {/* Header cliquable */}
                   <button
                     onClick={() => setExpandedReco(isExpanded ? null : reco.id)}
-                    className="w-full h-full text-left"
+                    className="w-full flex-1 text-left"
                   >
                     <div className="relative h-full p-2.5 lg:p-3 flex items-center gap-2.5">
                       {/* Image thumbnail */}
