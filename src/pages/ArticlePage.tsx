@@ -494,7 +494,7 @@ export default function ArticlePage() {
     // Initialize reading time
     setReadingTimeLeft(totalReadTime);
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [headings, article]);
 

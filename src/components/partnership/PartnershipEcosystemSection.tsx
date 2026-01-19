@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
+import { motion } from 'framer-motion';
+import {
   Building2, TrendingUp, Shield, Clock, Eye, DollarSign,
   CheckCircle, ArrowRight, BarChart3, Users, Zap, Target,
   Package, Megaphone, Sparkles, Handshake
@@ -156,39 +157,33 @@ const PartnershipEcosystemSection: React.FC = () => {
         }`}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <div className="inline-flex bg-gray-50 shadow-sm rounded-full p-1 border border-gray-200 min-w-max">
-              <button
-                onClick={() => setActiveTab('model')}
-                className={`px-4 sm:px-6 lg:px-8 py-2 sm:py-3 rounded-full font-medium transition-all text-sm sm:text-base whitespace-nowrap ${
-                  activeTab === 'model'
-                    ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-gray-900'
-                    : 'text-gray-500 hover:text-gray-900'
-                }`}
-              >
-                <Package className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
-                Le Modèle
-              </button>
-              <button
-                onClick={() => setActiveTab('verticales')}
-                className={`px-4 sm:px-6 lg:px-8 py-2 sm:py-3 rounded-full font-medium transition-all text-sm sm:text-base whitespace-nowrap ${
-                  activeTab === 'verticales'
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-gray-900'
-                    : 'text-gray-500 hover:text-gray-900'
-                }`}
-              >
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
-                Par Verticale
-              </button>
-              <button
-                onClick={() => setActiveTab('process')}
-                className={`px-4 sm:px-6 lg:px-8 py-2 sm:py-3 rounded-full font-medium transition-all text-sm sm:text-base whitespace-nowrap ${
-                  activeTab === 'process'
-                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-gray-900'
-                    : 'text-gray-500 hover:text-gray-900'
-                }`}
-              >
-                <Handshake className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
-                Process
-              </button>
+              {[
+                { id: 'model', label: 'Le Modèle', icon: Package, gradient: 'from-violet-600 to-purple-600' },
+                { id: 'verticales', label: 'Par Verticale', icon: Sparkles, gradient: 'from-purple-600 to-pink-600' },
+                { id: 'process', label: 'Process', icon: Handshake, gradient: 'from-orange-600 to-red-600' }
+              ].map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className="relative px-4 sm:px-6 lg:px-8 py-2 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base whitespace-nowrap"
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="ecosystemTabIndicator"
+                        className={`absolute inset-0 rounded-full bg-gradient-to-r ${tab.gradient}`}
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                    <span className={`relative z-10 flex items-center ${isActive ? 'text-white' : 'text-gray-500 hover:text-gray-900'}`}>
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                      {tab.label}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

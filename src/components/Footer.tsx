@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, Heart } from 'lucide-react';
 
 // ============ ICÔNES RÉSEAUX SOCIAUX ============
 const YouTubeIcon = () => (
@@ -45,16 +45,18 @@ const TikTokIcon = () => (
 // ============ DATA ============
 const socialLinks = [
   { icon: YouTubeIcon, href: 'https://youtube.com/@originesmedia', label: 'YouTube', color: '#FF0000' },
-  { icon: XIcon, href: 'https://x.com/originesmedia', label: 'X', color: '#1DA1F2' },
+  { icon: XIcon, href: 'https://x.com/originesmedia', label: 'X', color: '#000000' },
   { icon: SnapchatIcon, href: 'https://snapchat.com/add/originesmedia', label: 'Snapchat', color: '#FFFC00' },
   { icon: FacebookIcon, href: 'https://facebook.com/originesmedia', label: 'Facebook', color: '#1877F2' },
   { icon: InstagramIcon, href: 'https://instagram.com/originesmedia', label: 'Instagram', color: '#E4405F' },
-  { icon: TikTokIcon, href: 'https://tiktok.com/@originesmedia', label: 'TikTok', color: '#00F2EA' },
+  { icon: TikTokIcon, href: 'https://tiktok.com/@originesmedia', label: 'TikTok', color: '#000000' },
 ];
 
 const navigationColumns = [
   {
     title: 'Contenus',
+    titleHref: '/bibliotheque',
+    color: '#EC4899',
     links: [
       { label: 'Séries', href: '/series' },
       { label: 'Histoires', href: '/histoires' },
@@ -65,6 +67,8 @@ const navigationColumns = [
   },
   {
     title: 'Explorer',
+    titleHref: '/univers',
+    color: '#8B5CF6',
     links: [
       { label: 'Tous les univers', href: '/univers' },
       { label: 'Recommandations', href: '/recommandations' },
@@ -73,6 +77,8 @@ const navigationColumns = [
   },
   {
     title: 'Ensemble',
+    titleHref: '/ensemble',
+    color: '#14B8A6',
     links: [
       { label: 'Raconter son histoire', href: '/racontez-votre-histoire' },
       { label: 'Rejoindre l\'équipe', href: '/rejoindre' },
@@ -82,6 +88,8 @@ const navigationColumns = [
   },
   {
     title: 'À propos',
+    titleHref: '/a-propos',
+    color: '#F59E0B',
     links: [
       { label: 'Notre mission', href: '/a-propos' },
       { label: 'Contact', href: '/contact' },
@@ -108,8 +116,8 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-gray-50 text-gray-900">
-      {/* Gradient accent bar at top - tons doux */}
-      <div className="h-1 bg-gradient-to-r from-rose-300 via-violet-300 to-teal-300" />
+      {/* Gradient accent bar at top */}
+      <div className="h-1 bg-gradient-to-r from-rose-400 via-violet-400 to-teal-400" />
 
       {/* Newsletter Section - Top */}
       <div className="border-b border-gray-200">
@@ -135,12 +143,12 @@ const Footer: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="votre@email.com"
                     required
-                    className="flex-1 px-5 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-100 transition-all text-sm"
+                    className="flex-1 px-5 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all text-sm"
                   />
                   <button
                     type="submit"
                     disabled={!email.trim() || isSubmitting}
-                    className="px-6 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white"
+                    className="px-6 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center gap-2 bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 text-white shadow-md hover:shadow-lg"
                   >
                     {isSubmitting ? (
                       'Envoi...'
@@ -185,7 +193,7 @@ const Footer: React.FC = () => {
               Des récits qui inspirent, transforment et éclairent. Rejoignez notre communauté de lecteurs passionnés.
             </p>
 
-            {/* Social Links - avec couleurs de marque au hover */}
+            {/* Social Links - couleurs de marque par défaut */}
             <div className="flex items-center gap-1">
               {socialLinks.map((social) => (
                 <a
@@ -193,16 +201,20 @@ const Footer: React.FC = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 text-gray-400 hover:bg-gray-100 transition-all rounded-lg"
+                  className="group relative p-2.5 rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100"
                   aria-label={social.label}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = social.color;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '';
-                  }}
                 >
-                  <social.icon />
+                  <span
+                    className="transition-transform duration-300 block group-hover:scale-110"
+                    style={{ color: social.color }}
+                  >
+                    <social.icon />
+                  </span>
+                  {/* Glow subtil au hover */}
+                  <div
+                    className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-md -z-10"
+                    style={{ backgroundColor: social.color }}
+                  />
                 </a>
               ))}
             </div>
@@ -213,9 +225,16 @@ const Footer: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
               {navigationColumns.map((column) => (
                 <div key={column.title}>
-                  <h4 className="text-sm font-semibold text-gray-900 mb-5 uppercase tracking-wider">
-                    {column.title}
-                  </h4>
+                  <Link
+                    to={column.titleHref}
+                    className="text-sm font-semibold mb-5 uppercase tracking-wider flex items-center gap-2 hover:opacity-70 transition-opacity"
+                  >
+                    <span
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: column.color }}
+                    />
+                    <span className="text-gray-900">{column.title}</span>
+                  </Link>
                   <ul className="space-y-3">
                     {column.links.map((link) => (
                       <li key={link.href}>
@@ -240,8 +259,12 @@ const Footer: React.FC = () => {
         <div className="max-w-5xl mx-auto px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Copyright */}
-            <p className="text-sm text-gray-400">
-              © {currentYear} Origines Media. Tous droits réservés.
+            <p className="text-sm text-gray-400 flex items-center gap-2">
+              <span>© {currentYear} Origines Media</span>
+              <span className="text-gray-300">•</span>
+              <span className="flex items-center gap-1">
+                Fait avec <Heart className="w-3 h-3 text-rose-400 fill-rose-400" /> en France
+              </span>
             </p>
 
             {/* Legal Links */}

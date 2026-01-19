@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Users, Sparkles, Award, LinkedinIcon, Twitter, Globe, 
+import { motion } from 'framer-motion';
+import {
+  Users, Sparkles, Award, LinkedinIcon, Twitter, Globe,
   Camera, Mic, PenTool, BarChart3, Code, Megaphone,
   Heart, Target, Rocket, Shield, ChevronRight, Star
 } from 'lucide-react';
@@ -187,39 +188,33 @@ const PartnershipTeamSection: React.FC = () => {
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex bg-gray-50 shadow-sm rounded-full p-1 border border-gray-200">
-            <button
-              onClick={() => setActiveTab('founders')}
-              className={`px-8 py-3 rounded-full font-medium transition-all ${
-                activeTab === 'founders'
-                  ? 'bg-gradient-to-r from-orange-600 to-red-600 text-gray-900'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <Star className="w-5 h-5 inline mr-2" />
-              Fondateurs
-            </button>
-            <button
-              onClick={() => setActiveTab('creators')}
-              className={`px-8 py-3 rounded-full font-medium transition-all ${
-                activeTab === 'creators'
-                  ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-gray-900'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <Users className="w-5 h-5 inline mr-2" />
-              Équipes
-            </button>
-            <button
-              onClick={() => setActiveTab('advisory')}
-              className={`px-8 py-3 rounded-full font-medium transition-all ${
-                activeTab === 'advisory'
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-gray-900'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              <Shield className="w-5 h-5 inline mr-2" />
-              Advisory
-            </button>
+            {[
+              { id: 'founders', label: 'Fondateurs', icon: Star, gradient: 'from-orange-600 to-red-600' },
+              { id: 'creators', label: 'Équipes', icon: Users, gradient: 'from-violet-600 to-purple-600' },
+              { id: 'advisory', label: 'Advisory', icon: Shield, gradient: 'from-blue-600 to-indigo-600' }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className="relative px-8 py-3 rounded-full font-medium transition-colors"
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="teamTabIndicator"
+                      className={`absolute inset-0 rounded-full bg-gradient-to-r ${tab.gradient}`}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <span className={`relative z-10 flex items-center ${isActive ? 'text-white' : 'text-gray-500 hover:text-gray-900'}`}>
+                    <Icon className="w-5 h-5 mr-2" />
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 

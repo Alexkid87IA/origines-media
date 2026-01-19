@@ -252,6 +252,8 @@ const UniversDetailPage: React.FC<{ universId: string }> = ({ universId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [allVerticales, setAllVerticales] = useState<Verticale[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 9;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -592,8 +594,13 @@ const UniversDetailPage: React.FC<{ universId: string }> = ({ universId }) => {
           </section>
         )}
 
-        {/* Productions Grid - Premium Cards */}
-        {otherProductions.length > 0 && (
+        {/* Productions Grid - Premium Cards avec Pagination */}
+        {otherProductions.length > 0 && (() => {
+          const totalPages = Math.ceil(otherProductions.length / ITEMS_PER_PAGE);
+          const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+          const paginatedProductions = otherProductions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+          return (
           <section className="py-10 lg:py-14 bg-gray-50">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
@@ -603,24 +610,21 @@ const UniversDetailPage: React.FC<{ universId: string }> = ({ universId }) => {
                     Tous les récits
                   </h2>
                   <p className="text-gray-500 text-sm">
-                    Explorez notre collection sur {verticale.nom.toLowerCase()}
+                    {otherProductions.length} articles sur {verticale.nom.toLowerCase()}
                   </p>
                 </div>
 
-                {otherProductions.length >= 8 && (
-                  <Link
-                    to={`/bibliotheque?verticale=${verticale.slug}`}
-                    className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-white transition-all hover:scale-105"
-                    style={{ backgroundColor: colors.bg }}
-                  >
-                    Voir tout
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400 mr-2">
+                      Page {currentPage} / {totalPages}
+                    </span>
+                  </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
-                {otherProductions.slice(0, 8).map((prod, index) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 lg:gap-5">
+                {paginatedProductions.map((prod, index) => (
                   <motion.article
                     key={prod._id}
                     initial={{ opacity: 0, y: 20 }}
@@ -682,19 +686,61 @@ const UniversDetailPage: React.FC<{ universId: string }> = ({ universId }) => {
                 ))}
               </div>
 
-              {/* Footer CTA */}
-              <div className="flex items-center justify-center mt-10">
-                <Link
-                  to={`/bibliotheque?verticale=${verticale.slug}`}
-                  className="group inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full text-sm font-bold hover:bg-gray-800 transition-all"
-                >
-                  Voir tous les articles
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-10">
+                  {/* Bouton précédent */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(p => Math.max(1, p - 1));
+                      window.scrollTo({ top: 500, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-full border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <ArrowRight className="w-4 h-4 rotate-180" />
+                  </button>
+
+                  {/* Numéros de pages */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => {
+                          setCurrentPage(page);
+                          window.scrollTo({ top: 500, behavior: 'smooth' });
+                        }}
+                        className={`w-9 h-9 rounded-full text-sm font-semibold transition-all ${
+                          currentPage === page
+                            ? 'text-white shadow-lg'
+                            : 'text-gray-600 hover:bg-gray-100'
+                        }`}
+                        style={{
+                          backgroundColor: currentPage === page ? colors.bg : undefined,
+                        }}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Bouton suivant */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(p => Math.min(totalPages, p + 1));
+                      window.scrollTo({ top: 500, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-full border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </section>
-        )}
+          );
+        })()}
 
         {/* Autres Univers - Design Spectaculaire */}
         {relatedUniverses.length > 0 && (

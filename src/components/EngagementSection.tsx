@@ -1,170 +1,253 @@
 // src/components/EngagementSection.tsx
-// Section Lead Magnet - Kit d'Introspection - Style coloré et lumineux
+// Section Académie - Cartes Premium avec images
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check, Sparkles, Heart, Star } from 'lucide-react';
+import { ArrowRight, Sparkles, Star, Check } from 'lucide-react';
+import { typo } from '../lib/typography';
 
-const EngagementSection: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+// Produits de l'Académie
+const academyProducts = [
+  {
+    id: 'kit-introspection',
+    title: "Kit d'Introspection",
+    subtitle: 'Votre voyage intérieur commence ici',
+    description: '24 pages d\'exercices pour mieux vous connaître.',
+    image: '/kit-introspection.jpg',
+    price: 'Gratuit',
+    originalPrice: null,
+    color: '#06B6D4', // Cyan
+    href: '/academie/kit-introspection',
+    tag: 'Gratuit',
+    tagColor: '#10B981',
+    benefits: ['24 pages de contenu', 'Exercices pratiques', 'Téléchargement immédiat'],
+  },
+  {
+    id: 'masterclass-storytelling',
+    title: 'Masterclass Storytelling',
+    subtitle: "L'art de raconter votre histoire",
+    description: 'Apprenez à captiver et structurer vos récits.',
+    image: '/academy/masterclass-storytelling.jpg',
+    price: '29€',
+    originalPrice: '49€',
+    color: '#F59E0B', // Amber
+    href: '/academie/masterclass-storytelling',
+    tag: '-40%',
+    tagColor: '#EF4444',
+    benefits: ['3h de vidéo HD', 'Workbook inclus', 'Accès à vie'],
+  },
+  {
+    id: 'guide-mindset',
+    title: 'Guide Mindset',
+    subtitle: 'Transformez votre mental',
+    description: 'Développez un état d\'esprit de croissance.',
+    image: '/academy/guide-mindset.jpg',
+    price: '19€',
+    originalPrice: null,
+    color: '#8B5CF6', // Violet
+    href: '/academie/guide-mindset',
+    tag: 'Nouveau',
+    tagColor: '#8B5CF6',
+    benefits: ['Guide PDF complet', '12 exercices', 'Audio méditations'],
+  },
+  {
+    id: 'programme-complet',
+    title: 'Programme Complet',
+    subtitle: 'Accès illimité à vie',
+    description: 'Toutes nos formations en un seul pass.',
+    image: '/academy/programme-complet.jpg',
+    price: '79€',
+    originalPrice: '147€',
+    color: '#EC4899', // Pink
+    href: '/academie/programme-complet',
+    tag: 'Best-seller',
+    tagColor: '#EC4899',
+    benefits: ['Tout le catalogue', 'Mises à jour gratuites', 'Communauté privée'],
+  },
+];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
+// Composant carte produit Premium
+interface ProductCardProps {
+  product: typeof academyProducts[0];
+  index: number;
+  featured?: boolean;
+}
 
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitted(true);
-    setIsSubmitting(false);
-  };
-
-  // Features avec couleurs du livre
-  const features = [
-    { icon: Sparkles, text: '24 pages de contenu exclusif', color: '#06B6D4' }, // Cyan
-    { icon: Heart, text: 'Exercices pratiques guidés', color: '#EC4899' }, // Pink
-    { icon: Star, text: 'Outils de réflexion personnelle', color: '#F59E0B' }, // Amber
-  ];
+const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <section className="py-4 sm:py-6 lg:py-8 bg-gradient-to-br from-cyan-50 via-white to-pink-50">
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
-
-        {/* Main Card - Fond clair et coloré */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="rounded-xl overflow-hidden bg-white shadow-lg shadow-cyan-500/10 border border-gray-100"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      className="h-full"
+    >
+      <Link
+        to={product.href}
+        className="group flex flex-col h-full rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2"
+        style={{
+          backgroundColor: 'white',
+          boxShadow: isHovered
+            ? `0 25px 50px -12px ${product.color}40, 0 0 0 2px ${product.color}`
+            : '0 4px 20px -5px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05)'
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Image du produit */}
+        <div
+          className="relative aspect-[4/3] overflow-hidden flex-shrink-0"
+          style={{ backgroundColor: `${product.color}15` }}
         >
-          <div className="grid lg:grid-cols-2 gap-0">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
 
-            {/* Left - Product Image Container */}
-            <div className="relative min-h-[160px] sm:min-h-[200px] lg:min-h-[260px] bg-gradient-to-br from-cyan-100 via-cyan-50 to-pink-50 flex items-center justify-center p-2 sm:p-3 lg:p-4">
-              {/* Decorative shapes - couleurs du livre */}
-              <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-pink-400/20" />
-              <div className="absolute top-1/4 right-4 w-6 h-6 rounded-full bg-yellow-400/30" />
-              <div className="absolute bottom-1/4 left-6 w-6 h-6 rounded-full bg-cyan-400/30" />
-              <div className="absolute bottom-6 right-1/4 w-10 h-10 rounded-full bg-orange-400/20" />
-
-              {/* Decorative dots */}
-              <div className="absolute top-1/3 left-1/4 w-1.5 h-1.5 rounded-full bg-pink-400" />
-              <div className="absolute bottom-1/3 right-6 w-1 h-1 rounded-full bg-cyan-500" />
-              <div className="absolute top-1/2 right-1/3 w-1 h-1 rounded-full bg-yellow-400" />
-
-              {/* Product Image */}
-              <div className="relative z-10 w-full max-w-[110px] sm:max-w-[140px] lg:max-w-[170px]">
-                <motion.div
-                  initial={{ rotate: -3 }}
-                  whileHover={{ rotate: 0, scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  className="rounded-lg overflow-hidden shadow-2xl shadow-cyan-500/20"
-                >
-                  <img
-                    src="/kit-introspection.jpg"
-                    alt="Le Kit d'Introspection - Guide pratique et exclusif"
-                    className="w-full h-auto object-cover"
-                  />
-                </motion.div>
-
-                {/* Floating badge */}
-                <div className="absolute -bottom-1.5 -right-1.5 lg:-bottom-2 lg:-right-2">
-                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-pink-500 to-orange-400 rounded-full text-white font-bold text-[9px] shadow-lg shadow-pink-500/30">
-                    <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
-                    Gratuit
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right - Content & Form */}
-            <div className="p-2.5 sm:p-3 lg:p-4 flex flex-col justify-center bg-white">
-              {/* Badge */}
-              <span className="inline-flex items-center gap-1 self-start px-2 py-0.5 bg-gradient-to-r from-cyan-100 to-pink-100 rounded-full text-gray-700 text-[8px] font-semibold uppercase tracking-wider mb-2">
-                <Sparkles className="w-2 h-2 text-pink-500" />
-                Ressource gratuite
+          {/* Tag promo */}
+          {product.tag && (
+            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+              <span
+                className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white shadow-lg"
+                style={{ backgroundColor: product.tagColor }}
+              >
+                {product.tag}
               </span>
+            </div>
+          )}
 
-              <h2 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">
-                Le Kit d'Introspection
-              </h2>
+        </div>
 
-              <p className="text-gray-600 text-[11px] sm:text-xs lg:text-sm mb-2 sm:mb-3 leading-relaxed">
-                Nous avons compilé les outils et les questions les plus puissantes de nos intervenants dans un guide pratique et exclusif. 24 pages pour mieux vous connaître, identifier vos blocages et tracer votre chemin.
-              </p>
+        {/* Contenu */}
+        <div className="flex flex-col flex-1 p-3 sm:p-4">
+          {/* Titre + Sous-titre - Hauteur fixe pour harmoniser */}
+          <div className="min-h-[52px] sm:min-h-[60px] mb-2 sm:mb-3">
+            <h3
+              className="text-sm sm:text-base font-bold mb-0.5 sm:mb-1 transition-colors duration-200"
+              style={{ color: isHovered ? product.color : '#111827' }}
+            >
+              {product.title}
+            </h3>
+            <p className="text-gray-500 text-[10px] sm:text-xs">
+              {product.subtitle}
+            </p>
+          </div>
 
-              {/* Features - avec icônes colorées */}
-              <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div
-                      className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: `${feature.color}15` }}
-                    >
-                      <feature.icon className="w-2.5 h-2.5" style={{ color: feature.color }} />
-                    </div>
-                    <span className="text-gray-700 text-[10px] font-medium">
-                      {feature.text}
-                    </span>
-                  </div>
-                ))}
+          {/* Bénéfices */}
+          <div className="space-y-1 sm:space-y-1.5 flex-1">
+            {product.benefits.map((benefit, i) => (
+              <div key={i} className="flex items-center gap-1.5 sm:gap-2">
+                <Check className="w-3 h-3 flex-shrink-0" style={{ color: product.color }} />
+                <span className="text-[9px] sm:text-[10px] text-gray-600 line-clamp-1">{benefit}</span>
               </div>
+            ))}
+          </div>
 
-              {/* Form */}
-              {!isSubmitted ? (
-                <form onSubmit={handleSubmit} className="space-y-1.5">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 transition-all"
-                    placeholder="votre@email.com"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!email.trim() || isSubmitting}
-                    className="w-full px-3 py-2 bg-gradient-to-r from-cyan-500 to-pink-500 text-white text-xs font-bold rounded-md hover:from-cyan-600 hover:to-pink-600 transition-all disabled:opacity-50 flex items-center justify-center gap-1 shadow-lg shadow-pink-500/20"
-                  >
-                    {isSubmitting ? (
-                      'Envoi en cours...'
-                    ) : (
-                      <>
-                        Recevoir le guide gratuitement
-                        <ArrowRight className="w-2.5 h-2.5" />
-                      </>
-                    )}
-                  </button>
-                  <p className="text-gray-400 text-[8px] text-center">
-                    Vos données sont protégées. Désabonnement possible à tout moment.
-                  </p>
-                </form>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="p-3 bg-gradient-to-r from-cyan-50 to-pink-50 rounded-md text-center border border-cyan-100"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-pink-500 flex items-center justify-center mx-auto mb-2 shadow-lg shadow-pink-500/20">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-0.5">
-                    Merci !
-                  </h3>
-                  <p className="text-gray-600 text-[10px]">
-                    Votre guide vous attend dans votre boîte mail.
-                    <br />
-                    Vérifiez vos spams si nécessaire.
-                  </p>
-                </motion.div>
+          {/* Prix et CTA */}
+          <div
+            className="flex items-center justify-between pt-3 mt-3 border-t"
+            style={{ borderColor: `${product.color}15` }}
+          >
+            <div className="flex items-baseline gap-1">
+              <span
+                className="text-lg sm:text-xl font-bold"
+                style={{ color: product.color }}
+              >
+                {product.price}
+              </span>
+              {product.originalPrice && (
+                <span className="text-[10px] sm:text-xs text-gray-400 line-through">
+                  {product.originalPrice}
+                </span>
               )}
             </div>
-
+            <span
+              className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all duration-200"
+              style={{
+                backgroundColor: isHovered ? product.color : `${product.color}15`,
+                color: isHovered ? 'white' : product.color
+              }}
+            >
+              <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+            </span>
           </div>
-        </motion.div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
 
+const EngagementSection: React.FC = () => {
+  return (
+    <section className="py-6 sm:py-8 lg:py-12 bg-gradient-to-b from-white via-amber-50/20 to-white">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="max-w-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-1 w-8 bg-amber-500 rounded-full" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Apprendre</span>
+            </div>
+            <h2 className="text-xl sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+              Notre Académie
+            </h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {typo("Des ressources premium pour votre développement personnel. Guides, masterclasses et programmes complets créés par des experts.")}
+            </p>
+          </div>
+
+          <Link
+            to="/academie"
+            className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
+          >
+            <span>Voir l'Académie</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        {/* Grille de produits - 2 sur mobile, 4 sur desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {academyProducts.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} />
+          ))}
+        </div>
+
+        {/* Footer stats */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-6 sm:mt-8 pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-4 sm:gap-6">
+            <span className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              2,500+ apprenants
+            </span>
+            <span className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1.5">
+              <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+              4.9/5 de satisfaction
+            </span>
+            <span className="hidden sm:flex text-[10px] sm:text-xs text-gray-400 items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-violet-500" />
+              Garantie satisfait ou remboursé
+            </span>
+          </div>
+
+          <Link
+            to="/academie"
+            className="text-xs font-semibold text-gray-500 hover:text-amber-600 transition-colors flex items-center gap-1"
+          >
+            Tout découvrir
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

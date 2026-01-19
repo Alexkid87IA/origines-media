@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { User, Award, Film, Music, Palette, Edit3, Camera, Headphones, Twitter, Instagram, Linkedin, Globe, Mail, Star, TrendingUp, Users, Heart, MessageCircle, Share2, ChevronRight, Sparkles, Zap, Trophy, Target, Coffee, Layers, type LucideIcon } from 'lucide-react';
 
 interface Animateur {
@@ -189,21 +190,25 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
               { id: 'awards', label: 'Récompenses', icon: Trophy }
             ].map((tab) => {
               const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-6 py-3 rounded-full flex items-center gap-2 transition-all duration-300 ${
-                    activeTab === tab.id
-                      ? 'text-white shadow-md'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                  style={{
-                    backgroundColor: activeTab === tab.id ? formatColor : 'transparent'
-                  }}
+                  className="relative px-6 py-3 rounded-full flex items-center gap-2 transition-colors duration-300"
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium">{tab.label}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="equipeCreditsTabIndicator"
+                      className="absolute inset-0 rounded-full shadow-md"
+                      style={{ backgroundColor: formatColor }}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <Icon className={`relative z-10 w-4 h-4 ${isActive ? 'text-white' : 'text-gray-600'}`} />
+                  <span className={`relative z-10 font-medium ${isActive ? 'text-white' : 'text-gray-600 hover:text-gray-900'}`}>
+                    {tab.label}
+                  </span>
                 </button>
               );
             })}

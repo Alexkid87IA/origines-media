@@ -1,5 +1,16 @@
-import React, { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+
+// Composant pour scroller en haut à chaque changement de page
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 // Lazy loading des pages
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -22,6 +33,7 @@ const PartnershipsPage = lazy(() => import('./pages/PartnershipsPage'));
 const JoinPage = lazy(() => import('./pages/JoinPage'));
 const ShareStoryPage = lazy(() => import('./pages/ShareStoryPage'));
 const RecommandationsPage = lazy(() => import('./pages/RecommandationsPage'));
+const RecommandationPage = lazy(() => import('./pages/RecommandationPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
@@ -34,8 +46,10 @@ const LoadingFallback = () => (
 
 function App() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <Routes>
+    <>
+      <ScrollToTop />
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/univers" element={<UniversPage />} />
         <Route path="/univers/:universId" element={<UniversPage />} />
@@ -58,17 +72,18 @@ function App() {
         <Route path="/rejoindre" element={<JoinPage />} />
         <Route path="/racontez-votre-histoire" element={<ShareStoryPage />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
-        <Route path="/recommandation/:slug" element={<RecommandationsPage />} />
-        <Route path="/academy" element={<AcademyPage />} />
-        <Route path="/academy/:guideSlug" element={<AcademyPage />} />
+        <Route path="/recommandation/:slug" element={<RecommandationPage />} />
+        <Route path="/academie" element={<AcademyPage />} />
+        <Route path="/academie/:guideSlug" element={<AcademyPage />} />
         <Route path="/communaute" element={<EnsemblePage />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
         <Route path="/mentions-legales" element={<LegalPage />} />
         <Route path="/cgu" element={<LegalPage />} />
         <Route path="/politique-confidentialite" element={<LegalPage />} />
         <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+    </>
   );
 }
 

@@ -90,34 +90,42 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
   };
 
   return (
-    <section className="bg-gray-50 py-4 sm:py-6 lg:py-8">
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
+    <section className="bg-gray-50 py-6 sm:py-8 lg:py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header avec introduction étoffée */}
-        <div className="mb-4 sm:mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+        <div className="mb-5 sm:mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-4">
             <div className="max-w-xl">
-              <div className="h-0.5 w-8 sm:w-10 bg-gray-900 rounded-full mb-2 sm:mb-3" />
-              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
-                Par univers
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-1 w-8 bg-emerald-500 rounded-full" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lire</span>
+              </div>
+              <h2 className="text-xl sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+                Nos articles
               </h2>
-              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+              <p className="text-gray-600 text-sm leading-relaxed">
                 {typo("Chaque univers est un monde à explorer : psychologie, carrière, famille, spiritualité... Trouvez les récits qui résonnent avec vos questionnements du moment et laissez-vous guider par vos centres d'intérêt.")}
               </p>
             </div>
           </div>
 
-          {/* Tabs - Style outline sobre */}
-          <div className="flex flex-wrap gap-1">
+          {/* Tabs - Style avec animation layoutId */}
+          <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setActiveTab('tous')}
-              className={`px-2.5 py-1 text-[10px] font-semibold transition-all duration-200 rounded-full border ${
-                activeTab === 'tous'
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-transparent text-gray-600 border-gray-300 hover:border-gray-900 hover:text-gray-900'
-              }`}
+              className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-200 rounded-full"
             >
-              Tous
+              {activeTab === 'tous' && (
+                <motion.div
+                  layoutId="articlesTabIndicator"
+                  className="absolute inset-0 bg-gray-900 rounded-full"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className={`relative z-10 ${activeTab === 'tous' ? 'text-white' : 'text-gray-600 hover:text-gray-900'}`}>
+                Tous
+              </span>
             </button>
             {verticaleNames.map(name => {
               const colors = getUniversColors(name);
@@ -127,26 +135,28 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                 <button
                   key={name}
                   onClick={() => setActiveTab(name)}
-                  className="px-2.5 py-1 text-[10px] font-semibold transition-all duration-200 rounded-full border"
-                  style={{
-                    backgroundColor: isActive ? colors.bg : 'transparent',
-                    color: isActive ? colors.text : '#6B7280',
-                    borderColor: isActive ? colors.bg : '#D1D5DB',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = colors.bg;
-                      e.currentTarget.style.color = colors.bg;
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = '#D1D5DB';
-                      e.currentTarget.style.color = '#6B7280';
-                    }
-                  }}
+                  className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-200 rounded-full"
                 >
-                  {name}
+                  {isActive && (
+                    <motion.div
+                      layoutId="articlesTabIndicator"
+                      className="absolute inset-0 rounded-full"
+                      style={{ backgroundColor: colors.bg }}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <span
+                    className="relative z-10 transition-colors duration-200"
+                    style={{ color: isActive ? colors.text : '#6B7280' }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) e.currentTarget.style.color = colors.bg;
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) e.currentTarget.style.color = '#6B7280';
+                    }}
+                  >
+                    {name}
+                  </span>
                 </button>
               );
             })}
@@ -155,7 +165,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
         {/* Productions Grid - Glassmorphism Premium */}
         {/* Responsive: 6 sur mobile (3×2), 9 sur tablette (3×3), 8 sur desktop (2×4) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5 sm:gap-2 lg:gap-3 mb-4 sm:mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-3 mb-5 sm:mb-6">
           {filteredProductions.slice(0, 9).map((production, index) => {
             const colors = getUniversColors(production.verticale?.nom);
 
@@ -192,8 +202,8 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                         boxShadow: `0 20px 40px -15px ${colors.shadow}, 0 8px 20px -8px rgba(0,0,0,0.1)`,
                       }}
                     >
-                      {/* Image */}
-                      <div className="relative aspect-[4/5] overflow-hidden rounded-[14px]">
+                      {/* Image - Plus grande sur desktop */}
+                      <div className="relative aspect-[4/5] lg:aspect-[4/5.5] overflow-hidden rounded-[14px]">
                         <img
                           src={production.imageUrl || '/placeholder.svg'}
                           alt={production.titre}
@@ -232,28 +242,28 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                         <div className="absolute inset-0 rounded-[14px] ring-1 ring-inset ring-white/20 group-hover:ring-white/40 transition-all duration-300" />
                       </div>
 
-                      {/* OVERLAY COMPLET - Mobile (par défaut) + Desktop (au hover) */}
+                      {/* OVERLAY COMPLET - Mobile (par défaut) + Desktop (par défaut aussi) */}
                       <div
-                        className="block sm:hidden lg:block absolute inset-x-0 bottom-0 rounded-b-[14px] overflow-hidden lg:opacity-0 lg:translate-y-2 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300 lg:pointer-events-none lg:group-hover:pointer-events-auto"
+                        className="block sm:hidden lg:block absolute inset-x-0 bottom-0 rounded-b-[14px] overflow-hidden"
                       >
                         <div
-                          className="p-2.5 sm:p-3 pt-8 sm:pt-10 bg-gradient-to-t from-black/95 via-black/90 to-transparent"
+                          className="p-2.5 sm:p-3 lg:p-4 pt-8 sm:pt-10 lg:pt-16 bg-gradient-to-t from-black via-black/85 to-transparent"
                         >
-                          {/* Titre plus gros */}
-                          <h3 className="text-white font-bold text-[11px] sm:text-sm leading-tight mb-1.5 sm:mb-2 drop-shadow-lg line-clamp-2">
+                          {/* Titre - pas tronqué sur desktop */}
+                          <h3 className="text-white font-bold text-[11px] sm:text-sm lg:text-[13px] leading-tight lg:leading-snug mb-1.5 sm:mb-2 drop-shadow-lg line-clamp-2 lg:line-clamp-4">
                             {typo(production.titre)}
                           </h3>
 
                           {/* Extrait (avec fallback sur contenu) */}
                           {getExtrait(production) && (
-                            <p className="text-white/70 text-[9px] sm:text-[10px] leading-relaxed mb-1.5 sm:mb-2 line-clamp-2">
+                            <p className="text-white/80 text-[9px] sm:text-[10px] lg:text-[11px] leading-relaxed mb-1.5 sm:mb-2 line-clamp-2">
                               {typo(getExtrait(production))}
                             </p>
                           )}
 
                           {/* Bouton Lire plus */}
                           <span
-                            className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-semibold transition-all"
+                            className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] lg:text-[11px] font-semibold transition-all"
                             style={{ color: colors.bg }}
                           >
                             Lire l'article

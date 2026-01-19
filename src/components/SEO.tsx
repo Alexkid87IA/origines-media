@@ -23,7 +23,7 @@ const SITE_URL = 'https://originesmedia.com';
 const SEO: React.FC<SEOProps> = ({
   title,
   description = DEFAULT_DESCRIPTION,
-  image = DEFAULT_IMAGE,
+  image,
   url,
   type = 'website',
   author,
@@ -35,7 +35,8 @@ const SEO: React.FC<SEOProps> = ({
 }) => {
   const fullTitle = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE;
   const canonicalUrl = url ? `${SITE_URL}${url}` : SITE_URL;
-  const imageUrl = image.startsWith('http') ? image : `${SITE_URL}${image}`;
+  const safeImage = image || DEFAULT_IMAGE;
+  const imageUrl = safeImage.startsWith('http') ? safeImage : `${SITE_URL}${safeImage}`;
 
   return (
     <Helmet>

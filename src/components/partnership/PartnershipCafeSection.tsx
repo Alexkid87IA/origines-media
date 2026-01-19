@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Coffee, Pizza, Mic, Calendar, Clock, Users, Building2, 
+import { motion } from 'framer-motion';
+import {
+  Coffee, Pizza, Mic, Calendar, Clock, Users, Building2,
   Wifi, Camera, DollarSign, Target, Sparkles, ArrowRight,
   Sun, Moon, Package, Heart, Book, Phone, BatteryCharging,
   TrendingUp, MapPin, ChevronRight, Play, Settings
@@ -275,20 +276,28 @@ const PartnershipCafeSection: React.FC = () => {
           {/* Desktop tabs */}
           <div className="hidden md:flex justify-center">
             <div className="inline-flex bg-gray-50 shadow-sm rounded-full p-1 border border-gray-200">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-6 lg:px-8 py-3 rounded-full font-medium transition-all ${
-                    activeTab === tab.id
-                      ? 'bg-gradient-to-r ' + getTabColor(tab.id) + ' text-gray-900'
-                      : 'text-gray-500 hover:text-gray-900'
-                  }`}
-                >
-                  <tab.icon className="w-5 h-5 inline mr-2" />
-                  <span className="hidden lg:inline">{tab.label}</span>
-                </button>
-              ))}
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className="relative px-6 lg:px-8 py-3 rounded-full font-medium transition-colors"
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="cafeTabIndicator"
+                        className={`absolute inset-0 rounded-full bg-gradient-to-r ${getTabColor(tab.id)}`}
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                    <span className={`relative z-10 flex items-center ${isActive ? 'text-white' : 'text-gray-500 hover:text-gray-900'}`}>
+                      <tab.icon className="w-5 h-5 mr-2" />
+                      <span className="hidden lg:inline">{tab.label}</span>
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -308,20 +317,28 @@ const PartnershipCafeSection: React.FC = () => {
               {/* Timeline selector - Horizontal scroll on mobile */}
               <div className="overflow-x-auto pb-2 mb-6 md:mb-10">
                 <div className="flex justify-start md:justify-center gap-2 min-w-max px-2 md:px-0">
-                  {Object.entries(timeSlots).map(([key, slot]) => (
-                    <button
-                      key={key}
-                      onClick={() => setTimeOfDay(key as any)}
-                      className={`px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-medium transition-all whitespace-nowrap ${
-                        timeOfDay === key
-                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-gray-900 scale-105'
-                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                      }`}
-                    >
-                      <slot.icon className="w-4 h-4 md:w-5 md:h-5 inline mr-1 md:mr-2" />
-                      <span className="text-sm md:text-base">{slot.hours}</span>
-                    </button>
-                  ))}
+                  {Object.entries(timeSlots).map(([key, slot]) => {
+                    const isActive = timeOfDay === key;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => setTimeOfDay(key as any)}
+                        className="relative px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-medium transition-colors whitespace-nowrap"
+                      >
+                        {isActive && (
+                          <motion.div
+                            layoutId="cafeTimeIndicator"
+                            className="absolute inset-0 rounded-lg md:rounded-xl bg-gradient-to-r from-orange-500 to-red-500"
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
+                        <span className={`relative z-10 flex items-center ${isActive ? 'text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+                          <slot.icon className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" />
+                          <span className="text-sm md:text-base">{slot.hours}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

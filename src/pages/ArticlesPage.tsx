@@ -11,10 +11,7 @@ import {
   ChevronRight,
   X,
   ArrowRight,
-  Clock,
   Calendar,
-  FileText,
-  ChevronDown,
   SlidersHorizontal,
   Newspaper
 } from 'lucide-react';
@@ -50,7 +47,9 @@ interface Article {
   _id: string;
   titre: string;
   typeArticle: string;
-  description: string;
+  extrait?: string;
+  description?: string;
+  contenuTexte?: string;
   imageUrl: string;
   slug: string;
   datePublication: string;
@@ -60,14 +59,24 @@ interface Article {
   verticale?: { nom: string; couleurDominante: string; slug: string };
 }
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 6;
 
-// Labels pour les types d'articles
+// Labels pour les types d'articles (hors "article" standard qui est redondant)
 const TYPE_LABELS: Record<string, { label: string; color: string }> = {
-  article: { label: 'Article', color: '#059669' },
   actu: { label: 'Actualité', color: '#DC2626' },
   guide: { label: 'Guide', color: '#7C3AED' },
   interview: { label: 'Interview', color: '#F59E0B' },
+};
+
+// Helper: récupère l'extrait avec fallback sur description ou contenu
+const getExtrait = (article: Article): string => {
+  if (article.extrait) return article.extrait;
+  if (article.description) return article.description;
+  if (article.contenuTexte) {
+    const text = article.contenuTexte.substring(0, 120);
+    return text.length === 120 ? text + '...' : text;
+  }
+  return '';
 };
 
 const ArticlesPage: React.FC = () => {
@@ -129,6 +138,16 @@ const ArticlesPage: React.FC = () => {
     return counts;
   }, [articles, verticales]);
 
+  // Fonction de shuffle (Fisher-Yates)
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   // Filtrer les articles
   const filteredArticles = useMemo(() => {
     let result = [...articles];
@@ -149,7 +168,40 @@ const ArticlesPage: React.FC = () => {
     }
 
     if (activeVerticale) {
+      // Si une verticale est sélectionnée, afficher tous ses articles
       result = result.filter(a => a.verticale?.slug === activeVerticale);
+    } else {
+      // Mode "Tous les articles" : 1 article par verticale, shufflé
+      // Grouper par verticale
+      const byVerticale: Record<string, Article[]> = {};
+      result.forEach(article => {
+        const vSlug = article.verticale?.slug || 'sans-verticale';
+        if (!byVerticale[vSlug]) {
+          byVerticale[vSlug] = [];
+        }
+        byVerticale[vSlug].push(article);
+      });
+
+      // Shuffler chaque groupe puis prendre un article de chaque
+      const shuffledGroups = Object.values(byVerticale).map(group => shuffleArray(group));
+
+      // Créer un pool d'articles diversifiés (1 par verticale à chaque tour)
+      const diversified: Article[] = [];
+      let hasMore = true;
+      let roundIndex = 0;
+
+      while (hasMore) {
+        hasMore = false;
+        for (const group of shuffledGroups) {
+          if (group[roundIndex]) {
+            diversified.push(group[roundIndex]);
+            hasMore = true;
+          }
+        }
+        roundIndex++;
+      }
+
+      result = diversified;
     }
 
     return result;
@@ -211,17 +263,14 @@ const ArticlesPage: React.FC = () => {
 
   const hasActiveFilters = searchQuery || activeType || activeVerticale;
 
-  // Couleur active
+  // Couleur active - basée sur la verticale sélectionnée
   const activeColor = useMemo(() => {
-    if (activeType && TYPE_LABELS[activeType]) {
-      return TYPE_LABELS[activeType].color;
-    }
     if (activeVerticale) {
       const v = verticales.find(v => v.slug.current === activeVerticale);
       if (v?.couleurDominante) return v.couleurDominante;
     }
-    return '#059669'; // Emerald par défaut
-  }, [activeType, activeVerticale, verticales]);
+    return '#111827'; // Gris foncé par défaut (neutre)
+  }, [activeVerticale, verticales]);
 
   // Format de date
   const formatDate = (dateString: string) => {
@@ -382,7 +431,7 @@ const ArticlesPage: React.FC = () => {
                     </h3>
                   </div>
 
-                  <div className="p-2 max-h-64 overflow-y-auto">
+                  <div className="p-2">
                     {verticales.filter(v => verticaleCounts[v.slug.current] > 0).map((verticale) => {
                       const isActive = activeVerticale === verticale.slug.current;
                       const count = verticaleCounts[verticale.slug.current] || 0;
@@ -563,27 +612,6 @@ const ArticlesPage: React.FC = () => {
                                   loading="lazy"
                                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
-
-                                {/* Badge type */}
-                                <div className="absolute top-3 left-3">
-                                  <span
-                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg"
-                                    style={{ backgroundColor: typeInfo.color, color: '#FFFFFF' }}
-                                  >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />
-                                    {typeInfo.label}
-                                  </span>
-                                </div>
-
-                                {/* Temps de lecture */}
-                                {article.tempsLecture && (
-                                  <div className="absolute top-3 right-3">
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium bg-black/50 text-white backdrop-blur-sm">
-                                      <Clock className="w-3 h-3" />
-                                      {article.tempsLecture} min
-                                    </span>
-                                  </div>
-                                )}
                               </div>
 
                               {/* Contenu texte */}
@@ -602,11 +630,9 @@ const ArticlesPage: React.FC = () => {
                                   {typo(article.titre)}
                                 </h3>
 
-                                {article.description && (
-                                  <p className="text-gray-500 text-[11px] line-clamp-2 mb-3">
-                                    {article.description}
-                                  </p>
-                                )}
+                                <p className="text-gray-500 text-[11px] line-clamp-2 mb-3">
+                                  {getExtrait(article)}
+                                </p>
 
                                 <div className="flex items-center justify-between">
                                   <span

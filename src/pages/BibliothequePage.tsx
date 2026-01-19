@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Grid3X3, FileText, Play, Film, Heart, User,
   Clock, Eye, Star, BookOpen, ChevronDown, SlidersHorizontal,
-  ArrowRight, X
+  ArrowRight, X, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { sanityFetch } from '../lib/sanity';
 import {
@@ -99,6 +99,8 @@ const SORT_OPTIONS = [
   { id: 'alpha', label: 'A-Z' },
 ];
 
+const ITEMS_PER_PAGE = 9;
+
 // ============ HELPER FUNCTIONS ============
 function formatDuration(minutes: number): string {
   if (minutes < 60) return `${minutes} min`;
@@ -130,274 +132,106 @@ function getContentLink(item: ContentItem): string {
   }
 }
 
-// ============ CARD COMPONENTS ============
+// ============ CARD COMPONENT - Design unifié 16:9 ============
 
-// Article Card
-const ArticleCard: React.FC<{ item: ContentItem }> = ({ item }) => {
-  const color = item.verticale?.couleurDominante || '#6B7280';
+const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
+  const color = item.verticale?.couleurDominante || CONTENT_TYPES.find(t => t.id === item.contentType)?.color || '#6B7280';
+  const typeConfig = CONTENT_TYPES.find(t => t.id === item.contentType);
+  const TypeIcon = typeConfig?.icon || FileText;
 
-  return (
-    <Link to={getContentLink(item)} className="group block">
-      <div className="relative rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-        {/* Image */}
-        <div className="relative aspect-[16/10] overflow-hidden">
-          <img
-            src={item.imageUrl || '/placeholder.svg'}
-            alt={item.titre}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+  // Label du type de contenu
+  const getTypeLabel = () => {
+    switch (item.contentType) {
+      case 'article': return 'Article';
+      case 'video': return 'Vidéo';
+      case 'serie': return 'Série';
+      case 'reco': return item.type || 'Reco';
+      case 'histoire': return 'Histoire';
+      default: return 'Contenu';
+    }
+  };
 
-          {/* Badge type */}
-          <div className="absolute top-3 left-3">
-            <span
-              className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-              style={{ backgroundColor: color }}
-            >
-              {item.verticale?.nom || 'Article'}
-            </span>
-          </div>
-
-          {/* Badge article type */}
-          <div className="absolute top-3 right-3">
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/90 text-gray-700">
-              <FileText className="w-3 h-3 inline mr-1" />
-              Article
-            </span>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors">
-            {item.titre}
-          </h3>
-          {item.tempsLecture && (
-            <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {item.tempsLecture} min de lecture
-            </p>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-};
-
-// Video Card
-const VideoCard: React.FC<{ item: ContentItem }> = ({ item }) => {
-  const color = item.verticale?.couleurDominante || '#06B6D4';
+  // Info supplémentaire
+  const getSubInfo = () => {
+    if (item.contentType === 'video' && item.duree) return formatDuration(item.duree);
+    if (item.contentType === 'article' && item.tempsLecture) return `${item.tempsLecture} min`;
+    if (item.contentType === 'serie' && item.episodeCount) return `${item.episodeCount} ép.`;
+    if (item.contentType === 'histoire') return item.categorie || '';
+    return '';
+  };
 
   return (
     <Link to={getContentLink(item)} className="group block">
-      <div className="relative rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-        {/* Image with play button */}
+      <div className="relative rounded-xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+        {/* Image 16:9 */}
         <div className="relative aspect-video overflow-hidden">
           <img
             src={item.imageUrl || '/placeholder.svg'}
             alt={item.titre}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-          {/* Play button */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
-              <Play className="w-6 h-6 text-gray-900 ml-1" fill="currentColor" />
-            </div>
-          </div>
-
-          {/* Duration badge */}
-          {item.duree && (
-            <div className="absolute bottom-3 right-3">
-              <span className="px-2 py-1 rounded-md text-xs font-semibold bg-black/80 text-white">
-                {formatDuration(item.duree)}
-              </span>
-            </div>
-          )}
-
-          {/* Type badge */}
-          <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-500 text-white">
-              Vidéo
-            </span>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors">
-            {item.titre}
-          </h3>
-          {item.vues && (
-            <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <Eye className="w-3 h-3" />
-              {formatViews(item.vues)} vues
-            </p>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-};
-
-// Serie Card
-const SerieCard: React.FC<{ item: ContentItem }> = ({ item }) => {
-  return (
-    <Link to={getContentLink(item)} className="group block">
-      <div className="relative rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-        {/* Poster */}
-        <div className="relative aspect-[3/4] overflow-hidden">
-          <img
-            src={item.imageUrl || '/placeholder.svg'}
-            alt={item.titre}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-
-          {/* Badge */}
-          <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-violet-500 text-white">
-              Série
-            </span>
-          </div>
-
-          {/* Content overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-lg font-bold text-white line-clamp-2">
-              {item.titre}
-            </h3>
-            {item.episodeCount !== undefined && (
-              <p className="mt-1 text-sm text-white/80 flex items-center gap-1">
-                <Film className="w-3.5 h-3.5" />
-                {item.episodeCount} épisode{item.episodeCount > 1 ? 's' : ''}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-};
-
-// Reco Card
-const RecoCard: React.FC<{ item: ContentItem }> = ({ item }) => {
-  const typeIcon = RECO_TYPE_ICONS[item.type || 'livre'] || '📌';
-
-  return (
-    <Link to={getContentLink(item)} className="group block">
-      <div className="relative rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-        {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            src={item.imageUrl || '/placeholder.svg'}
-            alt={item.titre}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-          {/* Type badge */}
-          <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white/95 text-gray-800">
-              {typeIcon} {item.type || 'Reco'}
+          {/* Badge type en haut à gauche */}
+          <div className="absolute top-2 left-2">
+            <span
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
+              style={{ backgroundColor: typeConfig?.color || color }}
+            >
+              <TypeIcon className="w-3 h-3" />
+              {getTypeLabel()}
             </span>
           </div>
 
-          {/* Rating */}
-          {item.note && (
-            <div className="absolute top-3 right-3">
-              <span className="px-2 py-1 rounded-full text-xs font-bold bg-amber-400 text-amber-900 flex items-center gap-0.5">
-                <Star className="w-3 h-3" fill="currentColor" />
-                {item.note}
+          {/* Badge catégorie en haut à droite */}
+          {item.verticale?.nom && (
+            <div className="absolute top-2 right-2">
+              <span
+                className="px-2 py-1 rounded-full text-[10px] font-semibold text-white"
+                style={{ backgroundColor: color }}
+              >
+                {item.verticale.nom}
               </span>
             </div>
           )}
 
-          {/* Coup de coeur */}
+          {/* Durée/Info en bas à droite */}
+          {getSubInfo() && (
+            <div className="absolute bottom-2 right-2">
+              <span className="px-2 py-1 rounded-md text-[10px] font-semibold bg-black/70 text-white">
+                {getSubInfo()}
+              </span>
+            </div>
+          )}
+
+          {/* Play button pour vidéos */}
+          {item.contentType === 'video' && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
+                <Play className="w-4 h-4 text-gray-900 ml-0.5" fill="currentColor" />
+              </div>
+            </div>
+          )}
+
+          {/* Coup de coeur pour recos */}
           {item.coupDeCoeur && (
-            <div className="absolute bottom-3 right-3">
-              <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-rose-500 text-white">
-                ❤️ Coup de coeur
+            <div className="absolute bottom-2 left-2">
+              <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-rose-500 text-white flex items-center gap-1">
+                <Heart className="w-3 h-3" fill="currentColor" />
               </span>
             </div>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <h3 className="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors">
+        <div className="p-3">
+          <h3 className="text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors leading-snug">
             {item.titre}
           </h3>
-          {item.auteur && (
-            <p className="mt-1 text-sm text-gray-500">
-              {item.auteur}
-            </p>
-          )}
         </div>
       </div>
     </Link>
   );
-};
-
-// Histoire Card
-const HistoireCard: React.FC<{ item: ContentItem }> = ({ item }) => {
-  const color = item.verticale?.couleurDominante || '#F59E0B';
-
-  return (
-    <Link to={getContentLink(item)} className="group block">
-      <div className="relative rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-        {/* Image */}
-        <div className="relative aspect-[4/5] overflow-hidden">
-          <img
-            src={item.imageUrl || '/placeholder.svg'}
-            alt={item.titre}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-
-          {/* Badge */}
-          <div className="absolute top-3 left-3">
-            <span
-              className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-              style={{ backgroundColor: color }}
-            >
-              {item.categorie || 'Histoire'}
-            </span>
-          </div>
-
-          {/* Content overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-lg font-bold text-white line-clamp-2">
-              {item.titre}
-            </h3>
-            {item.accroche && (
-              <p className="mt-2 text-sm text-white/80 line-clamp-2">
-                {item.accroche}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-};
-
-// Content Card Router
-const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
-  switch (item.contentType) {
-    case 'article':
-      return <ArticleCard item={item} />;
-    case 'video':
-      return <VideoCard item={item} />;
-    case 'serie':
-      return <SerieCard item={item} />;
-    case 'reco':
-      return <RecoCard item={item} />;
-    case 'histoire':
-      return <HistoireCard item={item} />;
-    default:
-      return <ArticleCard item={item} />;
-  }
 };
 
 // ============ MAIN COMPONENT ============
@@ -409,6 +243,7 @@ function BibliothequePage() {
   const [activeVerticale, setActiveVerticale] = useState<string | null>(searchParams.get('categorie') || null);
   const [sortBy, setSortBy] = useState('recent');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Data states
   const [articles, setArticles] = useState<ContentItem[]>([]);
@@ -493,6 +328,18 @@ function BibliothequePage() {
 
     return content;
   }, [articles, videos, series, recos, histoires, activeType, activeVerticale, searchTerm, sortBy]);
+
+  // Pagination calculation
+  const totalPages = Math.ceil(allContent.length / ITEMS_PER_PAGE);
+  const paginatedContent = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return allContent.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [allContent, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeType, activeVerticale, searchTerm, sortBy]);
 
   // Stats
   const stats = useMemo(() => ({
@@ -715,7 +562,15 @@ function BibliothequePage() {
           {/* Results count */}
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-gray-500">
-              {allContent.length} résultat{allContent.length > 1 ? 's' : ''}
+              {allContent.length > ITEMS_PER_PAGE ? (
+                <>
+                  {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, allContent.length)} sur {allContent.length} résultat{allContent.length > 1 ? 's' : ''}
+                </>
+              ) : (
+                <>
+                  {allContent.length} résultat{allContent.length > 1 ? 's' : ''}
+                </>
+              )}
               {searchTerm && ` pour "${searchTerm}"`}
               {activeVerticale && ` dans ${verticales.find(v => v.slug.current === activeVerticale)?.nom}`}
             </p>
@@ -723,21 +578,116 @@ function BibliothequePage() {
 
           {/* Grid */}
           {allContent.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              <AnimatePresence mode="popLayout">
-                {allContent.map((item, index) => (
-                  <motion.div
-                    key={`${item.contentType}-${item._id}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ delay: index * 0.03 }}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <AnimatePresence mode="popLayout">
+                  {paginatedContent.map((item, index) => (
+                    <motion.div
+                      key={`${item.contentType}-${item._id}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ delay: index * 0.03 }}
+                    >
+                      <ContentCard item={item} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-10">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(p => Math.max(1, p - 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === 1}
+                    className={`
+                      flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all
+                      ${currentPage === 1
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }
+                    `}
                   >
-                    <ContentCard item={item} />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+                    <ChevronLeft className="w-4 h-4" />
+                    <span className="hidden sm:inline">Précédent</span>
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                      // Show first, last, current and adjacent pages
+                      const showPage = page === 1 ||
+                        page === totalPages ||
+                        Math.abs(page - currentPage) <= 1;
+
+                      // Show ellipsis
+                      const showEllipsisBefore = page === currentPage - 2 && currentPage > 3;
+                      const showEllipsisAfter = page === currentPage + 2 && currentPage < totalPages - 2;
+
+                      if (showEllipsisBefore || showEllipsisAfter) {
+                        return (
+                          <span key={page} className="px-2 text-gray-400">
+                            ...
+                          </span>
+                        );
+                      }
+
+                      if (!showPage) return null;
+
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => {
+                            setCurrentPage(page);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`
+                            w-10 h-10 rounded-full text-sm font-semibold transition-all
+                            ${currentPage === page
+                              ? 'bg-gray-900 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }
+                          `}
+                        >
+                          {page}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => {
+                      setCurrentPage(p => Math.min(totalPages, p + 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className={`
+                      flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all
+                      ${currentPage === totalPages
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }
+                    `}
+                  >
+                    <span className="hidden sm:inline">Suivant</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Page info */}
+              {totalPages > 1 && (
+                <p className="text-center text-sm text-gray-500 mt-4">
+                  Page {currentPage} sur {totalPages}
+                </p>
+              )}
+            </>
           ) : (
             <div className="text-center py-16">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">

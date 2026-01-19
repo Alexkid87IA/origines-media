@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowRight, Play, BookOpen, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -162,24 +163,30 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
                 onClick={() => handleTabChange(index)}
                 className={`
                   relative px-6 py-3 rounded-full font-inter font-medium tracking-wider uppercase text-sm
-                  transition-all duration-500 border backdrop-blur-sm
+                  transition-colors duration-300 border backdrop-blur-sm
                   ${isActive
-                    ? 'text-white scale-105 shadow-lg'
+                    ? 'text-white border-transparent'
                     : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
                   }
                   ${isTransitioning ? 'pointer-events-none' : 'cursor-pointer'}
                 `}
-                style={isActive ? {
-                  backgroundColor: tabColor,
-                  borderColor: `${tabColor}80`,
-                  boxShadow: `0 8px 25px ${tabColor}40`
-                } : {}}
                 disabled={isTransitioning}
                 role="tab"
                 aria-selected={isActive}
                 aria-controls={`tabpanel-${verticaleData.verticale.id}`}
                 id={`tab-${verticaleData.verticale.id}`}
               >
+                {isActive && (
+                  <motion.div
+                    layoutId="bibliothequeTabIndicatorDesktop"
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      backgroundColor: tabColor,
+                      boxShadow: `0 8px 25px ${tabColor}40`
+                    }}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
                 <span className="relative z-10">{verticaleData.verticale.nom}</span>
               </button>
             );
@@ -198,22 +205,28 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
                 onClick={() => handleTabChange(index)}
                 className={`
                   relative px-4 py-2 rounded-full font-inter font-medium tracking-wider uppercase text-xs
-                  transition-all duration-500 border backdrop-blur-sm
+                  transition-colors duration-300 border backdrop-blur-sm
                   ${isActive
-                    ? 'text-white scale-105 shadow-lg'
+                    ? 'text-white border-transparent'
                     : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
                   }
                   ${isTransitioning ? 'pointer-events-none' : 'cursor-pointer'}
                 `}
-                style={isActive ? {
-                  backgroundColor: tabColor,
-                  borderColor: `${tabColor}80`,
-                  boxShadow: `0 8px 25px ${tabColor}40`
-                } : {}}
                 disabled={isTransitioning}
                 role="tab"
                 aria-selected={isActive}
               >
+                {isActive && (
+                  <motion.div
+                    layoutId="bibliothequeTabIndicatorTablet"
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      backgroundColor: tabColor,
+                      boxShadow: `0 8px 25px ${tabColor}40`
+                    }}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
                 <span className="relative z-10">{verticaleData.verticale.nom}</span>
               </button>
             );
@@ -233,22 +246,28 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
                   onClick={() => handleTabChange(index)}
                   className={`
                     relative px-5 py-2.5 rounded-full font-inter font-medium tracking-wider uppercase text-xs
-                    transition-all duration-500 border backdrop-blur-sm whitespace-nowrap
+                    transition-colors duration-300 border backdrop-blur-sm whitespace-nowrap
                     ${isActive
-                      ? 'text-white scale-105 shadow-lg'
+                      ? 'text-white border-transparent'
                       : 'text-white/70 bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 hover:text-white'
                     }
                     ${isTransitioning ? 'pointer-events-none' : 'cursor-pointer'}
                   `}
-                  style={isActive ? {
-                    backgroundColor: tabColor,
-                    borderColor: `${tabColor}80`,
-                    boxShadow: `0 8px 25px ${tabColor}40`
-                  } : {}}
                   disabled={isTransitioning}
                   role="tab"
                   aria-selected={isActive}
                 >
+                  {isActive && (
+                    <motion.div
+                      layoutId="bibliothequeTabIndicatorMobile"
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        backgroundColor: tabColor,
+                        boxShadow: `0 8px 25px ${tabColor}40`
+                      }}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
                   <span className="relative z-10">{verticaleData.verticale.nom}</span>
                 </button>
               );

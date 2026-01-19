@@ -10,9 +10,10 @@
 // On récupère le dernier article de chaque verticale pour avoir de la diversité
 // 7 articles = 1 featured + 5 sidebar desktop + 1 extra pour mobile (grille 2 colonnes)
 // Extrait: extrait > description > texte extrait du contenu
+// EXCLUT les vidéos - elles ont leur propre section
 export const FEATURED_ARTICLES_QUERY = `
   *[_type == "verticale"] | order(ordre asc) [0...7] {
-    "article": *[_type == "production" && references(^._id) && defined(image.asset)] | order(datePublication desc) [0] {
+    "article": *[_type == "production" && references(^._id) && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0] {
       _id,
       titre,
       extrait,
@@ -74,7 +75,7 @@ export const SERIES_QUERY = `
   }
 `
 
-// Verticales avec leurs productions
+// Verticales avec leurs productions (EXCLUT les vidéos ET les histoires - elles ont leurs propres sections)
 export const VERTICALES_WITH_PRODUCTIONS_QUERY = `
   *[_type == "verticale"] | order(ordre asc) {
     _id,
@@ -83,7 +84,7 @@ export const VERTICALES_WITH_PRODUCTIONS_QUERY = `
     couleurDominante,
     description,
     imageUrl,
-    "productions": *[_type == "production" && references(^._id)] | order(datePublication desc) {
+    "productions": *[_type == "production" && references(^._id) && !(typeArticle in ["video", "histoire"])] | order(datePublication desc) {
       _id,
       titre,
       extrait,
@@ -93,6 +94,27 @@ export const VERTICALES_WITH_PRODUCTIONS_QUERY = `
       "slug": slug.current,
       datePublication,
       duree
+    }
+  }
+`
+
+// Vidéos pour la section homepage (productions avec typeArticle == "video")
+export const VIDEOS_SECTION_QUERY = `
+  *[_type == "production" && typeArticle == "video"] | order(datePublication desc) [0...12] {
+    _id,
+    titre,
+    description,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    videoUrl,
+    duree,
+    tempsLecture,
+    "slug": slug.current,
+    datePublication,
+    "verticale": verticale->{
+      _id,
+      nom,
+      couleurDominante,
+      "slug": slug.current
     }
   }
 `
@@ -115,6 +137,7 @@ export const VERTICALES_QUERY = `
 `
 
 // Verticales pour la page Univers (avec stats et univers liés)
+// L'image est récupérée depuis un article de la verticale (Psychologie prend l'article index 3 pour varier)
 export const VERTICALES_FOR_UNIVERS_PAGE_QUERY = `
   *[_type == "verticale"] | order(ordre asc) {
     _id,
@@ -122,7 +145,14 @@ export const VERTICALES_FOR_UNIVERS_PAGE_QUERY = `
     "slug": slug.current,
     couleurDominante,
     description,
-    "imageUrl": coalesce(image.asset->url, "/placeholder.svg"),
+    "imageUrl": coalesce(
+      image.asset->url,
+      select(
+        slug.current == "psychologie" => *[_type == "production" && references(^._id) && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication asc) [0].image.asset->url,
+        *[_type == "production" && references(^._id) && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0].image.asset->url
+      ),
+      "/placeholder.svg"
+    ),
     ordre,
     "stats": {
       "articles": count(*[_type == "production" && references(^._id)])
@@ -250,6 +280,55 @@ export const EXPLORER_RECOS_QUERY = `
   }
 `
 
+// Recommandation par slug (page détail)
+export const RECOMMENDATION_BY_SLUG_QUERY = `
+  *[_type == "recommendation" && slug.current == $slug][0] {
+    _id,
+    titre,
+    type,
+    auteur,
+    note,
+    coupDeCoeur,
+    accroche,
+    "description": accroche,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
+    "datePublication": coalesce(datePublication, _createdAt),
+    contenu[] {
+      ...,
+      markDefs[] {
+        ...,
+        _type == "internalLink" => {
+          ...,
+          "slug": reference->slug.current
+        }
+      }
+    },
+    items[] {
+      _key,
+      titre,
+      description,
+      note,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
+      lien,
+      auteurItem,
+      annee
+    }
+  }
+`
+
+// Recommandations liées (même type)
+export const RELATED_RECOS_QUERY = `
+  *[_type == "recommendation" && type == $type && slug.current != $slug] | order(datePublication desc) [0...4] {
+    _id,
+    titre,
+    type,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
+    note
+  }
+`
+
 // Histoires pour Explorer
 export const EXPLORER_HISTOIRES_QUERY = `
   *[_type == "portrait"] | order(ordre asc, _createdAt desc) {
@@ -327,7 +406,9 @@ export const ARTICLES_PAGE_QUERY = `
     _id,
     titre,
     typeArticle,
+    extrait,
     description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
     "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
     datePublication,
@@ -567,7 +648,9 @@ export const PORTRAIT_BY_SLUG_QUERY = `
       "imageUrl": coalesce(image.asset->url, imageUrl),
       "slug": slug.current,
       description,
-      typeArticle
+      typeArticle,
+      videoUrl,
+      contenu
     }
   }
 `
@@ -616,5 +699,41 @@ export const TAGS_QUERY = `
     nom,
     slug,
     couleur
+  }
+`
+
+// ========================================
+// NAVIGATION HISTOIRES
+// ========================================
+
+// Histoires similaires (même tags ou même univers)
+export const SIMILAR_HISTOIRES_QUERY = `
+  *[_type == "portrait" && _id != $currentId && (
+    count(tags[@._ref in $tagIds]) > 0 ||
+    univers._ref == $universId
+  )] | order(ordre asc) [0...4] {
+    _id,
+    titre,
+    categorie,
+    accroche,
+    "slug": slug.current,
+    citation,
+    "tags": tags[]->{
+      _id,
+      nom,
+      "slug": slug.current,
+      couleur
+    }
+  }
+`
+
+// Toutes les histoires (pour navigation prev/next)
+export const ALL_HISTOIRES_SLUGS_QUERY = `
+  *[_type == "portrait"] | order(ordre asc, _createdAt desc) {
+    _id,
+    titre,
+    categorie,
+    "slug": slug.current,
+    "tags": tags[0]->{nom, couleur}
   }
 `

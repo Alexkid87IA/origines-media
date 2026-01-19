@@ -1,128 +1,134 @@
 // src/components/VideosSection.tsx
 // Section "Nos dernières vidéos" - Format 9:16 vertical - Style sobre
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { typo } from '../lib/typography';
+import { sanityFetch } from '../lib/sanity';
+import { VIDEOS_SECTION_QUERY } from '../lib/queries';
+import { getUniversColors } from '../lib/universColors';
 
-// Données statiques (à remplacer par Sanity plus tard)
-const videos = [
-  {
-    id: '1',
-    title: "Comment j'ai surmonté mon anxiété sociale",
-    description: "Témoignage poignant sur le combat quotidien contre l'anxiété et les clés pour reprendre confiance.",
-    category: 'Psychologie',
-    thumbnail: '/placeholder.svg',
-    duration: '3:24',
-    slug: 'surmonter-anxiete-sociale',
-    color: '#8B5CF6',
-  },
-  {
-    id: '2',
-    title: "Une journée dans la vie d'un chef étoilé",
-    description: "Immersion dans les coulisses d'un restaurant gastronomique, entre passion et exigence.",
-    category: 'Carrière',
-    thumbnail: '/placeholder.svg',
-    duration: '5:12',
-    slug: 'journee-chef-etoile',
-    color: '#1F2937',
-  },
-  {
-    id: '3',
-    title: 'Le secret des couples qui durent',
-    description: "Les ingrédients essentiels d'une relation épanouissante selon les experts.",
-    category: 'Famille',
-    thumbnail: '/placeholder.svg',
-    duration: '4:45',
-    slug: 'secret-couples-durent',
-    color: '#EC4899',
-  },
-  {
-    id: '4',
-    title: "L'art de la méditation en pleine conscience",
-    description: "Guide pratique pour débuter la méditation et transformer votre quotidien.",
-    category: 'Spiritualité',
-    thumbnail: '/placeholder.svg',
-    duration: '6:30',
-    slug: 'art-meditation-pleine-conscience',
-    color: '#A855F7',
-  },
-  {
-    id: '5',
-    title: 'Voyage solo : mes 30 jours au Japon',
-    description: "Carnet de voyage introspectif à travers le pays du soleil levant.",
-    category: 'Voyage',
-    thumbnail: '/placeholder.svg',
-    duration: '8:15',
-    slug: 'voyage-solo-japon',
-    color: '#10B981',
-  },
-  // Vidéo 6 : visible sur mobile + tablette, cachée sur desktop
-  {
-    id: '6',
-    title: 'Reconversion professionnelle : par où commencer ?',
-    description: "Les étapes clés pour réussir sa transition de carrière en douceur.",
-    category: 'Carrière',
-    thumbnail: '/placeholder.svg',
-    duration: '7:02',
-    slug: 'reconversion-professionnelle',
-    color: '#1F2937',
-    hideOnDesktop: true,
-  },
-  // Vidéos 7-9 : visibles sur tablette uniquement
-  {
-    id: '7',
-    title: 'Les bienfaits insoupçonnés de la lecture',
-    description: "Pourquoi lire change votre cerveau et enrichit votre vie.",
-    category: 'Art & Créativité',
-    thumbnail: '/placeholder.svg',
-    duration: '4:18',
-    slug: 'bienfaits-lecture',
-    color: '#F59E0B',
-    hideOnMobile: true,
-    hideOnDesktop: true,
-  },
-  {
-    id: '8',
-    title: 'Apprendre à dire non sans culpabiliser',
-    description: "Poser ses limites est un acte d'amour envers soi-même.",
-    category: 'Psychologie',
-    thumbnail: '/placeholder.svg',
-    duration: '5:45',
-    slug: 'apprendre-dire-non',
-    color: '#8B5CF6',
-    hideOnMobile: true,
-    hideOnDesktop: true,
-  },
-  {
-    id: '9',
-    title: 'Ma routine matinale pour une journée productive',
-    description: "Les habitudes qui transforment vos matins et boostent votre énergie.",
-    category: 'Santé',
-    thumbnail: '/placeholder.svg',
-    duration: '6:12',
-    slug: 'routine-matinale',
-    color: '#10B981',
-    hideOnMobile: true,
-    hideOnDesktop: true,
-  },
-];
+interface SanityVideo {
+  _id: string;
+  titre: string;
+  description?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  duree?: number;
+  tempsLecture?: number;
+  slug?: string;
+  datePublication?: string;
+  verticale?: {
+    _id: string;
+    nom: string;
+    couleurDominante?: string;
+    slug?: string;
+  };
+}
+
+interface VideoDisplay {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  thumbnail: string;
+  duration: string;
+  slug: string;
+  color: string;
+  hideOnDesktop?: boolean;
+  hideOnMobile?: boolean;
+}
+
+// Convertit durée en minutes vers format "X:XX"
+const formatDuration = (minutes?: number): string => {
+  if (!minutes) return '';
+  const mins = Math.floor(minutes);
+  const secs = Math.round((minutes - mins) * 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+// Transforme les données Sanity en format d'affichage
+const transformSanityVideo = (video: SanityVideo, index: number): VideoDisplay => {
+  const colors = getUniversColors(video.verticale?.nom);
+  return {
+    id: video._id,
+    title: video.titre,
+    description: video.description || '',
+    category: video.verticale?.nom || 'Société',
+    thumbnail: video.imageUrl || '/placeholder.svg',
+    duration: formatDuration(video.tempsLecture || video.duree),
+    slug: video.slug || 'default',
+    color: colors.bg,
+    // Gestion responsive: index 4-5 cachées sur desktop, 6-8 tablette uniquement
+    hideOnDesktop: index >= 4,
+    hideOnMobile: index >= 6,
+  };
+};
 
 export default function VideosSection() {
+  const [videos, setVideos] = useState<VideoDisplay[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const sanityVideos = await sanityFetch(VIDEOS_SECTION_QUERY) as SanityVideo[];
+        if (sanityVideos && sanityVideos.length > 0) {
+          // Shuffle intelligent : mélanger puis sélectionner sans 2 catégories consécutives identiques
+          const shuffled = [...sanityVideos].sort(() => Math.random() - 0.5);
+
+          // Sélection avec règle : jamais 2 mêmes catégories côte à côte
+          const selected: SanityVideo[] = [];
+          const remaining = [...shuffled];
+
+          while (selected.length < 4 && remaining.length > 0) {
+            const lastCategory = selected.length > 0
+              ? selected[selected.length - 1].verticale?.nom
+              : null;
+
+            // Chercher une vidéo avec une catégorie différente de la précédente
+            let foundIndex = remaining.findIndex(v => v.verticale?.nom !== lastCategory);
+
+            // Si on ne trouve pas, prendre la première disponible (fallback)
+            if (foundIndex === -1) foundIndex = 0;
+
+            selected.push(remaining[foundIndex]);
+            remaining.splice(foundIndex, 1);
+          }
+
+          const transformed = selected.map(transformSanityVideo);
+          setVideos(transformed);
+        }
+      } catch (error) {
+        console.error('Erreur chargement vidéos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVideos();
+  }, []);
+
+  // Ne pas afficher la section si pas de vidéos
+  if (!loading && videos.length === 0) {
+    return null;
+  }
   return (
-    <section className="bg-gray-50 py-4 sm:py-6 lg:py-8">
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
+    <section className="bg-gray-50 py-6 sm:py-8 lg:py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header avec introduction étoffée */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6">
           <div className="max-w-xl">
-            <div className="h-0.5 w-8 sm:w-10 bg-gray-900 rounded-full mb-2 sm:mb-3" />
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-1 w-8 bg-cyan-500 rounded-full" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Regarder</span>
+            </div>
+            <h2 className="text-xl sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
               Nos dernières vidéos
             </h2>
-            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+            <p className="text-gray-600 text-sm leading-relaxed">
               {typo("Des formats courts pensés pour votre quotidien : témoignages authentiques, conseils pratiques et moments d'inspiration. Parfaits à regarder pendant une pause café ou dans les transports.")}
             </p>
           </div>
@@ -136,111 +142,91 @@ export default function VideosSection() {
           </Link>
         </div>
 
-        {/* Grid vidéos en 9:16 - Responsive: 6 sur mobile, 9 sur tablette, 5 sur desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1.5 lg:gap-2">
-          {videos.map((video, index) => {
-            // Gestion de la visibilité responsive
-            const visibilityClass = video.hideOnMobile && video.hideOnDesktop
-              ? 'hidden sm:block lg:hidden' // Vidéos 7-9 : tablette uniquement
-              : video.hideOnDesktop
-              ? 'lg:hidden' // Vidéo 6 : mobile + tablette
-              : ''; // Vidéos 1-5 : partout
-
-            return (
-              <motion.div
-                key={video.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: Math.min(index, 5) * 0.08 }}
-                className={visibilityClass}
+        {/* Grid vidéos en 16:9 - Style épisodes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {videos.slice(0, 4).map((video, index) => (
+            <motion.div
+              key={video.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
+            >
+              <Link
+                to={`/video/${video.slug}`}
+                className="group block"
               >
-                <Link
-                  to={`/video/${video.slug}`}
-                  className="group block relative rounded-xl overflow-visible"
-                >
-                  {/* Video card 9:16 */}
-                  <div className="relative aspect-[9/16] rounded-xl overflow-hidden transition-all duration-300 lg:group-hover:-translate-y-2 lg:group-hover:shadow-2xl">
-                    {/* Thumbnail */}
+                {/* Card container */}
+                <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1">
+                  {/* Thumbnail 16:9 */}
+                  <div className="relative aspect-video overflow-hidden">
                     <img
                       src={video.thumbnail}
                       alt={video.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
 
-                    {/* Gradient overlay - Plus fort sur mobile pour lisibilité */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent sm:from-black/90 sm:via-black/30" />
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* Play button - Visible tablette + desktop (avant hover) */}
-                    <div className="hidden sm:flex absolute inset-0 items-center justify-center lg:group-hover:opacity-0 transition-opacity duration-300">
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-xl">
-                        <Play className="w-3 h-3 text-gray-900 ml-0.5" fill="currentColor" />
+                    {/* Play button on hover */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div
+                        className="w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-sm"
+                        style={{ backgroundColor: `${video.color}dd` }}
+                      >
+                        <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
                       </div>
                     </div>
 
                     {/* Duration badge */}
-                    <div className="absolute top-2 right-2 sm:top-1.5 sm:right-1.5 z-10">
-                      <span className="px-1.5 py-0.5 sm:px-1 bg-black/60 backdrop-blur-sm rounded text-[9px] sm:text-[8px] font-medium text-white">
+                    {video.duration && (
+                      <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/80 rounded text-white text-[10px] font-medium">
                         {video.duration}
-                      </span>
-                    </div>
-
-                    {/* Content - Version tablette simple */}
-                    <div className="hidden sm:flex lg:hidden absolute bottom-0 left-0 right-0 p-2 min-h-[33%] flex-col justify-end">
-                      {/* Category badge - Dot coloré + texte blanc */}
-                      <span className="inline-flex items-center gap-0.5 text-[8px] font-bold uppercase tracking-wider text-white/90 mb-1">
-                        <span
-                          className="w-1 h-1 rounded-full"
-                          style={{ backgroundColor: video.color }}
-                        />
-                        {video.category}
-                      </span>
-
-                      <h3 className="text-[10px] font-semibold text-white leading-snug line-clamp-2 drop-shadow-sm">
-                        {typo(video.title)}
-                      </h3>
-                    </div>
-
-                    {/* OVERLAY COMPLET - Mobile (par défaut) + Desktop (au hover) */}
-                    <div className="flex sm:hidden lg:flex absolute inset-0 flex-col justify-end lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
-                      <div className="p-3 sm:p-2.5 pt-16 sm:pt-12 bg-gradient-to-t from-black/95 via-black/85 to-transparent">
-                        {/* Category badge */}
-                        <span className="inline-flex items-center gap-1 text-[9px] sm:text-[8px] font-bold uppercase tracking-wider text-white/90 mb-1.5">
-                          <span
-                            className="w-1.5 h-1.5 rounded-full"
-                            style={{ backgroundColor: video.color }}
-                          />
-                          {video.category}
-                        </span>
-
-                        {/* Titre plus gros */}
-                        <h3 className="text-[12px] sm:text-[11px] font-bold text-white leading-tight mb-1.5 drop-shadow-lg">
-                          {typo(video.title)}
-                        </h3>
-
-                        {/* Description */}
-                        {video.description && (
-                          <p className="text-white/70 text-[9px] sm:text-[8px] leading-relaxed mb-2 line-clamp-2">
-                            {typo(video.description)}
-                          </p>
-                        )}
-
-                        {/* Bouton Regarder */}
-                        <span
-                          className="inline-flex items-center gap-1 text-[9px] sm:text-[8px] font-semibold transition-all"
-                          style={{ color: video.color }}
-                        >
-                          <Play className="w-3 h-3 sm:w-2.5 sm:h-2.5" fill="currentColor" />
-                          Regarder
-                          <ArrowRight className="w-2.5 h-2.5 sm:w-2 sm:h-2" />
-                        </span>
                       </div>
-                    </div>
+                    )}
                   </div>
-                </Link>
-              </motion.div>
-            );
-          })}
+
+                  {/* Content */}
+                  <div className="p-3">
+                    {/* Category badge */}
+                    <span
+                      className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase tracking-wide mb-2"
+                      style={{
+                        backgroundColor: video.color,
+                        color: 'white',
+                      }}
+                    >
+                      {video.category}
+                    </span>
+
+                    {/* Title */}
+                    <h3 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 mb-2 group-hover:text-gray-700 transition-colors">
+                      {typo(video.title)}
+                    </h3>
+
+                    {/* Description */}
+                    {video.description && (
+                      <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">
+                        {typo(video.description)}
+                      </p>
+                    )}
+
+                    {/* Regarder link */}
+                    <span
+                      className="inline-flex items-center gap-1 text-xs font-semibold transition-all group-hover:gap-2"
+                      style={{ color: video.color }}
+                    >
+                      Regarder
+                      <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

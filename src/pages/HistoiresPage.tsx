@@ -1,6 +1,6 @@
 // src/pages/HistoiresPage.tsx
-// Design "Bibliothèque Émotionnelle" avec Sidebar
-// Style cohérent avec HomePage/Navbar - Glassmorphism, pas d'emojis
+// Design "Text-First" - Citations et parcours inspirants
+// Sans dépendance aux images de couverture
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -11,11 +11,18 @@ import {
   ChevronRight,
   X,
   ArrowRight,
-  Play,
   PenLine,
   ChevronDown,
   SlidersHorizontal,
-  BookOpen
+  BookOpen,
+  Quote,
+  Heart,
+  TrendingUp,
+  Route,
+  Users,
+  Brain,
+  Flame,
+  LucideIcon
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -23,14 +30,14 @@ import SEO from '../components/SEO';
 import { sanityFetch } from '../lib/sanity';
 import { HISTOIRES_PAGE_QUERY, TAGS_QUERY } from '../lib/queries';
 import { typo } from '../lib/typography';
-import { getUniversColors } from '../lib/universColors';
 import {
   TAG_CATEGORIES,
   getOrderedCategories,
   countStoriesByCategory,
   filterStoriesByCategory,
   getCategoryColors,
-  TagCategory
+  TagCategory,
+  getTagCategory
 } from '../lib/tagCategories';
 
 interface Tag {
@@ -53,16 +60,330 @@ interface Histoire {
   titre: string;
   categorie: string;
   accroche: string;
-  imageUrl: string;
   slug: string;
   citation?: string;
   tags?: Tag[];
   univers?: Univers;
-  articleSlug?: string;
 }
 
-const ITEMS_PER_PAGE = 12;
+// Icônes par catégorie thématique
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  emotions: Heart,
+  developpement: TrendingUp,
+  parcours: Route,
+  relations: Users,
+  sante: Brain,
+  epreuves: Flame
+};
 
+const ITEMS_PER_PAGE = 6;
+
+// Fonction pour mélanger les histoires avec diversité de catégories
+const shuffleWithDiversity = (histoires: Histoire[]): Histoire[] => {
+  if (histoires.length === 0) return [];
+
+  // Grouper par catégorie thématique
+  const byCategory: Record<string, Histoire[]> = {};
+  const uncategorized: Histoire[] = [];
+
+  histoires.forEach(h => {
+    let foundCategory = false;
+    if (h.tags && h.tags.length > 0) {
+      for (const tag of h.tags) {
+        const category = getTagCategory(tag.slug);
+        if (category) {
+          if (!byCategory[category.id]) {
+            byCategory[category.id] = [];
+          }
+          byCategory[category.id].push(h);
+          foundCategory = true;
+          break;
+        }
+      }
+    }
+    if (!foundCategory) {
+      uncategorized.push(h);
+    }
+  });
+
+  // Mélanger chaque groupe
+  const shuffleArray = <T,>(arr: T[]): T[] => {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  Object.keys(byCategory).forEach(key => {
+    byCategory[key] = shuffleArray(byCategory[key]);
+  });
+
+  // Round-robin pour alterner les catégories
+  const result: Histoire[] = [];
+  const categoryKeys = shuffleArray(Object.keys(byCategory));
+  const categoryIndices: Record<string, number> = {};
+  categoryKeys.forEach(key => categoryIndices[key] = 0);
+
+  let currentCategoryIdx = 0;
+  const totalFromCategories = Object.values(byCategory).reduce((sum, arr) => sum + arr.length, 0);
+
+  while (result.length < totalFromCategories) {
+    const catKey = categoryKeys[currentCategoryIdx % categoryKeys.length];
+    const catArray = byCategory[catKey];
+
+    if (categoryIndices[catKey] < catArray.length) {
+      result.push(catArray[categoryIndices[catKey]]);
+      categoryIndices[catKey]++;
+    }
+
+    currentCategoryIdx++;
+
+    // Éviter boucle infinie si une catégorie est vide
+    let attempts = 0;
+    while (
+      categoryIndices[categoryKeys[currentCategoryIdx % categoryKeys.length]] >=
+      byCategory[categoryKeys[currentCategoryIdx % categoryKeys.length]].length &&
+      attempts < categoryKeys.length
+    ) {
+      currentCategoryIdx++;
+      attempts++;
+    }
+  }
+
+  // Ajouter les non-catégorisés à la fin (mélangés)
+  return [...result, ...shuffleArray(uncategorized)];
+};
+
+// ═══════════════════════════════════════════════════════════════
+// COMPOSANT: Carte Histoire Text-First
+// ═══════════════════════════════════════════════════════════════
+interface HistoireCardProps {
+  histoire: Histoire;
+  index: number;
+  cmsTags: Tag[];
+}
+
+const HistoireCard: React.FC<HistoireCardProps> = ({ histoire, index, cmsTags }) => {
+  // Trouver la catégorie thématique principale
+  const mainCategory = useMemo(() => {
+    if (!histoire.tags || histoire.tags.length === 0) return null;
+    for (const tag of histoire.tags) {
+      const category = getTagCategory(tag.slug);
+      if (category) return category;
+    }
+    return null;
+  }, [histoire.tags]);
+
+  // Couleurs basées sur la catégorie ou l'univers
+  const colors = useMemo(() => {
+    if (mainCategory) {
+      return getCategoryColors(mainCategory.id);
+    }
+    if (histoire.univers?.couleur) {
+      return {
+        bg: histoire.univers.couleur,
+        text: '#FFFFFF',
+        light: `${histoire.univers.couleur}15`,
+        shadow: `${histoire.univers.couleur}40`
+      };
+    }
+    return getCategoryColors('parcours'); // Default violet
+  }, [mainCategory, histoire.univers]);
+
+  const CategoryIcon = mainCategory ? CATEGORY_ICONS[mainCategory.id] : Route;
+  const categoryLabel = mainCategory?.nom || histoire.univers?.nom || 'Parcours';
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04, duration: 0.4 }}
+      className="group"
+    >
+      <Link
+        to={`/histoire/${histoire.slug}`}
+        className="block h-full"
+      >
+        <div
+          className="h-full rounded-2xl p-5 transition-all duration-300 group-hover:-translate-y-1"
+          style={{
+            backgroundColor: colors.light,
+            border: `1px solid ${colors.bg}20`,
+            boxShadow: '0 2px 12px -4px rgba(0,0,0,0.04)'
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLDivElement).style.boxShadow = `0 12px 30px -8px ${colors.shadow}`;
+            (e.currentTarget as HTMLDivElement).style.borderColor = `${colors.bg}40`;
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px -4px rgba(0,0,0,0.04)';
+            (e.currentTarget as HTMLDivElement).style.borderColor = `${colors.bg}20`;
+          }}
+        >
+          {/* Header: Icône + Catégorie */}
+          <div className="flex items-center gap-2 mb-4">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: colors.bg }}
+            >
+              <CategoryIcon className="w-4 h-4 text-white" />
+            </div>
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider"
+              style={{ color: colors.bg }}
+            >
+              {categoryLabel}
+            </span>
+          </div>
+
+          {/* Citation (si disponible) */}
+          {histoire.citation && (
+            <div className="mb-4 relative">
+              <Quote
+                className="absolute -top-1 -left-1 w-6 h-6 opacity-20"
+                style={{ color: colors.bg }}
+              />
+              <p
+                className="text-sm italic leading-relaxed pl-5 line-clamp-3"
+                style={{ color: colors.bg }}
+              >
+                {typo(histoire.citation)}
+              </p>
+            </div>
+          )}
+
+          {/* Titre */}
+          <h3 className="font-bold text-gray-900 text-base leading-snug line-clamp-2 mb-2 group-hover:text-gray-700 transition-colors">
+            {typo(histoire.titre)}
+          </h3>
+
+          {/* Accroche */}
+          {histoire.accroche && (
+            <p className="text-gray-600 text-xs leading-relaxed line-clamp-3 mb-4">
+              {typo(histoire.accroche)}
+            </p>
+          )}
+
+          {/* Tags (max 3) */}
+          {histoire.tags && histoire.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {histoire.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag._id}
+                  className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-white/60 text-gray-600"
+                >
+                  {tag.nom}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* CTA */}
+          <span
+            className="inline-flex items-center gap-1.5 text-xs font-semibold group-hover:gap-2 transition-all mt-auto"
+            style={{ color: colors.bg }}
+          >
+            Lire l'histoire
+            <ArrowRight className="w-3 h-3" />
+          </span>
+        </div>
+      </Link>
+    </motion.article>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// COMPOSANT: Featured Histoire (plus grande)
+// ═══════════════════════════════════════════════════════════════
+interface FeaturedHistoireProps {
+  histoire: Histoire;
+  cmsTags: Tag[];
+}
+
+const FeaturedHistoire: React.FC<FeaturedHistoireProps> = ({ histoire, cmsTags }) => {
+  const mainCategory = useMemo(() => {
+    if (!histoire.tags || histoire.tags.length === 0) return null;
+    for (const tag of histoire.tags) {
+      const category = getTagCategory(tag.slug);
+      if (category) return category;
+    }
+    return null;
+  }, [histoire.tags]);
+
+  const colors = useMemo(() => {
+    if (mainCategory) {
+      return getCategoryColors(mainCategory.id);
+    }
+    return getCategoryColors('parcours');
+  }, [mainCategory]);
+
+  const CategoryIcon = mainCategory ? CATEGORY_ICONS[mainCategory.id] : Route;
+
+  return (
+    <Link
+      to={`/histoire/${histoire.slug}`}
+      className="block group"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-2xl overflow-hidden p-6 lg:p-8 transition-all duration-300"
+        style={{
+          backgroundColor: colors.bg,
+          boxShadow: `0 8px 32px -8px ${colors.shadow}`
+        }}
+      >
+        {/* Decorative quote marks */}
+        <div className="absolute top-4 right-4 opacity-10">
+          <Quote className="w-24 h-24 text-white" />
+        </div>
+
+        <div className="relative z-10">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <CategoryIcon className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-white/80 text-xs font-bold uppercase tracking-wider">
+              {mainCategory?.nom || 'À la une'}
+            </span>
+          </div>
+
+          {/* Citation */}
+          {histoire.citation && (
+            <blockquote className="text-white/90 text-lg lg:text-xl italic leading-relaxed mb-6 max-w-2xl">
+              "{typo(histoire.citation)}"
+            </blockquote>
+          )}
+
+          {/* Titre */}
+          <h2 className="text-white font-bold text-xl lg:text-2xl leading-tight mb-3 max-w-xl group-hover:text-white/90 transition-colors">
+            {typo(histoire.titre)}
+          </h2>
+
+          {/* Accroche */}
+          {histoire.accroche && (
+            <p className="text-white/70 text-sm leading-relaxed line-clamp-2 mb-6 max-w-xl">
+              {typo(histoire.accroche)}
+            </p>
+          )}
+
+          {/* CTA */}
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-semibold group-hover:bg-white/30 transition-all">
+            Découvrir cette histoire
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </span>
+        </div>
+      </motion.div>
+    </Link>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// PAGE PRINCIPALE
+// ═══════════════════════════════════════════════════════════════
 const HistoiresPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [histoires, setHistoires] = useState<Histoire[]>([]);
@@ -85,13 +406,22 @@ const HistoiresPage: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        console.log('🔄 Fetching histoires from Sanity...');
+        console.log('📋 Query utilisée:', HISTOIRES_PAGE_QUERY);
+
         const [histoiresData, tagsData] = await Promise.all([
           sanityFetch<Histoire[]>(HISTOIRES_PAGE_QUERY),
           sanityFetch<Tag[]>(TAGS_QUERY)
         ]);
+
+        console.log('✅ Histoires récupérées:', histoiresData?.length || 0);
+        console.log('📋 Premiers résultats:', histoiresData?.slice(0, 3));
+        console.log('🏷️ Tags récupérés:', tagsData?.length || 0);
+
         setHistoires(histoiresData || []);
         setCmsTags(tagsData || []);
       } catch (err) {
+        console.error('❌ Erreur chargement histoires:', err);
       } finally {
         setLoading(false);
       }
@@ -113,7 +443,7 @@ const HistoiresPage: React.FC = () => {
     return counts;
   }, [histoires]);
 
-  // Filtrer les histoires
+  // Filtrer les histoires avec diversité
   const filteredHistoires = useMemo(() => {
     let result = [...histoires];
 
@@ -123,6 +453,7 @@ const HistoiresPage: React.FC = () => {
         h.titre.toLowerCase().includes(query) ||
         h.accroche?.toLowerCase().includes(query) ||
         h.categorie?.toLowerCase().includes(query) ||
+        h.citation?.toLowerCase().includes(query) ||
         h.univers?.nom?.toLowerCase().includes(query) ||
         h.tags?.some(tag => tag.nom?.toLowerCase().includes(query))
       );
@@ -138,15 +469,36 @@ const HistoiresPage: React.FC = () => {
       );
     }
 
+    // Appliquer le shuffle pour diversité visuelle (seulement si pas de filtre actif)
+    if (!activeCategory && !activeTagSlug && !searchQuery) {
+      result = shuffleWithDiversity(result);
+    }
+
     return result;
   }, [histoires, searchQuery, activeCategory, activeTagSlug]);
 
+  // Featured histoire (premier résultat avec citation)
+  const featuredHistoire = useMemo(() => {
+    if (!activeCategory && !activeTagSlug && !searchQuery) {
+      return filteredHistoires.find(h => h.citation) || filteredHistoires[0];
+    }
+    return null;
+  }, [filteredHistoires, activeCategory, activeTagSlug, searchQuery]);
+
+  // Histoires pour la grille (sans le featured)
+  const gridHistoires = useMemo(() => {
+    if (featuredHistoire) {
+      return filteredHistoires.filter(h => h._id !== featuredHistoire._id);
+    }
+    return filteredHistoires;
+  }, [filteredHistoires, featuredHistoire]);
+
   // Pagination
-  const totalPages = Math.ceil(filteredHistoires.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(gridHistoires.length / ITEMS_PER_PAGE);
   const paginatedHistoires = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredHistoires.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredHistoires, currentPage]);
+    return gridHistoires.slice(start, start + ITEMS_PER_PAGE);
+  }, [gridHistoires, currentPage]);
 
   // Handlers
   const handleSearch = (e: React.FormEvent) => {
@@ -250,7 +602,7 @@ const HistoiresPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50/50">
       <SEO
         title="Histoires"
-        description="Des récits singuliers qui inspirent, transforment et éclairent."
+        description="Des récits singuliers qui inspirent, transforment et éclairent. Découvrez des parcours authentiques et des témoignages qui résonnent."
         url="/histoires"
       />
 
@@ -259,23 +611,51 @@ const HistoiresPage: React.FC = () => {
       <main className="pt-3 pb-8">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div
-                className="h-1 w-8 rounded-full"
-                style={{ backgroundColor: activeColors.bg }}
-              />
-              <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
-                Histoires
+          {/* ═══════════════════════════════════════════════════════════════ */}
+          {/* HERO SECTION */}
+          {/* ═══════════════════════════════════════════════════════════════ */}
+          <div className="mb-8">
+            {/* Header éditorial */}
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="h-1 w-8 rounded-full"
+                  style={{ backgroundColor: activeColors.bg }}
+                />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  Parcours inspirants
+                </span>
+              </div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                {activeCategory
+                  ? TAG_CATEGORIES[activeCategory]?.nom || 'Histoires'
+                  : 'Des histoires qui transforment'}
               </h1>
-              <span className="text-gray-400 text-sm">
-                {filteredHistoires.length} récit{filteredHistoires.length > 1 ? 's' : ''}
-              </span>
+              <p className="text-gray-600 text-sm lg:text-base max-w-2xl">
+                {typo("Chaque parcours est unique. Découvrez des témoignages authentiques, des récits de résilience et des expériences qui éclairent notre humanité commune.")}
+              </p>
+
+              {/* Stats */}
+              <div className="flex items-center gap-6 mt-4">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-500">
+                    <span className="font-semibold text-gray-900">{histoires.length}</span> histoires
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Route className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-500">
+                    <span className="font-semibold text-gray-900">6</span> thématiques
+                  </span>
+                </div>
+              </div>
             </div>
-            <p className="text-gray-500 text-[11px] lg:text-xs ml-11">
-              Des parcours singuliers qui inspirent et transforment
-            </p>
+
+            {/* Featured histoire */}
+            {featuredHistoire && !hasActiveFilters && (
+              <FeaturedHistoire histoire={featuredHistoire} cmsTags={cmsTags} />
+            )}
           </div>
 
           <div className="flex gap-6 lg:gap-8">
@@ -291,7 +671,7 @@ const HistoiresPage: React.FC = () => {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Rechercher..."
+                    placeholder="Rechercher une histoire..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200 transition-all placeholder:text-gray-400"
@@ -342,49 +722,54 @@ const HistoiresPage: React.FC = () => {
                       </span>
                     </button>
 
-                    {/* Catégories */}
+                    {/* Catégories avec icônes */}
                     {getOrderedCategories().map((category) => {
                       const isActive = activeCategory === category.id;
                       const isExpanded = expandedCategories.includes(category.id);
                       const categoryTags = getTagsForCategory(category);
+                      const CategoryIcon = CATEGORY_ICONS[category.id] || BookOpen;
 
                       return (
                         <div key={category.id} className="mt-1">
                           <button
                             onClick={() => handleCategoryClick(category.id)}
-                            className={`
-                              w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-200
-                              ${isActive ? 'text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}
-                            `}
-                            style={{
-                              backgroundColor: isActive ? category.couleur : undefined
-                            }}
+                            className="relative w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-colors duration-200"
                           >
-                            <div className="flex items-center gap-2.5">
-                              <span
-                                className="w-2 h-2 rounded-full"
+                            {isActive && (
+                              <motion.div
+                                layoutId="histoiresCategoryIndicator"
+                                className="absolute inset-0 rounded-xl shadow-md"
+                                style={{ backgroundColor: category.couleur }}
+                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                              />
+                            )}
+                            <div className={`relative z-10 flex items-center gap-2.5 ${isActive ? 'text-white' : 'text-gray-600 hover:text-gray-900'}`}>
+                              <CategoryIcon
+                                className="w-4 h-4"
                                 style={{
-                                  backgroundColor: isActive ? 'rgba(255,255,255,0.6)' : category.couleur
+                                  color: isActive ? 'rgba(255,255,255,0.9)' : category.couleur
                                 }}
                               />
                               <span className="font-medium">{category.nom}</span>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="relative z-10 flex items-center gap-2">
                               <span className={`text-xs ${isActive ? 'text-white/60' : 'text-gray-400'}`}>
                                 {categoryCounts[category.id]}
                               </span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleCategoryExpansion(category.id);
-                                }}
-                                className={`p-0.5 rounded transition-colors ${isActive ? 'hover:bg-white/20' : 'hover:bg-gray-100'}`}
-                              >
-                                <ChevronDown
-                                  className={`w-2.5 h-2.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-                                  style={{ color: isActive ? 'rgba(255,255,255,0.8)' : '#9CA3AF' }}
-                                />
-                              </button>
+                              {categoryTags.length > 0 && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleCategoryExpansion(category.id);
+                                  }}
+                                  className={`p-0.5 rounded transition-colors ${isActive ? 'hover:bg-white/20' : 'hover:bg-gray-100'}`}
+                                >
+                                  <ChevronDown
+                                    className={`w-2.5 h-2.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                                    style={{ color: isActive ? 'rgba(255,255,255,0.8)' : '#9CA3AF' }}
+                                  />
+                                </button>
+                              )}
                             </div>
                           </button>
 
@@ -432,19 +817,27 @@ const HistoiresPage: React.FC = () => {
                 </div>
 
                 {/* CTA Raconter */}
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-white ring-1 ring-gray-200/50">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1">
-                    Vous avez une histoire ?
-                  </h4>
+                <div
+                  className="p-4 rounded-2xl ring-1 ring-gray-200/50"
+                  style={{
+                    background: 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)'
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <PenLine className="w-4 h-4 text-violet-500" />
+                    <h4 className="font-semibold text-gray-900 text-sm">
+                      Vous avez une histoire ?
+                    </h4>
+                  </div>
                   <p className="text-xs text-gray-500 mb-3">
-                    Partagez votre parcours et inspirez des milliers de lecteurs.
+                    {typo("Partagez votre parcours et inspirez des milliers de lecteurs.")}
                   </p>
                   <Link
                     to="/racontez-votre-histoire"
-                    className="group inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-900 border-2 border-gray-900 rounded-full transition-all hover:bg-gray-900 hover:text-white"
+                    className="group inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-violet-500 rounded-full transition-all hover:bg-violet-600"
                   >
-                    <PenLine className="w-3 h-3" />
                     Racontez la vôtre
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                   </Link>
                 </div>
               </div>
@@ -495,23 +888,23 @@ const HistoiresPage: React.FC = () => {
                         >
                           Toutes
                         </button>
-                        {getOrderedCategories().map((cat) => (
-                          <button
-                            key={cat.id}
-                            onClick={() => { handleCategoryClick(cat.id); setShowMobileFilters(false); }}
-                            className="px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5"
-                            style={{
-                              backgroundColor: activeCategory === cat.id ? cat.couleur : `${cat.couleur}15`,
-                              color: activeCategory === cat.id ? '#FFFFFF' : cat.couleur
-                            }}
-                          >
-                            <span
-                              className="w-1.5 h-1.5 rounded-full"
-                              style={{ backgroundColor: activeCategory === cat.id ? 'rgba(255,255,255,0.6)' : cat.couleur }}
-                            />
-                            {cat.nom}
-                          </button>
-                        ))}
+                        {getOrderedCategories().map((cat) => {
+                          const CatIcon = CATEGORY_ICONS[cat.id] || BookOpen;
+                          return (
+                            <button
+                              key={cat.id}
+                              onClick={() => { handleCategoryClick(cat.id); setShowMobileFilters(false); }}
+                              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5"
+                              style={{
+                                backgroundColor: activeCategory === cat.id ? cat.couleur : `${cat.couleur}15`,
+                                color: activeCategory === cat.id ? '#FFFFFF' : cat.couleur
+                              }}
+                            >
+                              <CatIcon className="w-3 h-3" />
+                              {cat.nom}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   </motion.div>
@@ -527,7 +920,7 @@ const HistoiresPage: React.FC = () => {
                       className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                       style={{ backgroundColor: TAG_CATEGORIES[activeCategory]?.couleur || '#6366F1' }}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                      {React.createElement(CATEGORY_ICONS[activeCategory] || BookOpen, { className: 'w-3 h-3' })}
                       {TAG_CATEGORIES[activeCategory]?.nom}
                       <button onClick={() => handleCategoryClick(activeCategory)} className="ml-1 hover:bg-white/20 rounded-full p-0.5">
                         <X className="w-3 h-3" />
@@ -556,98 +949,26 @@ const HistoiresPage: React.FC = () => {
                 </div>
               )}
 
+              {/* Compteur résultats */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-500">
+                  {gridHistoires.length} histoire{gridHistoires.length > 1 ? 's' : ''}
+                  {hasActiveFilters && ' trouvée' + (gridHistoires.length > 1 ? 's' : '')}
+                </span>
+              </div>
+
               {/* Grille d'histoires */}
               {paginatedHistoires.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
-                    {paginatedHistoires.map((histoire, index) => {
-                      const colors = histoire.univers?.couleur
-                        ? {
-                            bg: histoire.univers.couleur,
-                            text: '#FFFFFF',
-                            shadow: `${histoire.univers.couleur}40`
-                          }
-                        : getUniversColors(histoire.categorie);
-
-                      const badgeLabel = histoire.univers?.nom || histoire.categorie;
-
-                      return (
-                        <motion.article
-                          key={histoire._id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.04 }}
-                          className="group"
-                        >
-                          <Link
-                            to={histoire.articleSlug ? `/article/${histoire.articleSlug}` : `/histoire/${histoire.slug}`}
-                            className="block"
-                          >
-                            <div
-                              className="rounded-2xl overflow-hidden bg-white ring-1 ring-gray-200/50 transition-all duration-300 group-hover:ring-2 group-hover:scale-[1.02]"
-                              style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.08)' }}
-                              onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLDivElement).style.boxShadow = `0 12px 30px -8px ${colors.shadow}, 0 0 0 2px ${colors.bg}`;
-                              }}
-                              onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px -4px rgba(0,0,0,0.08)';
-                              }}
-                            >
-                              {/* Image */}
-                              <div className="relative aspect-[16/10] overflow-hidden">
-                                <img
-                                  src={histoire.imageUrl || '/placeholder.svg'}
-                                  alt={histoire.titre}
-                                  loading="lazy"
-                                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                />
-
-                                {/* Badge catégorie */}
-                                {badgeLabel && (
-                                  <div className="absolute top-3 left-3">
-                                    <span
-                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg"
-                                      style={{ backgroundColor: colors.bg, color: colors.text }}
-                                    >
-                                      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />
-                                      {badgeLabel}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {/* Play button */}
-                                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                  <div className="w-8 h-8 rounded-full flex items-center justify-center shadow-xl backdrop-blur-md bg-white/90">
-                                    <Play className="w-4 h-4 ml-0.5 text-gray-900" fill="currentColor" />
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Contenu texte */}
-                              <div className="p-4">
-                                <h3 className="font-bold text-gray-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-gray-700 transition-colors">
-                                  {typo(histoire.titre)}
-                                </h3>
-
-                                {histoire.accroche && (
-                                  <p className="text-gray-500 text-[11px] line-clamp-2 mb-3">
-                                    {histoire.accroche}
-                                  </p>
-                                )}
-
-                                <span
-                                  className="inline-flex items-center gap-1.5 text-xs font-semibold group-hover:gap-2 transition-all"
-                                  style={{ color: colors.bg }}
-                                >
-                                  Lire l'histoire
-                                  <ArrowRight className="w-3 h-3" />
-                                </span>
-                              </div>
-                            </div>
-                          </Link>
-                        </motion.article>
-                      );
-                    })}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {paginatedHistoires.map((histoire, index) => (
+                      <HistoireCard
+                        key={histoire._id}
+                        histoire={histoire}
+                        index={index}
+                        cmsTags={cmsTags}
+                      />
+                    ))}
                   </div>
 
                   {/* Pagination */}
@@ -720,18 +1041,21 @@ const HistoiresPage: React.FC = () => {
 
               {/* CTA mobile */}
               <div className="lg:hidden mt-8 p-4 rounded-2xl bg-white ring-1 ring-gray-200/50">
-                <h3 className="font-bold text-gray-900 text-base mb-1">
-                  Vous avez une histoire ?
-                </h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <PenLine className="w-4 h-4 text-violet-500" />
+                  <h3 className="font-bold text-gray-900 text-base">
+                    Vous avez une histoire ?
+                  </h3>
+                </div>
                 <p className="text-gray-500 text-sm mb-3">
-                  Partagez votre parcours et inspirez des milliers de lecteurs.
+                  {typo("Partagez votre parcours et inspirez des milliers de lecteurs.")}
                 </p>
                 <Link
                   to="/racontez-votre-histoire"
-                  className="group inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-900 border-2 border-gray-900 rounded-full transition-all hover:bg-gray-900 hover:text-white"
+                  className="group inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-violet-500 rounded-full transition-all hover:bg-violet-600"
                 >
-                  <PenLine className="w-4 h-4" />
                   Racontez la vôtre
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
               </div>
             </div>

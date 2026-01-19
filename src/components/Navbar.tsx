@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ChevronDown, ArrowRight, Search, PenLine, X, Sparkles, Star } from 'lucide-react';
 
 // ============ ICÔNES RÉSEAUX SOCIAUX ============
@@ -70,12 +70,12 @@ interface NavItem {
 
 // ============ DATA ============
 const socialLinks = [
-  { icon: YouTubeIcon, href: 'https://youtube.com/@originesmedia', label: 'YouTube' },
-  { icon: XIcon, href: 'https://x.com/originesmedia', label: 'X' },
-  { icon: SnapchatIcon, href: 'https://snapchat.com/add/originesmedia', label: 'Snapchat' },
-  { icon: FacebookIcon, href: 'https://facebook.com/originesmedia', label: 'Facebook' },
-  { icon: InstagramIcon, href: 'https://instagram.com/originesmedia', label: 'Instagram' },
-  { icon: TikTokIcon, href: 'https://tiktok.com/@originesmedia', label: 'TikTok' },
+  { icon: YouTubeIcon, href: 'https://youtube.com/@originesmedia', label: 'YouTube', color: '#FF0000' },
+  { icon: XIcon, href: 'https://x.com/originesmedia', label: 'X', color: '#000000' },
+  { icon: SnapchatIcon, href: 'https://snapchat.com/add/originesmedia', label: 'Snapchat', color: '#FFFC00' },
+  { icon: FacebookIcon, href: 'https://facebook.com/originesmedia', label: 'Facebook', color: '#1877F2' },
+  { icon: InstagramIcon, href: 'https://instagram.com/originesmedia', label: 'Instagram', color: '#E4405F' },
+  { icon: TikTokIcon, href: 'https://tiktok.com/@originesmedia', label: 'TikTok', color: '#000000' },
 ];
 
 // Séries pour le mega menu showcase
@@ -108,44 +108,44 @@ interface FeaturedContent {
 // Contenus dynamiques par univers
 const universFeaturedByCategory: Record<string, FeaturedContent[]> = {
   'default': [
-    { title: 'Les secrets du bonheur', image: '/placeholder.svg', href: '/article/secrets-bonheur', tag: 'Psychologie', tagColor: '#8B5CF6' },
+    { title: 'Les secrets du bonheur', image: '/placeholder.svg', href: '/article/secrets-bonheur', tag: 'Psychologie', tagColor: '#4F46E5' },
     { title: 'Voyager autrement', image: '/placeholder.svg', href: '/article/voyager-autrement', tag: 'Voyage', tagColor: '#10B981' }
   ],
   'Psychologie': [
-    { title: 'Les secrets du bonheur', image: '/placeholder.svg', href: '/article/secrets-bonheur', tag: 'Psychologie', tagColor: '#8B5CF6' },
-    { title: 'Comprendre ses émotions', image: '/placeholder.svg', href: '/article/comprendre-emotions', tag: 'Psychologie', tagColor: '#8B5CF6' }
+    { title: 'Les secrets du bonheur', image: '/placeholder.svg', href: '/article/secrets-bonheur', tag: 'Psychologie', tagColor: '#4F46E5' },
+    { title: 'Comprendre ses émotions', image: '/placeholder.svg', href: '/article/comprendre-emotions', tag: 'Psychologie', tagColor: '#4F46E5' }
   ],
   'Société': [
-    { title: 'Vivre ensemble demain', image: '/placeholder.svg', href: '/article/vivre-ensemble', tag: 'Société', tagColor: '#F59E0B' },
-    { title: 'Les nouveaux liens sociaux', image: '/placeholder.svg', href: '/article/liens-sociaux', tag: 'Société', tagColor: '#F59E0B' }
+    { title: 'Vivre ensemble demain', image: '/placeholder.svg', href: '/article/vivre-ensemble', tag: 'Société', tagColor: '#D97706' },
+    { title: 'Les nouveaux liens sociaux', image: '/placeholder.svg', href: '/article/liens-sociaux', tag: 'Société', tagColor: '#D97706' }
   ],
   'Famille': [
-    { title: 'Transmission entre générations', image: '/placeholder.svg', href: '/article/transmission-generations', tag: 'Famille', tagColor: '#EC4899' },
-    { title: 'L\'amour au quotidien', image: '/placeholder.svg', href: '/article/amour-quotidien', tag: 'Famille', tagColor: '#EC4899' }
+    { title: 'Transmission entre générations', image: '/placeholder.svg', href: '/article/transmission-generations', tag: 'Famille', tagColor: '#FB7185' },
+    { title: 'L\'amour au quotidien', image: '/placeholder.svg', href: '/article/amour-quotidien', tag: 'Famille', tagColor: '#FB7185' }
   ],
   'Voyage': [
     { title: 'Voyager autrement', image: '/placeholder.svg', href: '/article/voyager-autrement', tag: 'Voyage', tagColor: '#10B981' },
     { title: 'Destinations inspirantes', image: '/placeholder.svg', href: '/article/destinations-inspirantes', tag: 'Voyage', tagColor: '#10B981' }
   ],
   'Spiritualité': [
-    { title: 'Le chemin intérieur', image: '/placeholder.svg', href: '/article/chemin-interieur', tag: 'Spiritualité', tagColor: '#A855F7' },
-    { title: 'Méditation guidée', image: '/placeholder.svg', href: '/article/meditation-guidee', tag: 'Spiritualité', tagColor: '#A855F7' }
+    { title: 'Le chemin intérieur', image: '/placeholder.svg', href: '/article/chemin-interieur', tag: 'Spiritualité', tagColor: '#9333EA' },
+    { title: 'Méditation guidée', image: '/placeholder.svg', href: '/article/meditation-guidee', tag: 'Spiritualité', tagColor: '#9333EA' }
   ],
   'Carrière': [
-    { title: 'Réussir sa reconversion', image: '/placeholder.svg', href: '/article/reussir-reconversion', tag: 'Carrière', tagColor: '#1F2937' },
-    { title: 'Leadership au féminin', image: '/placeholder.svg', href: '/article/leadership-feminin', tag: 'Carrière', tagColor: '#1F2937' }
+    { title: 'Réussir sa reconversion', image: '/placeholder.svg', href: '/article/reussir-reconversion', tag: 'Carrière', tagColor: '#0EA5E9' },
+    { title: 'Leadership au féminin', image: '/placeholder.svg', href: '/article/leadership-feminin', tag: 'Carrière', tagColor: '#0EA5E9' }
   ],
   'Art & Créativité': [
-    { title: 'L\'art de créer', image: '/placeholder.svg', href: '/article/art-creer', tag: 'Créativité', tagColor: '#6366F1' },
-    { title: 'Portraits d\'artistes', image: '/placeholder.svg', href: '/article/portraits-artistes', tag: 'Créativité', tagColor: '#6366F1' }
+    { title: 'L\'art de créer', image: '/placeholder.svg', href: '/article/art-creer', tag: 'Créativité', tagColor: '#D946EF' },
+    { title: 'Portraits d\'artistes', image: '/placeholder.svg', href: '/article/portraits-artistes', tag: 'Créativité', tagColor: '#D946EF' }
   ],
   'Santé': [
-    { title: 'Prendre soin de soi', image: '/placeholder.svg', href: '/article/prendre-soin', tag: 'Santé', tagColor: '#EF4444' },
-    { title: 'Bien-être au naturel', image: '/placeholder.svg', href: '/article/bien-etre-naturel', tag: 'Santé', tagColor: '#EF4444' }
+    { title: 'Prendre soin de soi', image: '/placeholder.svg', href: '/article/prendre-soin', tag: 'Santé', tagColor: '#DC2626' },
+    { title: 'Bien-être au naturel', image: '/placeholder.svg', href: '/article/bien-etre-naturel', tag: 'Santé', tagColor: '#DC2626' }
   ],
   'Tech': [
-    { title: 'L\'IA au service de l\'humain', image: '/placeholder.svg', href: '/article/ia-humain', tag: 'Tech', tagColor: '#06B6D4' },
-    { title: 'Innovations de demain', image: '/placeholder.svg', href: '/article/innovations-demain', tag: 'Tech', tagColor: '#06B6D4' }
+    { title: 'L\'IA au service de l\'humain', image: '/placeholder.svg', href: '/article/ia-humain', tag: 'Tech', tagColor: '#2563EB' },
+    { title: 'Innovations de demain', image: '/placeholder.svg', href: '/article/innovations-demain', tag: 'Tech', tagColor: '#2563EB' }
   ],
   'Business': [
     { title: 'Entreprendre autrement', image: '/placeholder.svg', href: '/article/entreprendre-autrement', tag: 'Business', tagColor: '#14B8A6' },
@@ -186,20 +186,20 @@ interface UniversItem {
 }
 
 const universItems: UniversItem[] = [
-  { name: 'Psychologie', href: '/univers/psychologie', color: '#8B5CF6' },
-  { name: 'Société', href: '/univers/societe', color: '#F59E0B' },
-  { name: 'Famille', href: '/univers/famille', color: '#EC4899' },
+  { name: 'Psychologie', href: '/univers/psychologie', color: '#4F46E5' },
+  { name: 'Société', href: '/univers/societe', color: '#D97706' },
+  { name: 'Famille', href: '/univers/famille', color: '#FB7185' },
   { name: 'Voyage', href: '/univers/voyage', color: '#10B981' },
-  { name: 'Spiritualité', href: '/univers/spiritualite', color: '#A855F7' },
-  { name: 'Carrière', href: '/univers/carriere', color: '#1F2937' },
-  { name: 'Art & Créativité', href: '/univers/art-creativite', color: '#6366F1' },
-  { name: 'Santé', href: '/univers/sante', color: '#EF4444' },
-  { name: 'Tech', href: '/univers/tech', color: '#06B6D4' },
+  { name: 'Spiritualité', href: '/univers/spiritualite', color: '#9333EA' },
+  { name: 'Carrière', href: '/univers/carriere', color: '#0EA5E9' },
+  { name: 'Art & Créativité', href: '/univers/art-creativite', color: '#D946EF' },
+  { name: 'Santé', href: '/univers/sante', color: '#DC2626' },
+  { name: 'Tech', href: '/univers/tech', color: '#2563EB' },
   { name: 'Business', href: '/univers/business', color: '#14B8A6' },
 ];
 
-// Items pour le dropdown Academy - Style Premium
-interface AcademyItem {
+// Items pour le dropdown Académie - Style Premium
+interface AcademieItem {
   name: string;
   subtitle: string;
   href: string;
@@ -209,41 +209,44 @@ interface AcademyItem {
   free?: boolean;
 }
 
-const academyItems: AcademyItem[] = [
-  { name: 'Kit d\'Introspection', subtitle: 'Démarrez votre voyage', href: '/academy/kit-introspection', price: 'Gratuit', free: true },
-  { name: 'Masterclass Storytelling', subtitle: 'L\'art du récit', href: '/academy/masterclass-storytelling', price: '29€', originalPrice: '49€', highlight: true },
-  { name: 'Guide Mindset', subtitle: 'Transformez votre mental', href: '/academy/guide-mindset', price: '19€' },
-  { name: 'Programme Complet', subtitle: 'Accès illimité à vie', href: '/academy/programme-complet', price: '79€', originalPrice: '147€' },
+const academieItems: AcademieItem[] = [
+  { name: 'Kit d\'Introspection', subtitle: 'Démarrez votre voyage', href: '/academie/kit-introspection', price: 'Gratuit', free: true },
+  { name: 'Masterclass Storytelling', subtitle: 'L\'art du récit', href: '/academie/masterclass-storytelling', price: '29€', originalPrice: '49€', highlight: true },
+  { name: 'Guide Mindset', subtitle: 'Transformez votre mental', href: '/academie/guide-mindset', price: '19€' },
+  { name: 'Programme Complet', subtitle: 'Accès illimité à vie', href: '/academie/programme-complet', price: '79€', originalPrice: '147€' },
 ];
 
-// Items pour le dropdown Recos
+// Items pour le dropdown Recos (synchronisé avec RecommandationsSection)
 interface RecoItem {
   name: string;
   href: string;
   color: string;
-  icon?: string;
 }
 
 const recoItems: RecoItem[] = [
-  { name: 'Livres', href: '/recommandations?type=livres', color: '#EF4444' },
-  { name: 'Films', href: '/recommandations?type=films', color: '#DC2626' },
-  { name: 'Séries TV', href: '/recommandations?type=series-tv', color: '#B91C1C' },
-  { name: 'Musique', href: '/recommandations?type=musique', color: '#F97316' },
-  { name: 'Social Media', href: '/recommandations?type=social-media', color: '#EA580C' },
+  { name: 'Livres', href: '/recommandations?type=livre', color: '#EC4899' },
+  { name: 'Films & Séries', href: '/recommandations?type=film', color: '#8B5CF6' },
+  { name: 'Musique', href: '/recommandations?type=musique', color: '#6366F1' },
+  { name: 'Podcasts', href: '/recommandations?type=podcast', color: '#14B8A6' },
+  { name: 'YouTube', href: '/recommandations?type=youtube', color: '#EF4444' },
+  { name: 'Activité', href: '/recommandations?type=activite', color: '#10B981' },
+  { name: 'Destination', href: '/recommandations?type=destination', color: '#0EA5E9' },
+  { name: 'Culture', href: '/recommandations?type=culture', color: '#A855F7' },
+  { name: 'Produits', href: '/recommandations?type=produit', color: '#F59E0B' },
 ];
 
 
 // Items pour le dropdown Articles (catégories/verticales)
 const articlesItems: UniversItem[] = [
-  { name: 'Psychologie', href: '/articles?verticale=psychologie', color: '#8B5CF6' },
-  { name: 'Société', href: '/articles?verticale=societe', color: '#F59E0B' },
-  { name: 'Famille', href: '/articles?verticale=famille', color: '#EC4899' },
+  { name: 'Psychologie', href: '/articles?verticale=psychologie', color: '#4F46E5' },
+  { name: 'Société', href: '/articles?verticale=societe', color: '#D97706' },
+  { name: 'Famille', href: '/articles?verticale=famille', color: '#FB7185' },
   { name: 'Voyage', href: '/articles?verticale=voyage', color: '#10B981' },
-  { name: 'Spiritualité', href: '/articles?verticale=spiritualite', color: '#A855F7' },
-  { name: 'Carrière', href: '/articles?verticale=carriere', color: '#1F2937' },
-  { name: 'Art & Créativité', href: '/articles?verticale=art-creativite', color: '#6366F1' },
-  { name: 'Santé', href: '/articles?verticale=sante', color: '#EF4444' },
-  { name: 'Tech', href: '/articles?verticale=tech', color: '#06B6D4' },
+  { name: 'Spiritualité', href: '/articles?verticale=spiritualite', color: '#9333EA' },
+  { name: 'Carrière', href: '/articles?verticale=carriere', color: '#0EA5E9' },
+  { name: 'Art & Créativité', href: '/articles?verticale=art-creativite', color: '#D946EF' },
+  { name: 'Santé', href: '/articles?verticale=sante', color: '#DC2626' },
+  { name: 'Tech', href: '/articles?verticale=tech', color: '#2563EB' },
   { name: 'Business', href: '/articles?verticale=business', color: '#14B8A6' },
 ];
 
@@ -266,6 +269,11 @@ const videosItems: UniversItem[] = [
   { name: 'Concept YouTube', href: '/videos?format=youtube', color: '#EF4444' },
   { name: 'Shorts', href: '/videos?format=shorts', color: '#EC4899' },
   { name: 'Live', href: '/videos?format=live', color: '#10B981' },
+  { name: 'Vlogs', href: '/videos?format=vlogs', color: '#F59E0B' },
+  { name: 'Décryptages', href: '/videos?format=decryptages', color: '#6366F1' },
+  { name: 'Débats', href: '/videos?format=debats', color: '#DC2626' },
+  { name: 'Portraits', href: '/videos?format=portraits', color: '#14B8A6' },
+  { name: 'News', href: '/videos?format=news', color: '#1F2937' },
 ];
 
 const navItems: NavItem[] = [
@@ -280,8 +288,8 @@ const navItems: NavItem[] = [
   { label: 'Articles', href: '/articles', hasDropdown: true, color: '#374151', hoverColor: '#059669', hoverBg: 'bg-emerald-50' },
   { label: 'Vidéos', href: '/videos', hasDropdown: true, color: '#374151', hoverColor: '#0891B2', hoverBg: 'bg-cyan-50' },
   { label: 'Histoires', href: '/histoires', hasDropdown: true, color: '#374151', hoverColor: '#DB2777', hoverBg: 'bg-rose-50' },
-  { label: 'Recos', href: '/recommandations', hasDropdown: true, color: '#374151', hoverColor: '#DC2626', hoverBg: 'bg-red-50' },
-  { label: 'Academy', href: '/academy', hasDropdown: true, color: '#374151', hoverColor: '#D97706', hoverBg: 'bg-amber-50' },
+  { label: 'Recos', href: '/recommandations', hasDropdown: true, color: '#374151', hoverColor: '#EC4899', hoverBg: 'bg-pink-50' },
+  { label: 'Académie', href: '/academie', hasDropdown: true, color: '#374151', hoverColor: '#D97706', hoverBg: 'bg-amber-50' },
 ];
 
 // ============ SERIES CARD COMPONENT ============
@@ -488,6 +496,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-center h-12">
 
             {/* Desktop Navigation */}
+            <LayoutGroup>
             <nav className="hidden lg:flex items-center gap-1">
               {navItems.map((item) => {
                 const isActive = isActiveRoute(item.href);
@@ -504,15 +513,17 @@ const Navbar: React.FC = () => {
                       onClick={() => handleNavigation(item.href)}
                       onMouseEnter={() => setHoveredNav(item.label)}
                       onMouseLeave={() => setHoveredNav(null)}
-                      className={`
-                        group relative h-7 px-2.5 rounded-md transition-all duration-200
-                        flex items-center justify-center gap-1
-                        hover:bg-gray-100/60
-                        ${isActive ? 'bg-gray-100' : ''}
-                      `}
+                      className="group relative h-7 px-2.5 rounded-md transition-colors duration-200 flex items-center justify-center gap-1 hover:bg-gray-100/60"
                     >
+                      {isActive && (
+                        <motion.div
+                          layoutId="navActiveIndicator"
+                          className="absolute inset-0 rounded-md bg-gray-100"
+                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        />
+                      )}
                       <span
-                        className="text-xs font-semibold transition-colors duration-200"
+                        className="relative z-10 text-xs font-semibold transition-colors duration-200"
                         style={{
                           color: (hoveredNav === item.label || isActive || isDropdownOpen)
                             ? item.hoverColor
@@ -523,7 +534,7 @@ const Navbar: React.FC = () => {
                       </span>
                       {item.hasDropdown && (
                         <ChevronDown
-                          className="w-2.5 h-2.5 transition-transform duration-200"
+                          className="relative z-10 w-2.5 h-2.5 transition-transform duration-200"
                           style={{
                             transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                             color: (hoveredNav === item.label || isActive || isDropdownOpen)
@@ -960,9 +971,9 @@ const Navbar: React.FC = () => {
                       )}
                     </AnimatePresence>
 
-                    {/* Mega Menu ACADEMY - Style cohérent avec le site */}
+                    {/* Mega Menu ACADÉMIE - Style cohérent avec le site */}
                     <AnimatePresence>
-                      {item.label === 'Academy' && isDropdownOpen && (
+                      {item.label === 'Académie' && isDropdownOpen && (
                         <motion.div
                           initial={{ opacity: 0, y: -4 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -984,14 +995,14 @@ const Navbar: React.FC = () => {
 
                                   {/* Guides pills */}
                                   <div className="flex flex-wrap gap-2">
-                                    {academyItems.map((academy) => {
-                                      const isHovered = hoveredUnivers === academy.name;
-                                      const baseColor = academy.highlight ? '#F59E0B' : '#D97706';
+                                    {academieItems.map((item) => {
+                                      const isHovered = hoveredUnivers === item.name;
+                                      const baseColor = item.highlight ? '#F59E0B' : '#D97706';
                                       return (
                                         <button
-                                          key={academy.href}
-                                          onClick={() => handleNavigation(academy.href)}
-                                          onMouseEnter={() => setHoveredUnivers(academy.name)}
+                                          key={item.href}
+                                          onClick={() => handleNavigation(item.href)}
+                                          onMouseEnter={() => setHoveredUnivers(item.name)}
                                           className="group rounded-full overflow-hidden transition-all duration-100"
                                           style={{
                                             border: `2px solid ${baseColor}`,
@@ -1006,28 +1017,28 @@ const Navbar: React.FC = () => {
                                                 className="text-sm font-semibold transition-colors duration-100"
                                                 style={{ color: isHovered ? 'white' : baseColor }}
                                               >
-                                                {academy.name}
+                                                {item.name}
                                               </span>
                                               <span
                                                 className="text-[10px] transition-colors duration-100"
                                                 style={{ color: isHovered ? 'rgba(255,255,255,0.7)' : '#9CA3AF' }}
                                               >
-                                                {academy.subtitle}
+                                                {item.subtitle}
                                               </span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                               <span
                                                 className="text-xs font-bold transition-colors duration-100"
-                                                style={{ color: isHovered ? 'white' : (academy.free ? '#10B981' : baseColor) }}
+                                                style={{ color: isHovered ? 'white' : (item.free ? '#10B981' : baseColor) }}
                                               >
-                                                {academy.price}
+                                                {item.price}
                                               </span>
-                                              {academy.originalPrice && (
+                                              {item.originalPrice && (
                                                 <span
                                                   className="text-[10px] line-through transition-colors duration-100"
                                                   style={{ color: isHovered ? 'rgba(255,255,255,0.5)' : '#9CA3AF' }}
                                                 >
-                                                  {academy.originalPrice}
+                                                  {item.originalPrice}
                                                 </span>
                                               )}
                                             </div>
@@ -1055,13 +1066,13 @@ const Navbar: React.FC = () => {
                                     </div>
 
                                     <button
-                                      onClick={() => handleNavigation('/academy')}
+                                      onClick={() => handleNavigation('/academie')}
                                       className="group w-full p-4 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white transition-all duration-150 hover:shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5"
                                     >
                                       <div className="flex items-center justify-between">
                                         <div className="text-left">
                                           <p className="text-xs font-medium text-white/70 mb-0.5">Découvrir</p>
-                                          <p className="text-base font-bold">Toute l'Academy</p>
+                                          <p className="text-base font-bold">Toute l'Académie</p>
                                         </div>
                                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
                                           <ArrowRight className="w-5 h-5" />
@@ -1104,8 +1115,8 @@ const Navbar: React.FC = () => {
                             <div className="max-w-4xl mx-auto px-6 py-6">
                               {/* Header */}
                               <div className="flex items-center gap-3 mb-4">
-                                <div className="h-1 w-8 bg-red-500 rounded-full" />
-                                <span className="text-sm font-semibold text-gray-900">Nos recommandations</span>
+                                <div className="h-1 w-8 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" />
+                                <span className="text-sm font-semibold text-gray-900">Nos coups de cœur</span>
                               </div>
 
                               {/* Pills outline style */}
@@ -1151,6 +1162,7 @@ const Navbar: React.FC = () => {
                 );
               })}
             </nav>
+            </LayoutGroup>
 
             {/* Mobile: Logo + burger */}
             <div className="lg:hidden flex items-center justify-between w-full">
@@ -1259,7 +1271,7 @@ const Navbar: React.FC = () => {
                   </Link>
                 ))}
 
-                {/* Réseaux sociaux mobile */}
+                {/* Réseaux sociaux mobile - couleurs de marque */}
                 <div className="flex items-center justify-center gap-2 py-3 border-t border-gray-100 mt-2">
                   {socialLinks.map((social) => (
                     <a
@@ -1267,7 +1279,8 @@ const Navbar: React.FC = () => {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 text-gray-400 hover:text-gray-700 transition-colors"
+                      className="p-2 transition-all duration-300 hover:scale-110"
+                      style={{ color: social.color }}
                       aria-label={social.label}
                     >
                       <social.icon />
