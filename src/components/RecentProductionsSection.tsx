@@ -111,7 +111,43 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
           </div>
 
           {/* Tabs - Style avec animation layoutId */}
-          <div className="flex flex-wrap gap-1.5">
+          {/* Version Mobile - Boutons outline comme navbar */}
+          <div className="flex flex-wrap gap-1.5 sm:hidden">
+            <button
+              onClick={() => setActiveTab('tous')}
+              className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
+                activeTab === 'tous'
+                  ? 'bg-gray-900 text-white border border-gray-900'
+                  : 'bg-white text-gray-900 border border-gray-900'
+              }`}
+            >
+              Tous
+              <ArrowRight className="w-3 h-3" />
+            </button>
+            {verticaleNames.map(name => {
+              const colors = getUniversColors(name);
+              const isActive = activeTab === name;
+
+              return (
+                <button
+                  key={name}
+                  onClick={() => setActiveTab(name)}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
+                  style={{
+                    backgroundColor: isActive ? colors.bg : 'white',
+                    color: isActive ? colors.text : colors.bg,
+                    border: `1px solid ${colors.bg}`,
+                  }}
+                >
+                  {name}
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Version Desktop - Animation layoutId */}
+          <div className="hidden sm:flex flex-wrap gap-1.5">
             <button
               onClick={() => setActiveTab('tous')}
               className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-200 rounded-full"
@@ -165,7 +201,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
         {/* Productions Grid - Glassmorphism Premium */}
         {/* Responsive: 6 sur mobile (3×2), 9 sur tablette (3×3), 8 sur desktop (2×4) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-3 mb-5 sm:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3 lg:gap-3 mb-5 sm:mb-6">
           {filteredProductions.slice(0, 9).map((production, index) => {
             const colors = getUniversColors(production.verticale?.nom);
 
@@ -202,8 +238,8 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                         boxShadow: `0 20px 40px -15px ${colors.shadow}, 0 8px 20px -8px rgba(0,0,0,0.1)`,
                       }}
                     >
-                      {/* Image - Plus grande sur desktop */}
-                      <div className="relative aspect-[4/5] lg:aspect-[4/5.5] overflow-hidden rounded-[14px]">
+                      {/* Image - 16:9 sur mobile, 4:5 sur tablette/desktop */}
+                      <div className="relative aspect-[16/9] sm:aspect-[4/5] lg:aspect-[4/5.5] overflow-hidden rounded-[14px]">
                         <img
                           src={production.imageUrl || '/placeholder.svg'}
                           alt={production.titre}

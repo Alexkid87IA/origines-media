@@ -94,6 +94,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const recoRef = useRef<HTMLDivElement>(null);
+  const [hasScrollHinted, setHasScrollHinted] = useState(false);
 
   // Fetch des recommandations depuis Sanity
   useEffect(() => {
@@ -191,6 +192,32 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
     }, 5000);
     return () => clearInterval(interval);
   }, [allItems.length]);
+
+  // Animation "peek" pour montrer qu'on peut scroller (mobile uniquement)
+  useEffect(() => {
+    if (hasScrollHinted || !sidebarRef.current) return;
+
+    // Vérifier si on est sur mobile (viewport < 1024px)
+    const isMobile = window.innerWidth < 1024;
+    if (!isMobile) return;
+
+    const container = sidebarRef.current;
+
+    // Attendre que le contenu soit chargé
+    const timer = setTimeout(() => {
+      // Scroll vers la droite - bien visible
+      container.scrollTo({ left: 200, behavior: 'smooth' });
+
+      // Pause pour que l'utilisateur voie
+      setTimeout(() => {
+        // Revenir au début
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+        setHasScrollHinted(true);
+      }, 1200);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [hasScrollHinted, sidebarItems.length]);
 
   // Calculer les couleurs utilisées par les articles
   const usedColors = React.useMemo(() => {
@@ -306,8 +333,52 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
             </Link>
           </motion.div>
 
-          {/* Side cards - 5 Sober cards (4 cols) avec Accordion */}
-          <div ref={sidebarRef} className="col-span-12 lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-2.5 lg:gap-2">
+          {/* Navigation dots - Mobile uniquement, entre image et carousel */}
+          <div className="col-span-12 lg:hidden flex items-center justify-center gap-1.5 py-3">
+            {allItems.map((item, index) => {
+              const dotColors = getUniversColors(item.categorie);
+              const isActive = index === safeIndex;
+
+              return (
+                <button
+                  key={index}
+                  onClick={() => setActiveIndex(index)}
+                  className="relative h-1.5 rounded-full transition-all duration-300 overflow-hidden"
+                  style={{
+                    width: isActive ? '24px' : '6px',
+                    backgroundColor: isActive ? dotColors.bg : '#e5e7eb',
+                  }}
+                >
+                  {isActive && (
+                    <motion.div
+                      className="absolute inset-0 rounded-full"
+                      style={{ backgroundColor: dotColors.bg, filter: 'brightness(0.8)' }}
+                      initial={{ scaleX: 0, transformOrigin: 'left' }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 5, ease: 'linear' }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Side cards - Carousel horizontal sur mobile, vertical sur desktop */}
+          <div className="col-span-12 lg:col-span-4 relative">
+            {/* Gradient fondu à droite (mobile uniquement) */}
+            <div className="absolute right-0 top-0 bottom-2 w-20 bg-gradient-to-l from-gray-50 via-gray-50/70 to-transparent z-10 pointer-events-none lg:hidden" />
+
+            <div
+              ref={sidebarRef}
+              className="flex lg:grid lg:grid-cols-1
+                         gap-2.5 lg:gap-2
+                         overflow-x-auto lg:overflow-visible
+                         pb-2 lg:pb-0
+                         -mx-4 px-4 lg:mx-0 lg:px-0
+                         snap-x snap-mandatory lg:snap-none
+                         scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
             {sidebarItems.map((item, index) => {
               const itemColors = getUniversColors(item.categorie);
               const isActive = activeIndex === index + 1;
@@ -322,10 +393,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.08 }}
-                  className={`relative group ${isLastItem ? 'lg:hidden' : ''}`}
+                  className={`relative group flex-shrink-0 lg:flex-shrink
+                             w-[260px] sm:w-[280px] lg:w-auto
+                             snap-start
+                             ${isLastItem ? 'lg:hidden' : ''}`}
                 >
                   <div
-                    className="relative rounded-xl overflow-hidden transition-all duration-300 bg-white"
+                    className="relative rounded-xl overflow-hidden transition-all duration-300 bg-white w-full"
                     style={{
                       boxShadow: isExpanded
                         ? `0 8px 24px -6px ${itemColors.bg}20`
@@ -341,7 +415,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                       }}
                       className="w-full text-left"
                     >
-                      <div className="relative p-2 lg:p-2.5 flex items-center gap-2">
+                      <div className="relative p-2.5 lg:p-2.5 flex items-center gap-2.5">
                         {/* Image thumbnail avec bordure colorée au hover */}
                         <motion.div
                           className="relative flex-shrink-0"
@@ -351,7 +425,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                           transition={{ duration: 0.3 }}
                         >
                           <div
-                            className="w-9 h-9 lg:w-10 lg:h-10 rounded-md overflow-hidden transition-all duration-300"
+                            className="w-12 h-12 lg:w-10 lg:h-10 rounded-lg overflow-hidden transition-all duration-300"
                             style={{
                               boxShadow: isActive || isExpanded
                                 ? `0 4px 12px -2px ${itemColors.bg}40`
@@ -373,7 +447,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                         <div className="flex-1 min-w-0 py-0.5">
                           {/* Badge pill coloré plein - petit */}
                           <span
-                            className="inline-flex items-center px-1.5 py-px rounded text-[7px] sm:text-[8px] font-semibold uppercase tracking-wide mb-1 whitespace-nowrap"
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase tracking-wide mb-1.5 whitespace-nowrap"
                             style={{
                               backgroundColor: itemColors.bg,
                               color: 'white',
@@ -381,7 +455,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                           >
                             {item.categorie}
                           </span>
-                          <h3 className="text-[10px] lg:text-[11px] font-medium text-gray-900 leading-snug line-clamp-2 group-hover:text-gray-700 transition-colors">
+                          <h3 className="text-[11px] lg:text-[11px] font-medium text-gray-900 leading-snug line-clamp-2 group-hover:text-gray-700 transition-colors">
                             {typo(item.titre)}
                           </h3>
                         </div>
@@ -460,11 +534,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 </motion.div>
               );
             })}
+            </div>
           </div>
         </div>
 
-        {/* Navigation dots */}
-        <div className="mt-3 sm:mt-4 flex items-center gap-1.5">
+        {/* Navigation dots - Desktop uniquement */}
+        <div className="hidden lg:flex mt-3 sm:mt-4 items-center gap-1.5">
           {allItems.map((item, index) => {
             const dotColors = getUniversColors(item.categorie);
             const isActive = index === activeIndex;

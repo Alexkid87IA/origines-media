@@ -167,10 +167,10 @@ export default function VideosSection() {
                     />
 
                     {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* Play button on hover */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {/* Play button - toujours visible sur mobile */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
                       <div
                         className="w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-sm"
                         style={{ backgroundColor: `${video.color}dd` }}

@@ -661,8 +661,51 @@ const ArticlesPage: React.FC = () => {
                             to={`/article/${article.slug}`}
                             className="block"
                           >
+                            {/* Version Mobile - 16:9 avec overlay */}
+                            <div className="sm:hidden relative rounded-2xl overflow-hidden aspect-[16/9]">
+                              <img
+                                src={article.imageUrl || '/placeholder.svg'}
+                                alt={article.titre}
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                              />
+                              {/* Gradient overlay */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                              {/* Badge catégorie en haut */}
+                              {article.verticale?.nom && (
+                                <div className="absolute top-3 left-3">
+                                  <span
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
+                                    style={{ backgroundColor: article.verticale.couleurDominante }}
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                                    {article.verticale.nom}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Contenu en bas */}
+                              <div className="absolute inset-x-0 bottom-0 p-4">
+                                <h3 className="font-bold text-white text-base leading-snug line-clamp-2 mb-2">
+                                  {typo(article.titre)}
+                                </h3>
+                                <p className="text-white/70 text-xs line-clamp-2 mb-3">
+                                  {getExtrait(article)}
+                                </p>
+                                <span
+                                  className="inline-flex items-center gap-1.5 text-xs font-semibold group-hover:gap-2 transition-all"
+                                  style={{ color }}
+                                >
+                                  Lire l'article
+                                  <ArrowRight className="w-3 h-3" />
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Version Desktop - Card classique */}
                             <div
-                              className="rounded-2xl overflow-hidden bg-white ring-1 ring-gray-200/50 transition-all duration-300 group-hover:ring-2 group-hover:scale-[1.02]"
+                              className="hidden sm:block rounded-2xl overflow-hidden bg-white ring-1 ring-gray-200/50 transition-all duration-300 group-hover:ring-2 group-hover:scale-[1.02]"
                               style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.08)' }}
                               onMouseEnter={(e) => {
                                 (e.currentTarget as HTMLDivElement).style.boxShadow = `0 12px 30px -8px ${color}40, 0 0 0 2px ${color}`;
