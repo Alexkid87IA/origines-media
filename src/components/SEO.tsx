@@ -16,9 +16,9 @@ interface SEOProps {
 }
 
 const DEFAULT_TITLE = 'Origines Media';
-const DEFAULT_DESCRIPTION = 'Origines Media - Récits inspirants et histoires qui transforment. Découvrez nos portraits, articles et vidéos exclusives.';
-const DEFAULT_IMAGE = 'https://originesmedia.com/og-image.jpg';
-const SITE_URL = 'https://originesmedia.com';
+const DEFAULT_DESCRIPTION = 'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.';
+const DEFAULT_IMAGE = 'https://origines.media/og-image.png';
+const SITE_URL = 'https://origines.media';
 
 const SEO: React.FC<SEOProps> = ({
   title,
