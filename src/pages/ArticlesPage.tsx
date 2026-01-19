@@ -326,10 +326,10 @@ const ArticlesPage: React.FC = () => {
           <div className="flex gap-6 lg:gap-8">
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* SIDEBAR - Desktop */}
+            {/* SIDEBAR - Desktop - Sticky */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-24 space-y-5">
+              <div className="sticky top-20 space-y-5">
 
                 {/* Recherche */}
                 <form onSubmit={handleSearch} className="relative">
@@ -465,6 +465,45 @@ const ArticlesPage: React.FC = () => {
                     })}
                   </div>
                 </div>
+
+                {/* Promo Académie - 9:16 */}
+                <Link
+                  to="/academie"
+                  className="group block rounded-2xl overflow-hidden relative"
+                  style={{ aspectRatio: '9/16' }}
+                >
+                  {/* Image de fond */}
+                  <img
+                    src="/academy/masterclass-storytelling.jpg"
+                    alt="Académie Origines"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+                  {/* Contenu */}
+                  <div className="relative z-10 flex flex-col justify-between h-full p-5">
+                    {/* Badge */}
+                    <span className="inline-block px-3 py-1.5 rounded-full bg-violet-600 text-white text-[10px] font-bold uppercase tracking-wider w-fit shadow-lg">
+                      Nouveau
+                    </span>
+
+                    {/* Content en bas */}
+                    <div>
+                      <h3 className="text-white text-lg font-bold leading-tight mb-2 drop-shadow-lg">
+                        L'Académie Origines
+                      </h3>
+                      <p className="text-white/90 text-xs leading-relaxed mb-4 drop-shadow">
+                        Formations et masterclasses pour développer vos compétences.
+                      </p>
+                      <span className="inline-flex items-center gap-2 text-white text-sm font-semibold group-hover:gap-3 transition-all">
+                        Découvrir
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
               </div>
             </aside>
 

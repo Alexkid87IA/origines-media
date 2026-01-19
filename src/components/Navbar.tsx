@@ -228,6 +228,7 @@ const recoItems: RecoItem[] = [
   { name: 'Films & Séries', href: '/recommandations?type=film', color: '#8B5CF6' },
   { name: 'Musique', href: '/recommandations?type=musique', color: '#6366F1' },
   { name: 'Podcasts', href: '/recommandations?type=podcast', color: '#14B8A6' },
+  { name: 'Social', href: '/recommandations?type=reseaux-sociaux', color: '#0891B2' },
   { name: 'YouTube', href: '/recommandations?type=youtube', color: '#EF4444' },
   { name: 'Activité', href: '/recommandations?type=activite', color: '#10B981' },
   { name: 'Destination', href: '/recommandations?type=destination', color: '#0EA5E9' },

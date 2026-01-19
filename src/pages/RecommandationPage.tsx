@@ -74,6 +74,7 @@ const recommendationTypes: Record<string, { color: string; label: string; icon: 
   destination: { color: '#0EA5E9', label: 'Destination', icon: MapPin, gradient: 'from-sky-500 to-blue-500', ctaLabel: 'Explorer' },
   culture: { color: '#A855F7', label: 'Culture', icon: Palette, gradient: 'from-purple-500 to-fuchsia-500', ctaLabel: 'Découvrir' },
   produit: { color: '#F59E0B', label: 'Produits', icon: ShoppingBag, gradient: 'from-amber-500 to-yellow-500', ctaLabel: 'Voir le produit' },
+  'reseaux-sociaux': { color: '#E11D48', label: 'Réseaux sociaux', icon: Globe, gradient: 'from-rose-500 to-pink-500', ctaLabel: 'Voir le compte' },
 };
 
 type RecoType = keyof typeof recommendationTypes;
