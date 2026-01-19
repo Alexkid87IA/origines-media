@@ -3,9 +3,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Play, Clock, Search, Clock3, Flame, ChevronLeft, ChevronRight
+  Play, Clock, Search, Clock3, Flame, ChevronLeft, ChevronRight, SlidersHorizontal
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -148,6 +148,7 @@ const VideosPage: React.FC = () => {
   const [activeFormat, setActiveFormat] = useState('all');
   const [activeSort, setActiveSort] = useState('recent');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -311,6 +312,82 @@ const VideosPage: React.FC = () => {
 
             {/* Grille vidéos */}
             <div>
+              {/* Barre mobile */}
+              <div className="lg:hidden flex items-center gap-2 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-gray-300"
+                  />
+                </div>
+                <button
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700"
+                >
+                  <SlidersHorizontal className="w-4 h-4" />
+                  Filtres
+                </button>
+              </div>
+
+              {/* Filtres mobile */}
+              <AnimatePresence>
+                {showMobileFilters && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="lg:hidden overflow-hidden mb-4"
+                  >
+                    <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-4">
+                      {/* Formats */}
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Format</p>
+                        <div className="flex flex-wrap gap-2">
+                          {formatFilters.map((format) => (
+                            <button
+                              key={format.id}
+                              onClick={() => { setActiveFormat(format.id); setShowMobileFilters(false); }}
+                              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                              style={{
+                                backgroundColor: activeFormat === format.id ? format.color : `${format.color}15`,
+                                color: activeFormat === format.id ? '#FFFFFF' : format.color
+                              }}
+                            >
+                              {format.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Tri */}
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Trier par</p>
+                        <div className="flex flex-wrap gap-2">
+                          {sortOptions.map((option) => (
+                            <button
+                              key={option.id}
+                              onClick={() => { setActiveSort(option.id); setShowMobileFilters(false); }}
+                              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
+                                activeSort === option.id
+                                  ? 'bg-gray-900 text-white'
+                                  : 'bg-gray-100 text-gray-600'
+                              }`}
+                            >
+                              <option.icon className="w-3 h-3" />
+                              {option.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {loading ? (
                 <div className="flex items-center justify-center py-20">
                   <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />

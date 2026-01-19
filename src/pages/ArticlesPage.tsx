@@ -542,33 +542,61 @@ const ArticlesPage: React.FC = () => {
                     exit={{ height: 0, opacity: 0 }}
                     className="lg:hidden overflow-hidden mb-4"
                   >
-                    <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => { clearFilters(); setShowMobileFilters(false); }}
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                            !activeType && !activeVerticale ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          Tous
-                        </button>
-                        {Object.entries(TYPE_LABELS).map(([type, { label, color }]) => (
+                    <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-4">
+                      {/* Types de contenu */}
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Type de contenu</p>
+                        <div className="flex flex-wrap gap-2">
                           <button
-                            key={type}
-                            onClick={() => { handleTypeClick(type); setShowMobileFilters(false); }}
-                            className="px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5"
-                            style={{
-                              backgroundColor: activeType === type ? color : `${color}15`,
-                              color: activeType === type ? '#FFFFFF' : color
-                            }}
+                            onClick={() => { clearFilters(); setShowMobileFilters(false); }}
+                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                              !activeType && !activeVerticale ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
+                            }`}
                           >
-                            <span
-                              className="w-1.5 h-1.5 rounded-full"
-                              style={{ backgroundColor: activeType === type ? 'rgba(255,255,255,0.6)' : color }}
-                            />
-                            {label}
+                            Tous
                           </button>
-                        ))}
+                          {Object.entries(TYPE_LABELS).map(([type, { label, color }]) => (
+                            <button
+                              key={type}
+                              onClick={() => { handleTypeClick(type); setShowMobileFilters(false); }}
+                              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5"
+                              style={{
+                                backgroundColor: activeType === type ? color : `${color}15`,
+                                color: activeType === type ? '#FFFFFF' : color
+                              }}
+                            >
+                              <span
+                                className="w-1.5 h-1.5 rounded-full"
+                                style={{ backgroundColor: activeType === type ? 'rgba(255,255,255,0.6)' : color }}
+                              />
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Catégories */}
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Par catégorie</p>
+                        <div className="flex flex-wrap gap-2">
+                          {verticales.filter(v => verticaleCounts[v.slug.current] > 0).map((verticale) => (
+                            <button
+                              key={verticale._id}
+                              onClick={() => { handleVerticaleClick(verticale.slug.current); setShowMobileFilters(false); }}
+                              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5"
+                              style={{
+                                backgroundColor: activeVerticale === verticale.slug.current ? verticale.couleurDominante : `${verticale.couleurDominante}15`,
+                                color: activeVerticale === verticale.slug.current ? '#FFFFFF' : verticale.couleurDominante
+                              }}
+                            >
+                              <span
+                                className="w-1.5 h-1.5 rounded-full"
+                                style={{ backgroundColor: activeVerticale === verticale.slug.current ? 'rgba(255,255,255,0.6)' : verticale.couleurDominante }}
+                              />
+                              {verticale.nom}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </motion.div>

@@ -3,11 +3,11 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Film, Headphones, ShoppingBag, Music, Youtube, MapPin, Palette, Globe,
   ArrowRight, Star, ArrowUpRight, Loader2, Send, Heart, MessageCircle, AtSign,
-  ChevronLeft, ChevronRight, Mail
+  ChevronLeft, ChevronRight, Mail, SlidersHorizontal, X
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -343,6 +343,7 @@ export default function RecommandationsPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<RecommendationType | 'all'>('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
     const fetchRecos = async () => {
@@ -516,7 +517,105 @@ export default function RecommandationsPage() {
         {/* ============ FILTRES ============ */}
         <section className="sticky top-16 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex flex-wrap justify-center gap-2">
+            {/* Mobile: Bouton filtres */}
+            <div className="lg:hidden">
+              <button
+                onClick={() => setShowMobileFilters(!showMobileFilters)}
+                className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium text-gray-700"
+              >
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <span>Filtrer par catégorie</span>
+                  {activeFilter !== 'all' && (
+                    <span
+                      className="px-2 py-0.5 rounded-full text-xs font-bold text-white"
+                      style={{ backgroundColor: recommendationTypes[activeFilter].color }}
+                    >
+                      {recommendationTypes[activeFilter].label}
+                    </span>
+                  )}
+                </div>
+                <motion.div
+                  animate={{ rotate: showMobileFilters ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronRight className="w-4 h-4 rotate-90" />
+                </motion.div>
+              </button>
+
+              {/* Mobile filters panel */}
+              <AnimatePresence>
+                {showMobileFilters && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-4 pb-2 space-y-3">
+                      {/* Bouton Tout */}
+                      <button
+                        onClick={() => {
+                          setActiveFilter('all');
+                          setShowMobileFilters(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${
+                          activeFilter === 'all'
+                            ? 'bg-gray-900 text-white'
+                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span className="font-medium">Tout voir</span>
+                        <span className="text-sm opacity-70">{allRecommendations.length}</span>
+                      </button>
+
+                      {/* Categories */}
+                      <div className="grid grid-cols-2 gap-2">
+                        {availableTypes.map(type => {
+                          const config = recommendationTypes[type];
+                          const Icon = config.icon;
+                          const isActive = activeFilter === type;
+                          const count = recosByType[type]?.length || 0;
+                          const isEmpty = count === 0;
+
+                          return (
+                            <button
+                              key={type}
+                              onClick={() => {
+                                if (!isEmpty) {
+                                  setActiveFilter(type);
+                                  setShowMobileFilters(false);
+                                }
+                              }}
+                              disabled={isEmpty}
+                              className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-left transition-all ${
+                                isEmpty ? 'opacity-40 cursor-not-allowed' : ''
+                              }`}
+                              style={{
+                                backgroundColor: isActive ? config.color : config.lightBg,
+                                color: isActive ? 'white' : config.color,
+                              }}
+                            >
+                              <Icon className="w-4 h-4 flex-shrink-0" />
+                              <span className="text-sm font-medium truncate">{config.label}</span>
+                              {count > 0 && (
+                                <span className={`text-xs ml-auto ${isActive ? 'opacity-70' : 'opacity-60'}`}>
+                                  {count}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Desktop: Filtres en ligne */}
+            <div className="hidden lg:flex flex-wrap justify-center gap-2">
               <button
                 onClick={() => setActiveFilter('all')}
                 className="relative px-5 py-2 rounded-full text-sm font-semibold transition-colors"
