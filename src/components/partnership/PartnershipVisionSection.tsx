@@ -637,66 +637,63 @@ const PartnershipVisionSection: React.FC = () => {
             </div>
 
             {/* Détail de la verticale sélectionnée */}
-            {selectedVerticale && (
-              <div className="bg-gradient-to-br from-violet-500/10 to-orange-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-300">
-                {(() => {
-                  const v = verticales.find(v => v.id === selectedVerticale)!;
-                  return (
-                    <>
-                      <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                        <div 
-                          className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center"
-                          style={{ backgroundColor: v.color + '20' }}
-                        >
-                          <v.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" style={{ color: v.color }} />
-                        </div>
-                        <div>
-                          <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900">
-                            Wanted{v.name}
-                          </h3>
-                          <p className="font-inter text-gray-500 text-xs sm:text-sm">{v.desc}</p>
-                        </div>
-                      </div>
+            {selectedVerticale && (() => {
+              const v = verticales.find(v => v.id === selectedVerticale);
+              if (!v) return null;
+              return (
+                <div className="bg-gradient-to-br from-violet-500/10 to-orange-500/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-300">
+                  <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div
+                      className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl flex items-center justify-center"
+                      style={{ backgroundColor: v.color + '20' }}
+                    >
+                      <v.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" style={{ color: v.color }} />
+                    </div>
+                    <div>
+                      <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl text-gray-900">
+                        Wanted{v.name}
+                      </h3>
+                      <p className="font-inter text-gray-500 text-xs sm:text-sm">{v.desc}</p>
+                    </div>
+                  </div>
 
-                      <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
-                        <div>
-                          <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Ligne éditoriale</h4>
-                          <p className="font-playfair italic text-sm sm:text-base lg:text-lg text-gray-600">{v.edito}</p>
-                        </div>
+                  <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
+                    <div>
+                      <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Ligne éditoriale</h4>
+                      <p className="font-playfair italic text-sm sm:text-base lg:text-lg text-gray-600">{v.edito}</p>
+                    </div>
 
-                        <div>
-                          <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Production</h4>
-                          <ul className="space-y-1 sm:space-y-2">
-                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 2 lives/mois</li>
-                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 15 shorts</li>
-                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 3 carrousels</li>
-                            <li className="font-inter text-gray-600 text-xs sm:text-sm">• 1 newsletter</li>
-                          </ul>
-                        </div>
+                    <div>
+                      <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Production</h4>
+                      <ul className="space-y-1 sm:space-y-2">
+                        <li className="font-inter text-gray-600 text-xs sm:text-sm">• 2 lives/mois</li>
+                        <li className="font-inter text-gray-600 text-xs sm:text-sm">• 15 shorts</li>
+                        <li className="font-inter text-gray-600 text-xs sm:text-sm">• 3 carrousels</li>
+                        <li className="font-inter text-gray-600 text-xs sm:text-sm">• 1 newsletter</li>
+                      </ul>
+                    </div>
 
-                        <div>
-                          <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Sponsors</h4>
-                          <p className="font-inter text-gray-500 text-xs sm:text-sm">
-                            {v.name === 'Animaux' && 'Purina, Royal Canin'}
-                            {v.name === 'Business' && 'LinkedIn, Indeed'}
-                            {v.name === 'Logement' && 'Nexity, Action Log.'}
-                            {v.name === 'Mode' && 'Vinted, H&M'}
-                            {v.name === 'Alimentation' && 'Too Good To Go'}
-                            {v.name === 'Formation' && 'OpenClassrooms'}
-                            {v.name === 'Santé' && 'Mutuelle, ARS'}
-                            {v.name === 'Culture' && 'Ministère Culture'}
-                            {v.name === 'Environnement' && 'Ademe, Veolia'}
-                            {v.name === 'Famille' && 'CAF, Fondations'}
-                            {v.name === 'Seniors' && 'AG2R, Malakoff'}
-                            {v.name === 'Mobilité' && 'SNCF, Blablacar'}
-                          </p>
-                        </div>
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
-            )}
+                    <div>
+                      <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base mb-2 sm:mb-3">Sponsors</h4>
+                      <p className="font-inter text-gray-500 text-xs sm:text-sm">
+                        {v.name === 'Animaux' && 'Purina, Royal Canin'}
+                        {v.name === 'Business' && 'LinkedIn, Indeed'}
+                        {v.name === 'Logement' && 'Nexity, Action Log.'}
+                        {v.name === 'Mode' && 'Vinted, H&M'}
+                        {v.name === 'Alimentation' && 'Too Good To Go'}
+                        {v.name === 'Formation' && 'OpenClassrooms'}
+                        {v.name === 'Santé' && 'Mutuelle, ARS'}
+                        {v.name === 'Culture' && 'Ministère Culture'}
+                        {v.name === 'Environnement' && 'Ademe, Veolia'}
+                        {v.name === 'Famille' && 'CAF, Fondations'}
+                        {v.name === 'Seniors' && 'AG2R, Malakoff'}
+                        {v.name === 'Mobilité' && 'SNCF, Blablacar'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 

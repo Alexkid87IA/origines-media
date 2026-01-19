@@ -135,7 +135,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
           // Si on n'a pas trouvé 2 types différents, prendre les 2 premiers
           if (selected.length < 2 && shuffled.length >= 2) {
-            selected.push(shuffled.find(r => !selected.includes(r))!);
+            const nextReco = shuffled.find(r => !selected.includes(r));
+            if (nextReco) selected.push(nextReco);
           }
 
           // Transformer en format d'affichage
@@ -213,8 +214,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
   if (allItems.length === 0) return null;
 
-  const currentItem = allItems[activeIndex];
-  const currentColors = getUniversColors(currentItem?.categorie);
+  // Sécurité: s'assurer que activeIndex est valide
+  const safeIndex = Math.min(activeIndex, allItems.length - 1);
+  const currentItem = allItems[safeIndex];
+
+  // Sécurité supplémentaire
+  if (!currentItem) return null;
+
+  const currentColors = getUniversColors(currentItem.categorie);
 
   return (
     <section className="bg-gray-50/50 relative overflow-hidden">
@@ -243,7 +250,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 {/* Image */}
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={activeIndex}
+                    key={safeIndex}
                     initial={{ opacity: 0, scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
@@ -265,7 +272,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6">
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={activeIndex}
+                      key={safeIndex}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
