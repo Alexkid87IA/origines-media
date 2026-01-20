@@ -1,10 +1,10 @@
 // src/components/HistoiresSection.tsx
-// Section Histoires pour la homepage - Style cohérent avec les autres sections
+// Section Histoires pour la homepage - Design textuel sans images
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Loader2, Quote } from 'lucide-react';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
 
@@ -20,14 +20,13 @@ const emotions = [
   { id: 'liberte', name: 'Liberté', color: '#14B8A6' },
 ];
 
-// Query pour récupérer les histoires (portraits)
+// Query pour récupérer les histoires SANS images de couverture
 const HISTOIRES_HOME_QUERY = `
-  *[_type == "portrait"] | order(ordre asc, _createdAt desc) [0...12] {
+  *[_type == "portrait" && !defined(image.asset)] | order(ordre asc, _createdAt desc) [0...12] {
     _id,
     titre,
     categorie,
     accroche,
-    "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
     citation
   }
@@ -38,7 +37,6 @@ interface Histoire {
   titre: string;
   categorie?: string;
   accroche?: string;
-  imageUrl?: string;
   slug: string;
   citation?: string;
 }
@@ -152,7 +150,7 @@ export default function HistoiresSection() {
           </div>
         )}
 
-        {/* Grid des histoires */}
+        {/* Grid des histoires - Design textuel */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeEmotion}
@@ -174,50 +172,61 @@ export default function HistoiresSection() {
                 >
                   <Link
                     to={`/histoire/${histoire.slug}`}
-                    className="group block"
+                    className="group block h-full"
                   >
-                    {/* Image */}
-                    <div className="relative aspect-[4/5] rounded-xl overflow-hidden mb-3">
-                      <img
-                        src={histoire.imageUrl || '/placeholder.svg'}
-                        alt={histoire.titre}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      {/* Overlay gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div
+                      className="relative h-full rounded-xl p-5 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg border"
+                      style={{
+                        backgroundColor: `${emotionColor}08`,
+                        borderColor: `${emotionColor}20`,
+                      }}
+                    >
+                      {/* Icône citation */}
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center mb-4"
+                        style={{ backgroundColor: `${emotionColor}15` }}
+                      >
+                        <Quote className="w-4 h-4" style={{ color: emotionColor }} />
+                      </div>
 
                       {/* Badge catégorie */}
                       {histoire.categorie && (
                         <span
-                          className="absolute top-3 left-3 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
+                          className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white mb-3"
                           style={{ backgroundColor: emotionColor }}
                         >
                           {histoire.categorie}
                         </span>
                       )}
 
-                      {/* Titre sur l'image */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h3 className="text-white font-bold text-sm leading-tight line-clamp-2 group-hover:text-white/90 transition-colors">
-                          {typo(histoire.titre)}
-                        </h3>
+                      {/* Titre */}
+                      <h3 className="text-gray-900 font-bold text-sm leading-tight line-clamp-2 mb-2 group-hover:text-gray-700 transition-colors">
+                        {typo(histoire.titre)}
+                      </h3>
+
+                      {/* Citation ou accroche */}
+                      {(histoire.citation || histoire.accroche) && (
+                        <p className="text-gray-500 text-xs line-clamp-3 italic mb-4">
+                          {typo(histoire.citation || histoire.accroche || '')}
+                        </p>
+                      )}
+
+                      {/* CTA */}
+                      <div
+                        className="flex items-center gap-1 text-xs font-semibold mt-auto"
+                        style={{ color: emotionColor }}
+                      >
+                        <span>Lire l'histoire</span>
+                        <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                       </div>
-                    </div>
 
-                    {/* Accroche sous l'image */}
-                    {histoire.accroche && (
-                      <p className="text-gray-600 text-xs line-clamp-2">
-                        {typo(histoire.accroche)}
-                      </p>
-                    )}
-
-                    {/* CTA */}
-                    <div
-                      className="flex items-center gap-1 mt-2 text-xs font-semibold transition-colors"
-                      style={{ color: emotionColor }}
-                    >
-                      <span>Découvrir</span>
-                      <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                      {/* Barre de progression au hover */}
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-xl overflow-hidden">
+                        <div
+                          className="h-full w-0 group-hover:w-full transition-all duration-500"
+                          style={{ backgroundColor: emotionColor }}
+                        />
+                      </div>
                     </div>
                   </Link>
                 </motion.div>
