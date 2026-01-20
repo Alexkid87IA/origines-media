@@ -108,6 +108,14 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                 {typo("Chaque univers est un monde à explorer : psychologie, carrière, famille, spiritualité... Trouvez les récits qui résonnent avec vos questionnements du moment et laissez-vous guider par vos centres d'intérêt.")}
               </p>
             </div>
+
+            <Link
+              to="/articles"
+              className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
+            >
+              <span>Tous les articles</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
 
           {/* Tabs - Style avec animation layoutId */}
