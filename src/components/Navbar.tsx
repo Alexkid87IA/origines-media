@@ -251,16 +251,14 @@ const articlesItems: UniversItem[] = [
   { name: 'Business', href: '/articles?verticale=business', color: '#14B8A6' },
 ];
 
-// Items pour le dropdown Histoires (émotions)
+// Items pour le dropdown Histoires (catégories thématiques)
 const histoiresItems: UniversItem[] = [
-  { name: 'Inspiration', href: '/histoires?emotion=inspiration', color: '#F59E0B' },
-  { name: 'Résilience', href: '/histoires?emotion=resilience', color: '#10B981' },
-  { name: 'Amour', href: '/histoires?emotion=amour', color: '#EC4899' },
-  { name: 'Courage', href: '/histoires?emotion=courage', color: '#EF4444' },
-  { name: 'Espoir', href: '/histoires?emotion=espoir', color: '#06B6D4' },
-  { name: 'Gratitude', href: '/histoires?emotion=gratitude', color: '#8B5CF6' },
-  { name: 'Transformation', href: '/histoires?emotion=transformation', color: '#6366F1' },
-  { name: 'Liberté', href: '/histoires?emotion=liberte', color: '#14B8A6' },
+  { name: 'Émotions & Bien-être', href: '/histoires?categorie=emotions', color: '#EC4899' },
+  { name: 'Développement', href: '/histoires?categorie=developpement', color: '#10B981' },
+  { name: 'Parcours & Résilience', href: '/histoires?categorie=parcours', color: '#8B5CF6' },
+  { name: 'Relations & Famille', href: '/histoires?categorie=relations', color: '#F59E0B' },
+  { name: 'Santé mentale', href: '/histoires?categorie=sante', color: '#06B6D4' },
+  { name: 'Épreuves & Inspiration', href: '/histoires?categorie=epreuves', color: '#6366F1' },
 ];
 
 // Items pour le dropdown Vidéos (formats)
@@ -784,7 +782,7 @@ const Navbar: React.FC = () => {
                                   {/* Header */}
                                   <div className="flex items-center gap-3 mb-4">
                                     <div className="h-1 w-8 bg-rose-500 rounded-full" />
-                                    <span className="text-sm font-semibold text-gray-900">Explorer par émotion</span>
+                                    <span className="text-sm font-semibold text-gray-900">Explorer par thème</span>
                                   </div>
 
                                   {/* Horizontal pills wrap - Outline style */}
@@ -847,21 +845,21 @@ const Navbar: React.FC = () => {
                                     </button>
                                   </div>
 
-                                  {/* Popular emotions */}
+                                  {/* Popular themes */}
                                   <div className="mt-4">
                                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Populaires</p>
                                     <div className="flex flex-wrap gap-2">
-                                      {['Inspiration', 'Résilience', 'Amour'].map((name) => {
-                                        const emotion = histoiresItems.find(e => e.name === name);
-                                        return emotion && (
+                                      {['Émotions & Bien-être', 'Parcours & Résilience', 'Développement'].map((name) => {
+                                        const theme = histoiresItems.find(e => e.name === name);
+                                        return theme && (
                                           <button
                                             key={name}
-                                            onClick={() => handleNavigation(emotion.href)}
+                                            onClick={() => handleNavigation(theme.href)}
                                             className="px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-100 hover:scale-105"
                                             style={{
-                                              backgroundColor: `${emotion.color}15`,
-                                              color: emotion.color,
-                                              border: `1px solid ${emotion.color}30`
+                                              backgroundColor: `${theme.color}15`,
+                                              color: theme.color,
+                                              border: `1px solid ${theme.color}30`
                                             }}
                                           >
                                             {name}
