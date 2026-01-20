@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Info, ChevronLeft, ChevronRight, X, Clock, Calendar, Eye, Heart } from 'lucide-react';
+import { Info, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { typo } from '../lib/typography';
@@ -33,6 +33,25 @@ interface Serie {
   annee: string;
   episodes: Episode[];
 }
+
+// Pool d'images aléatoires pour les épisodes "bientôt disponible"
+const PLACEHOLDER_IMAGES = [
+  '/series/01_transmission.jpg',
+  '/series/02_etat_esprit.jpg',
+  '/series/03_il_etait_une_fois.jpg',
+  '/series/04_secrets_professionnels.jpg',
+  '/series/05_la_lettre.jpg',
+  '/series/06_imagine.jpg',
+  '/academy/masterclass-storytelling.jpg',
+  '/academy/guide-mindset.jpg',
+  '/academy/programme-complet.jpg',
+  '/kit-introspection.jpg',
+];
+
+// Fonction pour obtenir une image aléatoire
+const getRandomImage = (index: number): string => {
+  return PLACEHOLDER_IMAGES[index % PLACEHOLDER_IMAGES.length];
+};
 
 // Données des séries avec leurs épisodes
 const seriesData: Serie[] = [
@@ -149,8 +168,7 @@ const seriesData: Serie[] = [
 // Composant Row horizontale (style Netflix)
 const SeriesRow: React.FC<{
   serie: Serie;
-  onSelectEpisode: (episode: Episode, serie: Serie) => void;
-}> = ({ serie, onSelectEpisode }) => {
+}> = ({ serie }) => {
   const rowRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -207,7 +225,7 @@ const SeriesRow: React.FC<{
           <ChevronLeft className="w-8 h-8 text-white" />
         </button>
 
-        {/* Episodes Row */}
+        {/* Episodes Row - Bientôt disponible */}
         <div
           ref={rowRef}
           onScroll={handleScroll}
@@ -220,52 +238,45 @@ const SeriesRow: React.FC<{
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.05 }}
-              onClick={() => onSelectEpisode(episode, serie)}
-              className="flex-shrink-0 w-[280px] lg:w-[320px] group cursor-pointer"
+              className="flex-shrink-0 w-[280px] lg:w-[320px] group cursor-not-allowed"
             >
               {/* Thumbnail */}
-              <div className="relative aspect-video rounded-lg overflow-hidden mb-2 ring-2 ring-transparent group-hover:ring-white transition-all duration-300">
+              <div className="relative aspect-video rounded-lg overflow-hidden mb-2 ring-2 ring-white/10">
                 <img
-                  src={episode.thumbnailUrl}
+                  src={getRandomImage(index + serie.episodes.length)}
                   alt={episode.titre}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover grayscale-[30%] brightness-75"
                 />
 
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                {/* Overlay permanent "Bientôt disponible" */}
+                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
                   <div
-                    className="w-14 h-14 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: serie.couleur }}
+                    className="w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-white/10 backdrop-blur-sm"
                   >
-                    <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                    <Lock className="w-5 h-5 text-white/80" />
                   </div>
+                  <span className="text-white/90 text-xs font-semibold uppercase tracking-wider">
+                    Bientôt disponible
+                  </span>
                 </div>
 
                 {/* Episode number badge */}
                 <div className="absolute top-2 left-2">
                   <span
-                    className="px-2 py-1 rounded text-xs font-bold text-white"
-                    style={{ backgroundColor: serie.couleur }}
+                    className="px-2 py-1 rounded text-xs font-bold text-white/80"
+                    style={{ backgroundColor: `${serie.couleur}80` }}
                   >
                     Ép. {episode.numeroEpisode}
-                  </span>
-                </div>
-
-                {/* Duration badge */}
-                <div className="absolute bottom-2 right-2">
-                  <span className="px-2 py-1 bg-black/80 rounded text-xs text-white flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {episode.duree}
                   </span>
                 </div>
               </div>
 
               {/* Episode Info */}
-              <h3 className="text-white font-semibold text-sm leading-tight line-clamp-1 group-hover:text-white/90 transition-colors">
+              <h3 className="text-white/60 font-semibold text-sm leading-tight line-clamp-1">
                 {typo(episode.titre)}
               </h3>
-              <p className="text-white/50 text-xs line-clamp-2 mt-1">
+              <p className="text-white/40 text-xs line-clamp-2 mt-1">
                 {episode.description}
               </p>
             </motion.div>
@@ -294,7 +305,6 @@ const SeriesRow: React.FC<{
 // Page principale
 const SeriesPage: React.FC = () => {
   const [featuredIndex, setFeaturedIndex] = useState(0);
-  const [selectedEpisode, setSelectedEpisode] = useState<{ episode: Episode; serie: Serie } | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
   const featuredSerie = seriesData[featuredIndex];
@@ -309,10 +319,6 @@ const SeriesPage: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [isPaused, featuredIndex]);
-
-  const handleSelectEpisode = (episode: Episode, serie: Serie) => {
-    setSelectedEpisode({ episode, serie });
-  };
 
   const handleSelectSerie = (index: number) => {
     setFeaturedIndex(index);
@@ -397,12 +403,12 @@ const SeriesPage: React.FC = () => {
                     {/* Buttons */}
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() => handleSelectEpisode(featuredSerie.episodes[0], featuredSerie)}
-                        aria-label={`Regarder ${featuredSerie.titre}`}
-                        className="flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-md font-semibold text-sm hover:bg-white/90 transition-colors"
+                        disabled
+                        aria-label="Bientôt disponible"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/20 text-white/70 rounded-md font-semibold text-sm cursor-not-allowed"
                       >
-                        <Play className="w-4 h-4" fill="currentColor" />
-                        Lecture
+                        <Lock className="w-4 h-4" />
+                        Bientôt disponible
                       </button>
                       <button
                         onClick={handleMoreInfo}
@@ -558,125 +564,10 @@ const SeriesPage: React.FC = () => {
             <SeriesRow
               key={serie.id}
               serie={serie}
-              onSelectEpisode={handleSelectEpisode}
             />
           ))}
         </section>
       </main>
-
-      {/* Episode Modal */}
-      <AnimatePresence>
-        {selectedEpisode && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={() => setSelectedEpisode(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl overflow-hidden max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-            >
-              {/* Video Preview */}
-              <div className="relative aspect-video">
-                <img
-                  src={selectedEpisode.episode.thumbnailUrl}
-                  alt={selectedEpisode.episode.titre}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <button
-                    aria-label={`Lire ${selectedEpisode.episode.titre}`}
-                    className="w-20 h-20 rounded-full flex items-center justify-center transition-transform hover:scale-110"
-                    style={{ backgroundColor: selectedEpisode.serie.couleur }}
-                  >
-                    <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                  </button>
-                </div>
-
-                {/* Close button */}
-                <button
-                  onClick={() => setSelectedEpisode(null)}
-                  aria-label="Fermer"
-                  className="absolute top-4 right-4 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
-                >
-                  <X className="w-5 h-5 text-white" />
-                </button>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 lg:p-8">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span
-                        className="px-2 py-1 rounded text-xs font-bold"
-                        style={{ backgroundColor: selectedEpisode.serie.couleur }}
-                      >
-                        {selectedEpisode.serie.titre}
-                      </span>
-                      <span className="text-white/60 text-sm">
-                        Saison {selectedEpisode.episode.saison} • Épisode {selectedEpisode.episode.numeroEpisode}
-                      </span>
-                    </div>
-                    <h2 className="text-2xl lg:text-3xl font-bold text-white">
-                      {typo(selectedEpisode.episode.titre)}
-                    </h2>
-                  </div>
-                </div>
-
-                {/* Meta */}
-                <div className="flex items-center gap-6 text-white/60 text-sm mb-6">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {selectedEpisode.episode.duree}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {new Date(selectedEpisode.episode.datePublication).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Eye className="w-4 h-4" />
-                    {selectedEpisode.episode.vues.toLocaleString()} vues
-                  </span>
-                </div>
-
-                {/* Description */}
-                <p className="text-white/80 text-lg leading-relaxed mb-8">
-                  {selectedEpisode.episode.description}
-                </p>
-
-                {/* Actions */}
-                <div className="flex items-center gap-4">
-                  <button
-                    aria-label={`Regarder ${selectedEpisode.episode.titre}`}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold text-white transition-colors"
-                    style={{ backgroundColor: selectedEpisode.serie.couleur }}
-                  >
-                    <Play className="w-5 h-5" fill="white" />
-                    Regarder l'épisode
-                  </button>
-                  <button
-                    aria-label="Ajouter aux favoris"
-                    className="p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
-                  >
-                    <Heart className="w-5 h-5 text-white" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <Footer />
     </div>

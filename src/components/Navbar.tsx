@@ -278,17 +278,10 @@ const videosItems: UniversItem[] = [
 ];
 
 const navItems: NavItem[] = [
-  {
-    label: 'Séries',
-    href: '/series',
-    hasDropdown: true,
-    color: '#374151',
-    hoverColor: '#8B5CF6',
-    hoverBg: 'bg-violet-50',
-  },
   { label: 'Articles', href: '/articles', hasDropdown: true, color: '#374151', hoverColor: '#059669', hoverBg: 'bg-emerald-50' },
   { label: 'Vidéos', href: '/videos', hasDropdown: true, color: '#374151', hoverColor: '#0891B2', hoverBg: 'bg-cyan-50' },
   { label: 'Histoires', href: '/histoires', hasDropdown: true, color: '#374151', hoverColor: '#DB2777', hoverBg: 'bg-rose-50' },
+  { label: 'Séries', href: '/series', hasDropdown: true, color: '#374151', hoverColor: '#8B5CF6', hoverBg: 'bg-violet-50' },
   { label: 'Recos', href: '/recommandations', hasDropdown: true, color: '#374151', hoverColor: '#EC4899', hoverBg: 'bg-pink-50' },
   { label: 'Académie', href: '/academie', hasDropdown: true, color: '#374151', hoverColor: '#D97706', hoverBg: 'bg-amber-50' },
 ];
