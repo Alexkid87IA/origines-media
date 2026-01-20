@@ -280,24 +280,33 @@ export default function RecommandationsSection() {
     <section className="py-10 sm:py-12 lg:py-16 bg-gray-50/50 overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header simple */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="h-px w-8 bg-gradient-to-r from-transparent to-rose-300" />
-            <Heart className="w-4 h-4 text-rose-400" />
-            <div className="h-px w-8 bg-gradient-to-l from-transparent to-rose-300" />
+        {/* Header - même style que les autres sections */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
+          <div className="max-w-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-1 w-8 bg-rose-500 rounded-full" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Découvrir</span>
+            </div>
+            <h2 className="text-xl sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+              Nos recommandations
+            </h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {typo("Livres, films, podcasts, chaînes YouTube, destinations... Découvrez les coups de cœur soigneusement sélectionnés par notre équipe pour enrichir votre quotidien.")}
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            Nos recommandations
-          </h2>
-          <p className="text-gray-500 text-sm max-w-md mx-auto">
-            {typo("Livres, films, podcasts... Les coups de cœur de notre équipe.")}
-          </p>
+
+          <Link
+            to="/recommandations"
+            className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
+          >
+            <span>Toutes les recos</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
         {/* Catégories - Pills compacts sans chiffre */}
         {availableCategories.length > 1 && (
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
+          <div className="flex flex-wrap gap-2 mb-6">
             {availableCategories.map((category) => {
               const isActive = activeCategory === category.id;
               const Icon = category.icon;
