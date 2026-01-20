@@ -1,23 +1,23 @@
 // src/components/HistoiresSection.tsx
-// Section Histoires pour la homepage - Design textuel sans images
+// Section Histoires pour la homepage - Design textuel élégant sans images
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Loader2, Quote } from 'lucide-react';
+import { ArrowRight, Loader2, Quote, Sparkles } from 'lucide-react';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
 
 // Émotions/catégories pour les histoires (synchronisé avec navbar)
 const emotions = [
-  { id: 'inspiration', name: 'Inspiration', color: '#F59E0B' },
-  { id: 'resilience', name: 'Résilience', color: '#10B981' },
-  { id: 'amour', name: 'Amour', color: '#EC4899' },
-  { id: 'courage', name: 'Courage', color: '#EF4444' },
-  { id: 'espoir', name: 'Espoir', color: '#06B6D4' },
-  { id: 'gratitude', name: 'Gratitude', color: '#8B5CF6' },
-  { id: 'transformation', name: 'Transformation', color: '#6366F1' },
-  { id: 'liberte', name: 'Liberté', color: '#14B8A6' },
+  { id: 'inspiration', name: 'Inspiration', color: '#F59E0B', gradient: 'from-amber-500 to-orange-500' },
+  { id: 'resilience', name: 'Résilience', color: '#10B981', gradient: 'from-emerald-500 to-teal-500' },
+  { id: 'amour', name: 'Amour', color: '#EC4899', gradient: 'from-pink-500 to-rose-500' },
+  { id: 'courage', name: 'Courage', color: '#EF4444', gradient: 'from-red-500 to-orange-500' },
+  { id: 'espoir', name: 'Espoir', color: '#06B6D4', gradient: 'from-cyan-500 to-blue-500' },
+  { id: 'gratitude', name: 'Gratitude', color: '#8B5CF6', gradient: 'from-violet-500 to-purple-500' },
+  { id: 'transformation', name: 'Transformation', color: '#6366F1', gradient: 'from-indigo-500 to-violet-500' },
+  { id: 'liberte', name: 'Liberté', color: '#14B8A6', gradient: 'from-teal-500 to-emerald-500' },
 ];
 
 // Query pour récupérer les histoires SANS images de couverture
@@ -71,18 +71,17 @@ export default function HistoiresSection() {
     histoires.some(h => h.categorie?.toLowerCase() === e.id)
   );
 
-  // Obtenir la couleur de l'émotion
-  const getEmotionColor = (categorie?: string): string => {
-    if (!categorie) return '#6366F1';
-    const emotion = emotions.find(e => e.id === categorie.toLowerCase());
-    return emotion?.color || '#6366F1';
+  // Obtenir la config de l'émotion
+  const getEmotionConfig = (categorie?: string) => {
+    if (!categorie) return emotions[0];
+    return emotions.find(e => e.id === categorie.toLowerCase()) || emotions[0];
   };
 
   if (loading) {
     return (
       <section className="py-10 sm:py-12 lg:py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 flex justify-center">
-          <Loader2 className="w-6 h-6 text-rose-500 animate-spin" />
+        <div className="max-w-4xl mx-auto px-4 flex justify-center">
+          <Loader2 className="w-6 h-6 text-fuchsia-500 animate-spin" />
         </div>
       </section>
     );
@@ -93,8 +92,8 @@ export default function HistoiresSection() {
   }
 
   return (
-    <section className="py-10 sm:py-12 lg:py-16 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-10 sm:py-12 lg:py-16 bg-gradient-to-b from-white to-gray-50/50 overflow-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header - même style que les autres sections */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
@@ -150,7 +149,7 @@ export default function HistoiresSection() {
           </div>
         )}
 
-        {/* Grid des histoires - Design textuel */}
+        {/* Grid des histoires - Design carte élégant */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeEmotion}
@@ -158,10 +157,10 @@ export default function HistoiresSection() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
             {filteredHistoires.slice(0, 4).map((histoire, index) => {
-              const emotionColor = getEmotionColor(histoire.categorie);
+              const emotionConfig = getEmotionConfig(histoire.categorie);
 
               return (
                 <motion.div
@@ -174,58 +173,57 @@ export default function HistoiresSection() {
                     to={`/histoire/${histoire.slug}`}
                     className="group block h-full"
                   >
-                    <div
-                      className="relative h-full rounded-xl p-5 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg border"
-                      style={{
-                        backgroundColor: `${emotionColor}08`,
-                        borderColor: `${emotionColor}20`,
-                      }}
-                    >
-                      {/* Icône citation */}
+                    <div className="relative h-full bg-white rounded-2xl p-5 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl border border-gray-100 overflow-hidden">
+                      {/* Décoration de fond */}
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center mb-4"
-                        style={{ backgroundColor: `${emotionColor}15` }}
-                      >
-                        <Quote className="w-4 h-4" style={{ color: emotionColor }} />
+                        className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"
+                        style={{ backgroundColor: emotionConfig.color }}
+                      />
+
+                      {/* Header avec icône et badge */}
+                      <div className="relative flex items-start justify-between mb-4">
+                        <div
+                          className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
+                          style={{
+                            background: `linear-gradient(135deg, ${emotionConfig.color}20 0%, ${emotionConfig.color}10 100%)`,
+                          }}
+                        >
+                          <Quote className="w-5 h-5" style={{ color: emotionConfig.color }} />
+                        </div>
+
+                        {histoire.categorie && (
+                          <span
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-sm"
+                            style={{ backgroundColor: emotionConfig.color }}
+                          >
+                            <Sparkles className="w-3 h-3" />
+                            {histoire.categorie}
+                          </span>
+                        )}
                       </div>
 
-                      {/* Badge catégorie */}
-                      {histoire.categorie && (
-                        <span
-                          className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white mb-3"
-                          style={{ backgroundColor: emotionColor }}
-                        >
-                          {histoire.categorie}
-                        </span>
-                      )}
-
                       {/* Titre */}
-                      <h3 className="text-gray-900 font-bold text-sm leading-tight line-clamp-2 mb-2 group-hover:text-gray-700 transition-colors">
+                      <h3 className="relative text-gray-900 font-bold text-base leading-snug mb-3 group-hover:text-gray-700 transition-colors">
                         {typo(histoire.titre)}
                       </h3>
 
                       {/* Citation ou accroche */}
                       {(histoire.citation || histoire.accroche) && (
-                        <p className="text-gray-500 text-xs line-clamp-3 italic mb-4">
-                          {typo(histoire.citation || histoire.accroche || '')}
+                        <p className="relative text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">
+                          "{typo(histoire.citation || histoire.accroche || '')}"
                         </p>
                       )}
 
                       {/* CTA */}
-                      <div
-                        className="flex items-center gap-1 text-xs font-semibold mt-auto"
-                        style={{ color: emotionColor }}
-                      >
-                        <span>Lire l'histoire</span>
-                        <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                      </div>
-
-                      {/* Barre de progression au hover */}
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-xl overflow-hidden">
+                      <div className="relative flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span className="text-xs text-gray-400">Témoignage</span>
                         <div
-                          className="h-full w-0 group-hover:w-full transition-all duration-500"
-                          style={{ backgroundColor: emotionColor }}
-                        />
+                          className="flex items-center gap-1.5 text-xs font-semibold"
+                          style={{ color: emotionConfig.color }}
+                        >
+                          <span>Lire</span>
+                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        </div>
                       </div>
                     </div>
                   </Link>
