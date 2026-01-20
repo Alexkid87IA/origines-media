@@ -1836,7 +1836,16 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <SEO title={title} description={description} url={`/article/${slug}`} />
+      <SEO
+        title={title}
+        description={description}
+        url={`/article/${slug}`}
+        image={imageUrl}
+        type="article"
+        author={authorName}
+        publishedTime={date}
+        section={verticale?.nom}
+      />
 
       {/* Progress Bar */}
       <div

@@ -1864,7 +1864,15 @@ export default function VideoPage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <SEO title={title} description={description} url={`/video/${slug}`} />
+      <SEO
+        title={title}
+        description={description}
+        url={`/video/${slug}`}
+        image={imageUrl}
+        type="video.other"
+        author={authorName}
+        section={verticale?.nom}
+      />
 
       {/* Progress Bar */}
       <div
