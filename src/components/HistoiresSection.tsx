@@ -4,21 +4,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Loader2, Quote, Sparkles } from 'lucide-react';
+import { ArrowRight, Loader2, Quote, Sparkles, Heart, TrendingUp, Award, Users, Brain, Flame } from 'lucide-react';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
 
-// Émotions/catégories pour les histoires (synchronisé avec navbar)
-const emotions = [
-  { id: 'inspiration', name: 'Inspiration', color: '#F59E0B' },
-  { id: 'resilience', name: 'Résilience', color: '#10B981' },
-  { id: 'amour', name: 'Amour', color: '#EC4899' },
-  { id: 'courage', name: 'Courage', color: '#EF4444' },
-  { id: 'espoir', name: 'Espoir', color: '#06B6D4' },
-  { id: 'gratitude', name: 'Gratitude', color: '#8B5CF6' },
-  { id: 'transformation', name: 'Transformation', color: '#6366F1' },
-  { id: 'liberte', name: 'Liberté', color: '#14B8A6' },
-];
+// Mapping des catégories avec couleurs et icônes
+const categoryConfig: Record<string, { color: string; icon: React.ElementType }> = {
+  'émotions & bien-être': { color: '#EC4899', icon: Heart },
+  'développement': { color: '#10B981', icon: TrendingUp },
+  'parcours & résilience': { color: '#8B5CF6', icon: Award },
+  'relations & famille': { color: '#F59E0B', icon: Users },
+  'santé mentale': { color: '#06B6D4', icon: Brain },
+  'épreuves & inspiration': { color: '#EF4444', icon: Flame },
+};
+
+// Couleur par défaut
+const defaultConfig = { color: '#6366F1', icon: Sparkles };
 
 // Query pour récupérer les histoires SANS images de couverture
 const HISTOIRES_HOME_QUERY = `
@@ -54,7 +55,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 export default function HistoiresSection() {
   const [histoires, setHistoires] = useState<Histoire[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeEmotion, setActiveEmotion] = useState<string>('tous');
+  const [activeCategory, setActiveCategory] = useState<string>('tous');
 
   useEffect(() => {
     const fetchHistoires = async () => {
@@ -72,24 +73,31 @@ export default function HistoiresSection() {
     fetchHistoires();
   }, []);
 
-  // Filtrer par émotion/catégorie
+  // Extraire les catégories uniques depuis les données
+  const availableCategories = useMemo(() => {
+    const cats = new Set<string>();
+    histoires.forEach(h => {
+      if (h.categorie) {
+        cats.add(h.categorie);
+      }
+    });
+    return Array.from(cats).sort();
+  }, [histoires]);
+
+  // Filtrer par catégorie
   const filteredHistoires = useMemo(() => {
-    const filtered = activeEmotion === 'tous'
+    const filtered = activeCategory === 'tous'
       ? histoires
-      : histoires.filter(h => h.categorie?.toLowerCase() === activeEmotion);
+      : histoires.filter(h => h.categorie === activeCategory);
     // Re-shuffle à chaque changement de filtre pour varier l'affichage
     return shuffleArray(filtered);
-  }, [activeEmotion, histoires]);
+  }, [activeCategory, histoires]);
 
-  // Émotions disponibles (celles qui ont des histoires)
-  const availableEmotions = emotions.filter(e =>
-    histoires.some(h => h.categorie?.toLowerCase() === e.id)
-  );
-
-  // Obtenir la config de l'émotion
-  const getEmotionConfig = (categorie?: string) => {
-    if (!categorie) return emotions[0];
-    return emotions.find(e => e.id === categorie.toLowerCase()) || emotions[0];
+  // Obtenir la config de la catégorie
+  const getCategoryConfig = (categorie?: string) => {
+    if (!categorie) return defaultConfig;
+    const key = categorie.toLowerCase();
+    return categoryConfig[key] || defaultConfig;
   };
 
   if (loading) {
@@ -134,13 +142,13 @@ export default function HistoiresSection() {
           </Link>
         </div>
 
-        {/* Filtres par émotion - Style tabs comme les articles */}
+        {/* Filtres par catégorie - Style tabs comme les articles */}
         <div className="flex flex-wrap gap-2 mb-6">
           {/* Bouton "Tous" */}
           <button
-            onClick={() => setActiveEmotion('tous')}
+            onClick={() => setActiveCategory('tous')}
             className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-              activeEmotion === 'tous'
+              activeCategory === 'tous'
                 ? 'bg-gray-900 text-white border border-gray-900'
                 : 'bg-white text-gray-900 border border-gray-900'
             }`}
@@ -149,21 +157,22 @@ export default function HistoiresSection() {
             <ArrowRight className="w-3 h-3" />
           </button>
 
-          {/* Boutons par émotion */}
-          {availableEmotions.map(emotion => {
-            const isActive = activeEmotion === emotion.id;
+          {/* Boutons par catégorie */}
+          {availableCategories.map(category => {
+            const config = getCategoryConfig(category);
+            const isActive = activeCategory === category;
             return (
               <button
-                key={emotion.id}
-                onClick={() => setActiveEmotion(emotion.id)}
+                key={category}
+                onClick={() => setActiveCategory(category)}
                 className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
                 style={{
-                  backgroundColor: isActive ? emotion.color : 'white',
-                  color: isActive ? 'white' : emotion.color,
-                  border: `1px solid ${emotion.color}`,
+                  backgroundColor: isActive ? config.color : 'white',
+                  color: isActive ? 'white' : config.color,
+                  border: `1px solid ${config.color}`,
                 }}
               >
-                {emotion.name}
+                {category}
               </button>
             );
           })}
@@ -172,7 +181,7 @@ export default function HistoiresSection() {
         {/* Grid des histoires - Design carte élégant */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeEmotion}
+            key={activeCategory}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -180,7 +189,8 @@ export default function HistoiresSection() {
             className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
             {filteredHistoires.slice(0, 4).map((histoire, index) => {
-              const emotionConfig = getEmotionConfig(histoire.categorie);
+              const config = getCategoryConfig(histoire.categorie);
+              const IconComponent = config.icon;
 
               return (
                 <motion.div
@@ -197,7 +207,7 @@ export default function HistoiresSection() {
                       {/* Décoration de fond */}
                       <div
                         className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"
-                        style={{ backgroundColor: emotionConfig.color }}
+                        style={{ backgroundColor: config.color }}
                       />
 
                       {/* Header avec icône et badge */}
@@ -205,18 +215,18 @@ export default function HistoiresSection() {
                         <div
                           className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
                           style={{
-                            background: `linear-gradient(135deg, ${emotionConfig.color}20 0%, ${emotionConfig.color}10 100%)`,
+                            background: `linear-gradient(135deg, ${config.color}20 0%, ${config.color}10 100%)`,
                           }}
                         >
-                          <Quote className="w-5 h-5" style={{ color: emotionConfig.color }} />
+                          <Quote className="w-5 h-5" style={{ color: config.color }} />
                         </div>
 
                         {histoire.categorie && (
                           <span
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-sm"
-                            style={{ backgroundColor: emotionConfig.color }}
+                            style={{ backgroundColor: config.color }}
                           >
-                            <Sparkles className="w-3 h-3" />
+                            <IconComponent className="w-3 h-3" />
                             {histoire.categorie}
                           </span>
                         )}
@@ -239,7 +249,7 @@ export default function HistoiresSection() {
                         <span className="text-xs text-gray-400">Témoignage</span>
                         <div
                           className="flex items-center gap-1.5 text-xs font-semibold"
-                          style={{ color: emotionConfig.color }}
+                          style={{ color: config.color }}
                         >
                           <span>Lire</span>
                           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
