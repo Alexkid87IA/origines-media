@@ -19,6 +19,7 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { PortableText } from '@portabletext/react';
 import { typo } from '../lib/typography';
+import { AdPlaceholder } from '../components/AdSense';
 
 // ============ ICÔNES RÉSEAUX SOCIAUX (Style Footer/Navbar) ============
 const XIcon = () => (
@@ -2312,11 +2313,7 @@ export default function ArticlePage() {
                   </Link>
 
                   {/* 9. Espace publicitaire */}
-                  <div className="bg-gray-100 border border-dashed border-gray-300 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[250px]">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">
-                      Publicité
-                    </p>
-                  </div>
+                  <AdPlaceholder format="rectangle" />
                 </div>
               </aside>
             </div>

@@ -17,6 +17,7 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { PortableText } from '@portabletext/react';
 import { typo } from '../lib/typography';
+import { AdPlaceholder } from '../components/AdSense';
 
 // Helper to extract text from Sanity block or return string
 const extractTextFromSanity = (value: any): string => {
@@ -381,23 +382,6 @@ function shuffleWithVariety(articles: RelatedArticle[]): RelatedArticle[] {
   return result;
 }
 
-// Composant Espace Pub
-const AdSpace: React.FC<{ format?: 'rectangle' | 'banner'; className?: string }> = ({
-  format = 'rectangle',
-  className = ''
-}) => (
-  <div className={`relative ${className}`}>
-    <div className={`
-      p-4 bg-gray-100 border border-dashed border-gray-300 rounded-xl
-      flex flex-col items-center justify-center text-center
-      ${format === 'banner' ? 'min-h-[100px]' : 'min-h-[250px]'}
-    `}>
-      <p className="text-[10px] uppercase tracking-widest text-gray-400">
-        Publicité
-      </p>
-    </div>
-  </div>
-);
 
 // Composant Widget Newsletter
 const NewsletterWidget: React.FC<{ themeColor: string }> = ({ themeColor }) => {
@@ -1677,7 +1661,7 @@ function ProductionDetailPage() {
             {/* Colonne Contenu */}
             <div ref={articleRef} className="lg:col-span-8">
               {/* Pub banner en haut du contenu */}
-              <AdSpace format="banner" className="mb-8 lg:hidden" />
+              <AdPlaceholder format="banner" className="mb-8 lg:hidden" />
 
               {/* Contenu Article */}
               {production.contenu && production.contenu.length > 0 ? (
@@ -1748,7 +1732,7 @@ function ProductionDetailPage() {
                 )}
 
                 {/* PUB 1 */}
-                <AdSpace format="rectangle" />
+                <AdPlaceholder format="rectangle" />
 
                 {/* Widget À explorer */}
                 <div className="rounded-xl bg-gray-50 border border-gray-200 overflow-hidden">
@@ -1829,7 +1813,7 @@ function ProductionDetailPage() {
                 <NewsletterWidget themeColor={themeColor} />
 
                 {/* PUB 2 */}
-                <AdSpace format="rectangle" />
+                <AdPlaceholder format="rectangle" />
 
                 {/* Réseaux sociaux */}
                 <SocialWidget />
@@ -1863,7 +1847,7 @@ function ProductionDetailPage() {
                 )}
 
                 {/* PUB 3 */}
-                <AdSpace format="rectangle" />
+                <AdPlaceholder format="rectangle" />
 
               </div>
             </div>
