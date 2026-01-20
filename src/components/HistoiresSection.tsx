@@ -1,7 +1,7 @@
 // src/components/HistoiresSection.tsx
 // Section Histoires pour la homepage - Design textuel élégant sans images
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Loader2, Quote, Sparkles } from 'lucide-react';
@@ -10,19 +10,19 @@ import { sanityFetch } from '../lib/sanity';
 
 // Émotions/catégories pour les histoires (synchronisé avec navbar)
 const emotions = [
-  { id: 'inspiration', name: 'Inspiration', color: '#F59E0B', gradient: 'from-amber-500 to-orange-500' },
-  { id: 'resilience', name: 'Résilience', color: '#10B981', gradient: 'from-emerald-500 to-teal-500' },
-  { id: 'amour', name: 'Amour', color: '#EC4899', gradient: 'from-pink-500 to-rose-500' },
-  { id: 'courage', name: 'Courage', color: '#EF4444', gradient: 'from-red-500 to-orange-500' },
-  { id: 'espoir', name: 'Espoir', color: '#06B6D4', gradient: 'from-cyan-500 to-blue-500' },
-  { id: 'gratitude', name: 'Gratitude', color: '#8B5CF6', gradient: 'from-violet-500 to-purple-500' },
-  { id: 'transformation', name: 'Transformation', color: '#6366F1', gradient: 'from-indigo-500 to-violet-500' },
-  { id: 'liberte', name: 'Liberté', color: '#14B8A6', gradient: 'from-teal-500 to-emerald-500' },
+  { id: 'inspiration', name: 'Inspiration', color: '#F59E0B' },
+  { id: 'resilience', name: 'Résilience', color: '#10B981' },
+  { id: 'amour', name: 'Amour', color: '#EC4899' },
+  { id: 'courage', name: 'Courage', color: '#EF4444' },
+  { id: 'espoir', name: 'Espoir', color: '#06B6D4' },
+  { id: 'gratitude', name: 'Gratitude', color: '#8B5CF6' },
+  { id: 'transformation', name: 'Transformation', color: '#6366F1' },
+  { id: 'liberte', name: 'Liberté', color: '#14B8A6' },
 ];
 
 // Query pour récupérer les histoires SANS images de couverture
 const HISTOIRES_HOME_QUERY = `
-  *[_type == "portrait" && !defined(image.asset)] | order(ordre asc, _createdAt desc) [0...12] {
+  *[_type == "portrait" && !defined(image.asset)] {
     _id,
     titre,
     categorie,
@@ -41,6 +41,16 @@ interface Histoire {
   citation?: string;
 }
 
+// Fonction shuffle (Fisher-Yates)
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 export default function HistoiresSection() {
   const [histoires, setHistoires] = useState<Histoire[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +60,8 @@ export default function HistoiresSection() {
     const fetchHistoires = async () => {
       try {
         const data = await sanityFetch(HISTOIRES_HOME_QUERY) as Histoire[];
-        setHistoires(data || []);
+        // Shuffle les histoires pour avoir un ordre aléatoire à chaque chargement
+        setHistoires(shuffleArray(data || []));
       } catch (error) {
         console.error('Erreur fetch histoires:', error);
       } finally {
@@ -62,9 +73,13 @@ export default function HistoiresSection() {
   }, []);
 
   // Filtrer par émotion/catégorie
-  const filteredHistoires = activeEmotion === 'tous'
-    ? histoires
-    : histoires.filter(h => h.categorie?.toLowerCase() === activeEmotion);
+  const filteredHistoires = useMemo(() => {
+    const filtered = activeEmotion === 'tous'
+      ? histoires
+      : histoires.filter(h => h.categorie?.toLowerCase() === activeEmotion);
+    // Re-shuffle à chaque changement de filtre pour varier l'affichage
+    return shuffleArray(filtered);
+  }, [activeEmotion, histoires]);
 
   // Émotions disponibles (celles qui ont des histoires)
   const availableEmotions = emotions.filter(e =>
@@ -119,35 +134,40 @@ export default function HistoiresSection() {
           </Link>
         </div>
 
-        {/* Filtres par émotion */}
-        {availableEmotions.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            <button
-              onClick={() => setActiveEmotion('tous')}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-                activeEmotion === 'tous'
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              Tous
-            </button>
-            {availableEmotions.map(emotion => (
+        {/* Filtres par émotion - Style tabs comme les articles */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {/* Bouton "Tous" */}
+          <button
+            onClick={() => setActiveEmotion('tous')}
+            className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
+              activeEmotion === 'tous'
+                ? 'bg-gray-900 text-white border border-gray-900'
+                : 'bg-white text-gray-900 border border-gray-900'
+            }`}
+          >
+            Tous
+            <ArrowRight className="w-3 h-3" />
+          </button>
+
+          {/* Boutons par émotion */}
+          {availableEmotions.map(emotion => {
+            const isActive = activeEmotion === emotion.id;
+            return (
               <button
                 key={emotion.id}
                 onClick={() => setActiveEmotion(emotion.id)}
                 className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
                 style={{
-                  backgroundColor: activeEmotion === emotion.id ? emotion.color : 'white',
-                  color: activeEmotion === emotion.id ? 'white' : emotion.color,
-                  border: `1px solid ${activeEmotion === emotion.id ? emotion.color : emotion.color + '40'}`,
+                  backgroundColor: isActive ? emotion.color : 'white',
+                  color: isActive ? 'white' : emotion.color,
+                  border: `1px solid ${emotion.color}`,
                 }}
               >
                 {emotion.name}
               </button>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
 
         {/* Grid des histoires - Design carte élégant */}
         <AnimatePresence mode="wait">
