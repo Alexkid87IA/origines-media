@@ -57,17 +57,22 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ verticales }) => {
+const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ verticales = [] }) => {
   const [activeTab, setActiveTab] = useState('tous');
+
+  // Protection: si pas de verticales, ne pas afficher la section
+  if (!verticales || verticales.length === 0) {
+    return null;
+  }
 
   // Récupère toutes les productions avec leur verticale
   const allProductions = React.useMemo(() => {
     return verticales.flatMap(v =>
-      v.productions.map(p => ({
+      (v.productions || []).map(p => ({
         ...p,
         verticale: {
-          nom: v.verticale.nom,
-          couleurDominante: v.verticale.couleurDominante
+          nom: v.verticale?.nom || 'Inconnu',
+          couleurDominante: v.verticale?.couleurDominante || '#6366F1'
         }
       }))
     );
@@ -81,7 +86,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
     return shuffleArray(filtered);
   }, [activeTab, allProductions]);
 
-  const verticaleNames = [...new Set(verticales.map(v => v.verticale.nom))];
+  const verticaleNames = [...new Set(verticales.map(v => v.verticale?.nom).filter(Boolean))];
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';
