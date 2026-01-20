@@ -21,9 +21,9 @@ const categoryConfig: Record<string, { color: string; icon: React.ElementType }>
 // Couleur par défaut
 const defaultConfig = { color: '#6366F1', icon: Sparkles };
 
-// Query pour récupérer les histoires SANS images de couverture
+// Query pour récupérer toutes les histoires
 const HISTOIRES_HOME_QUERY = `
-  *[_type == "portrait" && !defined(image.asset)] {
+  *[_type == "portrait"] {
     _id,
     titre,
     categorie,
