@@ -7,6 +7,7 @@ import SeriesSection from '../components/SeriesSection';
 import RecentProductionsSection from '../components/RecentProductionsSection';
 import VideosSection from '../components/VideosSection';
 import RecommandationsSection from '../components/RecommandationsSection';
+import HistoiresSection from '../components/HistoiresSection';
 import EngagementSection from '../components/EngagementSection';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -166,6 +167,7 @@ function HomePage() {
         <VideosSection />
         <RecentProductionsSection verticales={verticales} />
         <SeriesSection series={series} />
+        <HistoiresSection />
         <RecommandationsSection />
         <EngagementSection />
       </main>
