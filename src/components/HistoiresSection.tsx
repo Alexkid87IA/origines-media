@@ -4,42 +4,56 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Loader2, Quote, Sparkles, Heart, TrendingUp, Award, Users, Brain, Flame } from 'lucide-react';
+import { ArrowRight, Loader2, Quote, Heart, TrendingUp, Route, Users, Brain, Flame, LucideIcon } from 'lucide-react';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
+import { TAG_CATEGORIES, getTagCategory, getOrderedCategories } from '../lib/tagCategories';
 
-// Mapping des catégories avec couleurs et icônes
-const categoryConfig: Record<string, { color: string; icon: React.ElementType }> = {
-  'émotions & bien-être': { color: '#EC4899', icon: Heart },
-  'développement': { color: '#10B981', icon: TrendingUp },
-  'parcours & résilience': { color: '#8B5CF6', icon: Award },
-  'relations & famille': { color: '#F59E0B', icon: Users },
-  'santé mentale': { color: '#06B6D4', icon: Brain },
-  'épreuves & inspiration': { color: '#EF4444', icon: Flame },
-};
-
-// Couleur par défaut
-const defaultConfig = { color: '#6366F1', icon: Sparkles };
-
-// Query pour récupérer toutes les histoires
+// Query pour récupérer toutes les histoires avec leurs tags
 const HISTOIRES_HOME_QUERY = `
   *[_type == "portrait"] {
     _id,
     titre,
-    categorie,
     accroche,
     "slug": slug.current,
-    citation
+    citation,
+    tags[]-> {
+      _id,
+      nom,
+      "slug": slug.current
+    }
   }
 `;
+
+// Icônes par catégorie thématique
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  emotions: Heart,
+  developpement: TrendingUp,
+  parcours: Route,
+  relations: Users,
+  sante: Brain,
+  epreuves: Flame
+};
+
+interface Tag {
+  _id: string;
+  nom: string;
+  slug: string;
+}
 
 interface Histoire {
   _id: string;
   titre: string;
-  categorie?: string;
   accroche?: string;
   slug: string;
   citation?: string;
+  tags?: Tag[];
+  // Catégorie déterminée dynamiquement
+  thematicCategory?: {
+    id: string;
+    nom: string;
+    couleur: string;
+  };
 }
 
 // Fonction shuffle (Fisher-Yates)
@@ -52,6 +66,23 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
+// Fonction pour déterminer la catégorie thématique d'une histoire basée sur ses tags
+const getHistoireCategory = (histoire: Histoire): { id: string; nom: string; couleur: string } | undefined => {
+  if (!histoire.tags || histoire.tags.length === 0) return undefined;
+
+  for (const tag of histoire.tags) {
+    const category = getTagCategory(tag.slug);
+    if (category) {
+      return {
+        id: category.id,
+        nom: category.nom,
+        couleur: category.couleur
+      };
+    }
+  }
+  return undefined;
+};
+
 export default function HistoiresSection() {
   const [histoires, setHistoires] = useState<Histoire[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,8 +92,13 @@ export default function HistoiresSection() {
     const fetchHistoires = async () => {
       try {
         const data = await sanityFetch(HISTOIRES_HOME_QUERY) as Histoire[];
+        // Ajouter la catégorie thématique à chaque histoire
+        const enrichedData = (data || []).map(h => ({
+          ...h,
+          thematicCategory: getHistoireCategory(h)
+        }));
         // Shuffle les histoires pour avoir un ordre aléatoire à chaque chargement
-        setHistoires(shuffleArray(data || []));
+        setHistoires(shuffleArray(enrichedData));
       } catch (error) {
         console.error('Erreur fetch histoires:', error);
       } finally {
@@ -73,32 +109,22 @@ export default function HistoiresSection() {
     fetchHistoires();
   }, []);
 
-  // Extraire les catégories uniques depuis les données
+  // Catégories thématiques disponibles (celles qui ont des histoires)
   const availableCategories = useMemo(() => {
-    const cats = new Set<string>();
-    histoires.forEach(h => {
-      if (h.categorie) {
-        cats.add(h.categorie);
-      }
-    });
-    return Array.from(cats).sort();
+    const categories = getOrderedCategories();
+    return categories.filter(cat =>
+      histoires.some(h => h.thematicCategory?.id === cat.id)
+    );
   }, [histoires]);
 
   // Filtrer par catégorie
   const filteredHistoires = useMemo(() => {
     const filtered = activeCategory === 'tous'
       ? histoires
-      : histoires.filter(h => h.categorie === activeCategory);
+      : histoires.filter(h => h.thematicCategory?.id === activeCategory);
     // Re-shuffle à chaque changement de filtre pour varier l'affichage
     return shuffleArray(filtered);
   }, [activeCategory, histoires]);
-
-  // Obtenir la config de la catégorie
-  const getCategoryConfig = (categorie?: string) => {
-    if (!categorie) return defaultConfig;
-    const key = categorie.toLowerCase();
-    return categoryConfig[key] || defaultConfig;
-  };
 
   if (loading) {
     return (
@@ -142,37 +168,56 @@ export default function HistoiresSection() {
           </Link>
         </div>
 
-        {/* Filtres par catégorie - Style tabs comme les articles */}
+        {/* Filtres par catégorie - Style tabs avec animation */}
         <div className="flex flex-wrap gap-2 mb-6">
           {/* Bouton "Tous" */}
           <button
             onClick={() => setActiveCategory('tous')}
-            className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-              activeCategory === 'tous'
-                ? 'bg-gray-900 text-white border border-gray-900'
-                : 'bg-white text-gray-900 border border-gray-900'
-            }`}
+            className="relative inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
           >
-            Tous
-            <ArrowRight className="w-3 h-3" />
+            {activeCategory === 'tous' && (
+              <motion.div
+                layoutId="histoiresTabIndicator"
+                className="absolute inset-0 bg-gray-900 rounded-full"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
+            )}
+            <span className={`relative z-10 ${activeCategory === 'tous' ? 'text-white' : 'text-gray-900'}`}>
+              Tous
+            </span>
+            <ArrowRight className={`relative z-10 w-3 h-3 ${activeCategory === 'tous' ? 'text-white' : 'text-gray-900'}`} />
           </button>
 
-          {/* Boutons par catégorie */}
+          {/* Boutons par catégorie thématique */}
           {availableCategories.map(category => {
-            const config = getCategoryConfig(category);
-            const isActive = activeCategory === category;
+            const isActive = activeCategory === category.id;
+            const Icon = CATEGORY_ICONS[category.id];
             return (
               <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
-                style={{
-                  backgroundColor: isActive ? config.color : 'white',
-                  color: isActive ? 'white' : config.color,
-                  border: `1px solid ${config.color}`,
-                }}
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
               >
-                {category}
+                {isActive && (
+                  <motion.div
+                    layoutId="histoiresTabIndicator"
+                    className="absolute inset-0 rounded-full"
+                    style={{ backgroundColor: category.couleur }}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                {Icon && (
+                  <Icon
+                    className="relative z-10 w-3 h-3 transition-colors duration-200"
+                    style={{ color: isActive ? 'white' : category.couleur }}
+                  />
+                )}
+                <span
+                  className="relative z-10 transition-colors duration-200"
+                  style={{ color: isActive ? 'white' : category.couleur }}
+                >
+                  {category.nom}
+                </span>
               </button>
             );
           })}
@@ -189,8 +234,9 @@ export default function HistoiresSection() {
             className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
             {filteredHistoires.slice(0, 4).map((histoire, index) => {
-              const config = getCategoryConfig(histoire.categorie);
-              const IconComponent = config.icon;
+              const category = histoire.thematicCategory;
+              const categoryColor = category?.couleur || '#6366F1';
+              const Icon = category ? CATEGORY_ICONS[category.id] : null;
 
               return (
                 <motion.div
@@ -207,7 +253,7 @@ export default function HistoiresSection() {
                       {/* Décoration de fond */}
                       <div
                         className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"
-                        style={{ backgroundColor: config.color }}
+                        style={{ backgroundColor: categoryColor }}
                       />
 
                       {/* Header avec icône et badge */}
@@ -215,19 +261,19 @@ export default function HistoiresSection() {
                         <div
                           className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
                           style={{
-                            background: `linear-gradient(135deg, ${config.color}20 0%, ${config.color}10 100%)`,
+                            background: `linear-gradient(135deg, ${categoryColor}20 0%, ${categoryColor}10 100%)`,
                           }}
                         >
-                          <Quote className="w-5 h-5" style={{ color: config.color }} />
+                          <Quote className="w-5 h-5" style={{ color: categoryColor }} />
                         </div>
 
-                        {histoire.categorie && (
+                        {category && (
                           <span
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-sm"
-                            style={{ backgroundColor: config.color }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm text-white"
+                            style={{ backgroundColor: categoryColor }}
                           >
-                            <IconComponent className="w-3 h-3" />
-                            {histoire.categorie}
+                            {Icon && <Icon className="w-3 h-3" />}
+                            {category.nom}
                           </span>
                         )}
                       </div>
@@ -249,7 +295,7 @@ export default function HistoiresSection() {
                         <span className="text-xs text-gray-400">Témoignage</span>
                         <div
                           className="flex items-center gap-1.5 text-xs font-semibold"
-                          style={{ color: config.color }}
+                          style={{ color: categoryColor }}
                         >
                           <span>Lire</span>
                           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -262,6 +308,17 @@ export default function HistoiresSection() {
             })}
           </motion.div>
         </AnimatePresence>
+
+        {/* Mobile: Bouton voir tout */}
+        <div className="sm:hidden mt-4">
+          <Link
+            to="/histoires"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-fuchsia-50 text-fuchsia-600 hover:bg-fuchsia-100"
+          >
+            <span>Voir toutes les histoires</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );

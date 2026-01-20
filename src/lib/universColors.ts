@@ -218,6 +218,58 @@ export const universColors: Record<string, UniversColor> = {
     shadow: 'rgba(244, 63, 94, 0.35)',
     light: '#FFF1F2'
   },
+
+  // ═══════════════════════════════════════════════════════
+  // CATÉGORIES HISTOIRES (tagCategories)
+  // ═══════════════════════════════════════════════════════
+
+  // Émotions & Bien-être - Pink
+  'Émotions & Bien-être': {
+    bg: '#EC4899',
+    text: '#ffffff',
+    shadow: 'rgba(236, 72, 153, 0.35)',
+    light: '#FDF2F8'
+  },
+
+  // Développement - Emerald
+  'Développement': {
+    bg: '#10B981',
+    text: '#ffffff',
+    shadow: 'rgba(16, 185, 129, 0.35)',
+    light: '#ECFDF5'
+  },
+
+  // Parcours & Résilience - Violet
+  'Parcours & Résilience': {
+    bg: '#8B5CF6',
+    text: '#ffffff',
+    shadow: 'rgba(139, 92, 246, 0.35)',
+    light: '#F5F3FF'
+  },
+
+  // Relations & Famille - Amber
+  'Relations & Famille': {
+    bg: '#F59E0B',
+    text: '#ffffff',
+    shadow: 'rgba(245, 158, 11, 0.35)',
+    light: '#FFFBEB'
+  },
+
+  // Santé mentale - Cyan
+  'Santé mentale': {
+    bg: '#06B6D4',
+    text: '#ffffff',
+    shadow: 'rgba(6, 182, 212, 0.35)',
+    light: '#ECFEFF'
+  },
+
+  // Épreuves & Inspiration - Indigo
+  'Épreuves & Inspiration': {
+    bg: '#6366F1',
+    text: '#ffffff',
+    shadow: 'rgba(99, 102, 241, 0.35)',
+    light: '#EEF2FF'
+  },
 };
 
 // Couleur par défaut si l'univers n'est pas trouvé - Gris neutre

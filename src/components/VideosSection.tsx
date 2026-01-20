@@ -228,6 +228,17 @@ export default function VideosSection() {
             </motion.div>
           ))}
         </div>
+
+        {/* Mobile: Bouton voir tout */}
+        <div className="sm:hidden mt-4">
+          <Link
+            to="/videos"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-cyan-50 text-cyan-600 hover:bg-cyan-100"
+          >
+            <span>Voir toutes les vidéos</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );

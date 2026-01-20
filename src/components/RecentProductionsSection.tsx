@@ -323,8 +323,8 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
           })}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-gray-200">
+        {/* Footer - Desktop */}
+        <div className="hidden sm:flex items-center justify-between pt-3 sm:pt-4 border-t border-gray-200">
           <span className="text-[10px] text-gray-400">
             {allProductions.length} récits disponibles
           </span>
@@ -335,6 +335,17 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
           >
             Voir la bibliothèque
             <span className="ml-1">&rarr;</span>
+          </Link>
+        </div>
+
+        {/* Mobile: Bouton voir tout */}
+        <div className="sm:hidden mt-4">
+          <Link
+            to="/articles"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+          >
+            <span>Voir tous les articles</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

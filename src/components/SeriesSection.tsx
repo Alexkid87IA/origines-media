@@ -246,13 +246,13 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
               </motion.div>
             </div>
 
-            {/* Stats et CTA en bas de la grille */}
+            {/* Stats et CTA en bas de la grille - Desktop */}
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
-              className="mt-4 sm:mt-5 pt-4 border-t border-gray-100 flex items-center justify-between"
+              className="hidden sm:flex mt-4 sm:mt-5 pt-4 border-t border-gray-100 items-center justify-between"
             >
               <div className="flex items-center gap-4">
                 <span className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1.5">
@@ -273,6 +273,17 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
                 <ArrowRight className="w-3 h-3" />
               </Link>
             </motion.div>
+
+            {/* Mobile: Bouton voir tout */}
+            <div className="sm:hidden mt-4">
+              <Link
+                to="/series"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-violet-50 text-violet-600 hover:bg-violet-100"
+              >
+                <span>Voir toutes les séries</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
