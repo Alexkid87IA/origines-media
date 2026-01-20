@@ -557,9 +557,9 @@ export const ARTICLE_BY_SLUG_QUERY = `
   }
 `
 
-// Articles liés (fallback si pas définis manuellement)
+// Articles liés (fallback si pas définis manuellement) - exclut les vidéos
 export const RELATED_ARTICLES_QUERY = `
-  *[_type == "production" && _id != $currentId && (
+  *[_type == "production" && _id != $currentId && coalesce(typeArticle, "article") != "video" && (
     count(categories[@._ref in $categoryIds]) > 0 ||
     univers._ref == $universId ||
     verticale._ref == $verticaleId ||
@@ -586,9 +586,9 @@ export const RELATED_ARTICLES_QUERY = `
   }
 `
 
-// Articles populaires (par vues)
+// Articles populaires (par vues) - exclut les vidéos
 export const POPULAR_ARTICLES_QUERY = `
-  *[_type == "production"] | order(coalesce(stats.views, views, 0) desc) [0...10] {
+  *[_type == "production" && coalesce(typeArticle, "article") != "video"] | order(coalesce(stats.views, views, 0) desc) [0...10] {
     _id,
     "title": titre,
     slug,
