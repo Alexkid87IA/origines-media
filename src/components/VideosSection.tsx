@@ -134,7 +134,7 @@ export default function VideosSection() {
           </div>
 
           <Link
-            to="/bibliotheque?format=video"
+            to="/videos"
             className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
           >
             <span>Toutes les vidéos</span>
