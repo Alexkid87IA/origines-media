@@ -479,11 +479,18 @@ export const ARTICLE_BY_SLUG_QUERY = `
     author-> {
       _id,
       name,
+      role,
       bio,
+      specialites,
       image {
         asset-> {
           url
         }
+      },
+      social {
+        twitter,
+        linkedin,
+        instagram
       }
     },
     authorDetails,
@@ -557,9 +564,9 @@ export const ARTICLE_BY_SLUG_QUERY = `
   }
 `
 
-// Articles liés (fallback si pas définis manuellement) - exclut les vidéos
+// Articles liés (fallback si pas définis manuellement) - exclut vidéos et histoires
 export const RELATED_ARTICLES_QUERY = `
-  *[_type == "production" && _id != $currentId && coalesce(typeArticle, "article") != "video" && (
+  *[_type == "production" && _id != $currentId && !(coalesce(typeArticle, "article") in ["video", "histoire"]) && (
     count(categories[@._ref in $categoryIds]) > 0 ||
     univers._ref == $universId ||
     verticale._ref == $verticaleId ||
@@ -586,9 +593,9 @@ export const RELATED_ARTICLES_QUERY = `
   }
 `
 
-// Articles populaires (par vues) - exclut les vidéos
+// Articles populaires (par vues) - exclut vidéos et histoires
 export const POPULAR_ARTICLES_QUERY = `
-  *[_type == "production" && coalesce(typeArticle, "article") != "video"] | order(coalesce(stats.views, views, 0) desc) [0...10] {
+  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"])] | order(coalesce(stats.views, views, 0) desc) [0...10] {
     _id,
     "title": titre,
     slug,
