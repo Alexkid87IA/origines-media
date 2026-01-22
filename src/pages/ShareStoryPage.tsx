@@ -1,12 +1,14 @@
 // src/pages/ShareStoryPage.tsx
 // Page "Racontez votre histoire" - Structure complète optimisée
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import { sanityFetch } from '../lib/sanity';
+import { VIDEOS_SECTION_QUERY } from '../lib/queries';
 import {
   ArrowRight,
   PenLine,
@@ -27,25 +29,41 @@ import {
   MessageCircle,
   Globe,
   Lightbulb,
-  Target,
   Phone,
   Calendar,
   FileText
 } from 'lucide-react';
 
+// Types
+interface SanityVideo {
+  _id: string;
+  titre: string;
+  description?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  duree?: string;
+  slug: string;
+  verticale?: {
+    _id: string;
+    nom: string;
+    couleurDominante?: string;
+    slug: string;
+  };
+}
+
 // ============ DATA ============
 
-// Vidéo/histoire featured pour le hero
-const featuredStory = {
-  title: "Comment j'ai reconstruit ma vie après un burn-out",
-  author: 'Nadia K.',
-  role: 'Entrepreneuse, 34 ans',
-  thumbnail: '/placeholder.svg',
-  videoUrl: '#',
-  duration: '8:24',
-  views: '45K',
-  category: 'Santé mentale',
-  color: '#8B5CF6',
+// Vidéo featured pour le hero (slug fixe)
+const FEATURED_VIDEO_SLUG = 'lettre-a-la-jeune-louane-hyperactivite-deuil-et-succes';
+
+// Fonction pour mélanger un tableau (Fisher-Yates shuffle)
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 };
 
 // Étapes du processus - redesign
@@ -84,81 +102,6 @@ const processSteps = [
   },
 ];
 
-// Grille d'histoires publiées (vraies vidéos/articles)
-const publishedStories = [
-  {
-    id: '1',
-    title: "J'ai quitté mon CDI pour devenir artisan",
-    author: 'Thomas R.',
-    thumbnail: '/placeholder.svg',
-    type: 'video',
-    duration: '6:12',
-    views: '32K',
-    category: 'Reconversion',
-    color: '#F59E0B',
-    slug: 'quitter-cdi-artisan',
-  },
-  {
-    id: '2',
-    title: 'Vivre avec la bipolarité au quotidien',
-    author: 'Camille L.',
-    thumbnail: '/placeholder.svg',
-    type: 'video',
-    duration: '12:45',
-    views: '89K',
-    category: 'Santé mentale',
-    color: '#8B5CF6',
-    slug: 'vivre-bipolarite',
-  },
-  {
-    id: '3',
-    title: "L'adoption de notre fille en Colombie",
-    author: 'Marie & Jean',
-    thumbnail: '/placeholder.svg',
-    type: 'article',
-    readTime: '8 min',
-    views: '28K',
-    category: 'Famille',
-    color: '#EC4899',
-    slug: 'adoption-colombie',
-  },
-  {
-    id: '4',
-    title: 'Mon coming-out à 45 ans',
-    author: 'Patrick M.',
-    thumbnail: '/placeholder.svg',
-    type: 'podcast',
-    duration: '42 min',
-    views: '56K',
-    category: 'Identité',
-    color: '#10B981',
-    slug: 'coming-out-45-ans',
-  },
-  {
-    id: '5',
-    title: 'Reconstruire après la perte de mon fils',
-    author: 'Sophie D.',
-    thumbnail: '/placeholder.svg',
-    type: 'livre',
-    readTime: '280 pages',
-    views: '124K',
-    category: 'Deuil',
-    color: '#6366F1',
-    slug: 'reconstruire-perte-fils',
-  },
-  {
-    id: '6',
-    title: "De SDF à chef d'entreprise",
-    author: 'Karim B.',
-    thumbnail: '/placeholder.svg',
-    type: 'video',
-    duration: '9:18',
-    views: '210K',
-    category: 'Parcours',
-    color: '#EF4444',
-    slug: 'sdf-chef-entreprise',
-  },
-];
 
 // Raisons de partager - Version premium
 const reasons = [
@@ -300,6 +243,39 @@ const ShareStoryPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // State pour les vidéos Sanity
+  const [featuredVideo, setFeaturedVideo] = useState<SanityVideo | null>(null);
+  const [randomVideos, setRandomVideos] = useState<SanityVideo[]>([]);
+  const [isLoadingVideos, setIsLoadingVideos] = useState(true);
+
+  // Fetch videos from Sanity
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const videos = await sanityFetch(VIDEOS_SECTION_QUERY) as SanityVideo[];
+
+        if (videos && videos.length > 0) {
+          // Trouver la vidéo featured
+          const featured = videos.find(v => v.slug === FEATURED_VIDEO_SLUG);
+          if (featured) {
+            setFeaturedVideo(featured);
+          }
+
+          // Mélanger les vidéos et prendre 6 (exclure la featured)
+          const otherVideos = videos.filter(v => v.slug !== FEATURED_VIDEO_SLUG);
+          const shuffled = shuffleArray(otherVideos).slice(0, 6);
+          setRandomVideos(shuffled);
+        }
+      } catch (error) {
+        console.error('Erreur fetch vidéos:', error);
+      } finally {
+        setIsLoadingVideos(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
@@ -368,51 +344,56 @@ const ShareStoryPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <Link
-                  to={`/histoire/${featuredStory.videoUrl}`}
-                  className="group block rounded-2xl overflow-hidden bg-white"
-                  style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.08)' }}
-                >
-                  <div className="relative aspect-video">
-                    <img
-                      src={featuredStory.thumbnail}
-                      alt={featuredStory.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                {featuredVideo ? (
+                  <Link
+                    to={`/video/${featuredVideo.slug}`}
+                    className="group block rounded-2xl overflow-hidden bg-white"
+                    style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.08)' }}
+                  >
+                    <div className="relative aspect-video">
+                      <img
+                        src={featuredVideo.imageUrl || '/placeholder.svg'}
+                        alt={featuredVideo.titre}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                    {/* Play button */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                        <Play className="w-5 h-5 text-gray-900 ml-0.5" fill="currentColor" />
+                      {/* Play button */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                          <Play className="w-5 h-5 text-gray-900 ml-0.5" fill="currentColor" />
+                        </div>
+                      </div>
+
+                      {/* Duration */}
+                      {featuredVideo.duree && (
+                        <div className="absolute top-2 right-2">
+                          <span className="px-1.5 py-0.5 bg-black/60 rounded text-[9px] font-medium text-white">
+                            {featuredVideo.duree}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Content */}
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        {featuredVideo.verticale && (
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider text-white mb-1.5"
+                            style={{ backgroundColor: featuredVideo.verticale.couleurDominante || '#8B5CF6' }}
+                          >
+                            <span className="w-1 h-1 rounded-full bg-white/60" />
+                            {featuredVideo.verticale.nom}
+                          </span>
+                        )}
+                        <h2 className="text-xs lg:text-sm font-bold text-white leading-snug">
+                          {featuredVideo.titre}
+                        </h2>
                       </div>
                     </div>
-
-                    {/* Duration */}
-                    <div className="absolute top-2 right-2">
-                      <span className="px-1.5 py-0.5 bg-black/60 rounded text-[9px] font-medium text-white">
-                        {featuredStory.duration}
-                      </span>
-                    </div>
-
-                    {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <span
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider text-white mb-1.5"
-                        style={{ backgroundColor: featuredStory.color }}
-                      >
-                        <span className="w-1 h-1 rounded-full bg-white/60" />
-                        {featuredStory.category}
-                      </span>
-                      <h2 className="text-xs lg:text-sm font-bold text-white leading-snug">
-                        {featuredStory.title}
-                      </h2>
-                      <p className="text-[10px] text-white/70 mt-1">
-                        {featuredStory.author} · {featuredStory.views} vues
-                      </p>
-                    </div>
-                  </div>
-                </Link>
+                  </Link>
+                ) : (
+                  <div className="aspect-video rounded-2xl bg-gray-100 animate-pulse" />
+                )}
               </motion.div>
             </div>
           </div>
@@ -518,7 +499,7 @@ const ShareStoryPage: React.FC = () => {
                 </p>
               </div>
               <Link
-                to="/histoires"
+                to="/videos"
                 className="group inline-flex items-center gap-1 text-xs font-medium text-gray-900 hover:text-gray-600 transition-colors"
               >
                 Voir tout
@@ -528,62 +509,69 @@ const ShareStoryPage: React.FC = () => {
 
             {/* Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-              {publishedStories.map((story, index) => (
-                <motion.div
-                  key={story.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link
-                    to={`/histoire/${story.slug}`}
-                    className="group block rounded-xl overflow-hidden bg-white"
-                    style={{ boxShadow: '0 2px 8px -2px rgba(0,0,0,0.06)' }}
+              {isLoadingVideos ? (
+                // Skeleton loading
+                Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="aspect-[4/3] rounded-xl bg-gray-100 animate-pulse" />
+                ))
+              ) : (
+                randomVideos.map((video, index) => (
+                  <motion.div
+                    key={video._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05 }}
                   >
-                    <div className="relative aspect-[4/3]">
-                      <img
-                        src={story.thumbnail}
-                        alt={story.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                    <Link
+                      to={`/video/${video.slug}`}
+                      className="group block rounded-xl overflow-hidden bg-white"
+                      style={{ boxShadow: '0 2px 8px -2px rgba(0,0,0,0.06)' }}
+                    >
+                      <div className="relative aspect-[4/3]">
+                        <img
+                          src={video.imageUrl || '/placeholder.svg'}
+                          alt={video.titre}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-                      {/* Type icon */}
-                      <div className="absolute top-2 left-2">
-                        <div className="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
-                          {story.type === 'video' && <Play className="w-3 h-3 text-gray-900 ml-0.5" fill="currentColor" />}
-                          {story.type === 'article' && <PenLine className="w-3 h-3 text-gray-900" />}
-                          {story.type === 'podcast' && <Mic className="w-3 h-3 text-gray-900" />}
-                          {story.type === 'livre' && <BookOpen className="w-3 h-3 text-gray-900" />}
-                          {story.type === 'documentaire' && <Film className="w-3 h-3 text-gray-900" />}
+                        {/* Play icon */}
+                        <div className="absolute top-2 left-2">
+                          <div className="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
+                            <Play className="w-3 h-3 text-gray-900 ml-0.5" fill="currentColor" />
+                          </div>
+                        </div>
+
+                        {/* Duration */}
+                        {video.duree && (
+                          <div className="absolute top-2 right-2">
+                            <span className="px-1.5 py-0.5 bg-black/60 rounded text-[8px] font-medium text-white">
+                              {video.duree}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Content */}
+                        <div className="absolute bottom-0 left-0 right-0 p-2.5">
+                          {video.verticale && (
+                            <span className="inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-wider text-white/90 mb-1">
+                              <span
+                                className="w-1 h-1 rounded-full"
+                                style={{ backgroundColor: video.verticale.couleurDominante || '#8B5CF6' }}
+                              />
+                              {video.verticale.nom}
+                            </span>
+                          )}
+                          <h3 className="text-[10px] lg:text-[11px] font-semibold text-white leading-snug line-clamp-2">
+                            {video.titre}
+                          </h3>
                         </div>
                       </div>
-
-                      {/* Duration/Time */}
-                      <div className="absolute top-2 right-2">
-                        <span className="px-1.5 py-0.5 bg-black/60 rounded text-[8px] font-medium text-white">
-                          {story.type === 'article' || story.type === 'livre' ? story.readTime : story.duration}
-                        </span>
-                      </div>
-
-                      {/* Content */}
-                      <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                        <span className="inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-wider text-white/90 mb-1">
-                          <span className="w-1 h-1 rounded-full" style={{ backgroundColor: story.color }} />
-                          {story.category}
-                        </span>
-                        <h3 className="text-[10px] lg:text-[11px] font-semibold text-white leading-snug line-clamp-2">
-                          {story.title}
-                        </h3>
-                        <p className="text-[9px] text-white/60 mt-0.5">
-                          {story.author} · {story.views} vues
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
+                    </Link>
+                  </motion.div>
+                ))
+              )}
             </div>
           </div>
         </section>
