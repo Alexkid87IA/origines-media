@@ -6,9 +6,17 @@
     }
   },
   "rewrites": [
-    { "source": "/article/:slug", "destination": "/api/article/:slug" },
-    { "source": "/article/:slug/", "destination": "/api/article/:slug" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/article/:slug",
+      "destination": "/api/article/:slug",
+      "missing": [{ "type": "query", "key": "_rdr" }]
+    },
+    {
+      "source": "/article/:slug/",
+      "destination": "/api/article/:slug",
+      "missing": [{ "type": "query", "key": "_rdr" }]
+    },
+    { "source": "/:path((?!api|assets|favicon|.*\\.).+)", "destination": "/index.html" }
   ],
   "headers": [
     {

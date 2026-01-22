@@ -76,90 +76,25 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, m => map[m])
 }
 
-// Cache en mémoire pour l'index.html (évite de fetch à chaque requête)
-let cachedIndexHTML: { html: string; timestamp: number } | null = null
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
-
-// Fonction pour récupérer l'index.html avec cache et fallback
-async function getBaseHTML(): Promise<string> {
-  // Vérifier le cache
-  const now = Date.now()
-  if (cachedIndexHTML && (now - cachedIndexHTML.timestamp) < CACHE_DURATION) {
-    console.log('Using cached index.html')
-    return cachedIndexHTML.html
-  }
-
-  // Construire l'URL dynamiquement selon l'environnement
-  const baseURL = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'https://origines.media'
-
-  const indexURL = `${baseURL}/index.html`
-
-  console.log(`Fetching index.html from: ${indexURL}`)
-
-  try {
-    const response = await fetch(indexURL, {
-      // Timeout de 10 secondes
-      signal: AbortSignal.timeout(10000)
-    })
-
-    // CRITIQUE: Vérifier que la réponse est OK
-    if (!response.ok) {
-      throw new Error(`Failed to fetch index.html: ${response.status} ${response.statusText}`)
-    }
-
-    const html = await response.text()
-
-    // Vérifier que c'est bien du HTML
-    if (!html.includes('<!doctype html') && !html.includes('<!DOCTYPE html')) {
-      throw new Error('Fetched content is not valid HTML')
-    }
-
-    // Mettre en cache
-    cachedIndexHTML = { html, timestamp: now }
-    console.log('index.html fetched and cached successfully')
-
-    return html
-  } catch (error) {
-    console.error('Error fetching index.html:', error)
-
-    // Si on a un cache expiré, l'utiliser quand même en fallback
-    if (cachedIndexHTML) {
-      console.warn('Using expired cache as fallback')
-      return cachedIndexHTML.html
-    }
-
-    // Dernier recours: HTML minimal fonctionnel
-    throw new Error('Failed to fetch index.html and no cache available')
-  }
-}
-
-// Fonction pour injecter les métadonnées dans le HTML
-function injectMetaTags(baseHTML: string, article: any, slug: string): string {
+// Génère le HTML complet avec meta tags pour les crawlers
+function generateCrawlerHTML(article: any, slug: string): string {
   const title = article?.title || 'Origines Media - La profondeur du récit'
   const description = article?.description || 'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.'
   const image = article?.image || 'https://origines.media/og-image.png'
   const url = `https://origines.media/article/${slug}`
 
-  let html = baseHTML
+  return `<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  // 1. SUPPRIMER toutes les balises Open Graph existantes
-  html = html.replace(/<meta property="og:[^"]*"[^>]*>/g, '')
-  html = html.replace(/<meta name="twitter:[^"]*"[^>]*>/g, '')
-  html = html.replace(/<meta property="article:[^"]*"[^>]*>/g, '')
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-  // 2. SUPPRIMER les balises meta génériques (title, description, canonical)
-  html = html.replace(/<meta name="title"[^>]*>/g, '')
-  html = html.replace(/<meta name="description"[^>]*>/g, '')
-  html = html.replace(/<link rel="canonical"[^>]*>/g, '')
-
-  // 3. REMPLACER le <title>
-  html = html.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)} | Origines Media</title>`)
-
-  // 4. INJECTER les nouvelles métadonnées
-  const metaTags = `
-    <!-- Article Dynamic Meta Tags -->
+    <!-- SEO -->
+    <title>${escapeHtml(title)} | Origines Media</title>
     <meta name="title" content="${escapeHtml(title)}" />
     <meta name="description" content="${escapeHtml(description)}" />
     <link rel="canonical" href="${url}" />
@@ -184,46 +119,45 @@ function injectMetaTags(baseHTML: string, article: any, slug: string): string {
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${image}" />
     <meta name="twitter:site" content="@originesmedia" />
-  `
 
-  html = html.replace('</head>', `${metaTags}\n  </head>`)
-
-  return html
+    <meta name="theme-color" content="#0A0A0A" />
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>`
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { slug } = req.query
   const userAgent = req.headers['user-agent'] || ''
+  const slugStr = Array.isArray(slug) ? slug.join('/') : (slug as string)
 
+  // Vérifier si c'est un crawler ou un vrai utilisateur
+  const isCrawlerRequest = isCrawler(userAgent)
+
+  // Pour les vrais utilisateurs, rediriger vers la même URL avec ?_rdr=1
+  // Ce paramètre permet de bypasser l'API et servir le SPA directement
+  if (!isCrawlerRequest) {
+    const redirectUrl = `/article/${slugStr}?_rdr=1`
+    res.setHeader('Cache-Control', 'no-cache')
+    return res.redirect(302, redirectUrl)
+  }
+
+  // Pour les crawlers: générer le HTML avec les meta tags
   try {
-    // Récupérer le HTML de base (avec cache et validation)
-    const baseHTML = await getBaseHTML()
+    const article = await fetchArticleMeta(slugStr)
+    console.log(`Crawler pre-render for slug "${slugStr}":`, article ? 'found' : 'not found')
+    console.log(`Crawler UA: ${userAgent.substring(0, 80)}`)
 
-    // Récupérer les métadonnées de l'article
-    const article = await fetchArticleMeta(slug as string)
-
-    // Injecter les métadonnées dans le HTML
-    const html = injectMetaTags(baseHTML, article, slug as string)
-
+    const html = generateCrawlerHTML(article, slugStr)
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
-
-    // Logging pour debug
-    if (isCrawler(userAgent)) {
-      console.log(`Crawler detected: ${userAgent.substring(0, 50)} for article: ${slug}`)
-    }
-
     res.status(200).send(html)
   } catch (error) {
-    console.error('Error in article pre-render:', error)
-
-    // Erreur plus descriptive dans les logs
-    if (error instanceof Error) {
-      console.error('Error details:', error.message)
-    }
-
-    // En cas d'erreur critique, retourner une erreur 500 au lieu de rediriger
-    // Cela permet aux crawlers de réessayer plus tard
-    res.status(500).send('Internal Server Error: Unable to render article page')
+    console.error('Error in crawler pre-render:', error)
+    const html = generateCrawlerHTML(null, slugStr)
+    res.setHeader('Content-Type', 'text/html; charset=utf-8')
+    res.status(200).send(html)
   }
 }
