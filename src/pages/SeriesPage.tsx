@@ -341,7 +341,7 @@ const SeriesPage: React.FC = () => {
 
       <main>
         {/* Hero Banner - Série à la une */}
-        <section className="relative h-[70vh] lg:h-[80vh] overflow-hidden">
+        <section className="relative h-[85vh] sm:h-[75vh] lg:h-[80vh] overflow-hidden">
           {/* Background Image */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -359,13 +359,13 @@ const SeriesPage: React.FC = () => {
               />
               {/* Gradients */}
               <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-gray-950/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/90 to-gray-950/30" />
             </motion.div>
           </AnimatePresence>
 
           {/* Content : Gauche (texte) + Droite (poster en grand) */}
-          <div className="absolute inset-0 flex items-center pb-32">
-            <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between gap-8">
+          <div className="absolute inset-0 flex items-end sm:items-center pb-40 sm:pb-32">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-8">
 
               {/* Left: Content */}
               <div className="flex-1 max-w-xl">
@@ -378,45 +378,45 @@ const SeriesPage: React.FC = () => {
                     transition={{ duration: 0.5 }}
                   >
                     {/* Badge avec couleur de la série */}
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
                       <span
-                        className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                        className="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider"
                         style={{ backgroundColor: featuredSerie.couleur }}
                       >
                         Série Origines
                       </span>
-                      <span className="text-white/50 text-xs">
+                      <span className="text-white/50 text-xs sm:text-sm">
                         {featuredSerie.nombreSaisons} saison{featuredSerie.nombreSaisons > 1 ? 's' : ''} • {featuredSerie.nombreEpisodes} épisodes
                       </span>
                     </div>
 
                     {/* Title */}
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
                       {typo(featuredSerie.titre)}
                     </h1>
 
                     {/* Description */}
-                    <p className="text-base text-white/70 mb-5 max-w-lg leading-relaxed">
+                    <p className="text-sm sm:text-base text-white/70 mb-5 sm:mb-6 max-w-lg leading-relaxed">
                       {featuredSerie.description}
                     </p>
 
                     {/* Buttons */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 sm:gap-3">
                       <button
                         disabled
                         aria-label="Bientôt disponible"
-                        className="flex items-center gap-2 px-4 py-2 bg-white/20 text-white/70 rounded-md font-semibold text-sm cursor-not-allowed"
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-white/20 text-white/70 rounded-md font-semibold text-sm cursor-not-allowed"
                       >
                         <Lock className="w-4 h-4" />
-                        Bientôt disponible
+                        <span className="whitespace-nowrap">Bientôt disponible</span>
                       </button>
                       <button
                         onClick={handleMoreInfo}
                         aria-label={`Voir les épisodes de ${featuredSerie.titre}`}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm text-white rounded-md font-medium text-sm hover:bg-white/25 transition-colors"
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-white/15 backdrop-blur-sm text-white rounded-md font-medium text-sm hover:bg-white/25 transition-colors"
                       >
                         <Info className="w-4 h-4" />
-                        Plus d'infos
+                        <span className="whitespace-nowrap">Plus d'infos</span>
                       </button>
                     </div>
                   </motion.div>
@@ -496,10 +496,10 @@ const SeriesPage: React.FC = () => {
           </div>
 
           {/* Sélecteur de séries en bas avec miniatures */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent pt-8 pb-5">
-            <div className="max-w-3xl mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent pt-8 pb-4 sm:pb-5">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-12">
               {/* Miniatures */}
-              <div className="flex items-end justify-center gap-3 py-2">
+              <div className="flex items-end justify-center gap-2 sm:gap-3 py-2">
                 {seriesData.map((serie, index) => (
                   <button
                     key={serie.id}
@@ -509,7 +509,7 @@ const SeriesPage: React.FC = () => {
                     className={`
                       flex-shrink-0 relative rounded overflow-hidden transition-all duration-300
                       ${index === featuredIndex
-                        ? 'scale-110 z-10'
+                        ? 'scale-110 sm:scale-110 z-10'
                         : 'opacity-50 hover:opacity-90 hover:scale-105'
                       }
                     `}
@@ -519,7 +519,7 @@ const SeriesPage: React.FC = () => {
                         : '0 2px 8px rgba(0,0,0,0.3)'
                     }}
                   >
-                    <div className="w-10 sm:w-11 lg:w-12 aspect-[2/3]">
+                    <div className="w-12 sm:w-11 lg:w-12 aspect-[2/3]">
                       <img
                         src={serie.posterUrl}
                         alt={serie.titre}
@@ -531,7 +531,7 @@ const SeriesPage: React.FC = () => {
               </div>
 
               {/* Progress bar */}
-              <div className="flex gap-1 mt-3 max-w-[260px] mx-auto" role="tablist" aria-label="Sélecteur de série">
+              <div className="flex gap-1 mt-3 max-w-[280px] sm:max-w-[260px] mx-auto" role="tablist" aria-label="Sélecteur de série">
                 {seriesData.map((serie, index) => (
                   <button
                     key={serie.id}
