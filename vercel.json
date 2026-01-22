@@ -27,6 +27,10 @@
       "source": "/article/:slug/",
       "destination": "/api/article/:slug",
       "missing": [{ "type": "query", "key": "_rdr" }]
+    },
+    {
+      "source": "/((?!api|assets|static|_next|favicon.ico|robots.txt|sitemap.xml|kit-media-origines.pdf|.*\\..*).*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
