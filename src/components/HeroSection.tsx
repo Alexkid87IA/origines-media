@@ -197,6 +197,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
   useEffect(() => {
     if (hasScrollHinted || !sidebarRef.current) return;
 
+    // Protection SSR : vérifier que window existe
+    if (typeof window === 'undefined') return;
+
     // Vérifier si on est sur mobile (viewport < 1024px)
     const isMobile = window.innerWidth < 1024;
     if (!isMobile) return;

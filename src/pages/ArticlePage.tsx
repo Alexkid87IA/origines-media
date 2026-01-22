@@ -1801,14 +1801,35 @@ export default function ArticlePage() {
     },
   };
 
-  // Loading state
+  // Loading state - Skeleton UI
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
-          <span className="text-gray-600">Chargement...</span>
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-pulse">
+          {/* Skeleton pour le titre */}
+          <div className="h-12 bg-gray-200 rounded-lg w-3/4 mb-4" />
+          <div className="h-6 bg-gray-200 rounded w-1/2 mb-8" />
+
+          {/* Skeleton pour l'image */}
+          <div className="aspect-video bg-gray-200 rounded-xl mb-8" />
+
+          {/* Skeleton pour le contenu */}
+          <div className="space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-full" />
+            <div className="h-4 bg-gray-200 rounded w-full" />
+            <div className="h-4 bg-gray-200 rounded w-5/6" />
+            <div className="h-4 bg-gray-200 rounded w-full" />
+            <div className="h-4 bg-gray-200 rounded w-4/5" />
+          </div>
+
+          {/* Indicateur de chargement */}
+          <div className="mt-8 flex items-center justify-center gap-2 text-gray-400">
+            <div className="w-6 h-6 border-2 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
+            <span className="text-sm">Chargement de l'article...</span>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }

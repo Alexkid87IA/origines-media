@@ -1,7 +1,7 @@
 // src/components/AdSense.tsx
 // Composant Google AdSense réutilisable
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
@@ -26,13 +26,24 @@ const AdSense: React.FC<AdSenseProps> = ({
 }) => {
   const adRef = useRef<HTMLModElement>(null);
   const isAdLoaded = useRef(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
+    // Protection SSR
+    if (typeof window === 'undefined') return;
+
     // Éviter de charger plusieurs fois la même pub
     if (isAdLoaded.current) return;
 
     try {
-      if (typeof window !== 'undefined' && adRef.current) {
+      if (adRef.current) {
+        // Vérifier que le script AdSense est chargé
+        if (!window.adsbygoogle) {
+          console.warn('AdSense script not loaded yet');
+          setHasError(true);
+          return;
+        }
+
         // Vérifier que l'élément n'a pas déjà une pub
         if (adRef.current.children.length === 0) {
           (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -41,8 +52,14 @@ const AdSense: React.FC<AdSenseProps> = ({
       }
     } catch (error) {
       console.error('AdSense error:', error);
+      setHasError(true);
     }
   }, []);
+
+  // Si erreur, ne rien afficher (fail silently)
+  if (hasError) {
+    return null;
+  }
 
   return (
     <div className={`adsense-container ${className}`}>

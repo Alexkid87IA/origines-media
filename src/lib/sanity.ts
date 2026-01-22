@@ -16,26 +16,74 @@ export const client = createClient({
   apiVersion: API_VERSION,
 })
 
+// Fonction utilitaire pour retry avec exponential backoff
+async function fetchWithRetry<T>(
+  fetchFn: () => Promise<T>,
+  maxRetries = 3,
+  timeout = 30000
+): Promise<T> {
+  let lastError: Error | null = null
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      // Créer un AbortController pour le timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+      try {
+        const result = await Promise.race([
+          fetchFn(),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('Request timeout')), timeout)
+          )
+        ])
+        clearTimeout(timeoutId)
+        return result
+      } finally {
+        clearTimeout(timeoutId)
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error))
+
+      // Si c'est le dernier essai, throw
+      if (attempt === maxRetries) {
+        break
+      }
+
+      // Exponential backoff: 500ms, 1s, 2s
+      const delay = Math.min(500 * Math.pow(2, attempt), 3000)
+      console.warn(`Sanity fetch attempt ${attempt + 1} failed, retrying in ${delay}ms...`, lastError.message)
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
+  }
+
+  throw lastError || new Error('Unknown error in fetchWithRetry')
+}
+
 // Fonction de fetch qui utilise le proxy en développement
 export async function sanityFetch<T>(query: string, params: Record<string, unknown> = {}): Promise<T> {
   if (isDev) {
     // En développement, utiliser le proxy Vite pour éviter CORS
-    const encodedQuery = encodeURIComponent(query)
-    const paramString = Object.entries(params)
-      .map(([key, value]) => `$${key}=${encodeURIComponent(JSON.stringify(value))}`)
-      .join('&')
+    return fetchWithRetry(async () => {
+      const encodedQuery = encodeURIComponent(query)
+      const paramString = Object.entries(params)
+        .map(([key, value]) => `$${key}=${encodeURIComponent(JSON.stringify(value))}`)
+        .join('&')
 
-    const url = `/sanity-api/v${API_VERSION}/data/query/${DATASET}?query=${encodedQuery}${paramString ? '&' + paramString : ''}`
+      const url = `/sanity-api/v${API_VERSION}/data/query/${DATASET}?query=${encodedQuery}${paramString ? '&' + paramString : ''}`
 
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error(`Sanity fetch error: ${response.status}`)
-    }
-    const data = await response.json()
-    return data.result as T
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`Sanity fetch error: ${response.status} ${response.statusText}`)
+      }
+      const data = await response.json()
+      return data.result as T
+    })
   } else {
-    // En production, utiliser le client Sanity directement
-    return client.fetch<T>(query, params)
+    // En production, utiliser le client Sanity directement avec retry
+    return fetchWithRetry(async () => {
+      return client.fetch<T>(query, params)
+    })
   }
 }
 

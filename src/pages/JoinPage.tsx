@@ -21,13 +21,39 @@ function JoinPage() {
   const [showError, setShowError] = useState(false);
 
   // Le mot de passe est stocké dans les variables d'environnement pour la sécurité
-  const CORRECT_PASSWORD = import.meta.env.VITE_JOIN_PASSWORD || '';
+  const CORRECT_PASSWORD = import.meta.env.VITE_JOIN_PASSWORD;
+
+  // Validation critique : s'assurer que le mot de passe est configuré
+  if (!CORRECT_PASSWORD) {
+    console.error('CRITICAL: VITE_JOIN_PASSWORD environment variable is not set!');
+    // En dev, montrer une erreur visible
+    if (import.meta.env.DEV) {
+      return (
+        <div className="min-h-screen bg-red-50 flex items-center justify-center p-4">
+          <div className="max-w-md bg-white p-6 rounded-lg shadow-lg border-2 border-red-500">
+            <h1 className="text-xl font-bold text-red-600 mb-2">Configuration Error</h1>
+            <p className="text-gray-700">
+              VITE_JOIN_PASSWORD environment variable is not set.
+              Please add it to your .env file.
+            </p>
+          </div>
+        </div>
+      );
+    }
+  }
 
   // Vérifier si l'utilisateur est déjà authentifié (stocké dans la session)
   useEffect(() => {
-    const isAuth = sessionStorage.getItem('joinPageAuth');
-    if (isAuth === 'true') {
-      setIsAuthenticated(true);
+    // Protection SSR : vérifier que window existe
+    if (typeof window === 'undefined') return;
+
+    try {
+      const isAuth = sessionStorage.getItem('joinPageAuth');
+      if (isAuth === 'true') {
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error('Error accessing sessionStorage:', error);
     }
   }, []);
 
@@ -45,7 +71,16 @@ function JoinPage() {
 
     if (password === CORRECT_PASSWORD) {
       setIsAuthenticated(true);
-      sessionStorage.setItem('joinPageAuth', 'true');
+
+      // Protection SSR : vérifier que window existe avant d'utiliser sessionStorage
+      if (typeof window !== 'undefined') {
+        try {
+          sessionStorage.setItem('joinPageAuth', 'true');
+        } catch (error) {
+          console.error('Error setting sessionStorage:', error);
+        }
+      }
+
       setShowError(false);
     } else {
       setShowError(true);
