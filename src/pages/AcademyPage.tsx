@@ -354,7 +354,7 @@ const AcademyPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <SEO
-        title="Academy - Guides & Formations | Origines Media"
+        title="Académie - Guides & Formations | Origines Media"
         description="Découvrez nos guides et formations pour votre développement personnel."
       />
 
@@ -387,7 +387,7 @@ const AcademyPage: React.FC = () => {
               <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
                 Origines{' '}
                 <span className="bg-gradient-to-r from-amber-500 to-pink-500 bg-clip-text text-transparent">
-                  Academy
+                  Académie
                 </span>
               </h1>
 

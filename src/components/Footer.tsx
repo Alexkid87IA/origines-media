@@ -72,7 +72,7 @@ const navigationColumns = [
     links: [
       { label: 'Tous les univers', href: '/univers' },
       { label: 'Recommandations', href: '/recommandations' },
-      { label: 'Academy', href: '/academy' },
+      { label: 'Académie', href: '/academie' },
     ]
   },
   {
