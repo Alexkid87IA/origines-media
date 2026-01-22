@@ -74,10 +74,24 @@ function injectMetaTags(baseHTML: string, article: any, slug: string): string {
   const image = article?.image || 'https://origines.media/og-image.png'
   const url = `https://origines.media/article/${slug}`
 
-  // Métadonnées à injecter
+  let html = baseHTML
+
+  // 1. SUPPRIMER toutes les balises Open Graph existantes
+  html = html.replace(/<meta property="og:[^"]*"[^>]*>/g, '')
+  html = html.replace(/<meta name="twitter:[^"]*"[^>]*>/g, '')
+  html = html.replace(/<meta property="article:[^"]*"[^>]*>/g, '')
+
+  // 2. SUPPRIMER les balises meta génériques (title, description, canonical)
+  html = html.replace(/<meta name="title"[^>]*>/g, '')
+  html = html.replace(/<meta name="description"[^>]*>/g, '')
+  html = html.replace(/<link rel="canonical"[^>]*>/g, '')
+
+  // 3. REMPLACER le <title>
+  html = html.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)} | Origines Media</title>`)
+
+  // 4. INJECTER les nouvelles métadonnées
   const metaTags = `
     <!-- Article Dynamic Meta Tags -->
-    <title>${escapeHtml(title)} | Origines Media</title>
     <meta name="title" content="${escapeHtml(title)}" />
     <meta name="description" content="${escapeHtml(description)}" />
     <link rel="canonical" href="${url}" />
@@ -104,13 +118,6 @@ function injectMetaTags(baseHTML: string, article: any, slug: string): string {
     <meta name="twitter:site" content="@originesmedia" />
   `
 
-  // Remplacer le <title> existant et injecter les métadonnées
-  let html = baseHTML
-
-  // Remplacer le titre par défaut
-  html = html.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)} | Origines Media</title>`)
-
-  // Injecter les métadonnées juste avant </head>
   html = html.replace('</head>', `${metaTags}\n  </head>`)
 
   return html
