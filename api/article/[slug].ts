@@ -76,6 +76,65 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, m => map[m])
 }
 
+// Cache en mémoire pour l'index.html (évite de fetch à chaque requête)
+let cachedIndexHTML: { html: string; timestamp: number } | null = null
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
+// Fonction pour récupérer l'index.html avec cache et fallback
+async function getBaseHTML(): Promise<string> {
+  // Vérifier le cache
+  const now = Date.now()
+  if (cachedIndexHTML && (now - cachedIndexHTML.timestamp) < CACHE_DURATION) {
+    console.log('Using cached index.html')
+    return cachedIndexHTML.html
+  }
+
+  // Construire l'URL dynamiquement selon l'environnement
+  const baseURL = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://origines.media'
+
+  const indexURL = `${baseURL}/index.html`
+
+  console.log(`Fetching index.html from: ${indexURL}`)
+
+  try {
+    const response = await fetch(indexURL, {
+      // Timeout de 10 secondes
+      signal: AbortSignal.timeout(10000)
+    })
+
+    // CRITIQUE: Vérifier que la réponse est OK
+    if (!response.ok) {
+      throw new Error(`Failed to fetch index.html: ${response.status} ${response.statusText}`)
+    }
+
+    const html = await response.text()
+
+    // Vérifier que c'est bien du HTML
+    if (!html.includes('<!doctype html') && !html.includes('<!DOCTYPE html')) {
+      throw new Error('Fetched content is not valid HTML')
+    }
+
+    // Mettre en cache
+    cachedIndexHTML = { html, timestamp: now }
+    console.log('index.html fetched and cached successfully')
+
+    return html
+  } catch (error) {
+    console.error('Error fetching index.html:', error)
+
+    // Si on a un cache expiré, l'utiliser quand même en fallback
+    if (cachedIndexHTML) {
+      console.warn('Using expired cache as fallback')
+      return cachedIndexHTML.html
+    }
+
+    // Dernier recours: HTML minimal fonctionnel
+    throw new Error('Failed to fetch index.html and no cache available')
+  }
+}
+
 // Fonction pour injecter les métadonnées dans le HTML
 function injectMetaTags(baseHTML: string, article: any, slug: string): string {
   const title = article?.title || 'Origines Media - La profondeur du récit'
@@ -137,9 +196,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const userAgent = req.headers['user-agent'] || ''
 
   try {
-    // Récupérer le HTML de base (index.html buildé par Vite)
-    const baseHTMLResponse = await fetch('https://origines.media/index.html')
-    const baseHTML = await baseHTMLResponse.text()
+    // Récupérer le HTML de base (avec cache et validation)
+    const baseHTML = await getBaseHTML()
 
     // Récupérer les métadonnées de l'article
     const article = await fetchArticleMeta(slug as string)
@@ -158,7 +216,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(200).send(html)
   } catch (error) {
     console.error('Error in article pre-render:', error)
-    // En cas d'erreur, rediriger vers l'index
-    res.redirect(302, '/')
+
+    // Erreur plus descriptive dans les logs
+    if (error instanceof Error) {
+      console.error('Error details:', error.message)
+    }
+
+    // En cas d'erreur critique, retourner une erreur 500 au lieu de rediriger
+    // Cela permet aux crawlers de réessayer plus tard
+    res.status(500).send('Internal Server Error: Unable to render article page')
   }
 }
