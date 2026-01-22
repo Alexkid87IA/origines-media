@@ -1,5 +1,5 @@
 // src/pages/AcademyPage.tsx
-// Page Academy - Style Magazine Compact (cohérent avec HomePage)
+// Page Académie - Style Magazine Compact (cohérent avec HomePage)
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -59,7 +59,7 @@ const guides: Guide[] = [
     features: ['10 exercices', 'Journal PDF', 'Audio méditation', 'Communauté'],
     duration: '1 sem.',
     format: 'PDF + Audio',
-    href: '/academy/kit-introspection',
+    href: '/academie/kit-introspection',
     comingSoon: true
   },
   {
@@ -77,7 +77,7 @@ const guides: Guide[] = [
     duration: '4 sem.',
     format: 'Vidéo + PDF',
     popular: false,
-    href: '/academy/masterclass-storytelling',
+    href: '/academie/masterclass-storytelling',
     comingSoon: true
   },
   {
@@ -93,7 +93,7 @@ const guides: Guide[] = [
     features: ['8 modules', 'Exercices quotidiens', 'Tracker', 'Accès à vie'],
     duration: '3 sem.',
     format: 'PDF interactif',
-    href: '/academy/guide-mindset',
+    href: '/academie/guide-mindset',
     comingSoon: true
   },
   {
@@ -110,7 +110,7 @@ const guides: Guide[] = [
     features: ['Tous les guides', 'Futures formations', 'Q&A mensuelles', 'Coaching', 'Support VIP'],
     duration: 'À vie',
     format: 'Tout inclus',
-    href: '/academy/programme-complet',
+    href: '/academie/programme-complet',
     comingSoon: true
   }
 ];
