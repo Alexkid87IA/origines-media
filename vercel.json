@@ -11,20 +11,6 @@
       "destination": "/api/article/:slug"
     }
   ],
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/((?!api).*)",
-      "dest": "/index.html"
-    }
-  ],
   "headers": [
     {
       "source": "/api/article/(.*)",
