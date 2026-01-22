@@ -29,6 +29,8 @@ const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const LegalPage = lazy(() => import('./pages/LegalPage'));
+const CGUPage = lazy(() => import('./pages/CGUPage'));
+const CGVPage = lazy(() => import('./pages/CGVPage'));
 const PartnershipsPage = lazy(() => import('./pages/PartnershipsPage'));
 const JoinPage = lazy(() => import('./pages/JoinPage'));
 const ShareStoryPage = lazy(() => import('./pages/ShareStoryPage'));
@@ -78,8 +80,8 @@ function App() {
         <Route path="/communaute" element={<EnsemblePage />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
         <Route path="/mentions-legales" element={<LegalPage />} />
-        <Route path="/cgu" element={<LegalPage />} />
-        <Route path="/politique-confidentialite" element={<LegalPage />} />
+        <Route path="/cgu" element={<CGUPage />} />
+        <Route path="/cgv" element={<CGVPage />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>

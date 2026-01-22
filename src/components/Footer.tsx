@@ -275,8 +275,8 @@ const Footer: React.FC = () => {
               <Link to="/cgu" className="text-gray-400 hover:text-gray-600 transition-colors">
                 CGU
               </Link>
-              <Link to="/politique-confidentialite" className="text-gray-400 hover:text-gray-600 transition-colors">
-                Confidentialité
+              <Link to="/cgv" className="text-gray-400 hover:text-gray-600 transition-colors">
+                CGV
               </Link>
             </div>
           </div>
