@@ -2,11 +2,6 @@
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
-  "functions": {
-    "api/_middleware.ts": {
-      "runtime": "edge"
-    }
-  },
   "headers": [
     {
       "source": "/article/(.*)",
