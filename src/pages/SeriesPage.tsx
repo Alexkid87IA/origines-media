@@ -193,9 +193,9 @@ const SeriesRow: React.FC<{
   };
 
   return (
-    <div id={`serie-${serie.id}`} className="mb-10 group/row scroll-mt-24">
+    <div id={`serie-${serie.id}`} className="mb-8 group/row scroll-mt-20">
       {/* Row Header */}
-      <div className="flex items-center gap-3 mb-4 px-4 sm:px-8 lg:px-12">
+      <div className="flex items-center gap-3 mb-3 px-4 sm:px-8 lg:px-12">
         <div
           className="w-1 h-6 rounded-full"
           style={{ backgroundColor: serie.couleur }}
@@ -341,7 +341,7 @@ const SeriesPage: React.FC = () => {
 
       <main>
         {/* Hero Banner - Série à la une */}
-        <section className="relative h-[85vh] sm:h-[75vh] lg:h-[80vh] overflow-hidden">
+        <section className="relative h-[65vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden">
           {/* Background Image */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -364,7 +364,7 @@ const SeriesPage: React.FC = () => {
           </AnimatePresence>
 
           {/* Content : Gauche (texte) + Droite (poster en grand) */}
-          <div className="absolute inset-0 flex items-end sm:items-center pb-40 sm:pb-32">
+          <div className="absolute inset-0 flex items-end sm:items-center pb-32 sm:pb-28">
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-8">
 
               {/* Left: Content */}
@@ -496,7 +496,7 @@ const SeriesPage: React.FC = () => {
           </div>
 
           {/* Sélecteur de séries en bas avec miniatures */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent pt-8 pb-4 sm:pb-5">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent pt-6 pb-3 sm:pb-4">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-12">
               {/* Miniatures */}
               <div className="flex items-end justify-center gap-2 sm:gap-3 py-2">
@@ -559,7 +559,7 @@ const SeriesPage: React.FC = () => {
         </section>
 
         {/* Series Rows */}
-        <section className="py-8 -mt-20 relative z-10">
+        <section className="pt-6 pb-8 relative z-10">
           {seriesData.map((serie) => (
             <SeriesRow
               key={serie.id}

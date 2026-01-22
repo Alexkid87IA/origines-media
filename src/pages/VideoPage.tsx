@@ -18,6 +18,7 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { PortableText } from '@portabletext/react';
 import { typo } from '../lib/typography';
+import SafeHTML from '../components/ui/SafeHTML';
 
 // ============ QUERIES SANITY POUR VIDÉOS ============
 const VIDEO_BY_SLUG_QUERY = `
@@ -1706,10 +1707,10 @@ export default function VideoPage() {
         </div>
       ),
 
-      // Social Embed (Twitter, Instagram, etc.)
+      // Social Embed (Twitter, Instagram, etc.) - Sécurisé avec DOMPurify
       socialEmbed: ({ value }: any) => (
         <div className="my-8 flex justify-center">
-          <div className="w-full max-w-lg" dangerouslySetInnerHTML={{ __html: value.embed || value.html || '' }} />
+          <SafeHTML html={value.embed || value.html || ''} className="w-full max-w-lg" />
         </div>
       ),
       tweet: ({ value }: any) => (

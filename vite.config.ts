@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
@@ -15,13 +21,25 @@ export default defineConfig({
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
             return 'vendor-react';
           }
+          // React Query - chunk séparé
+          if (id.includes('node_modules/@tanstack')) {
+            return 'vendor-query';
+          }
           // Sanity - chunk séparé
           if (id.includes('node_modules/@sanity') || id.includes('node_modules/@portabletext')) {
             return 'vendor-sanity';
           }
-          // Lucide icons - séparés car très volumineux
+          // Lucide icons - séparés car volumineux
           if (id.includes('node_modules/lucide-react')) {
             return 'vendor-icons';
+          }
+          // Framer Motion - séparé
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-motion';
+          }
+          // DOMPurify - séparé (sécurité)
+          if (id.includes('node_modules/dompurify')) {
+            return 'vendor-security';
           }
           // Univers components - séparés
           if (id.includes('src/components/univers/')) {
@@ -30,8 +48,8 @@ export default defineConfig({
         },
       },
     },
-    // Le chunk d'icônes sera gros mais c'est inévitable avec lucide-react
-    chunkSizeWarningLimit: 800,
+    // Augmenter la limite pour éviter les warnings
+    chunkSizeWarningLimit: 600,
   },
   server: {
     proxy: {

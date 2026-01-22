@@ -5,8 +5,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  ArrowRight, Users, Heart, Target, Globe, Lightbulb,
-  Sparkles, Quote
+  ArrowRight, Users, Heart, Target, Globe, Lightbulb, Quote
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -18,24 +17,27 @@ const AboutPage: React.FC = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "Marie Dubois",
-      role: "Fondatrice & Directrice Éditoriale",
-      description: "Ancienne journaliste, Marie a créé Origines pour donner une voix aux récits authentiques qui transforment.",
-      imageUrl: "/placeholder.svg"
+      name: "Alexandre Quilghini",
+      role: "Co-fondateur & Direction éditoriale",
+      color: "#8B5CF6"
     },
     {
       id: 2,
-      name: "Thomas Martin",
-      role: "Directeur Créatif",
-      description: "Réalisateur et storyteller, Thomas orchestre la dimension visuelle et narrative de nos productions.",
-      imageUrl: "/placeholder.svg"
+      name: "Alexis Chavetnoir",
+      role: "Co-fondateur & Direction social media",
+      color: "#EC4899"
     },
     {
       id: 3,
-      name: "Sophie Chen",
-      role: "Responsable Communauté",
-      description: "Psychologue de formation, Sophie cultive les liens avec notre communauté et anime nos échanges.",
-      imageUrl: "/placeholder.svg"
+      name: "Tabatha Vannieu",
+      role: "Directrice des opérations",
+      color: "#F59E0B"
+    },
+    {
+      id: 4,
+      name: "Vincent Dubois",
+      role: "Journaliste",
+      color: "#10B981"
     }
   ];
 
@@ -90,7 +92,7 @@ const AboutPage: React.FC = () => {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
               <div>
-                <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
+                <div className="h-0.5 w-10 bg-violet-500 rounded-full mb-2" />
                 <h1 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
                   À propos d'Origines
                 </h1>
@@ -102,11 +104,11 @@ const AboutPage: React.FC = () => {
               {/* Quick stats inline */}
               <div className="flex items-center gap-2">
                 {[
-                  { value: "2021", label: "Création" },
-                  { value: "500+", label: "Récits" },
+                  { value: "2021", label: "Création", color: "#8B5CF6" },
+                  { value: "500+", label: "Récits", color: "#EC4899" },
                 ].map((stat, index) => (
-                  <div key={index} className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full">
-                    <span className="text-xs font-bold text-gray-900">{stat.value}</span>
+                  <div key={index} className="flex items-center gap-1 px-2 py-1 bg-white border border-gray-200 rounded-full">
+                    <span className="text-xs font-bold" style={{ color: stat.color }}>{stat.value}</span>
                     <span className="text-[8px] text-gray-500 uppercase tracking-wider">{stat.label}</span>
                   </div>
                 ))}
@@ -150,7 +152,7 @@ const AboutPage: React.FC = () => {
                 <div className="mt-4">
                   <Link
                     to="/contact"
-                    className="group inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-[10px] font-bold rounded-full hover:bg-gray-800 transition-all"
+                    className="group inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 text-white text-[10px] font-bold rounded-full hover:bg-violet-700 transition-all"
                   >
                     <span>Nous contacter</span>
                     <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-0.5 transition-transform" />
@@ -193,7 +195,7 @@ const AboutPage: React.FC = () => {
             {/* Section Header */}
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-4">
               <div>
-                <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
+                <div className="h-0.5 w-10 bg-pink-500 rounded-full mb-2" />
                 <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
                   Nos valeurs
                 </h2>
@@ -281,7 +283,7 @@ const AboutPage: React.FC = () => {
             {/* Section Header */}
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-4">
               <div>
-                <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
+                <div className="h-0.5 w-10 bg-amber-500 rounded-full mb-2" />
                 <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
                   Notre équipe
                 </h2>
@@ -290,17 +292,10 @@ const AboutPage: React.FC = () => {
                 </p>
               </div>
 
-              <Link
-                to="/equipe"
-                className="group inline-flex items-center gap-1 text-gray-900 font-medium text-xs hover:text-violet-600 transition-colors"
-              >
-                <span>Toute l'équipe</span>
-                <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-1 transition-transform" />
-              </Link>
             </div>
 
-            {/* Team Grid - Compact cards */}
-            <div className="grid grid-cols-3 gap-2 lg:gap-3">
+            {/* Team Grid - Compact cards sans photos */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
               {teamMembers.map((member, index) => (
                 <motion.div
                   key={member.id}
@@ -308,26 +303,27 @@ const AboutPage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
-                  className="group relative overflow-hidden rounded-xl aspect-[3/4]"
+                  className="bg-white border border-gray-200 rounded-xl p-3 hover:shadow-md transition-all relative overflow-hidden"
                 >
-                  {/* Image */}
-                  <img
-                    src={member.imageUrl}
-                    alt={member.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  {/* Barre colorée */}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-1"
+                    style={{ backgroundColor: member.color }}
                   />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  {/* Avatar initiales */}
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold mb-2"
+                    style={{ backgroundColor: member.color }}
+                  >
+                    {member.name.split(' ').map(n => n[0]).join('')}
+                  </div>
 
-                  {/* Content */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-2 lg:p-3">
-                    <h3 className="font-bold text-[10px] lg:text-xs text-white mb-0.5 line-clamp-1">
-                      {member.name}
-                    </h3>
-                    <div className="text-violet-300 font-medium text-[8px] lg:text-[9px] uppercase tracking-wider line-clamp-1">
-                      {member.role}
-                    </div>
+                  <h3 className="font-bold text-[11px] text-gray-900 mb-0.5">
+                    {member.name}
+                  </h3>
+                  <div className="text-[9px] text-gray-500">
+                    {member.role}
                   </div>
                 </motion.div>
               ))}

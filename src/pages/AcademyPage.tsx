@@ -41,9 +41,10 @@ interface Guide {
   format: string;
   popular?: boolean;
   href: string;
+  comingSoon?: boolean;
 }
 
-// Data
+// Data - Tous les produits sont "Bientôt disponible"
 const guides: Guide[] = [
   {
     id: 'kit-introspection',
@@ -51,14 +52,15 @@ const guides: Guide[] = [
     subtitle: 'Votre point de départ',
     description: 'Exercices et réflexions pour commencer votre voyage intérieur.',
     price: 'Gratuit',
-    badge: 'Starter',
-    badgeColor: '#10B981',
+    badge: 'Bientôt',
+    badgeColor: '#F59E0B',
     color: '#06B6D4',
     icon: <Heart className="w-3.5 h-3.5" />,
     features: ['10 exercices', 'Journal PDF', 'Audio méditation', 'Communauté'],
     duration: '1 sem.',
     format: 'PDF + Audio',
-    href: '/academy/kit-introspection'
+    href: '/academy/kit-introspection',
+    comingSoon: true
   },
   {
     id: 'masterclass-storytelling',
@@ -67,15 +69,16 @@ const guides: Guide[] = [
     description: 'L\'art de raconter votre histoire de manière captivante.',
     price: '29€',
     originalPrice: '49€',
-    badge: 'Populaire',
-    badgeColor: '#EC4899',
+    badge: 'Bientôt',
+    badgeColor: '#F59E0B',
     color: '#F59E0B',
     icon: <BookOpen className="w-3.5 h-3.5" />,
     features: ['12 vidéos', 'Workbook 50p', 'Templates', 'Feedback', 'Certificat'],
     duration: '4 sem.',
     format: 'Vidéo + PDF',
-    popular: true,
-    href: '/academy/masterclass-storytelling'
+    popular: false,
+    href: '/academy/masterclass-storytelling',
+    comingSoon: true
   },
   {
     id: 'guide-mindset',
@@ -83,14 +86,15 @@ const guides: Guide[] = [
     subtitle: 'Transformez votre mental',
     description: 'Développez un état d\'esprit de croissance.',
     price: '19€',
-    badge: 'Essentiel',
-    badgeColor: '#8B5CF6',
+    badge: 'Bientôt',
+    badgeColor: '#F59E0B',
     color: '#EC4899',
     icon: <Target className="w-3.5 h-3.5" />,
     features: ['8 modules', 'Exercices quotidiens', 'Tracker', 'Accès à vie'],
     duration: '3 sem.',
     format: 'PDF interactif',
-    href: '/academy/guide-mindset'
+    href: '/academy/guide-mindset',
+    comingSoon: true
   },
   {
     id: 'programme-complet',
@@ -99,14 +103,15 @@ const guides: Guide[] = [
     description: 'Accès illimité à tous nos contenus premium.',
     price: '79€',
     originalPrice: '147€',
-    badge: 'Premium',
-    badgeColor: '#6366F1',
+    badge: 'Bientôt',
+    badgeColor: '#F59E0B',
     color: '#8B5CF6',
     icon: <Award className="w-3.5 h-3.5" />,
     features: ['Tous les guides', 'Futures formations', 'Q&A mensuelles', 'Coaching', 'Support VIP'],
     duration: 'À vie',
     format: 'Tout inclus',
-    href: '/academy/programme-complet'
+    href: '/academy/programme-complet',
+    comingSoon: true
   }
 ];
 
@@ -313,18 +318,27 @@ const GuideCard: React.FC<{ guide: Guide; index: number }> = ({ guide, index }) 
                     <span>{guide.format}</span>
                   </div>
 
-                  <Link
-                    to={guide.href}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                    style={{
-                      backgroundColor: guide.color,
-                      boxShadow: `0 2px 8px ${guide.color}40`
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {guide.price === 'Gratuit' ? 'Télécharger' : 'Découvrir'}
-                    <ArrowUpRight className="w-2.5 h-2.5" />
-                  </Link>
+                  {guide.comingSoon ? (
+                    <span
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-semibold text-amber-700 bg-amber-100 cursor-not-allowed"
+                    >
+                      <Clock className="w-2.5 h-2.5" />
+                      Bientôt disponible
+                    </span>
+                  ) : (
+                    <Link
+                      to={guide.href}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                      style={{
+                        backgroundColor: guide.color,
+                        boxShadow: `0 2px 8px ${guide.color}40`
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {guide.price === 'Gratuit' ? 'Télécharger' : 'Découvrir'}
+                      <ArrowUpRight className="w-2.5 h-2.5" />
+                    </Link>
+                  )}
                 </div>
               </motion.div>
             </motion.div>
@@ -366,7 +380,7 @@ const AcademyPage: React.FC = () => {
             >
               {/* Badge */}
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-100 to-pink-100 rounded-full text-gray-700 text-[8px] font-semibold uppercase tracking-wider mb-2">
-                <Sparkles className="w-2 h-2 text-amber-500" />
+                <BookOpen className="w-2 h-2 text-amber-500" />
                 Formations Premium
               </span>
 
@@ -405,27 +419,27 @@ const AcademyPage: React.FC = () => {
             >
               <div className="bg-white rounded-xl p-3 shadow-lg shadow-amber-500/10 ring-1 ring-gray-100">
                 <div className="flex items-center gap-3">
-                  <div className="w-16 h-20 rounded-lg overflow-hidden shadow-md flex-shrink-0">
+                  <div className="relative w-16 h-20 rounded-lg overflow-hidden shadow-md flex-shrink-0">
                     <img
                       src="/kit-introspection.jpg"
                       alt="Kit d'Introspection"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover grayscale-[20%]"
                     />
+                    {/* Badge overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-amber-500/20 to-transparent" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-100 rounded-full text-emerald-700 text-[8px] font-bold uppercase tracking-wider mb-1">
-                      <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                      Gratuit
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 rounded-full text-amber-700 text-[8px] font-bold uppercase tracking-wider mb-1">
+                      <Clock className="w-2 h-2" />
+                      Bientôt
                     </span>
                     <h3 className="text-xs font-semibold text-gray-900 mb-0.5">Kit d'Introspection</h3>
                     <p className="text-[10px] text-gray-500 mb-2">Commencez votre voyage intérieur</p>
-                    <Link
-                      to="/academy/kit-introspection"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full text-[9px] font-semibold hover:shadow-lg transition-all"
+                    <span
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-500 rounded-full text-[9px] font-semibold cursor-not-allowed"
                     >
-                      Télécharger
-                      <ArrowRight className="w-2.5 h-2.5" />
-                    </Link>
+                      Bientôt disponible
+                    </span>
                   </div>
                 </div>
               </div>
@@ -505,40 +519,36 @@ const AcademyPage: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Section - Style compact comme EngagementSection */}
+      {/* CTA Section - Bientôt disponible */}
       <section className="py-6 lg:py-8 bg-gradient-to-br from-amber-50 via-white to-pink-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="rounded-xl overflow-hidden bg-gradient-to-r from-amber-500 to-pink-500 shadow-lg shadow-pink-500/20"
+            className="rounded-xl overflow-hidden bg-gradient-to-r from-amber-400 to-orange-400 shadow-lg shadow-orange-500/20"
           >
             <div className="p-4 lg:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-center sm:text-left">
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/20 rounded-full text-white/90 text-[9px] font-bold uppercase tracking-wider mb-2">
+                  <Clock className="w-2.5 h-2.5" />
+                  En préparation
+                </div>
                 <h3 className="text-base lg:text-lg font-bold text-white mb-1">
-                  Prêt à commencer ?
+                  Nos formations arrivent bientôt
                 </h3>
                 <p className="text-white/80 text-[11px]">
-                  Téléchargez le Kit gratuit et découvrez notre approche.
+                  Nous préparons des contenus de qualité pour vous accompagner.
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <Link
-                  to="/academy/kit-introspection"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-amber-600 rounded-full text-xs font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
+                <span
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/90 text-amber-700 rounded-full text-xs font-semibold cursor-default"
                 >
-                  <Download className="w-3 h-3" />
-                  Kit gratuit
-                </Link>
-                <Link
-                  to="/academy/programme-complet"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/20 text-white border border-white/30 rounded-full text-xs font-semibold hover:bg-white/30 transition-all"
-                >
-                  <Play className="w-3 h-3" />
-                  Programme
-                </Link>
+                  <Clock className="w-3 h-3" />
+                  Bientôt disponible
+                </span>
               </div>
             </div>
           </motion.div>

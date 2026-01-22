@@ -18,6 +18,7 @@ import {
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import { SkeletonGrid } from '../components/ui/Skeleton';
 import { sanityFetch } from '../lib/sanity';
 import { ARTICLES_PAGE_QUERY, VERTICALES_QUERY } from '../lib/queries';
 import { typo } from '../lib/typography';
@@ -281,11 +282,37 @@ const ArticlesPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gray-50/50">
         <Navbar />
-        <div className="flex items-center justify-center h-[60vh]">
-          <div className="text-gray-400 text-lg">Chargement...</div>
-        </div>
+        <main className="pt-3 pb-8">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header skeleton */}
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-1 w-8 rounded-full bg-gray-200 animate-pulse" />
+                <div className="h-6 w-24 rounded bg-gray-200 animate-pulse" />
+              </div>
+              <div className="h-4 w-64 ml-11 rounded bg-gray-200 animate-pulse" />
+            </div>
+
+            <div className="flex gap-6 lg:gap-8">
+              {/* Sidebar skeleton */}
+              <aside className="hidden lg:block w-64 flex-shrink-0 space-y-5">
+                <div className="h-10 rounded-xl bg-gray-200 animate-pulse" />
+                <div className="bg-white rounded-2xl p-4 space-y-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="h-10 rounded-xl bg-gray-100 animate-pulse" />
+                  ))}
+                </div>
+              </aside>
+
+              {/* Content skeleton */}
+              <div className="flex-1">
+                <SkeletonGrid count={6} columns={3} />
+              </div>
+            </div>
+          </div>
+        </main>
         <Footer />
       </div>
     );

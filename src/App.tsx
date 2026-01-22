@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+// import SkinWrapper from './components/SkinWrapper';
 
 // Composant pour scroller en haut à chaque changement de page
 function ScrollToTop() {
@@ -38,6 +39,8 @@ const RecommandationsPage = lazy(() => import('./pages/RecommandationsPage'));
 const RecommandationPage = lazy(() => import('./pages/RecommandationPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
+const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
+const JoinPartnerPage = lazy(() => import('./pages/JoinPartnerPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
@@ -72,11 +75,14 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/partenariats" element={<PartnershipsPage />} />
         <Route path="/rejoindre" element={<JoinPage />} />
+        <Route path="/newsletter" element={<NewsletterPage />} />
+        <Route path="/join-partner" element={<JoinPartnerPage />} />
         <Route path="/racontez-votre-histoire" element={<ShareStoryPage />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
         <Route path="/recommandation/:slug" element={<RecommandationPage />} />
         <Route path="/academie" element={<AcademyPage />} />
         <Route path="/academie/:guideSlug" element={<AcademyPage />} />
+        <Route path="/academy" element={<AcademyPage />} />
         <Route path="/communaute" element={<EnsemblePage />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
         <Route path="/mentions-legales" element={<LegalPage />} />

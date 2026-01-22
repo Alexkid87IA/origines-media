@@ -75,7 +75,7 @@ const ContactPage: React.FC = () => {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
               <div>
-                <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
+                <div className="h-0.5 w-10 bg-violet-500 rounded-full mb-2" />
                 <h1 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
                   Contact
                 </h1>
@@ -214,7 +214,7 @@ const ContactPage: React.FC = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
-                        className="w-full py-2 px-4 bg-gray-900 text-white text-[11px] font-bold rounded-lg hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                        className="w-full py-2 px-4 bg-violet-600 text-white text-[11px] font-bold rounded-lg hover:bg-violet-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
                       >
                         {isSubmitting ? (
                           <>

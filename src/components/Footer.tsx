@@ -93,7 +93,7 @@ const navigationColumns = [
     links: [
       { label: 'Notre mission', href: '/a-propos' },
       { label: 'Contact', href: '/contact' },
-      { label: 'Média Kit', href: '/media-kit' },
+      { label: 'Média Kit', href: '/kit-media-origines.pdf', download: true },
     ]
   }
 ];
@@ -115,7 +115,7 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 text-gray-900">
+    <footer className="bg-gray-50 text-gray-900" role="contentinfo" aria-label="Pied de page">
       {/* Gradient accent bar at top */}
       <div className="h-1 bg-gradient-to-r from-rose-400 via-violet-400 to-teal-400" />
 
@@ -136,18 +136,20 @@ const Footer: React.FC = () => {
             {/* Right - Form */}
             <div className="flex-1 lg:max-w-md">
               {!isSubmitted ? (
-                <form onSubmit={handleNewsletterSubmit} className="flex gap-3">
+                <form onSubmit={handleNewsletterSubmit} className="flex gap-3" aria-label="Inscription à la newsletter">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="votre@email.com"
                     required
+                    aria-label="Adresse email pour la newsletter"
                     className="flex-1 px-5 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all text-sm"
                   />
                   <button
                     type="submit"
                     disabled={!email.trim() || isSubmitting}
+                    aria-label={isSubmitting ? "Envoi en cours..." : "S'inscrire à la newsletter"}
                     className="px-6 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center gap-2 bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 text-white shadow-md hover:shadow-lg"
                   >
                     {isSubmitting ? (
@@ -238,12 +240,22 @@ const Footer: React.FC = () => {
                   <ul className="space-y-3">
                     {column.links.map((link) => (
                       <li key={link.href}>
-                        <Link
-                          to={link.href}
-                          className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-block"
-                        >
-                          {link.label}
-                        </Link>
+                        {'download' in link && link.download ? (
+                          <a
+                            href={link.href}
+                            download="Kit-Media-Origines-2024.pdf"
+                            className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-block"
+                          >
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link
+                            to={link.href}
+                            className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-block"
+                          >
+                            {link.label}
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>

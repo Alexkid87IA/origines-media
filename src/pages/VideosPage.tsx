@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Skeleton from '../components/ui/Skeleton';
 import { sanityFetch } from '../lib/sanity';
 import { typo } from '../lib/typography';
 
@@ -87,8 +88,8 @@ const sortOptions = [
   { id: 'popular', label: 'Plus populaires', icon: Flame },
 ];
 
-// Composant carte vidéo
-const VideoCard: React.FC<{ video: Video; index: number }> = ({ video, index }) => {
+// Composant carte vidéo avec memoization
+const VideoCard: React.FC<{ video: Video; index: number }> = React.memo(({ video, index }) => {
   const thumbnail = video.imageUrl || getYouTubeThumbnail(video.videoUrl);
 
   return (
@@ -139,7 +140,7 @@ const VideoCard: React.FC<{ video: Video; index: number }> = ({ video, index }) 
       </Link>
     </motion.div>
   );
-};
+});
 
 const VideosPage: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -389,8 +390,14 @@ const VideosPage: React.FC = () => {
               </AnimatePresence>
 
               {loading ? (
-                <div className="flex items-center justify-center py-20">
-                  <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="space-y-3">
+                      <Skeleton variant="rectangular" className="w-full aspect-video rounded-xl" />
+                      <Skeleton variant="text" className="h-4 w-3/4" />
+                      <Skeleton variant="text" className="h-4 w-1/2" />
+                    </div>
+                  ))}
                 </div>
               ) : sortedVideos.length === 0 ? (
                 <div className="text-center py-20">

@@ -4,285 +4,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
-import { ChevronDown, ArrowRight, Search, PenLine, X, Sparkles, Star } from 'lucide-react';
+import { ChevronDown, ArrowRight, Search, PenLine, X, Star } from 'lucide-react';
 
-// ============ ICÔNES RÉSEAUX SOCIAUX ============
-const YouTubeIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-  </svg>
-);
-
-const XIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-  </svg>
-);
-
-const SnapchatIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.031-.063-.052-.15-.055-.225-.015-.243.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-1.107-.435-1.257-.93-1.197-1.273.09-.479.674-.793 1.168-.793.146 0 .27.029.383.074.42.194.789.3 1.104.3.234 0 .384-.06.465-.105l-.046-.569c-.098-1.626-.225-3.651.307-4.837C7.392 1.077 10.739.807 11.727.807l.419-.015h.06z"/>
-  </svg>
-);
-
-const FacebookIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-  </svg>
-);
-
-const InstagramIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-  </svg>
-);
-
-const TikTokIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
-  </svg>
-);
-
-// ============ TYPES ============
-interface SubCategory {
-  name: string;
-  href: string;
-}
-
-interface FeaturedArticle {
-  title: string;
-  image: string;
-  href: string;
-  tag: string;
-  tagColor: string;
-}
-
-interface NavItem {
-  label: string;
-  href: string;
-  hasDropdown?: boolean;
-  color?: string;
-  hoverColor?: string;
-  hoverBg?: string;
-  subcategories?: SubCategory[][];
-  featuredArticles?: FeaturedArticle[];
-}
-
-// ============ DATA ============
-const socialLinks = [
-  { icon: YouTubeIcon, href: 'https://youtube.com/@originesmedia', label: 'YouTube', color: '#FF0000' },
-  { icon: XIcon, href: 'https://x.com/originesmedia', label: 'X', color: '#000000' },
-  { icon: SnapchatIcon, href: 'https://snapchat.com/add/originesmedia', label: 'Snapchat', color: '#FFFC00' },
-  { icon: FacebookIcon, href: 'https://facebook.com/originesmedia', label: 'Facebook', color: '#1877F2' },
-  { icon: InstagramIcon, href: 'https://instagram.com/originesmedia', label: 'Instagram', color: '#E4405F' },
-  { icon: TikTokIcon, href: 'https://tiktok.com/@originesmedia', label: 'TikTok', color: '#000000' },
-];
-
-// Séries pour le mega menu showcase
-interface SeriesItem {
-  title: string;
-  image: string;
-  href: string;
-  episodes?: number;
-  color: string;
-}
-
-const seriesShowcase: SeriesItem[] = [
-  { title: 'Transmission', image: '/series/01_transmission_poster.jpg', href: '/series/transmission', episodes: 12, color: '#6366F1' },
-  { title: 'État d\'esprit', image: '/series/02_etat_esprit_poster.jpg', href: '/series/etat-d-esprit', episodes: 8, color: '#06B6D4' },
-  { title: 'Il était une fois', image: '/series/03_il_etait_une_fois_poster.jpg', href: '/series/il-etait-une-fois', episodes: 15, color: '#F59E0B' },
-  { title: 'Secrets pro', image: '/series/04_secrets_professionnels_poster.jpg', href: '/series/secrets-professionnels', episodes: 10, color: '#8B5CF6' },
-  { title: 'La lettre', image: '/series/05_la_lettre_poster.jpg', href: '/series/la-lettre', episodes: 6, color: '#10B981' },
-  { title: 'Imagine', image: '/series/06_imagine_poster.jpg', href: '/series/imagine', episodes: 9, color: '#EC4899' },
-];
-
-// Contenus mis en avant
-interface FeaturedContent {
-  title: string;
-  image: string;
-  href: string;
-  tag: string;
-  tagColor: string;
-}
-
-// Contenus dynamiques par univers
-const universFeaturedByCategory: Record<string, FeaturedContent[]> = {
-  'default': [
-    { title: 'Les secrets du bonheur', image: '/placeholder.svg', href: '/article/secrets-bonheur', tag: 'Psychologie', tagColor: '#4F46E5' },
-    { title: 'Voyager autrement', image: '/placeholder.svg', href: '/article/voyager-autrement', tag: 'Voyage', tagColor: '#10B981' }
-  ],
-  'Psychologie': [
-    { title: 'Les secrets du bonheur', image: '/placeholder.svg', href: '/article/secrets-bonheur', tag: 'Psychologie', tagColor: '#4F46E5' },
-    { title: 'Comprendre ses émotions', image: '/placeholder.svg', href: '/article/comprendre-emotions', tag: 'Psychologie', tagColor: '#4F46E5' }
-  ],
-  'Société': [
-    { title: 'Vivre ensemble demain', image: '/placeholder.svg', href: '/article/vivre-ensemble', tag: 'Société', tagColor: '#D97706' },
-    { title: 'Les nouveaux liens sociaux', image: '/placeholder.svg', href: '/article/liens-sociaux', tag: 'Société', tagColor: '#D97706' }
-  ],
-  'Famille': [
-    { title: 'Transmission entre générations', image: '/placeholder.svg', href: '/article/transmission-generations', tag: 'Famille', tagColor: '#FB7185' },
-    { title: 'L\'amour au quotidien', image: '/placeholder.svg', href: '/article/amour-quotidien', tag: 'Famille', tagColor: '#FB7185' }
-  ],
-  'Voyage': [
-    { title: 'Voyager autrement', image: '/placeholder.svg', href: '/article/voyager-autrement', tag: 'Voyage', tagColor: '#10B981' },
-    { title: 'Destinations inspirantes', image: '/placeholder.svg', href: '/article/destinations-inspirantes', tag: 'Voyage', tagColor: '#10B981' }
-  ],
-  'Spiritualité': [
-    { title: 'Le chemin intérieur', image: '/placeholder.svg', href: '/article/chemin-interieur', tag: 'Spiritualité', tagColor: '#9333EA' },
-    { title: 'Méditation guidée', image: '/placeholder.svg', href: '/article/meditation-guidee', tag: 'Spiritualité', tagColor: '#9333EA' }
-  ],
-  'Carrière': [
-    { title: 'Réussir sa reconversion', image: '/placeholder.svg', href: '/article/reussir-reconversion', tag: 'Carrière', tagColor: '#0EA5E9' },
-    { title: 'Leadership au féminin', image: '/placeholder.svg', href: '/article/leadership-feminin', tag: 'Carrière', tagColor: '#0EA5E9' }
-  ],
-  'Art & Créativité': [
-    { title: 'L\'art de créer', image: '/placeholder.svg', href: '/article/art-creer', tag: 'Créativité', tagColor: '#D946EF' },
-    { title: 'Portraits d\'artistes', image: '/placeholder.svg', href: '/article/portraits-artistes', tag: 'Créativité', tagColor: '#D946EF' }
-  ],
-  'Santé': [
-    { title: 'Prendre soin de soi', image: '/placeholder.svg', href: '/article/prendre-soin', tag: 'Santé', tagColor: '#DC2626' },
-    { title: 'Bien-être au naturel', image: '/placeholder.svg', href: '/article/bien-etre-naturel', tag: 'Santé', tagColor: '#DC2626' }
-  ],
-  'Tech': [
-    { title: 'L\'IA au service de l\'humain', image: '/placeholder.svg', href: '/article/ia-humain', tag: 'Tech', tagColor: '#2563EB' },
-    { title: 'Innovations de demain', image: '/placeholder.svg', href: '/article/innovations-demain', tag: 'Tech', tagColor: '#2563EB' }
-  ],
-  'Business': [
-    { title: 'Entreprendre autrement', image: '/placeholder.svg', href: '/article/entreprendre-autrement', tag: 'Business', tagColor: '#14B8A6' },
-    { title: 'Success stories', image: '/placeholder.svg', href: '/article/success-stories', tag: 'Business', tagColor: '#14B8A6' }
-  ]
-};
-
-// Épisodes mis en avant pour Séries
-const seriesFeatured: FeaturedContent[] = [
-  {
-    title: 'Transmission - Ép. 1 : L\'héritage',
-    image: '/series/01_transmission.jpg',
-    href: '/series/transmission/episode-1',
-    tag: 'Nouveau',
-    tagColor: '#6366F1'
-  },
-  {
-    title: 'État d\'esprit - Ép. 3 : La résilience',
-    image: '/series/02_etat_esprit.jpg',
-    href: '/series/etat-d-esprit/episode-3',
-    tag: 'Populaire',
-    tagColor: '#EC4899'
-  },
-  {
-    title: 'Il était une fois - Ép. 5 : Le destin',
-    image: '/series/03_il_etait_une_fois.jpg',
-    href: '/series/il-etait-une-fois/episode-5',
-    tag: 'Tendance',
-    tagColor: '#F59E0B'
-  }
-];
-
-// Items pour le dropdown Univers
-interface UniversItem {
-  name: string;
-  href: string;
-  color: string;
-}
-
-const universItems: UniversItem[] = [
-  { name: 'Psychologie', href: '/univers/psychologie', color: '#4F46E5' },
-  { name: 'Société', href: '/univers/societe', color: '#D97706' },
-  { name: 'Famille', href: '/univers/famille', color: '#FB7185' },
-  { name: 'Voyage', href: '/univers/voyage', color: '#10B981' },
-  { name: 'Spiritualité', href: '/univers/spiritualite', color: '#9333EA' },
-  { name: 'Carrière', href: '/univers/carriere', color: '#0EA5E9' },
-  { name: 'Art & Créativité', href: '/univers/art-creativite', color: '#D946EF' },
-  { name: 'Santé', href: '/univers/sante', color: '#DC2626' },
-  { name: 'Tech', href: '/univers/tech', color: '#2563EB' },
-  { name: 'Business', href: '/univers/business', color: '#14B8A6' },
-];
-
-// Items pour le dropdown Académie - Style Premium
-interface AcademieItem {
-  name: string;
-  subtitle: string;
-  href: string;
-  price: string;
-  originalPrice?: string;
-  highlight?: boolean;
-  free?: boolean;
-}
-
-const academieItems: AcademieItem[] = [
-  { name: 'Kit d\'Introspection', subtitle: 'Démarrez votre voyage', href: '/academie/kit-introspection', price: 'Gratuit', free: true },
-  { name: 'Masterclass Storytelling', subtitle: 'L\'art du récit', href: '/academie/masterclass-storytelling', price: '29€', originalPrice: '49€', highlight: true },
-  { name: 'Guide Mindset', subtitle: 'Transformez votre mental', href: '/academie/guide-mindset', price: '19€' },
-  { name: 'Programme Complet', subtitle: 'Accès illimité à vie', href: '/academie/programme-complet', price: '79€', originalPrice: '147€' },
-];
-
-// Items pour le dropdown Recos (synchronisé avec RecommandationsSection)
-interface RecoItem {
-  name: string;
-  href: string;
-  color: string;
-}
-
-const recoItems: RecoItem[] = [
-  { name: 'Livres', href: '/recommandations?type=livre', color: '#EC4899' },
-  { name: 'Films & Séries', href: '/recommandations?type=film', color: '#8B5CF6' },
-  { name: 'Musique', href: '/recommandations?type=musique', color: '#6366F1' },
-  { name: 'Podcasts', href: '/recommandations?type=podcast', color: '#14B8A6' },
-  { name: 'Social', href: '/recommandations?type=reseaux-sociaux', color: '#0891B2' },
-  { name: 'YouTube', href: '/recommandations?type=youtube', color: '#EF4444' },
-  { name: 'Activité', href: '/recommandations?type=activite', color: '#10B981' },
-  { name: 'Destination', href: '/recommandations?type=destination', color: '#0EA5E9' },
-  { name: 'Culture', href: '/recommandations?type=culture', color: '#A855F7' },
-  { name: 'Produits', href: '/recommandations?type=produit', color: '#F59E0B' },
-];
-
-
-// Items pour le dropdown Articles (catégories/verticales)
-const articlesItems: UniversItem[] = [
-  { name: 'Psychologie', href: '/articles?verticale=psychologie', color: '#4F46E5' },
-  { name: 'Société', href: '/articles?verticale=societe', color: '#D97706' },
-  { name: 'Famille', href: '/articles?verticale=famille', color: '#FB7185' },
-  { name: 'Voyage', href: '/articles?verticale=voyage', color: '#10B981' },
-  { name: 'Spiritualité', href: '/articles?verticale=spiritualite', color: '#9333EA' },
-  { name: 'Carrière', href: '/articles?verticale=carriere', color: '#0EA5E9' },
-  { name: 'Art & Créativité', href: '/articles?verticale=art-creativite', color: '#D946EF' },
-  { name: 'Santé', href: '/articles?verticale=sante', color: '#DC2626' },
-  { name: 'Tech', href: '/articles?verticale=tech', color: '#2563EB' },
-  { name: 'Business', href: '/articles?verticale=business', color: '#14B8A6' },
-];
-
-// Items pour le dropdown Histoires (catégories thématiques)
-const histoiresItems: UniversItem[] = [
-  { name: 'Émotions & Bien-être', href: '/histoires?categorie=emotions', color: '#EC4899' },
-  { name: 'Développement', href: '/histoires?categorie=developpement', color: '#10B981' },
-  { name: 'Parcours & Résilience', href: '/histoires?categorie=parcours', color: '#8B5CF6' },
-  { name: 'Relations & Famille', href: '/histoires?categorie=relations', color: '#F59E0B' },
-  { name: 'Santé mentale', href: '/histoires?categorie=sante', color: '#06B6D4' },
-  { name: 'Épreuves & Inspiration', href: '/histoires?categorie=epreuves', color: '#6366F1' },
-];
-
-// Items pour le dropdown Vidéos (formats)
-const videosItems: UniversItem[] = [
-  { name: 'Reportages', href: '/videos?format=reportages', color: '#0891B2' },
-  { name: 'Témoignages', href: '/videos?format=temoignages', color: '#8B5CF6' },
-  { name: 'Concept YouTube', href: '/videos?format=youtube', color: '#EF4444' },
-  { name: 'Shorts', href: '/videos?format=shorts', color: '#EC4899' },
-  { name: 'Live', href: '/videos?format=live', color: '#10B981' },
-  { name: 'Vlogs', href: '/videos?format=vlogs', color: '#F59E0B' },
-  { name: 'Décryptages', href: '/videos?format=decryptages', color: '#6366F1' },
-  { name: 'Débats', href: '/videos?format=debats', color: '#DC2626' },
-  { name: 'Portraits', href: '/videos?format=portraits', color: '#14B8A6' },
-  { name: 'News', href: '/videos?format=news', color: '#1F2937' },
-];
-
-const navItems: NavItem[] = [
-  { label: 'Articles', href: '/articles', hasDropdown: true, color: '#374151', hoverColor: '#059669', hoverBg: 'bg-emerald-50' },
-  { label: 'Vidéos', href: '/videos', hasDropdown: true, color: '#374151', hoverColor: '#0891B2', hoverBg: 'bg-cyan-50' },
-  { label: 'Histoires', href: '/histoires', hasDropdown: true, color: '#374151', hoverColor: '#DB2777', hoverBg: 'bg-rose-50' },
-  { label: 'Séries', href: '/series', hasDropdown: true, color: '#374151', hoverColor: '#8B5CF6', hoverBg: 'bg-violet-50' },
-  { label: 'Recos', href: '/recommandations', hasDropdown: true, color: '#374151', hoverColor: '#EC4899', hoverBg: 'bg-pink-50' },
-  { label: 'Académie', href: '/academie', hasDropdown: true, color: '#374151', hoverColor: '#D97706', hoverBg: 'bg-amber-50' },
-];
+// Imports depuis les modules navbar/
+import type { SeriesItem } from './navbar/types';
+import {
+  socialLinks,
+  seriesShowcase,
+  seriesFeatured,
+  academieItems,
+  recoItems,
+  articlesItems,
+  histoiresItems,
+  videosItems,
+  navItems,
+} from './navbar/navData';
 
 // ============ SERIES CARD COMPONENT ============
 interface SeriesCardProps {
@@ -457,13 +193,14 @@ const Navbar: React.FC = () => {
 
               {/* Recherche (Center - truly centered) */}
               <div className="w-80">
-                <form onSubmit={handleSearch} className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <form onSubmit={handleSearch} className="relative" role="search">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Rechercher..."
+                    aria-label="Rechercher sur le site"
                     className="w-full pl-9 pr-4 py-2 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-full focus:bg-white focus:border-gray-300 focus:outline-none transition-all placeholder:text-gray-400"
                   />
                 </form>
@@ -489,7 +226,7 @@ const Navbar: React.FC = () => {
 
             {/* Desktop Navigation */}
             <LayoutGroup>
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-1" role="navigation" aria-label="Menu principal">
               {navItems.map((item) => {
                 const isActive = isActiveRoute(item.href);
                 const isDropdownOpen = activeDropdown === item.label;
@@ -1180,14 +917,19 @@ const Navbar: React.FC = () => {
                 <button
                   onClick={() => setSearchOpen(!searchOpen)}
                   className="p-2 text-gray-600"
+                  aria-label={searchOpen ? "Fermer la recherche" : "Ouvrir la recherche"}
+                  aria-expanded={searchOpen}
                 >
-                  <Search className="w-5 h-5" />
+                  <Search className="w-5 h-5" aria-hidden="true" />
                 </button>
 
                 {/* Burger */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="p-2 text-gray-600"
+                  aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+                  aria-expanded={isMobileMenuOpen}
+                  aria-controls="mobile-menu"
                 >
                   <div className="w-5 h-4 flex flex-col justify-between">
                     <span className={`block h-0.5 bg-current transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
@@ -1210,14 +952,15 @@ const Navbar: React.FC = () => {
               exit={{ height: 0, opacity: 0 }}
               className="lg:hidden border-t border-gray-100 overflow-hidden"
             >
-              <form onSubmit={handleSearch} className="p-3 flex gap-2">
+              <form onSubmit={handleSearch} className="p-3 flex gap-2" role="search">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Rechercher..."
+                    aria-label="Rechercher sur le site"
                     className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-full focus:border-gray-400 focus:outline-none"
                     autoFocus
                   />
@@ -1226,8 +969,9 @@ const Navbar: React.FC = () => {
                   type="button"
                   onClick={() => setSearchOpen(false)}
                   className="p-2 text-gray-400"
+                  aria-label="Fermer la recherche"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5" aria-hidden="true" />
                 </button>
               </form>
             </motion.div>
@@ -1238,10 +982,13 @@ const Navbar: React.FC = () => {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
+              id="mobile-menu"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="lg:hidden bg-white border-t border-gray-100 overflow-hidden"
+              role="navigation"
+              aria-label="Menu principal mobile"
             >
               <div className="px-4 py-3 space-y-1">
                 {navItems.map((item) => (

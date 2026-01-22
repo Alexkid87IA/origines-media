@@ -508,20 +508,24 @@
 }
 
 /* ===========================================
-   ACCESSIBILITY - Focus Indicators
+   ACCESSIBILITY - Focus Indicators (WCAG 2.1 AA)
    =========================================== */
 @layer base {
-  /* Focus visible for all interactive elements */
+  /* Focus visible for all interactive elements - 3px for better visibility */
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible,
   [role="button"]:focus-visible,
+  [role="link"]:focus-visible,
+  [role="tab"]:focus-visible,
+  [role="menuitem"]:focus-visible,
   [tabindex]:focus-visible {
-    outline: 2px solid #EC4899;
-    outline-offset: 2px;
+    outline: 3px solid #EC4899;
+    outline-offset: 3px;
     border-radius: 4px;
+    box-shadow: 0 0 0 6px rgba(236, 72, 153, 0.2);
   }
 
   /* Remove default outline only when focus-visible applies */
@@ -535,8 +539,19 @@
 
   /* High contrast focus for dark backgrounds */
   .dark-bg a:focus-visible,
-  .dark-bg button:focus-visible {
+  .dark-bg button:focus-visible,
+  [data-theme="dark"] a:focus-visible,
+  [data-theme="dark"] button:focus-visible {
     outline-color: #F5F5F5;
+    box-shadow: 0 0 0 6px rgba(245, 245, 245, 0.2);
+  }
+
+  /* Focus for cards and clickable containers */
+  .card-focusable:focus-visible,
+  [role="article"]:focus-visible {
+    outline: 3px solid #8B5CF6;
+    outline-offset: 4px;
+    box-shadow: 0 0 0 8px rgba(139, 92, 246, 0.15);
   }
 }
 
@@ -620,16 +635,17 @@
 }
 
 /* ===========================================
-   ACCESSIBILITY - High Contrast Text
+   ACCESSIBILITY - High Contrast Text (WCAG 2.1 AA)
+   Minimum contrast ratio: 4.5:1 for normal text, 3:1 for large text
    =========================================== */
 @layer utilities {
-  /* Standardized opacity classes for text - WCAG compliant */
+  /* Standardized opacity classes for text - WCAG AA compliant */
   .text-opacity-muted {
-    opacity: 0.6; /* Minimum for non-essential text */
+    opacity: 0.7; /* Increased from 0.6 for better contrast */
   }
 
   .text-opacity-medium {
-    opacity: 0.75; /* Standard body text */
+    opacity: 0.8; /* Increased from 0.75 */
   }
 
   .text-opacity-high {
@@ -641,12 +657,13 @@
   }
 
   /* Better contrast alternatives to white/50 etc */
+  /* On dark bg (#0A0A0A), these need to be at least rgb(122,122,122) for 4.5:1 */
   .text-muted {
-    color: rgba(245, 245, 245, 0.6);
+    color: rgba(245, 245, 245, 0.7); /* Increased from 0.6 */
   }
 
   .text-secondary {
-    color: rgba(245, 245, 245, 0.75);
+    color: rgba(245, 245, 245, 0.8); /* Increased from 0.75 */
   }
 
   .text-primary-subtle {
@@ -717,5 +734,75 @@
     color: #EF4444;
     font-size: 0.75rem;
     margin-top: 0.25rem;
+  }
+}
+/* ============================================
+   HABILLAGE PUBLICITAIRE (SKIN) PANORAMIQUE
+   ============================================ */
+
+/* Background skin fixe sur toute la page */
+.skin-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+
+  /* Image panoramique */
+  background-image: url('/skin/panoramic-skin.jpg');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+
+  /* Effet premium avec légère animation au scroll */
+  will-change: transform;
+}
+
+/* Contenu principal qui passe par-dessus */
+.skin-content {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  background-color: #ffffff; /* Fond blanc pour masquer le centre du skin */
+
+  /* Centrage du contenu */
+  margin: 0 auto;
+
+  /* Par défaut, le contenu prend toute la largeur (pas de skin visible) */
+  width: 100%;
+
+  /* Sur très grands écrans (ultra-wide), on limite pour voir le skin */
+  @media (min-width: 2000px) {
+    max-width: 1600px; /* Le skin sera visible seulement sur écrans > 2000px */
+  }
+
+  @media (min-width: 2560px) {
+    max-width: 1800px; /* Encore plus de skin visible sur 4K */
+  }
+}
+
+/* Optimisation pour mobile - désactiver le background fixed qui peut causer des problèmes */
+@media (max-width: 1024px) {
+  .skin-background {
+    background-attachment: scroll;
+    background-size: cover;
+    background-position: center center;
+  }
+}
+
+/* Sur très grands écrans (ultra-wide), on peut étendre légèrement */
+@media (min-width: 1920px) {
+  .skin-background {
+    background-size: 100% auto;
+  }
+}
+
+/* Désactiver le skin en mode impression */
+@media print {
+  .skin-background {
+    display: none;
   }
 }

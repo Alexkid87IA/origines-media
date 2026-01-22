@@ -27,8 +27,29 @@ class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
 
-    // You can log the error to an error reporting service here
-    // Example: logErrorToService(error, errorInfo);
+    // Log error to console in development
+    if (import.meta.env.DEV) {
+      console.error('ErrorBoundary caught an error:', error);
+      console.error('Component stack:', errorInfo.componentStack);
+    }
+
+    // Prepare error data for reporting
+    const errorData = {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Log to browser console for debugging
+    console.error('[ErrorBoundary] Error captured:', errorData);
+
+    // TODO: Sentry integration
+    // If you add Sentry, uncomment and configure:
+    // import * as Sentry from '@sentry/react';
+    // Sentry.captureException(error, { extra: errorData });
   }
 
   private handleReload = () => {

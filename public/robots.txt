@@ -1,0 +1,16 @@
+# Robots.txt pour Origines Media
+# https://www.origines.media
+
+User-agent: *
+Allow: /
+
+# Bloquer les pages d'admin et API
+Disallow: /api/
+Disallow: /_next/
+Disallow: /*.json$
+
+# Sitemap
+Sitemap: https://www.origines.media/sitemap.xml
+
+# Crawl-delay recommandé
+Crawl-delay: 1
