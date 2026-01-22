@@ -41,12 +41,21 @@ function isCrawler(userAgent: string): boolean {
 
 // Fonction pour récupérer les données depuis Sanity
 async function fetchArticleMeta(slug: string) {
-  const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}?query=${encodeURIComponent(ARTICLE_META_QUERY)}&$slug="${slug}"`
+  // Utiliser URLSearchParams pour un encodage correct des paramètres
+  const params = new URLSearchParams({
+    query: ARTICLE_META_QUERY,
+    '$slug': `"${slug}"`
+  })
+  const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}?${params.toString()}`
 
   try {
     const response = await fetch(url)
-    if (!response.ok) return null
+    if (!response.ok) {
+      console.error(`Sanity API error: ${response.status} ${response.statusText}`)
+      return null
+    }
     const data = await response.json()
+    console.log(`Article meta fetched for slug "${slug}":`, data.result ? 'found' : 'not found')
     return data.result
   } catch (error) {
     console.error('Error fetching article meta:', error)
