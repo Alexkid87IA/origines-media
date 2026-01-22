@@ -1,11 +1,18 @@
 {
+  "functions": {
+    "api/article/[slug].ts": {
+      "memory": 256,
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
-    { "source": "/article/:slug*", "destination": "/api/article/:slug*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/article/:slug", "destination": "/api/article/:slug" },
+    { "source": "/article/:slug/", "destination": "/api/article/:slug" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
-      "source": "/article/(.*)",
+      "source": "/api/article/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
