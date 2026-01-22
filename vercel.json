@@ -8,15 +8,22 @@
   "rewrites": [
     {
       "source": "/article/:slug",
-      "destination": "/api/article/:slug",
-      "missing": [{ "type": "query", "key": "_rdr" }]
+      "destination": "/api/article/:slug"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
-      "source": "/article/:slug/",
-      "destination": "/api/article/:slug",
-      "missing": [{ "type": "query", "key": "_rdr" }]
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json))",
+      "dest": "/$1"
     },
-    { "source": "/:path((?!api|assets|favicon|.*\\.).+)", "destination": "/index.html" }
+    {
+      "src": "/((?!api).*)",
+      "dest": "/index.html"
+    }
   ],
   "headers": [
     {
