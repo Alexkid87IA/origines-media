@@ -688,44 +688,44 @@ const ArticlesPage: React.FC = () => {
                             to={`/article/${article.slug}`}
                             className="block"
                           >
-                            {/* Version Mobile - 16:9 avec overlay */}
-                            <div className="sm:hidden relative rounded-2xl overflow-hidden aspect-[16/9]">
+                            {/* Version Mobile - Grande carte lisible */}
+                            <div className="sm:hidden relative rounded-2xl overflow-hidden aspect-[3/4]">
                               <img
                                 src={article.imageUrl || '/placeholder.svg'}
                                 alt={article.titre}
                                 loading="lazy"
                                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                               />
-                              {/* Gradient overlay */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                              {/* Gradient overlay prononcé pour la lisibilité */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
                               {/* Badge catégorie en haut */}
                               {article.verticale?.nom && (
-                                <div className="absolute top-3 left-3">
+                                <div className="absolute top-4 left-4">
                                   <span
-                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider text-white shadow-lg"
                                     style={{ backgroundColor: article.verticale.couleurDominante }}
                                   >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                                    <span className="w-2 h-2 rounded-full bg-white/60" />
                                     {article.verticale.nom}
                                   </span>
                                 </div>
                               )}
 
                               {/* Contenu en bas */}
-                              <div className="absolute inset-x-0 bottom-0 p-4">
-                                <h3 className="font-bold text-white text-base leading-snug line-clamp-2 mb-2">
+                              <div className="absolute inset-x-0 bottom-0 p-6">
+                                <h3 className="font-bold text-white text-xl leading-tight line-clamp-3 mb-3">
                                   {typo(article.titre)}
                                 </h3>
-                                <p className="text-white/70 text-xs line-clamp-2 mb-3">
+                                <p className="text-white/90 text-base leading-relaxed line-clamp-3 mb-5">
                                   {getExtrait(article)}
                                 </p>
                                 <span
-                                  className="inline-flex items-center gap-1.5 text-xs font-semibold group-hover:gap-2 transition-all"
+                                  className="inline-flex items-center gap-2 text-base font-bold group-hover:gap-3 transition-all"
                                   style={{ color }}
                                 >
                                   Lire l'article
-                                  <ArrowRight className="w-3 h-3" />
+                                  <ArrowRight className="w-5 h-5" />
                                 </span>
                               </div>
                             </div>

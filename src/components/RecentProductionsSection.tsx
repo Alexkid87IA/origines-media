@@ -264,10 +264,10 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
                         {/* Badge - Dot coloré + texte blanc */}
                         {production.verticale?.nom && (
-                          <div className="absolute top-1.5 left-1.5 z-10">
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider text-white bg-black/40 backdrop-blur-sm">
+                          <div className="absolute top-3 left-3 sm:top-1.5 sm:left-1.5 z-10">
+                            <span className="inline-flex items-center gap-1.5 sm:gap-0.5 px-3 py-1.5 sm:px-1.5 sm:py-0.5 rounded-full text-xs sm:text-[8px] font-bold uppercase tracking-wider text-white bg-black/50 sm:bg-black/40 backdrop-blur-sm shadow-lg sm:shadow-none">
                               <span
-                                className="w-1 h-1 rounded-full"
+                                className="w-1.5 h-1.5 sm:w-1 sm:h-1 rounded-full"
                                 style={{ backgroundColor: colors.bg }}
                               />
                               {production.verticale.nom}
@@ -296,27 +296,27 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                         className="block sm:hidden lg:block absolute inset-x-0 bottom-0 rounded-b-[14px] overflow-hidden"
                       >
                         <div
-                          className="p-2.5 sm:p-3 lg:p-4 pt-8 sm:pt-10 lg:pt-16 bg-gradient-to-t from-black via-black/85 to-transparent"
+                          className="p-5 sm:p-3 lg:p-4 pt-16 sm:pt-10 lg:pt-16 bg-gradient-to-t from-black via-black/90 to-transparent"
                         >
-                          {/* Titre - pas tronqué sur desktop */}
-                          <h3 className="text-white font-bold text-[11px] sm:text-sm lg:text-[13px] leading-tight lg:leading-snug mb-1.5 sm:mb-2 drop-shadow-lg line-clamp-2 lg:line-clamp-4">
+                          {/* Titre - plus grand sur mobile */}
+                          <h3 className="text-white font-bold text-lg sm:text-sm lg:text-[13px] leading-tight lg:leading-snug mb-2 sm:mb-2 drop-shadow-lg line-clamp-3 lg:line-clamp-4">
                             {typo(production.titre)}
                           </h3>
 
                           {/* Extrait (avec fallback sur contenu) */}
                           {getExtrait(production) && (
-                            <p className="text-white/80 text-[9px] sm:text-[10px] lg:text-[11px] leading-relaxed mb-1.5 sm:mb-2 line-clamp-2">
+                            <p className="text-white/90 text-sm sm:text-[10px] lg:text-[11px] leading-relaxed mb-3 sm:mb-2 line-clamp-2">
                               {typo(getExtrait(production))}
                             </p>
                           )}
 
                           {/* Bouton Lire plus */}
                           <span
-                            className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] lg:text-[11px] font-semibold transition-all"
+                            className="inline-flex items-center gap-2 text-sm sm:text-[10px] lg:text-[11px] font-bold transition-all"
                             style={{ color: colors.bg }}
                           >
                             Lire l'article
-                            <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                            <ArrowRight className="w-4 h-4 sm:w-3 sm:h-3" />
                           </span>
                         </div>
                       </div>
