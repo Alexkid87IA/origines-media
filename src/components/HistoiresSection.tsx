@@ -173,7 +173,7 @@ export default function HistoiresSection() {
           {/* Bouton "Tous" */}
           <button
             onClick={() => setActiveCategory('tous')}
-            className="relative inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
+            className="relative inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300"
           >
             {activeCategory === 'tous' && (
               <motion.div
@@ -196,7 +196,7 @@ export default function HistoiresSection() {
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
+                className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300"
               >
                 {isActive && (
                   <motion.div
@@ -208,12 +208,12 @@ export default function HistoiresSection() {
                 )}
                 {Icon && (
                   <Icon
-                    className="relative z-10 w-3 h-3 transition-colors duration-200"
+                    className="relative z-10 w-3 h-3 transition-colors duration-300"
                     style={{ color: isActive ? 'white' : category.couleur }}
                   />
                 )}
                 <span
-                  className="relative z-10 transition-colors duration-200"
+                  className="relative z-10 transition-colors duration-300"
                   style={{ color: isActive ? 'white' : category.couleur }}
                 >
                   {category.nom}

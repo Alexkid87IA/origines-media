@@ -72,7 +72,7 @@ const PartnershipCTASection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header avec urgence */}
-        <div className={`text-center mb-16 transition-all duration-1000 ${
+        <div className={`text-center mb-16 transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
           <div className="inline-flex items-center gap-3 mb-8 px-6 py-3 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full border border-orange-500/30">
@@ -96,7 +96,7 @@ const PartnershipCTASection: React.FC = () => {
         </div>
 
         {/* Timeline d'urgence */}
-        <div className={`grid lg:grid-cols-4 gap-6 mb-20 transition-all duration-1000 delay-200 ${
+        <div className={`grid lg:grid-cols-4 gap-6 mb-20 transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           {urgencyPoints.map((point, index) => (
@@ -118,7 +118,7 @@ const PartnershipCTASection: React.FC = () => {
         </div>
 
         {/* Main CTA Grid */}
-        <div className={`grid lg:grid-cols-2 gap-12 items-start transition-all duration-1000 delay-400 ${
+        <div className={`grid lg:grid-cols-2 gap-12 items-start transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           
@@ -328,7 +328,7 @@ const PartnershipCTASection: React.FC = () => {
         </div>
 
         {/* Message final puissant */}
-        <div className={`mt-20 text-center transition-all duration-1000 delay-600 ${
+        <div className={`mt-20 text-center transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="relative">
@@ -354,7 +354,7 @@ const PartnershipCTASection: React.FC = () => {
         </div>
 
         {/* Logos partenaires */}
-        <div className={`mt-16 text-center transition-all duration-1000 delay-800 ${
+        <div className={`mt-16 text-center transition-all duration-3000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="flex items-center justify-center gap-8">

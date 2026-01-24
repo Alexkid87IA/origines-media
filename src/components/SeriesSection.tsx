@@ -50,7 +50,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ serie, color, index }) => {
     >
       <Link
         to={`/series/${serie.slug.current}`}
-        className="group block rounded-xl overflow-hidden transition-all duration-150 hover:scale-[1.03]"
+        className="group block rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.03]"
         style={{
           border: `2px solid ${color}`,
           backgroundColor: isHovered ? color : 'transparent',
@@ -62,7 +62,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ serie, color, index }) => {
         <div className="relative p-2 sm:p-2.5 lg:p-3 flex flex-col gap-2">
           {/* Poster thumbnail */}
           <div
-            className="w-full aspect-[3/4] rounded-lg overflow-hidden shadow-md transition-all duration-150"
+            className="w-full aspect-[3/4] rounded-lg overflow-hidden shadow-md transition-all duration-300"
             style={{ border: `2px solid ${isHovered ? 'rgba(255,255,255,0.3)' : `${color}30`}` }}
           >
             <img
@@ -75,14 +75,14 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ serie, color, index }) => {
           {/* Content */}
           <div className="min-h-[40px] sm:min-h-[48px]">
             <span
-              className="text-[7px] sm:text-[8px] font-bold uppercase tracking-widest block mb-0.5 transition-colors duration-150"
+              className="text-[7px] sm:text-[8px] font-bold uppercase tracking-widest block mb-0.5 transition-colors duration-300"
               style={{ color: isHovered ? 'rgba(255,255,255,0.7)' : `${color}99` }}
             >
               <Play className="w-2 h-2 inline mr-0.5" fill="currentColor" />
               {serie.nombreEpisodes || '?'} épisodes
             </span>
             <h4
-              className="text-[10px] sm:text-[11px] lg:text-xs font-bold leading-tight line-clamp-2 transition-colors duration-150"
+              className="text-[10px] sm:text-[11px] lg:text-xs font-bold leading-tight line-clamp-2 transition-colors duration-300"
               style={{ color: isHovered ? 'white' : color }}
             >
               {typo(serie.titre)}
@@ -137,7 +137,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
           >
             <Link
               to={`/series/${featuredSerie.slug.current}`}
-              className="group block h-full rounded-2xl overflow-hidden transition-all duration-200"
+              className="group block h-full rounded-2xl overflow-hidden transition-all duration-300"
               style={{
                 border: `3px solid ${featuredColor}`,
                 backgroundColor: featuredHovered ? featuredColor : 'transparent',
@@ -149,7 +149,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
               <div className="relative p-4 flex flex-col h-full">
                 {/* Grande image poster */}
                 <div
-                  className="w-full aspect-[3/4] rounded-xl overflow-hidden shadow-xl mb-4 transition-all duration-200"
+                  className="w-full aspect-[3/4] rounded-xl overflow-hidden shadow-xl mb-4 transition-all duration-300"
                   style={{ border: `2px solid ${featuredHovered ? 'rgba(255,255,255,0.3)' : `${featuredColor}30`}` }}
                 >
                   <img
@@ -162,7 +162,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
                 {/* Content */}
                 <div className="flex-1 flex flex-col">
                   <span
-                    className="text-[9px] font-bold uppercase tracking-widest mb-2 transition-colors duration-150 flex items-center gap-1"
+                    className="text-[9px] font-bold uppercase tracking-widest mb-2 transition-colors duration-300 flex items-center gap-1"
                     style={{ color: featuredHovered ? 'rgba(255,255,255,0.7)' : `${featuredColor}99` }}
                   >
                     <Play className="w-2.5 h-2.5" fill="currentColor" />
@@ -170,7 +170,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
                   </span>
 
                   <h3
-                    className="text-lg font-bold leading-snug mb-2 transition-colors duration-150"
+                    className="text-lg font-bold leading-snug mb-2 transition-colors duration-300"
                     style={{ color: featuredHovered ? 'white' : featuredColor }}
                   >
                     {typo(featuredSerie.titre)}
@@ -178,7 +178,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
 
                   {featuredSerie.description && (
                     <p
-                      className="text-xs leading-relaxed mb-3 line-clamp-3 transition-colors duration-150"
+                      className="text-xs leading-relaxed mb-3 line-clamp-3 transition-colors duration-300"
                       style={{ color: featuredHovered ? 'rgba(255,255,255,0.8)' : '#6B7280' }}
                     >
                       {typo(featuredSerie.description)}
@@ -187,7 +187,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
 
                   <div className="mt-auto">
                     <span
-                      className="inline-flex items-center gap-1.5 text-xs font-bold transition-all duration-150 group-hover:gap-2"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold transition-all duration-300 group-hover:gap-2"
                       style={{ color: featuredHovered ? 'white' : featuredColor }}
                     >
                       Découvrir la série
@@ -231,9 +231,9 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
               >
                 <Link
                   to="/series"
-                  className="group flex flex-col items-center justify-center h-full min-h-[200px] rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 hover:border-violet-400 hover:bg-violet-50/50 transition-all duration-200"
+                  className="group flex flex-col items-center justify-center h-full min-h-[200px] rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 hover:border-violet-400 hover:bg-violet-50/50 transition-all duration-300"
                 >
-                  <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center mb-3 group-hover:bg-violet-200 group-hover:scale-110 transition-all duration-200">
+                  <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center mb-3 group-hover:bg-violet-200 group-hover:scale-110 transition-all duration-300">
                     <ArrowRight className="w-5 h-5 text-violet-500" />
                   </div>
                   <span className="text-sm font-bold text-gray-700 group-hover:text-violet-600 transition-colors">

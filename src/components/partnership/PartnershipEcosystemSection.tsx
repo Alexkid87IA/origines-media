@@ -74,7 +74,7 @@ const PartnershipEcosystemSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header */}
-        <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-1000 ${
+        <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
           {/* Badge supérieur */}
@@ -109,7 +109,7 @@ const PartnershipEcosystemSection: React.FC = () => {
         </div>
 
         {/* Le modèle en chiffres */}
-        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-1000 delay-200 ${
+        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 shadow-sm rounded-xl sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 border border-orange-500/20">
@@ -152,7 +152,7 @@ const PartnershipEcosystemSection: React.FC = () => {
         </div>
 
         {/* Tabs navigation - Scroll horizontal sur mobile */}
-        <div className={`flex justify-center mb-8 sm:mb-10 lg:mb-12 transition-all duration-1000 delay-400 ${
+        <div className={`flex justify-center mb-8 sm:mb-10 lg:mb-12 transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -189,7 +189,7 @@ const PartnershipEcosystemSection: React.FC = () => {
         </div>
 
         {/* Contenu des tabs */}
-        <div className={`transition-all duration-1000 delay-600 ${
+        <div className={`transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           
@@ -528,7 +528,7 @@ const PartnershipEcosystemSection: React.FC = () => {
         </div>
 
         {/* Message final */}
-        <div className={`text-center mt-12 sm:mt-16 lg:mt-20 transition-all duration-1000 delay-800 ${
+        <div className={`text-center mt-12 sm:mt-16 lg:mt-20 transition-all duration-3000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="bg-gradient-to-r from-orange-600/10 via-purple-600/10 to-pink-600/10 shadow-sm rounded-xl sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 border border-gray-300">

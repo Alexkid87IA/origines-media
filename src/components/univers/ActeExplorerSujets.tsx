@@ -145,7 +145,7 @@ const ActeExplorerSujets: React.FC<ActeExplorerSujetsProps> = ({
 
       <div className="relative z-10 px-6 lg:px-12 xl:px-16">
         {/* Header */}
-        <div className={`max-w-7xl mx-auto mb-20 transition-all duration-1000 ${
+        <div className={`max-w-7xl mx-auto mb-20 transition-all duration-3000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
           <div className="space-y-6">
@@ -346,7 +346,7 @@ const ActeExplorerSujets: React.FC<ActeExplorerSujetsProps> = ({
         </div>
 
         {/* CTA */}
-        <div className={`text-center mt-20 transition-all duration-1000 ${
+        <div className={`text-center mt-20 transition-all duration-3000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
           <a

@@ -165,7 +165,7 @@ const ActeBibliothequeFormat: React.FC<ActeBibliothequeFormatProps> = ({
       <div className="max-w-[1600px] mx-auto">
 
         {/* Section Header */}
-        <div className={`text-center mb-16 transform transition-all duration-1000 ${
+        <div className={`text-center mb-16 transform transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex items-center gap-4 mb-6">
@@ -203,7 +203,7 @@ const ActeBibliothequeFormat: React.FC<ActeBibliothequeFormatProps> = ({
         </div>
 
         {/* Controls Bar */}
-        <div className={`mb-12 transform transition-all duration-1000 delay-200 ${
+        <div className={`mb-12 transform transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
@@ -402,7 +402,7 @@ const ActeBibliothequeFormat: React.FC<ActeBibliothequeFormatProps> = ({
         </div>
 
         {/* Episodes Grid/List/Timeline */}
-        <div className={`transform transition-all duration-1000 delay-400 ${
+        <div className={`transform transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           {viewMode === 'bento' && (
@@ -771,7 +771,7 @@ const ActeBibliothequeFormat: React.FC<ActeBibliothequeFormatProps> = ({
         </div>
 
         {/* CTA Button */}
-        <div className={`text-center mt-16 transform transition-all duration-1000 delay-600 ${
+        <div className={`text-center mt-16 transform transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <a

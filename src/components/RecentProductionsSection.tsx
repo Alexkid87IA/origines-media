@@ -128,7 +128,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
           <div className="flex flex-wrap gap-1.5 sm:hidden">
             <button
               onClick={() => setActiveTab('tous')}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
+              className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 ${
                 activeTab === 'tous'
                   ? 'bg-gray-900 text-white border border-gray-900'
                   : 'bg-white text-gray-900 border border-gray-900'
@@ -145,7 +145,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                 <button
                   key={name}
                   onClick={() => setActiveTab(name)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300"
                   style={{
                     backgroundColor: isActive ? colors.bg : 'white',
                     color: isActive ? colors.text : colors.bg,
@@ -163,7 +163,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
           <div className="hidden sm:flex flex-wrap gap-1.5">
             <button
               onClick={() => setActiveTab('tous')}
-              className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-200 rounded-full"
+              className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-300 rounded-full"
             >
               {activeTab === 'tous' && (
                 <motion.div
@@ -184,7 +184,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                 <button
                   key={name}
                   onClick={() => setActiveTab(name)}
-                  className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-200 rounded-full"
+                  className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-300 rounded-full"
                 >
                   {isActive && (
                     <motion.div
@@ -195,7 +195,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                     />
                   )}
                   <span
-                    className="relative z-10 transition-colors duration-200"
+                    className="relative z-10 transition-colors duration-300"
                     style={{ color: isActive ? colors.text : '#6B7280' }}
                     onMouseEnter={(e) => {
                       if (!isActive) e.currentTarget.style.color = colors.bg;
@@ -284,7 +284,7 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
                         {/* Effet brillance au hover */}
                         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-3000" />
                         </div>
 
                         {/* Bordure intérieure subtile */}

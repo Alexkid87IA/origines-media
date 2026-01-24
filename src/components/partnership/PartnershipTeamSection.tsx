@@ -145,7 +145,7 @@ const PartnershipTeamSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
-        <div className={`text-center mb-16 transition-all duration-1000 ${
+        <div className={`text-center mb-16 transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
           <h2 className="font-montserrat font-black text-3xl lg:text-5xl text-gray-900 mb-4">
@@ -158,7 +158,7 @@ const PartnershipTeamSection: React.FC = () => {
         </div>
 
         {/* Stats rapides */}
-        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16 transition-all duration-1000 delay-200 ${
+        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16 transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="text-center p-6 bg-gray-50 shadow-sm rounded-2xl border border-gray-200">
@@ -184,7 +184,7 @@ const PartnershipTeamSection: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className={`flex justify-center mb-12 transition-all duration-1000 delay-400 ${
+        <div className={`flex justify-center mb-12 transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex bg-gray-50 shadow-sm rounded-full p-1 border border-gray-200">
@@ -219,7 +219,7 @@ const PartnershipTeamSection: React.FC = () => {
         </div>
 
         {/* Contenu des tabs */}
-        <div className={`transition-all duration-1000 delay-600 ${
+        <div className={`transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           
@@ -405,7 +405,7 @@ const PartnershipTeamSection: React.FC = () => {
         </div>
 
         {/* Message de recrutement */}
-        <div className={`text-center mt-20 transition-all duration-1000 delay-800 ${
+        <div className={`text-center mt-20 transition-all duration-3000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="bg-gradient-to-r from-green-600/10 to-emerald-600/10 shadow-sm rounded-3xl p-10 border border-green-500/20">

@@ -160,7 +160,7 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
       </div>
 
       {/* Section Header */}
-      <div className={`text-center mb-16 px-8 lg:px-16 transform transition-all duration-1000 ${
+      <div className={`text-center mb-16 px-8 lg:px-16 transform transition-all duration-3000 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         <div className="inline-flex items-center gap-4 mb-6">
@@ -183,7 +183,7 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
       </div>
 
       {/* Navigation Instructions with Arrow Buttons */}
-      <div className={`text-center mb-8 px-8 lg:px-16 transform transition-all duration-1000 delay-300 ${
+      <div className={`text-center mb-8 px-8 lg:px-16 transform transition-all duration-3000 delay-300 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         <div className="flex items-center justify-center gap-6">
@@ -615,7 +615,7 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
       </div>
 
       {/* Enhanced Navigation Indicators */}
-      <div className={`text-center mt-16 px-8 lg:px-16 transform transition-all duration-1000 delay-700 ${
+      <div className={`text-center mt-16 px-8 lg:px-16 transform transition-all duration-3000 delay-700 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         {/* Scroll Progress Indicators */}

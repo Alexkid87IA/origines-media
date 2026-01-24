@@ -123,7 +123,7 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
     >
       <div className="relative z-10 px-6 lg:px-12 xl:px-16">
         {/* Header */}
-        <div className={`max-w-7xl mx-auto mb-20 text-center transition-all duration-1000 ${
+        <div className={`max-w-7xl mx-auto mb-20 text-center transition-all duration-3000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
           <div className="space-y-6">
@@ -248,7 +248,7 @@ const ActeAutresUnivers: React.FC<ActeAutresUniversProps> = ({
         </div>
 
         {/* Message de conclusion */}
-        <div className={`text-center mt-20 transition-all duration-1000 ${
+        <div className={`text-center mt-20 transition-all duration-3000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
           <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">

@@ -203,7 +203,7 @@ const PartnershipVisionSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transform transition-all duration-1000 ${
+        <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transform transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 lg:mb-8">
@@ -228,7 +228,7 @@ const PartnershipVisionSection: React.FC = () => {
         </div>
 
         {/* Navigation tabs - Horizontal scroll sur mobile */}
-        <div className={`mb-8 sm:mb-12 transform transition-all duration-1000 delay-200 ${
+        <div className={`mb-8 sm:mb-12 transform transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -259,7 +259,7 @@ const PartnershipVisionSection: React.FC = () => {
 
         {/* Timeline Section */}
         {activeSection === 'timeline' && (
-          <div className={`transform transition-all duration-1000 delay-300 ${
+          <div className={`transform transition-all duration-3000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             {/* Timeline Slider */}
@@ -474,7 +474,7 @@ const PartnershipVisionSection: React.FC = () => {
 
         {/* Production Section */}
         {activeSection === 'production' && (
-          <div className={`transform transition-all duration-1000 delay-300 ${
+          <div className={`transform transition-all duration-3000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
@@ -594,7 +594,7 @@ const PartnershipVisionSection: React.FC = () => {
 
         {/* Verticales Section */}
         {activeSection === 'verticales' && (
-          <div className={`transform transition-all duration-1000 delay-300 ${
+          <div className={`transform transition-all duration-3000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
@@ -699,7 +699,7 @@ const PartnershipVisionSection: React.FC = () => {
 
         {/* Setup Section */}
         {activeSection === 'setup' && (
-          <div className={`transform transition-all duration-1000 delay-300 ${
+          <div className={`transform transition-all duration-3000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
@@ -801,7 +801,7 @@ const PartnershipVisionSection: React.FC = () => {
 
         {/* Vision Section */}
         {activeSection === 'vision' && (
-          <div className={`transform transition-all duration-1000 delay-300 ${
+          <div className={`transform transition-all duration-3000 delay-300 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <div className="bg-gray-50 shadow-sm border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
@@ -897,7 +897,7 @@ const PartnershipVisionSection: React.FC = () => {
         )}
 
         {/* Footer CTA - toujours visible */}
-        <div className={`text-center mt-8 sm:mt-12 lg:mt-16 transform transition-all duration-1000 delay-900 ${
+        <div className={`text-center mt-8 sm:mt-12 lg:mt-16 transform transition-all duration-3000 delay-900 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <p className="font-playfair italic text-sm sm:text-base lg:text-lg text-gray-500 px-4">

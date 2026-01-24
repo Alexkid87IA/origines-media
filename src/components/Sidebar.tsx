@@ -182,7 +182,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile = false, onClose }) => {
                   onMouseLeave={() => setHoveredItem(null)}
                   className={`
                     relative flex items-center gap-2.5 px-3 py-2 rounded-lg
-                    transition-all duration-200
+                    transition-all duration-300
                     ${isActive
                       ? 'bg-violet-500/15 text-white'
                       : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
@@ -233,7 +233,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile = false, onClose }) => {
                   onMouseLeave={() => setHoveredFormat(null)}
                   className={`
                     flex items-center gap-2.5 px-2 py-1.5 rounded-lg
-                    transition-all duration-200
+                    transition-all duration-300
                     ${hoveredFormat === format.id ? 'bg-white/[0.05]' : ''}
                   `}
                 >

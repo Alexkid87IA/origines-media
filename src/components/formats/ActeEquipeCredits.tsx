@@ -142,7 +142,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
       <div className="relative z-10 max-w-7xl mx-auto px-8 lg:px-16">
 
         {/* Section Header */}
-        <div className={`text-center mb-16 transform transition-all duration-1000 ${
+        <div className={`text-center mb-16 transform transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex items-center gap-4 mb-6">
@@ -180,7 +180,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
         </div>
 
         {/* Tabs Navigation */}
-        <div className={`flex justify-center mb-12 transform transition-all duration-1000 delay-200 ${
+        <div className={`flex justify-center mb-12 transform transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex items-center bg-white border border-gray-200 rounded-full p-1 shadow-sm">
@@ -216,7 +216,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
         </div>
 
         {/* Content based on active tab */}
-        <div className={`transform transition-all duration-1000 delay-400 ${
+        <div className={`transform transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
 
@@ -624,7 +624,7 @@ const ActeEquipeCredits: React.FC<ActeEquipeCreditsProps> = ({
         </div>
 
         {/* Bottom CTA */}
-        <div className={`text-center mt-16 transform transition-all duration-1000 delay-600 ${
+        <div className={`text-center mt-16 transform transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <p className="font-inter text-gray-600 text-lg mb-8">

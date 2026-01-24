@@ -127,7 +127,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
           {/* Titre + Sous-titre - Hauteur fixe pour harmoniser */}
           <div className="min-h-[52px] sm:min-h-[60px] mb-2 sm:mb-3">
             <h3
-              className="text-sm sm:text-base font-bold mb-0.5 sm:mb-1 transition-colors duration-200"
+              className="text-sm sm:text-base font-bold mb-0.5 sm:mb-1 transition-colors duration-300"
               style={{ color: isHovered ? product.color : '#111827' }}
             >
               {product.title}
@@ -166,7 +166,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
               )}
             </div>
             <span
-              className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all duration-200"
+              className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all duration-300"
               style={{
                 backgroundColor: isHovered ? product.color : `${product.color}15`,
                 color: isHovered ? 'white' : product.color

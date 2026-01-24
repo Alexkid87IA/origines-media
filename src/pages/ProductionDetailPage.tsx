@@ -75,11 +75,11 @@ const AccordionItemProduction = ({
 
       <button
         onClick={onToggle}
-        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-200 ${
+        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-300 ${
           isOpen ? 'bg-gradient-to-r from-gray-50/80 to-transparent' : 'hover:bg-gray-50/50'
         }`}
       >
-        <span className={`font-semibold text-[17px] transition-colors duration-200 ${
+        <span className={`font-semibold text-[17px] transition-colors duration-300 ${
           isOpen ? 'text-gray-900' : 'text-gray-700'
         }`}>
           {question}
@@ -87,13 +87,13 @@ const AccordionItemProduction = ({
 
         {/* Animated icon */}
         <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
             isOpen ? 'bg-gray-900' : 'bg-gray-100'
           }`}
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
             isOpen ? 'text-white' : 'text-gray-500'
           }`} />
         </motion.div>
@@ -208,7 +208,7 @@ const AccordionBlockProduction = ({ value, themeColor = '#8B5CF6' }: { value: an
     >
       <button
         onClick={() => setSingleOpen(!singleOpen)}
-        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-200 ${
+        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-300 ${
           singleOpen ? 'bg-gradient-to-r from-gray-50 to-white' : 'hover:bg-gray-50/50'
         }`}
       >
@@ -226,7 +226,7 @@ const AccordionBlockProduction = ({ value, themeColor = '#8B5CF6' }: { value: an
               <Plus className="w-5 h-5" style={{ color: themeColor }} />
             </motion.div>
           </motion.div>
-          <span className={`font-semibold text-lg transition-colors duration-200 ${
+          <span className={`font-semibold text-lg transition-colors duration-300 ${
             singleOpen ? 'text-gray-900' : 'text-gray-700'
           }`}>
             {title}
@@ -234,13 +234,13 @@ const AccordionBlockProduction = ({ value, themeColor = '#8B5CF6' }: { value: an
         </div>
 
         <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
             singleOpen ? 'bg-gray-900' : 'bg-gray-100'
           }`}
           animate={{ rotate: singleOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
             singleOpen ? 'text-white' : 'text-gray-500'
           }`} />
         </motion.div>
@@ -495,7 +495,7 @@ const TableOfContentsWidget: React.FC<{
                     onClick={() => onSectionClick(heading.id)}
                     className={`
                       w-full flex items-center gap-3 py-2.5 px-3 rounded-lg text-left
-                      transition-all duration-200
+                      transition-all duration-300
                       ${heading.level === 3 ? 'ml-4' : ''}
                       ${isActive ? 'bg-white shadow-sm' : 'hover:bg-white/50'}
                     `}
@@ -1529,7 +1529,7 @@ function ProductionDetailPage() {
 
       {/* Progress Bar */}
       <div
-        className="fixed top-0 left-0 h-1 z-[60] transition-all duration-150"
+        className="fixed top-0 left-0 h-1 z-[60] transition-all duration-300"
         style={{
           width: `${scrollProgress}%`,
           background: `linear-gradient(90deg, ${themeColor}, ${themeColor}99)`

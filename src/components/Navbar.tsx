@@ -43,7 +43,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ serie, idx, onNavigate }) => {
   return (
     <button
       onClick={() => onNavigate(serie.href)}
-      className="group text-left rounded-xl overflow-hidden transition-all duration-150 hover:scale-[1.03]"
+      className="group text-left rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.03]"
       style={{
         border: `2px solid ${serie.color}`,
         backgroundColor: isHovered ? serie.color : 'transparent',
@@ -55,7 +55,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ serie, idx, onNavigate }) => {
       <div className="relative p-2.5 flex flex-col gap-1.5">
         {/* Poster thumbnail */}
         <div
-          className="w-full aspect-[3/4] rounded-lg overflow-hidden shadow-md transition-all duration-150"
+          className="w-full aspect-[3/4] rounded-lg overflow-hidden shadow-md transition-all duration-300"
           style={{ border: `2px solid ${isHovered ? 'rgba(255,255,255,0.3)' : `${serie.color}30`}` }}
         >
           <img
@@ -68,13 +68,13 @@ const SeriesCard: React.FC<SeriesCardProps> = ({ serie, idx, onNavigate }) => {
         {/* Content */}
         <div>
           <span
-            className="text-[8px] font-bold uppercase tracking-widest block transition-colors duration-150"
+            className="text-[8px] font-bold uppercase tracking-widest block transition-colors duration-300"
             style={{ color: isHovered ? 'rgba(255,255,255,0.7)' : `${serie.color}99` }}
           >
             {serie.episodes} ép.
           </span>
           <h4
-            className="text-[11px] font-bold leading-tight line-clamp-1 transition-colors duration-150"
+            className="text-[11px] font-bold leading-tight line-clamp-1 transition-colors duration-300"
             style={{ color: isHovered ? 'white' : serie.color }}
           >
             {serie.title}
@@ -254,7 +254,7 @@ const Navbar: React.FC = () => {
                       onClick={() => handleNavigation(item.href)}
                       onMouseEnter={() => setHoveredNav(item.label)}
                       onMouseLeave={() => setHoveredNav(null)}
-                      className="group relative h-7 px-2.5 rounded-md transition-colors duration-200 flex items-center justify-center gap-1 hover:bg-gray-100/60"
+                      className="group relative h-7 px-2.5 rounded-md transition-colors duration-300 flex items-center justify-center gap-1 hover:bg-gray-100/60"
                     >
                       {isActive && (
                         <motion.div
@@ -264,7 +264,7 @@ const Navbar: React.FC = () => {
                         />
                       )}
                       <span
-                        className="relative z-10 text-xs font-semibold transition-colors duration-200"
+                        className="relative z-10 text-xs font-semibold transition-colors duration-300"
                         style={{
                           color: (hoveredNav === item.label || isActive || isDropdownOpen)
                             ? item.hoverColor
@@ -275,7 +275,7 @@ const Navbar: React.FC = () => {
                       </span>
                       {item.hasDropdown && (
                         <ChevronDown
-                          className="relative z-10 w-2.5 h-2.5 transition-transform duration-200"
+                          className="relative z-10 w-2.5 h-2.5 transition-transform duration-300"
                           style={{
                             transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                             color: (hoveredNav === item.label || isActive || isDropdownOpen)
@@ -315,7 +315,7 @@ const Navbar: React.FC = () => {
                                         key={cat.href}
                                         onClick={() => handleNavigation(cat.href)}
                                         onMouseEnter={() => setHoveredUnivers(cat.name)}
-                                        className="group rounded-full overflow-hidden transition-all duration-100"
+                                        className="group rounded-full overflow-hidden transition-all duration-300"
                                         style={{
                                           border: `2px solid ${cat.color}`,
                                           backgroundColor: hoveredUnivers === cat.name ? cat.color : 'transparent',
@@ -325,13 +325,13 @@ const Navbar: React.FC = () => {
                                       >
                                         <div className="px-4 py-2 flex items-center gap-2">
                                           <span
-                                            className="text-sm font-semibold transition-colors duration-100"
+                                            className="text-sm font-semibold transition-colors duration-300"
                                             style={{ color: hoveredUnivers === cat.name ? 'white' : cat.color }}
                                           >
                                             {cat.name}
                                           </span>
                                           <ArrowRight
-                                            className="w-3.5 h-3.5 transition-all duration-100"
+                                            className="w-3.5 h-3.5 transition-all duration-300"
                                             style={{
                                               color: hoveredUnivers === cat.name ? 'rgba(255,255,255,0.8)' : `${cat.color}99`,
                                               transform: hoveredUnivers === cat.name ? 'translateX(2px)' : 'translateX(0)'
@@ -354,7 +354,7 @@ const Navbar: React.FC = () => {
 
                                     <button
                                       onClick={() => handleNavigation('/articles')}
-                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white transition-all duration-150 hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5"
                                     >
                                       <div className="flex items-center justify-between">
                                         <div className="text-left">
@@ -378,7 +378,7 @@ const Navbar: React.FC = () => {
                                           <button
                                             key={name}
                                             onClick={() => handleNavigation(cat.href)}
-                                            className="px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-100 hover:scale-105"
+                                            className="px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 hover:scale-105"
                                             style={{
                                               backgroundColor: `${cat.color}15`,
                                               color: cat.color,
@@ -428,7 +428,7 @@ const Navbar: React.FC = () => {
                                         key={format.href}
                                         onClick={() => handleNavigation(format.href)}
                                         onMouseEnter={() => setHoveredUnivers(format.name)}
-                                        className="group rounded-full overflow-hidden transition-all duration-100"
+                                        className="group rounded-full overflow-hidden transition-all duration-300"
                                         style={{
                                           border: `2px solid ${format.color}`,
                                           backgroundColor: hoveredUnivers === format.name ? format.color : 'transparent',
@@ -438,13 +438,13 @@ const Navbar: React.FC = () => {
                                       >
                                         <div className="px-4 py-2 flex items-center gap-2">
                                           <span
-                                            className="text-sm font-semibold transition-colors duration-100"
+                                            className="text-sm font-semibold transition-colors duration-300"
                                             style={{ color: hoveredUnivers === format.name ? 'white' : format.color }}
                                           >
                                             {format.name}
                                           </span>
                                           <ArrowRight
-                                            className="w-3.5 h-3.5 transition-all duration-100"
+                                            className="w-3.5 h-3.5 transition-all duration-300"
                                             style={{
                                               color: hoveredUnivers === format.name ? 'rgba(255,255,255,0.8)' : `${format.color}99`,
                                               transform: hoveredUnivers === format.name ? 'translateX(2px)' : 'translateX(0)'
@@ -467,7 +467,7 @@ const Navbar: React.FC = () => {
 
                                     <button
                                       onClick={() => handleNavigation('/videos')}
-                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white transition-all duration-150 hover:shadow-lg hover:shadow-cyan-500/30 hover:-translate-y-0.5"
+                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30 hover:-translate-y-0.5"
                                     >
                                       <div className="flex items-center justify-between">
                                         <div className="text-left">
@@ -491,7 +491,7 @@ const Navbar: React.FC = () => {
                                           <button
                                             key={name}
                                             onClick={() => handleNavigation(format.href)}
-                                            className="px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-100 hover:scale-105"
+                                            className="px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 hover:scale-105"
                                             style={{
                                               backgroundColor: `${format.color}15`,
                                               color: format.color,
@@ -541,7 +541,7 @@ const Navbar: React.FC = () => {
                                         key={emotion.href}
                                         onClick={() => handleNavigation(emotion.href)}
                                         onMouseEnter={() => setHoveredUnivers(emotion.name)}
-                                        className="group rounded-full overflow-hidden transition-all duration-100"
+                                        className="group rounded-full overflow-hidden transition-all duration-300"
                                         style={{
                                           border: `2px solid ${emotion.color}`,
                                           backgroundColor: hoveredUnivers === emotion.name ? emotion.color : 'transparent',
@@ -551,13 +551,13 @@ const Navbar: React.FC = () => {
                                       >
                                         <div className="px-4 py-2 flex items-center gap-2">
                                           <span
-                                            className="text-sm font-semibold transition-colors duration-100"
+                                            className="text-sm font-semibold transition-colors duration-300"
                                             style={{ color: hoveredUnivers === emotion.name ? 'white' : emotion.color }}
                                           >
                                             {emotion.name}
                                           </span>
                                           <ArrowRight
-                                            className="w-3.5 h-3.5 transition-all duration-100"
+                                            className="w-3.5 h-3.5 transition-all duration-300"
                                             style={{
                                               color: hoveredUnivers === emotion.name ? 'rgba(255,255,255,0.8)' : `${emotion.color}99`,
                                               transform: hoveredUnivers === emotion.name ? 'translateX(2px)' : 'translateX(0)'
@@ -580,7 +580,7 @@ const Navbar: React.FC = () => {
 
                                     <button
                                       onClick={() => handleNavigation('/histoires')}
-                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 text-white transition-all duration-150 hover:shadow-lg hover:shadow-rose-500/30 hover:-translate-y-0.5"
+                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 text-white transition-all duration-300 hover:shadow-lg hover:shadow-rose-500/30 hover:-translate-y-0.5"
                                     >
                                       <div className="flex items-center justify-between">
                                         <div className="text-left">
@@ -604,7 +604,7 @@ const Navbar: React.FC = () => {
                                           <button
                                             key={name}
                                             onClick={() => handleNavigation(theme.href)}
-                                            className="px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-100 hover:scale-105"
+                                            className="px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 hover:scale-105"
                                             style={{
                                               backgroundColor: `${theme.color}15`,
                                               color: theme.color,
@@ -697,7 +697,7 @@ const Navbar: React.FC = () => {
                                           </span>
                                         </div>
                                         <div className="flex-1 min-w-0 py-1">
-                                          <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-amber-600 transition-colors duration-150">
+                                          <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-amber-600 transition-colors duration-300">
                                             {content.title}
                                           </h4>
                                         </div>
@@ -744,7 +744,7 @@ const Navbar: React.FC = () => {
                                           key={item.href}
                                           onClick={() => handleNavigation(item.href)}
                                           onMouseEnter={() => setHoveredUnivers(item.name)}
-                                          className="group rounded-full overflow-hidden transition-all duration-100"
+                                          className="group rounded-full overflow-hidden transition-all duration-300"
                                           style={{
                                             border: `2px solid ${baseColor}`,
                                             backgroundColor: isHovered ? baseColor : 'transparent',
@@ -755,13 +755,13 @@ const Navbar: React.FC = () => {
                                           <div className="px-4 py-2 flex items-center gap-3">
                                             <div className="flex flex-col items-start">
                                               <span
-                                                className="text-sm font-semibold transition-colors duration-100"
+                                                className="text-sm font-semibold transition-colors duration-300"
                                                 style={{ color: isHovered ? 'white' : baseColor }}
                                               >
                                                 {item.name}
                                               </span>
                                               <span
-                                                className="text-[10px] transition-colors duration-100"
+                                                className="text-[10px] transition-colors duration-300"
                                                 style={{ color: isHovered ? 'rgba(255,255,255,0.7)' : '#9CA3AF' }}
                                               >
                                                 {item.subtitle}
@@ -769,14 +769,14 @@ const Navbar: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                               <span
-                                                className="text-xs font-bold transition-colors duration-100"
+                                                className="text-xs font-bold transition-colors duration-300"
                                                 style={{ color: isHovered ? 'white' : (item.free ? '#10B981' : baseColor) }}
                                               >
                                                 {item.price}
                                               </span>
                                               {item.originalPrice && (
                                                 <span
-                                                  className="text-[10px] line-through transition-colors duration-100"
+                                                  className="text-[10px] line-through transition-colors duration-300"
                                                   style={{ color: isHovered ? 'rgba(255,255,255,0.5)' : '#9CA3AF' }}
                                                 >
                                                   {item.originalPrice}
@@ -784,7 +784,7 @@ const Navbar: React.FC = () => {
                                               )}
                                             </div>
                                             <ArrowRight
-                                              className="w-3.5 h-3.5 transition-all duration-100"
+                                              className="w-3.5 h-3.5 transition-all duration-300"
                                               style={{
                                                 color: isHovered ? 'rgba(255,255,255,0.8)' : `${baseColor}99`,
                                                 transform: isHovered ? 'translateX(2px)' : 'translateX(0)'
@@ -808,7 +808,7 @@ const Navbar: React.FC = () => {
 
                                     <button
                                       onClick={() => handleNavigation('/academie')}
-                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white transition-all duration-150 hover:shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5"
+                                      className="group w-full p-4 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5"
                                     >
                                       <div className="flex items-center justify-between">
                                         <div className="text-left">
@@ -867,7 +867,7 @@ const Navbar: React.FC = () => {
                                     key={reco.href}
                                     onClick={() => handleNavigation(reco.href)}
                                     onMouseEnter={() => setHoveredUnivers(reco.name)}
-                                    className="group rounded-full overflow-hidden transition-all duration-100"
+                                    className="group rounded-full overflow-hidden transition-all duration-300"
                                     style={{
                                       border: `2px solid ${reco.color}`,
                                       backgroundColor: hoveredUnivers === reco.name ? reco.color : 'transparent',
@@ -877,13 +877,13 @@ const Navbar: React.FC = () => {
                                   >
                                     <div className="px-5 py-2.5 flex items-center gap-2">
                                       <span
-                                        className="text-sm font-semibold transition-colors duration-100"
+                                        className="text-sm font-semibold transition-colors duration-300"
                                         style={{ color: hoveredUnivers === reco.name ? 'white' : reco.color }}
                                       >
                                         {reco.name}
                                       </span>
                                       <ArrowRight
-                                        className="w-3.5 h-3.5 transition-all duration-100"
+                                        className="w-3.5 h-3.5 transition-all duration-300"
                                         style={{
                                           color: hoveredUnivers === reco.name ? 'rgba(255,255,255,0.8)' : `${reco.color}99`,
                                           transform: hoveredUnivers === reco.name ? 'translateX(4px)' : 'translateX(0)'
@@ -1039,7 +1039,7 @@ const Navbar: React.FC = () => {
                         {/* Header de l'accordéon */}
                         <button
                           onClick={() => setMobileAccordion(isAccordionOpen ? null : item.label)}
-                          className="w-full group flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-200 active:scale-[0.98]"
+                          className="w-full group flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 active:scale-[0.98]"
                           style={{
                             backgroundColor: isAccordionOpen ? `${item.hoverColor}10` : isActive ? `${item.hoverColor}15` : 'transparent',
                             border: isAccordionOpen ? `2px solid ${item.hoverColor}40` : isActive ? `2px solid ${item.hoverColor}30` : '2px solid transparent'

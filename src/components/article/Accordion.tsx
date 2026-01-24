@@ -95,7 +95,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-200 ${
+        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-300 ${
           isOpen ? 'bg-gradient-to-r from-gray-50/80 to-transparent' : 'hover:bg-gray-50/50'
         }`}
       >
@@ -116,7 +116,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
               {index + 1}
             </motion.span>
           )}
-          <span className={`font-semibold text-[17px] transition-colors duration-200 ${
+          <span className={`font-semibold text-[17px] transition-colors duration-300 ${
             isOpen ? 'text-gray-900' : 'text-gray-700'
           }`}>
             {question}
@@ -124,13 +124,13 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
         </div>
 
         <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
             isOpen ? 'bg-gray-900' : 'bg-gray-100'
           }`}
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
             isOpen ? 'text-white' : 'text-gray-500'
           }`} />
         </motion.div>
@@ -200,7 +200,7 @@ export const SingleAccordion: React.FC<SingleAccordionProps> = ({ value, themeCo
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-200 ${
+        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-300 ${
           isOpen ? 'bg-gradient-to-r from-gray-50 to-white' : 'hover:bg-gray-50/50'
         }`}
       >
@@ -218,7 +218,7 @@ export const SingleAccordion: React.FC<SingleAccordionProps> = ({ value, themeCo
               <Plus className="w-5 h-5" style={{ color: themeColor }} />
             </motion.div>
           </motion.div>
-          <span className={`font-semibold text-lg transition-colors duration-200 ${
+          <span className={`font-semibold text-lg transition-colors duration-300 ${
             isOpen ? 'text-gray-900' : 'text-gray-700'
           }`}>
             {title}
@@ -226,13 +226,13 @@ export const SingleAccordion: React.FC<SingleAccordionProps> = ({ value, themeCo
         </div>
 
         <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
             isOpen ? 'bg-gray-900' : 'bg-gray-100'
           }`}
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
             isOpen ? 'text-white' : 'text-gray-500'
           }`} />
         </motion.div>

@@ -398,7 +398,7 @@ const ArticlesPage: React.FC = () => {
                     <button
                       onClick={clearFilters}
                       className={`
-                        w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-200
+                        w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-300
                         ${!activeType && !activeVerticale
                           ? 'bg-gray-900 text-white shadow-md'
                           : 'text-gray-600 hover:bg-gray-50'
@@ -425,7 +425,7 @@ const ArticlesPage: React.FC = () => {
                           key={type}
                           onClick={() => handleTypeClick(type)}
                           className={`
-                            w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-200 mt-1
+                            w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-300 mt-1
                             ${isActive ? 'text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}
                           `}
                           style={{
@@ -468,7 +468,7 @@ const ArticlesPage: React.FC = () => {
                           key={verticale._id}
                           onClick={() => handleVerticaleClick(verticale.slug.current)}
                           className={`
-                            w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all duration-200 mt-0.5
+                            w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all duration-300 mt-0.5
                             ${isActive ? 'text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}
                           `}
                           style={{

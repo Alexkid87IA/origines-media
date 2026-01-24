@@ -61,7 +61,7 @@ export default function PartnershipTechSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header avec style professionnel */}
-        <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-1000 ${
+        <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
           {/* Badge supérieur */}
@@ -138,7 +138,7 @@ export default function PartnershipTechSection() {
         </div>
 
         {/* 1. L'IA Valuator */}
-        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-1000 delay-200 ${
+        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="relative bg-gradient-to-br from-cyan-500/10 to-blue-500/10 shadow-sm rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-16 border border-cyan-500/20 overflow-hidden">
@@ -226,7 +226,7 @@ export default function PartnershipTechSection() {
 
                   {/* Progress bar */}
                   <div className="absolute bottom-0 left-0 right-0 h-1.5 sm:h-2 bg-white">
-                    <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-400 transition-all duration-200"
+                    <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-400 transition-all duration-300"
                       style={{ width: `${scanProgress}%` }}
                     />
                   </div>
@@ -237,7 +237,7 @@ export default function PartnershipTechSection() {
         </div>
 
         {/* 2. Le Matching Engine */}
-        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-1000 delay-400 ${
+        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="relative bg-gradient-to-br from-purple-500/10 to-pink-500/10 shadow-sm rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-16 border border-purple-500/20">
@@ -251,7 +251,7 @@ export default function PartnershipTechSection() {
                 {/* Visualisation du matching - Simplifié sur mobile */}
                 <div className="relative h-60 sm:h-80">
                   {/* Les 3 personnes */}
-                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-1000 ${
+                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-3000 ${
                     activeMatch === 0 ? 'scale-110' : 'scale-90 sm:scale-100'
                   }`}>
                     <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center">
@@ -261,7 +261,7 @@ export default function PartnershipTechSection() {
                     <p className="text-center text-gray-900/60 text-xs sm:text-sm">Vélo (280€)</p>
                   </div>
 
-                  <div className={`absolute bottom-0 left-0 transition-all duration-1000 ${
+                  <div className={`absolute bottom-0 left-0 transition-all duration-3000 ${
                     activeMatch === 1 ? 'scale-110' : 'scale-90 sm:scale-100'
                   }`}>
                     <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
@@ -271,7 +271,7 @@ export default function PartnershipTechSection() {
                     <p className="text-center text-gray-900/60 text-xs sm:text-sm">Cours + PS4</p>
                   </div>
 
-                  <div className={`absolute bottom-0 right-0 transition-all duration-1000 ${
+                  <div className={`absolute bottom-0 right-0 transition-all duration-3000 ${
                     activeMatch === 2 ? 'scale-110' : 'scale-90 sm:scale-100'
                   }`}>
                     <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center">
@@ -369,7 +369,7 @@ export default function PartnershipTechSection() {
         </div>
 
         {/* 3. L'Impact Tracker */}
-        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-1000 delay-600 ${
+        <div className={`mb-12 sm:mb-16 lg:mb-20 transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="relative bg-gradient-to-br from-green-500/10 to-emerald-500/10 shadow-sm rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-16 border border-green-500/20">
@@ -465,7 +465,7 @@ export default function PartnershipTechSection() {
           </h3>
 
           {/* Acquisition Strategy */}
-          <div className={`mb-12 sm:mb-16 transition-all duration-1000 delay-1000 ${
+          <div className={`mb-12 sm:mb-16 transition-all duration-3000 delay-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <h4 className="font-montserrat font-bold text-lg sm:text-xl text-gray-900 text-center mb-6 sm:mb-8 flex items-center justify-center gap-2 sm:gap-3">
@@ -519,7 +519,7 @@ export default function PartnershipTechSection() {
           </div>
 
           {/* Business Model */}
-          <div className={`transition-all duration-1000 delay-1200 ${
+          <div className={`transition-all duration-3000 delay-1200 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <h4 className="font-montserrat font-bold text-lg sm:text-xl text-gray-900 text-center mb-6 sm:mb-8 flex items-center justify-center gap-2 sm:gap-3 flex-wrap px-4">

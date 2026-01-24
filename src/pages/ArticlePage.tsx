@@ -167,7 +167,7 @@ const AccordionItem = ({
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-200 ${
+        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-300 ${
           isOpen ? 'bg-gradient-to-r from-gray-50/80 to-transparent' : 'hover:bg-gray-50/50'
         }`}
       >
@@ -188,7 +188,7 @@ const AccordionItem = ({
               {index + 1}
             </motion.span>
           )}
-          <span className={`font-semibold text-[17px] transition-colors duration-200 ${
+          <span className={`font-semibold text-[17px] transition-colors duration-300 ${
             isOpen ? 'text-gray-900' : 'text-gray-700'
           }`}>
             {question}
@@ -197,13 +197,13 @@ const AccordionItem = ({
 
         {/* Animated icon */}
         <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
             isOpen ? 'bg-gray-900' : 'bg-gray-100'
           }`}
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
             isOpen ? 'text-white' : 'text-gray-500'
           }`} />
         </motion.div>
@@ -268,7 +268,7 @@ const SingleAccordion = ({ value, themeColor = '#8B5CF6' }: { value: any; themeC
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-200 ${
+        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-300 ${
           isOpen ? 'bg-gradient-to-r from-gray-50 to-white' : 'hover:bg-gray-50/50'
         }`}
       >
@@ -286,7 +286,7 @@ const SingleAccordion = ({ value, themeColor = '#8B5CF6' }: { value: any; themeC
               <Plus className="w-5 h-5" style={{ color: themeColor }} />
             </motion.div>
           </motion.div>
-          <span className={`font-semibold text-lg transition-colors duration-200 ${
+          <span className={`font-semibold text-lg transition-colors duration-300 ${
             isOpen ? 'text-gray-900' : 'text-gray-700'
           }`}>
             {title}
@@ -294,13 +294,13 @@ const SingleAccordion = ({ value, themeColor = '#8B5CF6' }: { value: any; themeC
         </div>
 
         <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
             isOpen ? 'bg-gray-900' : 'bg-gray-100'
           }`}
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-200 ${
+          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
             isOpen ? 'text-white' : 'text-gray-500'
           }`} />
         </motion.div>
@@ -1883,7 +1883,7 @@ export default function ArticlePage() {
 
       {/* Progress Bar */}
       <div
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 z-[60] transition-all duration-150"
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 z-[60] transition-all duration-300"
         style={{ width: `${scrollProgress}%` }}
       />
 
@@ -2101,7 +2101,7 @@ export default function ArticlePage() {
                           <List className="w-4 h-4 text-violet-500" />
                           Sommaire
                         </span>
-                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${tocExpanded ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${tocExpanded ? 'rotate-180' : ''}`} />
                       </button>
                       <AnimatePresence>
                         {tocExpanded && (
@@ -2123,7 +2123,7 @@ export default function ArticlePage() {
                                   <button
                                     key={heading.id}
                                     onClick={() => scrollToSection(heading.id)}
-                                    className={`group flex items-start gap-2.5 w-full text-left transition-all duration-200 ${
+                                    className={`group flex items-start gap-2.5 w-full text-left transition-all duration-300 ${
                                       isH2 ? 'py-2.5' : 'py-1.5 ml-7'
                                     }`}
                                   >
@@ -2189,7 +2189,7 @@ export default function ArticlePage() {
                         <button
                           key={btn.id}
                           onClick={() => handleShare(btn.id)}
-                          className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:border-transparent hover:text-white hover:scale-105"
+                          className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:border-transparent hover:text-white hover:scale-105"
                           onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = btn.color;
                             e.currentTarget.style.color = 'white';
@@ -2208,7 +2208,7 @@ export default function ArticlePage() {
                       {/* Threads */}
                       <button
                         onClick={() => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(article?.titre || article?.title || '')} ${encodeURIComponent(window.location.href)}`, '_blank')}
-                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:bg-black hover:text-white hover:border-transparent hover:scale-105"
+                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:bg-black hover:text-white hover:border-transparent hover:scale-105"
                         title="Threads"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -2218,7 +2218,7 @@ export default function ArticlePage() {
                       {/* Copy Link */}
                       <button
                         onClick={() => handleShare('copy')}
-                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:bg-violet-500 hover:text-white hover:border-transparent hover:scale-105"
+                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:bg-violet-500 hover:text-white hover:border-transparent hover:scale-105"
                         title="Copier le lien"
                       >
                         {copySuccess ? <Check className="w-4 h-4 text-emerald-500" /> : <Link2 className="w-4 h-4" />}
@@ -2265,7 +2265,7 @@ export default function ArticlePage() {
                           <Link
                             key={tag._id}
                             to={`/bibliotheque?tag=${tag.slug || tag._id}`}
-                            className="px-2.5 py-1 text-[10px] font-medium rounded-full transition-all duration-200 hover:scale-105"
+                            className="px-2.5 py-1 text-[10px] font-medium rounded-full transition-all duration-300 hover:scale-105"
                             style={{
                               backgroundColor: tag.color ? `${tag.color}15` : '#F3F4F6',
                               color: tag.color || '#6B7280',
@@ -2590,7 +2590,7 @@ export default function ArticlePage() {
                   <button
                     key={btn.id}
                     onClick={() => handleShare(btn.id)}
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-200"
+                    className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-300"
                     style={{ backgroundColor: `${btn.color}10` }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = btn.color;
@@ -2611,7 +2611,7 @@ export default function ArticlePage() {
                 ))}
                 <button
                   onClick={() => handleShare('copy')}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-violet-50 hover:bg-violet-500 transition-all duration-200 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-violet-50 hover:bg-violet-500 transition-all duration-300 group"
                 >
                   {copySuccess ? (
                     <Check className="w-4 h-4 text-emerald-500" />

@@ -68,7 +68,7 @@ const ActeManifeste: React.FC<ActeManifesteProps> = ({
       {/* Background avec image */}
       <div className="absolute inset-0">
         <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out"
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-3000 ease-out"
           style={{
             backgroundImage: `url(${actualImageHero})`,
             transform: `scale(${isHovered ? 1.05 : 1}) translate(${(mousePos.x - 0.5) * 10}px, ${(mousePos.y - 0.5) * 10}px)`,

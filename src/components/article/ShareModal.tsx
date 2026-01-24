@@ -47,7 +47,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                 <button
                   key={btn.id}
                   onClick={() => onShare(btn.id)}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-200"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-300"
                   style={{ backgroundColor: `${btn.color}10` }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = btn.color;
@@ -73,7 +73,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
               ))}
               <button
                 onClick={() => onShare('copy')}
-                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-violet-50 hover:bg-violet-500 transition-all duration-200 group"
+                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-violet-50 hover:bg-violet-500 transition-all duration-300 group"
                 aria-label="Copier le lien"
               >
                 {copySuccess ? (

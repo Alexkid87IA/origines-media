@@ -133,7 +133,7 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
       <div className="relative z-10 pt-12 sm:pt-16 lg:pt-20 pb-6 sm:pb-8 lg:pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
           {/* Logos principaux */}
-          <div className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 transition-all duration-3000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="relative group">
               <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <img 
@@ -156,14 +156,14 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
           </div>
           
           {/* Sous-titre */}
-          <div className={`text-center transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div className={`text-center transition-all duration-3000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <p className="text-base sm:text-xl lg:text-2xl text-gray-600 font-light px-4">
               L'empire média de l'entraide commence maintenant
             </p>
           </div>
 
           {/* Métriques en temps réel - Optimisé mobile */}
-          <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mt-8 sm:mt-10 lg:mt-12 transition-all duration-1000 delay-300 ${metricsVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mt-8 sm:mt-10 lg:mt-12 transition-all duration-3000 delay-300 ${metricsVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="text-center p-3 sm:p-4 lg:p-6 bg-white rounded-xl sm:rounded-2xl border border-gray-200 group hover:bg-gray-50 hover:shadow-lg transition-all">
               <Users className="w-5 sm:w-6 lg:w-8 h-5 sm:h-6 lg:h-8 text-violet-500 mx-auto mb-1 sm:mb-2" />
               <div className="font-montserrat font-bold text-xl sm:text-2xl lg:text-3xl text-gray-900">
@@ -210,7 +210,7 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
 
       {/* Section principale : Les faits */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 py-12 sm:py-16 lg:py-20">
-        <div className={`transition-all duration-1000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+        <div className={`transition-all duration-3000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
           {/* Card "Les faits" */}
           <div className="relative group mb-12 sm:mb-16 lg:mb-20">
             <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-violet-100 to-orange-100 rounded-2xl sm:rounded-3xl blur-xl sm:blur-2xl opacity-50 group-hover:opacity-75 transition-opacity" />
@@ -273,7 +273,7 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
             <div className="relative mb-12 sm:mb-16 lg:mb-20 hidden sm:block">
               <div className="absolute left-0 right-0 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-violet-600 to-orange-600 rounded-full transition-all duration-1000"
+                  className="h-full bg-gradient-to-r from-violet-600 to-orange-600 rounded-full transition-all duration-3000"
                   style={{ width: `${((currentActe + 1) / 4) * 100}%` }}
                 />
               </div>

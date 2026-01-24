@@ -706,7 +706,7 @@ const HistoiresPage: React.FC = () => {
                     <button
                       onClick={clearFilters}
                       className={`
-                        w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-200
+                        w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-300
                         ${!activeCategory && !activeTagSlug
                           ? 'bg-gray-900 text-white shadow-md'
                           : 'text-gray-600 hover:bg-gray-50'
@@ -733,7 +733,7 @@ const HistoiresPage: React.FC = () => {
                         <div key={category.id} className="mt-1">
                           <button
                             onClick={() => handleCategoryClick(category.id)}
-                            className="relative w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-colors duration-200"
+                            className="relative w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-colors duration-300"
                           >
                             {isActive && (
                               <motion.div
@@ -765,7 +765,7 @@ const HistoiresPage: React.FC = () => {
                                   className={`p-0.5 rounded transition-colors ${isActive ? 'hover:bg-white/20' : 'hover:bg-gray-100'}`}
                                 >
                                   <ChevronDown
-                                    className={`w-2.5 h-2.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                                    className={`w-2.5 h-2.5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                                     style={{ color: isActive ? 'rgba(255,255,255,0.8)' : '#9CA3AF' }}
                                   />
                                 </button>
@@ -791,7 +791,7 @@ const HistoiresPage: React.FC = () => {
                                         key={tag._id}
                                         onClick={() => handleTagClick(tag.slug)}
                                         className={`
-                                          w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition-all duration-150
+                                          w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition-all duration-300
                                           ${isTagActive
                                             ? 'font-semibold'
                                             : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'

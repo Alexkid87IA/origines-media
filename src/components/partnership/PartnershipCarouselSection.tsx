@@ -852,7 +852,7 @@ const PartnershipCarouselSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <div className={`text-center mb-8 md:mb-16 transform transition-all duration-1000 ${
+        <div className={`text-center mb-8 md:mb-16 transform transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex items-center gap-2 md:gap-4 mb-4 md:mb-8">
@@ -873,7 +873,7 @@ const PartnershipCarouselSection: React.FC = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className={`relative transform transition-all duration-1000 delay-300 ${
+        <div className={`relative transform transition-all duration-3000 delay-300 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           {/* 3D Perspective Container */}
@@ -971,7 +971,7 @@ const PartnershipCarouselSection: React.FC = () => {
                       : 'w-2 bg-white/20 hover:bg-white/40 hover:w-3'
                   }`} />
                   {/* Tooltip - Hidden on mobile */}
-                  <div className="hidden md:block absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                  <div className="hidden md:block absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                     <div className="bg-white shadow-sm text-gray-900 text-xs px-2 py-1 rounded whitespace-nowrap">
                       {slide.title}
                     </div>

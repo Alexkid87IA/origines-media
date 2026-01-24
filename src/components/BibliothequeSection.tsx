@@ -125,7 +125,7 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
       </div>
 
       {/* Section Header */}
-      <div className={`text-center mb-16 transform transition-all duration-1000 ${
+      <div className={`text-center mb-16 transform transition-all duration-3000 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         <div className="inline-flex items-center gap-4 mb-6">
@@ -148,7 +148,7 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
       </div>
 
       {/* Tabs Navigation with Dynamic Colors */}
-      <div className={`max-w-7xl mx-auto mb-12 transform transition-all duration-1000 delay-300 ${
+      <div className={`max-w-7xl mx-auto mb-12 transform transition-all duration-3000 delay-300 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         {/* Desktop Tabs */}
@@ -490,7 +490,7 @@ const BibliothequeSection: React.FC<BibliothequeSectionProps> = ({ verticales })
       </div>
 
       {/* Bottom CTA - CORRIGÉ AVEC REACT ROUTER */}
-      <div className={`text-center mt-20 transform transition-all duration-1000 delay-1000 ${
+      <div className={`text-center mt-20 transform transition-all duration-3000 delay-1000 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         <button

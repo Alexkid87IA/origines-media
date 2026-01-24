@@ -900,7 +900,7 @@ export default function RecommandationPage() {
                       <button
                         key={btn.id}
                         onClick={() => handleShare(btn.id)}
-                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:border-transparent hover:text-white hover:scale-105"
+                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:border-transparent hover:text-white hover:scale-105"
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = btn.color;
                           e.currentTarget.style.color = 'white';
@@ -919,7 +919,7 @@ export default function RecommandationPage() {
                     {/* Threads */}
                     <button
                       onClick={() => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(reco.titre)} ${encodeURIComponent(window.location.href)}`, '_blank')}
-                      className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:bg-black hover:text-white hover:border-transparent hover:scale-105"
+                      className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:bg-black hover:text-white hover:border-transparent hover:scale-105"
                       title="Threads"
                     >
                       <ThreadsIcon />
@@ -927,7 +927,7 @@ export default function RecommandationPage() {
                     {/* Copy Link */}
                     <button
                       onClick={() => handleShare('copy')}
-                      className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-200 hover:text-white hover:border-transparent hover:scale-105"
+                      className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:text-white hover:border-transparent hover:scale-105"
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = typeConfig.color;
                         e.currentTarget.style.color = 'white';

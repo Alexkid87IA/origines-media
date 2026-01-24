@@ -166,7 +166,7 @@ const PartnershipCafeSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header */}
-        <div className={`text-center mb-8 md:mb-16 transition-all duration-1000 ${
+        <div className={`text-center mb-8 md:mb-16 transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
           {/* Badge */}
@@ -202,7 +202,7 @@ const PartnershipCafeSection: React.FC = () => {
         </div>
 
         {/* Stats rapides */}
-        <div className={`grid grid-cols-2 gap-3 md:gap-6 mb-8 md:mb-16 transition-all duration-1000 delay-200 ${
+        <div className={`grid grid-cols-2 gap-3 md:gap-6 mb-8 md:mb-16 transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="text-center p-4 md:p-6 bg-gray-50 shadow-sm rounded-xl md:rounded-2xl border border-gray-200">
@@ -228,7 +228,7 @@ const PartnershipCafeSection: React.FC = () => {
         </div>
 
         {/* Tabs - Mobile dropdown and desktop tabs */}
-        <div className={`mb-8 md:mb-12 transition-all duration-1000 delay-400 ${
+        <div className={`mb-8 md:mb-12 transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           {/* Mobile dropdown */}
@@ -303,7 +303,7 @@ const PartnershipCafeSection: React.FC = () => {
         </div>
 
         {/* Contenu des tabs */}
-        <div className={`transition-all duration-1000 delay-600 ${
+        <div className={`transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           
@@ -617,7 +617,7 @@ const PartnershipCafeSection: React.FC = () => {
         </div>
 
         {/* Message final */}
-        <div className={`mt-12 md:mt-20 text-center transition-all duration-1000 delay-800 ${
+        <div className={`mt-12 md:mt-20 text-center transition-all duration-3000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="bg-gradient-to-r from-orange-600/10 via-purple-600/10 to-pink-600/10 shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-10 border border-gray-300">

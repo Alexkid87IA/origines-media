@@ -256,7 +256,7 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
         
         {/* Dynamic Color Overlay basé sur la catégorie */}
         <div 
-          className="absolute inset-0 mix-blend-overlay transition-all duration-1000"
+          className="absolute inset-0 mix-blend-overlay transition-all duration-3000"
           style={{
             background: `radial-gradient(circle at 30% 70%, ${categoryColors.primary}15 0%, transparent 50%)`
           }}
@@ -515,7 +515,7 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({ portraits }) => {
       </div>
 
       {/* Enhanced Loading Indicator */}
-      <div className={`absolute top-0 left-0 bg-gradient-to-r ${categoryColors.accent} transition-all duration-100 z-30 ${!isPaused && !isHovered ? 'opacity-80' : 'opacity-0'}`}
+      <div className={`absolute top-0 left-0 bg-gradient-to-r ${categoryColors.accent} transition-all duration-300 z-30 ${!isPaused && !isHovered ? 'opacity-80' : 'opacity-0'}`}
            style={{
              width: `${progress}%`,
              height: 'clamp(2px, 0.3vw, 4px)',

@@ -59,7 +59,7 @@ const ActeBibliotheque: React.FC<ActeBibliothequeProps> = ({
       </div>
 
       {/* Section Header */}
-      <div className={`text-center mb-16 transform transition-all duration-1000 ${
+      <div className={`text-center mb-16 transform transition-all duration-3000 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         <div className="inline-flex items-center gap-4 mb-6">
@@ -104,7 +104,7 @@ const ActeBibliotheque: React.FC<ActeBibliothequeProps> = ({
       </div>
 
       {/* CTA */}
-      <div className={`text-center mt-20 transform transition-all duration-1000 delay-500 ${
+      <div className={`text-center mt-20 transform transition-all duration-3000 delay-500 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}>
         <button

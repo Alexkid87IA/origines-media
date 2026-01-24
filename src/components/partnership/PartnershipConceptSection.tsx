@@ -61,7 +61,7 @@ const PartnershipConceptSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header */}
-        <div className={`text-center mb-10 md:mb-20 transition-all duration-1000 ${
+        <div className={`text-center mb-10 md:mb-20 transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}>
           {/* Badge */}
@@ -93,7 +93,7 @@ const PartnershipConceptSection: React.FC = () => {
         </div>
 
         {/* Ce que chacun apporte */}
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-24 transition-all duration-1000 delay-200 ${
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-24 transition-all duration-3000 delay-200 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           {/* Wanted apporte */}
@@ -180,7 +180,7 @@ const PartnershipConceptSection: React.FC = () => {
         </div>
 
         {/* Le cycle de création de valeur */}
-        <div className={`relative mb-12 md:mb-24 transition-all duration-1000 delay-400 ${
+        <div className={`relative mb-12 md:mb-24 transition-all duration-3000 delay-400 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="relative bg-white shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 border border-gray-200 overflow-hidden">
@@ -365,7 +365,7 @@ const PartnershipConceptSection: React.FC = () => {
         </div>
 
         {/* Qui fait quoi */}
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-24 transition-all duration-1000 delay-600 ${
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-24 transition-all duration-3000 delay-600 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           {/* Wanted */}
@@ -448,7 +448,7 @@ const PartnershipConceptSection: React.FC = () => {
         </div>
 
         {/* Impact concret */}
-        <div className={`bg-gradient-to-r from-violet-600/10 via-pink-600/10 to-orange-600/10 shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-16 border border-gray-200 text-center transition-all duration-1000 delay-800 ${
+        <div className={`bg-gradient-to-r from-violet-600/10 via-pink-600/10 to-orange-600/10 shadow-sm rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-16 border border-gray-200 text-center transition-all duration-3000 delay-800 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <h3 className="font-bold text-xl md:text-2xl lg:text-3xl text-gray-900 mb-6 md:mb-8">

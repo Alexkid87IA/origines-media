@@ -143,7 +143,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transform transition-all duration-1000 ${
+        <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transform transition-all duration-3000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="inline-flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
@@ -164,7 +164,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
         </div>
 
         {/* Section 1: Machine à formats - Simplifié pour mobile */}
-        <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1000 delay-300 ${
+        <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-3000 delay-300 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="text-center mb-6 sm:mb-8 lg:mb-12">
@@ -235,7 +235,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
         </div>
 
         {/* Section 2: Growth Engine */}
-        <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1000 delay-500 ${
+        <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-3000 delay-500 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-900 text-center mb-6 sm:mb-8 lg:mb-12">
@@ -312,7 +312,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
         </div>
 
         {/* Section 3: Modèle économique - Simplifié pour mobile */}
-        <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1000 delay-700 ${
+        <div className={`mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-3000 delay-700 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-900 text-center mb-6 sm:mb-8 lg:mb-12">
@@ -428,7 +428,7 @@ const PartnershipImpactMultifacettesSection: React.FC = () => {
         </div>
 
         {/* Section 4: L'équipe - Grid optimisé */}
-        <div className={`transform transition-all duration-1000 delay-900 ${
+        <div className={`transform transition-all duration-3000 delay-900 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <h3 className="font-montserrat font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-900 text-center mb-6 sm:mb-8 lg:mb-12">

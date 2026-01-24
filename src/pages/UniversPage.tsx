@@ -674,7 +674,7 @@ const UniversDetailPage: React.FC<{ universId: string }> = ({ universId }) => {
 
                           {/* Hover effect - shine */}
                           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-3000" />
                           </div>
 
                           {/* Border */}
@@ -825,7 +825,7 @@ const UniversDetailPage: React.FC<{ universId: string }> = ({ universId }) => {
 
                               {/* Shine effect */}
                               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-3000" />
                               </div>
 
                               {/* Content */}

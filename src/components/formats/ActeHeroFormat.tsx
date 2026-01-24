@@ -242,7 +242,7 @@ const ActeHeroFormat: React.FC<ActeHeroFormatProps> = ({
         <div className="max-w-5xl">
           
           {/* Badge Animé "Format Exclusif" */}
-          <div className={`mb-8 transform transition-all duration-1000 ${
+          <div className={`mb-8 transform transition-all duration-3000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <div 
@@ -272,7 +272,7 @@ const ActeHeroFormat: React.FC<ActeHeroFormatProps> = ({
 
           {/* Title avec effet de révélation cinématographique */}
           <h1 
-            className={`font-montserrat font-black text-6xl md:text-7xl lg:text-8xl text-white mb-6 leading-[0.9] transform transition-all duration-1500 ${
+            className={`font-montserrat font-black text-6xl md:text-7xl lg:text-8xl text-white mb-6 leading-[0.9] transform transition-all duration-3000 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
             }`}
             style={{
@@ -298,7 +298,7 @@ const ActeHeroFormat: React.FC<ActeHeroFormatProps> = ({
 
           {/* Tagline avec gradient animé */}
           <p 
-            className={`font-inter text-2xl md:text-3xl mb-8 leading-relaxed transform transition-all duration-1000 delay-700 ${
+            className={`font-inter text-2xl md:text-3xl mb-8 leading-relaxed transform transition-all duration-3000 delay-700 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
             }`}
             style={{
@@ -314,7 +314,7 @@ const ActeHeroFormat: React.FC<ActeHeroFormatProps> = ({
 
           {/* Description avec glassmorphism */}
           <div 
-            className={`mb-10 transform transition-all duration-1000 delay-900 ${
+            className={`mb-10 transform transition-all duration-3000 delay-900 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
             }`}
           >
@@ -330,7 +330,7 @@ const ActeHeroFormat: React.FC<ActeHeroFormatProps> = ({
 
           {/* Stats enrichies avec animations */}
           <div 
-            className={`flex flex-wrap items-center gap-6 mb-10 transform transition-all duration-1000 delay-1100 ${
+            className={`flex flex-wrap items-center gap-6 mb-10 transform transition-all duration-3000 delay-1100 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
             }`}
           >
@@ -398,7 +398,7 @@ const ActeHeroFormat: React.FC<ActeHeroFormatProps> = ({
           {/* Awards si disponibles */}
           {awards.length > 0 && (
             <div 
-              className={`flex flex-wrap items-center gap-4 transform transition-all duration-1000 delay-1300 ${
+              className={`flex flex-wrap items-center gap-4 transform transition-all duration-3000 delay-1300 ${
                 isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
               }`}
             >
@@ -419,7 +419,7 @@ const ActeHeroFormat: React.FC<ActeHeroFormatProps> = ({
       {/* Scroll Indicator Animé */}
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30">
         <div 
-          className={`flex flex-col items-center gap-2 animate-bounce transform transition-all duration-1000 delay-1500 ${
+          className={`flex flex-col items-center gap-2 animate-bounce transform transition-all duration-3000 delay-1500 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}
         >
