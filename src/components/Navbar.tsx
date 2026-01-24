@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx
 // Navbar 2 niveaux - Top bar avec réseaux sociaux + Nav avec 7 catégories
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ChevronDown, ArrowRight, Search, PenLine, X, Star } from 'lucide-react';
@@ -91,7 +91,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -111,20 +111,20 @@ const Navbar: React.FC = () => {
       // Always show navbar at the very top of the page
       if (currentScrollY < 50) {
         setIsVisible(true);
-      } else if (currentScrollY < lastScrollY) {
+      } else if (currentScrollY < lastScrollY.current) {
         // Scrolling up - show navbar
         setIsVisible(true);
-      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         // Scrolling down and past threshold - hide navbar
         setIsVisible(false);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);

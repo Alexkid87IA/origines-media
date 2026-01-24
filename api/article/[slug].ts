@@ -81,7 +81,8 @@ function generateCrawlerHTML(article: any, slug: string): string {
   const title = article?.title || 'Origines Media - La profondeur du récit'
   const description = article?.description || 'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.'
   const image = article?.image || 'https://origines.media/og-image.png'
-  const url = `https://origines.media/article/${slug}`
+  const safeSlug = encodeURIComponent(slug).replace(/%2F/g, '/')
+  const url = `https://origines.media/article/${safeSlug}`
 
   return `<!doctype html>
 <html lang="fr">
