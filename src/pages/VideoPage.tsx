@@ -1900,7 +1900,7 @@ export default function VideoPage() {
         </section>
       )}
 
-      <main>
+      <main className="pb-24 lg:pb-0">
         {/* Hero Section - Split Layout (masqué si vidéo YouTube présente) */}
         <section className={`relative ${article?.videoUrl ? 'hidden' : ''}`}>
           {/* Header de navigation flottant */}
@@ -2452,8 +2452,10 @@ export default function VideoPage() {
       </main>
 
       {/* Mobile Floating Action Bar */}
-      <div className="fixed bottom-4 left-4 right-4 lg:hidden z-50">
-        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
+      <div
+        className="fixed bottom-0 left-0 right-0 lg:hidden z-50 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-white via-white to-transparent"
+      >
+        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
           {/* Like */}
           <button
             onClick={() => setIsLiked(!isLiked)}
@@ -2493,7 +2495,8 @@ export default function VideoPage() {
       {headings.length > 0 && (
         <button
           onClick={() => setShowMobileToc(true)}
-          className="fixed bottom-24 right-4 lg:hidden z-50 w-12 h-12 bg-violet-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-violet-500/30"
+          className="fixed right-4 lg:hidden z-50 w-12 h-12 bg-violet-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-violet-500/30"
+          style={{ bottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
         >
           <List className="w-6 h-6" />
         </button>

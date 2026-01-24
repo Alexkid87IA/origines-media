@@ -1538,7 +1538,7 @@ function ProductionDetailPage() {
 
       <Navbar />
 
-      <main>
+      <main className="pb-24 lg:pb-0">
         {/* Hero Section - Layout Split */}
         <div className="relative">
           {/* Header flottant */}
@@ -1899,7 +1899,9 @@ function ProductionDetailPage() {
         )}
 
         {/* Mobile Floating Action Bar */}
-        <div className="fixed bottom-4 left-4 right-4 lg:hidden z-50">
+        <div
+          className="fixed bottom-0 left-0 right-0 lg:hidden z-50 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-white via-white to-transparent"
+        >
           <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
             <button
               onClick={() => setLiked(!liked)}
