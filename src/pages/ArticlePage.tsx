@@ -574,11 +574,11 @@ export default function ArticlePage() {
         if (!isMounted) return;
 
         if (!articleData) {
-          navigate('/404');
+          if (isMounted) navigate('/404');
           return;
         }
 
-        setArticle(articleData);
+        if (isMounted) setArticle(articleData);
 
         // Fetch related articles and popular articles in parallel
         try {

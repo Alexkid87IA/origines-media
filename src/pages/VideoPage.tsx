@@ -605,11 +605,11 @@ export default function VideoPage() {
         if (!isMounted) return;
 
         if (!articleData) {
-          navigate('/404');
+          if (isMounted) navigate('/404');
           return;
         }
 
-        setArticle(articleData);
+        if (isMounted) setArticle(articleData);
 
         // Fetch related videos and popular videos in parallel
         try {
