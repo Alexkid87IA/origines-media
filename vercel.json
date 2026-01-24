@@ -1,12 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.origines.media" }],
-      "destination": "https://origines.media/:path*",
-      "permanent": true
-    }
-  ],
   "functions": {
     "api/article/[slug].ts": {
       "memory": 256,
