@@ -564,10 +564,14 @@ export default function ArticlePage() {
 
   // Fetch article data
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
-        setLoading(true);
+        if (isMounted) setLoading(true);
         const articleData = await sanityFetch(ARTICLE_BY_SLUG_QUERY, { slug });
+
+        if (!isMounted) return;
 
         if (!articleData) {
           navigate('/404');
@@ -592,17 +596,21 @@ export default function ArticlePage() {
             sanityFetch(POPULAR_ARTICLES_QUERY)
           ]);
 
-          setRelatedArticles(related || []);
-          // Filter out current article from popular
-          setPopularArticles((popular || []).filter((p: any) => p._id !== articleData._id).slice(0, 4));
+          if (isMounted) {
+            setRelatedArticles(related || []);
+            // Filter out current article from popular
+            setPopularArticles((popular || []).filter((p: any) => p._id !== articleData._id).slice(0, 4));
+          }
         } catch {
-          setRelatedArticles([]);
-          setPopularArticles([]);
+          if (isMounted) {
+            setRelatedArticles([]);
+            setPopularArticles([]);
+          }
         }
       } catch {
-        navigate('/404');
+        if (isMounted) navigate('/404');
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
@@ -610,6 +618,10 @@ export default function ArticlePage() {
       fetchData();
       window.scrollTo(0, 0);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [slug, navigate]);
 
   // Helpers
@@ -774,7 +786,7 @@ export default function ArticlePage() {
       // H1: Main title with themed underline
       h1: ({ children, value }: any) => {
         const index = (article?.contenu || article?.body)?.findIndex((b: any) => b._key === value._key);
-        const id = `heading-${index}`;
+        const id = index !== undefined && index >= 0 ? `heading-${index}` : `heading-${value._key}`;
         return (
           <h1 id={id} className="text-3xl md:text-4xl font-bold text-gray-900 mt-10 mb-6 scroll-mt-24">
             {children}
@@ -784,7 +796,7 @@ export default function ArticlePage() {
       // H2: Big section titles with themed underline
       h2: ({ children, value }: any) => {
         const index = (article?.contenu || article?.body)?.findIndex((b: any) => b._key === value._key);
-        const id = `heading-${index}`;
+        const id = index !== undefined && index >= 0 ? `heading-${index}` : `heading-${value._key}`;
         return (
           <h2 id={id} className="mt-14 mb-6 scroll-mt-24">
             <span className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight block">{children}</span>
@@ -798,7 +810,7 @@ export default function ArticlePage() {
       // H3: Subsection titles with themed underline
       h3: ({ children, value }: any) => {
         const index = (article?.contenu || article?.body)?.findIndex((b: any) => b._key === value._key);
-        const id = `heading-${index}`;
+        const id = index !== undefined && index >= 0 ? `heading-${index}` : `heading-${value._key}`;
         return (
           <h3 id={id} className="mt-10 mb-4 scroll-mt-24">
             <span className="text-xl md:text-2xl font-semibold text-gray-800">{children}</span>
