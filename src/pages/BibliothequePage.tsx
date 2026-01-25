@@ -95,8 +95,80 @@ const SORT_OPTIONS = [
 ];
 
 const ITEMS_PER_PAGE = 9;
+const MAX_HISTOIRES_PER_PAGE = 2;
 
 // ============ HELPER FUNCTIONS ============
+
+// Fisher-Yates shuffle
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Réorganise pour éviter 2 contenus de même verticale côte à côte
+function distributeByVerticale(items: ContentItem[]): ContentItem[] {
+  if (items.length <= 1) return items;
+
+  const result: ContentItem[] = [];
+  const remaining = [...items];
+
+  while (remaining.length > 0) {
+    const lastVerticale = result.length > 0 ? result[result.length - 1].verticale?.slug : null;
+
+    // Cherche un item avec une verticale différente
+    let foundIndex = remaining.findIndex(item => item.verticale?.slug !== lastVerticale);
+
+    // Si pas trouvé, prend le premier disponible
+    if (foundIndex === -1) foundIndex = 0;
+
+    result.push(remaining[foundIndex]);
+    remaining.splice(foundIndex, 1);
+  }
+
+  return result;
+}
+
+// Limite les histoires par page
+function limitHistoiresPerPage(items: ContentItem[], itemsPerPage: number, maxHistoires: number): ContentItem[] {
+  const result: ContentItem[] = [];
+  let pageHistoireCount = 0;
+  let currentPageIndex = 0;
+
+  for (const item of items) {
+    const pageIndex = Math.floor(result.length / itemsPerPage);
+
+    // Nouvelle page, reset du compteur
+    if (pageIndex > currentPageIndex) {
+      currentPageIndex = pageIndex;
+      pageHistoireCount = 0;
+    }
+
+    // Si c'est une histoire et qu'on a déjà atteint la limite pour cette page
+    if (item.contentType === 'histoire') {
+      if (pageHistoireCount >= maxHistoires) {
+        // On la met à la fin pour les pages suivantes
+        continue;
+      }
+      pageHistoireCount++;
+    }
+
+    result.push(item);
+  }
+
+  // Ajoute les histoires restantes à la fin
+  const addedIds = new Set(result.map(r => r._id));
+  for (const item of items) {
+    if (!addedIds.has(item._id)) {
+      result.push(item);
+    }
+  }
+
+  return result;
+}
 function formatDuration(minutes: number): string {
   if (minutes < 60) return `${minutes} min`;
   const h = Math.floor(minutes / 60);
@@ -387,13 +459,13 @@ function BibliothequePage() {
     if (activeType === 'all') {
       content = [...articles, ...videos, ...recos, ...histoires];
     } else if (activeType === 'article') {
-      content = articles;
+      content = [...articles];
     } else if (activeType === 'video') {
-      content = videos;
+      content = [...videos];
     } else if (activeType === 'reco') {
-      content = recos;
+      content = [...recos];
     } else if (activeType === 'histoire') {
-      content = histoires;
+      content = [...histoires];
     }
 
     // Filter by verticale (only for types that have it)
@@ -418,6 +490,16 @@ function BibliothequePage() {
       content.sort((a, b) => (a.titre || '').localeCompare(b.titre || ''));
     } else if (sortBy === 'popular') {
       content.sort((a, b) => (b.vues || 0) - (a.vues || 0));
+    }
+
+    // Pour le mode "Tout" sans recherche ni filtre verticale, on applique le shuffle intelligent
+    if (activeType === 'all' && !searchTerm && !activeVerticale && sortBy === 'recent') {
+      // 1. Shuffle initial
+      content = shuffleArray(content);
+      // 2. Redistribue pour éviter 2 verticales consécutives
+      content = distributeByVerticale(content);
+      // 3. Limite les histoires à MAX par page
+      content = limitHistoiresPerPage(content, ITEMS_PER_PAGE, MAX_HISTOIRES_PER_PAGE);
     }
 
     return content;
