@@ -305,7 +305,15 @@ const MagneticLogo: React.FC<{
 // COMPOSANT PRINCIPAL: SplashScreen
 // ============================================
 const SplashScreen: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  // Vérifier si déjà vu cette session
+  const [hasSeenSplash] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('splashSeen') === 'true';
+    }
+    return false;
+  });
+
+  const [isVisible, setIsVisible] = useState(!hasSeenSplash);
   const [stage, setStage] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
@@ -324,30 +332,35 @@ const SplashScreen: React.FC = () => {
     mouseY.set((clientY / innerHeight) - 0.5);
   }, [mouseX, mouseY]);
 
-  // Text scramble for tagline
+  // Text scramble for tagline - plus rapide
   const tagline = "Des récits qui ont du sens";
-  const { displayText } = useScrambleText(tagline, stage >= 2, 40);
+  const { displayText } = useScrambleText(tagline, stage >= 2, 25);
 
   useEffect(() => {
-    // Le tagline "Des récits qui ont du sens" = 26 caractères
-    // Scramble: 26 chars * 3 iterations * 40ms = ~3100ms
-    // On démarre le scramble à 1400ms, il finit vers 4500ms
-    // On attend 1.5s après la fin pour que l'utilisateur puisse lire
+    // Si déjà vu, ne rien faire
+    if (hasSeenSplash) return;
+
+    // Marquer comme vu
+    sessionStorage.setItem('splashSeen', 'true');
+
+    // Timings optimisés pour mobile - total ~2.5s
     const timers = [
-      // Start with explosion + white reveal
       setTimeout(() => {
         setShowExplosion(true);
         setShowShockwave(true);
         setStage(1);
-      }, 100),
-      setTimeout(() => setShowExplosion(false), 1100),
-      setTimeout(() => setStage(2), 1400),     // Tagline scramble starts
-      setTimeout(() => setIsExiting(true), 6000),  // Exit after tagline is complete + pause
-      setTimeout(() => setIsVisible(false), 7000),
+      }, 50),
+      setTimeout(() => setShowExplosion(false), 600),
+      setTimeout(() => setStage(2), 700),      // Tagline scramble starts
+      setTimeout(() => setIsExiting(true), 2200),  // Exit rapidement
+      setTimeout(() => setIsVisible(false), 2800),
     ];
 
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [hasSeenSplash]);
+
+  // Si déjà vu cette session, ne rien afficher
+  if (hasSeenSplash) return null;
 
   return (
     <AnimatePresence>
