@@ -359,7 +359,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
           {/* Contenu principal */}
           <div className="absolute inset-0 flex flex-col justify-end">
-            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
+            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-16 sm:pb-12 lg:pb-16">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end">
 
                 {/* Colonne gauche: Contenu featured */}
@@ -473,7 +473,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
         </div>
 
         {/* Navigation dots - Mobile */}
-        <div className="lg:hidden absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur-md">
+        <div className="lg:hidden absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md">
           {allItems.map((item, index) => {
             const dotColors = getUniversColors(item.categorie);
             const isActive = index === safeIndex;
