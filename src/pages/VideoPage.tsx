@@ -1,7 +1,7 @@
 // src/pages/VideoPage.tsx
 // Page vidéo : YouTube hero + contenu enrichi + sidebar identique ArticlePage
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -323,11 +323,11 @@ export default function VideoPage() {
   // Get theme color for styled headings
   const themeColorForHeadings = article?.verticale?.couleurDominante || '#8B5CF6';
 
-  // Use extracted PortableText components factory
-  const portableTextComponents = createPortableTextComponents({
-    themeColor: themeColorForHeadings,
-    article
-  });
+  // Use extracted PortableText components factory (memoized to prevent re-renders)
+  const portableTextComponents = useMemo(
+    () => createPortableTextComponents({ themeColor: themeColorForHeadings, article }),
+    [themeColorForHeadings, article]
+  );
 
   // Loading state
   if (loading) {

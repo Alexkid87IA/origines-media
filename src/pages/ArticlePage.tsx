@@ -1,7 +1,7 @@
 // src/pages/ArticlePage.tsx
 // Design épuré - Style minimaliste blanc + Sidebar Premium
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -241,11 +241,11 @@ export default function ArticlePage() {
   // Get theme color for styled headings
   const themeColorForHeadings = article?.verticale?.couleurDominante || '#8B5CF6';
 
-  // Use extracted PortableText components factory
-  const portableTextComponents = createPortableTextComponents({
-    themeColor: themeColorForHeadings,
-    article
-  });
+  // Use extracted PortableText components factory (memoized to prevent re-renders)
+  const portableTextComponents = useMemo(
+    () => createPortableTextComponents({ themeColor: themeColorForHeadings, article }),
+    [themeColorForHeadings, article]
+  );
 
   // Loading state - Skeleton UI
   if (loading) {
