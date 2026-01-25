@@ -614,7 +614,14 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
       youtube: ({ value }: any) => {
         const videoId = value.url?.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
         return videoId ? (
-          <div className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900">
+          <div
+            className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900 group"
+            onClick={(e) => {
+              // Remove overlay on click to allow interaction with video
+              const overlay = e.currentTarget.querySelector('.scroll-overlay');
+              if (overlay) overlay.classList.add('pointer-events-none');
+            }}
+          >
             <iframe
               src={`https://www.youtube.com/embed/${videoId}?rel=0`}
               title={value.title || 'Vidéo'}
@@ -622,6 +629,8 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
+            {/* Overlay transparent pour permettre le scroll - disparaît au clic */}
+            <div className="scroll-overlay absolute inset-0 cursor-pointer" />
           </div>
         ) : null;
       },
@@ -629,7 +638,13 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
       videoEmbed: ({ value }: any) => {
         const url = value.url || value.videoUrl;
         return url ? (
-          <div className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900">
+          <div
+            className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900 group"
+            onClick={(e) => {
+              const overlay = e.currentTarget.querySelector('.scroll-overlay');
+              if (overlay) overlay.classList.add('pointer-events-none');
+            }}
+          >
             <iframe
               src={url}
               title={value.title || 'Vidéo'}
@@ -637,6 +652,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
+            <div className="scroll-overlay absolute inset-0 cursor-pointer" />
           </div>
         ) : null;
       },
