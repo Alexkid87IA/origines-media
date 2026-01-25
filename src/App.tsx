@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import SplashScreen from './components/SplashScreen';
 // import SkinWrapper from './components/SkinWrapper';
 
 // Composant pour scroller en haut à chaque changement de page
@@ -37,10 +38,11 @@ const JoinPage = lazy(() => import('./pages/JoinPage'));
 const ShareStoryPage = lazy(() => import('./pages/ShareStoryPage'));
 const RecommandationsPage = lazy(() => import('./pages/RecommandationsPage'));
 const RecommandationPage = lazy(() => import('./pages/RecommandationPage'));
-const AcademyPage = lazy(() => import('./pages/AcademyPage'));
+const BoutiquePage = lazy(() => import('./pages/BoutiquePage'));
 const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
 const JoinPartnerPage = lazy(() => import('./pages/JoinPartnerPage'));
+const RecherchePage = lazy(() => import('./pages/RecherchePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
@@ -52,6 +54,7 @@ const LoadingFallback = () => (
 function App() {
   return (
     <>
+      <SplashScreen />
       <ScrollToTop />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
@@ -80,14 +83,16 @@ function App() {
         <Route path="/racontez-votre-histoire" element={<ShareStoryPage />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
         <Route path="/recommandation/:slug" element={<RecommandationPage />} />
-        <Route path="/academie" element={<AcademyPage />} />
-        <Route path="/academie/:guideSlug" element={<AcademyPage />} />
-        <Route path="/academy" element={<AcademyPage />} />
+        <Route path="/boutique" element={<BoutiquePage />} />
+        <Route path="/boutique/:guideSlug" element={<BoutiquePage />} />
+        <Route path="/academie" element={<BoutiquePage />} />
+        <Route path="/academy" element={<BoutiquePage />} />
         <Route path="/communaute" element={<EnsemblePage />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
         <Route path="/mentions-legales" element={<LegalPage />} />
         <Route path="/cgu" element={<CGUPage />} />
         <Route path="/cgv" element={<CGVPage />} />
+        <Route path="/recherche" element={<RecherchePage />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
