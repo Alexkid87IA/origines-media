@@ -20,29 +20,63 @@ interface PortableTextConfig {
 // Helper function to convert URLs in text to clickable links
 const createLinkifyHelpers = () => {
   const linkifySimpleUrls = (text: string, keyOffset: number): React.ReactNode[] => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text.split(urlRegex);
+    // Combined regex for full URLs and bare domains
+    const combinedRegex = /(https?:\/\/[^\s]+)|(\b[a-zA-Z0-9-]+\.(?:fr|org|com|net|io|co|eu|be|ch|ca|uk|de|es|it|nl|pt|info|gov|edu|biz)\b)/g;
 
-    return parts.map((part, index) => {
-      if (urlRegex.test(part)) {
-        urlRegex.lastIndex = 0;
-        return (
+    const result: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+
+    combinedRegex.lastIndex = 0;
+
+    while ((match = combinedRegex.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        result.push(text.slice(lastIndex, match.index));
+      }
+
+      const fullUrl = match[1]; // https:// URL
+      const domain = match[2];  // bare domain
+
+      if (fullUrl) {
+        result.push(
           <a
-            key={`simple-${keyOffset}-${index}`}
-            href={part}
+            key={`url-${keyOffset}-${match.index}`}
+            href={fullUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-violet-600 hover:text-violet-700 underline transition-colors break-all"
           >
-            {part}
+            {fullUrl}
+          </a>
+        );
+      } else if (domain) {
+        result.push(
+          <a
+            key={`domain-${keyOffset}-${match.index}`}
+            href={`https://${domain}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-violet-600 hover:text-violet-700 underline transition-colors"
+          >
+            {domain}
           </a>
         );
       }
-      return part;
-    }).filter(part => part !== '');
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      result.push(text.slice(lastIndex));
+    }
+
+    return result.length > 0 ? result : [text];
   };
 
   const linkifyText = (text: string): React.ReactNode => {
+    // First handle labeled URLs like "Label: https://..."
     const labeledUrlRegex = /([^•\n]+?)\s*:\s*(https?:\/\/[^\s]+)/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
@@ -99,6 +133,96 @@ const createLinkifyHelpers = () => {
   };
 
   return { linkifyText, linkifySimpleUrls, LinkifyChildren };
+};
+
+// Helper to linkify source text (domains, URLs)
+const linkifySource = (source: string, sourceUrl?: string): React.ReactNode => {
+  if (!source) return null;
+
+  // If we have a dedicated sourceUrl, use it
+  if (sourceUrl) {
+    return (
+      <a
+        href={sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-violet-600 hover:text-violet-700 underline underline-offset-2 transition-colors"
+      >
+        {source}
+      </a>
+    );
+  }
+
+  // Check if source looks like a URL or domain
+  const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
+  const domainPattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+
+  // If it's a full URL
+  if (source.match(/^https?:\/\//)) {
+    return (
+      <a
+        href={source}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-violet-600 hover:text-violet-700 underline underline-offset-2 transition-colors"
+      >
+        {source.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+      </a>
+    );
+  }
+
+  // If it looks like a domain (e.g., "ademe.fr", "quechoisir.org")
+  if (domainPattern.test(source.trim())) {
+    return (
+      <a
+        href={`https://${source.trim()}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-violet-600 hover:text-violet-700 underline underline-offset-2 transition-colors"
+      >
+        {source}
+      </a>
+    );
+  }
+
+  // Check if source contains a URL/domain within text (e.g., "Source: ademe.fr")
+  const inlineUrlRegex = /(https?:\/\/[^\s]+)|([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?)/g;
+  const parts = source.split(inlineUrlRegex).filter(Boolean);
+
+  if (parts.length > 1) {
+    return parts.map((part, index) => {
+      if (part.match(/^https?:\/\//)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-violet-600 hover:text-violet-700 underline underline-offset-2 transition-colors"
+          >
+            {part.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+          </a>
+        );
+      }
+      if (domainPattern.test(part)) {
+        return (
+          <a
+            key={index}
+            href={`https://${part}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-violet-600 hover:text-violet-700 underline underline-offset-2 transition-colors"
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  }
+
+  // Plain text, return as is
+  return <>{source}</>;
 };
 
 // Helper to get the right icon based on item.icon value
@@ -336,7 +460,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
                 {isRichText ? <PortableText value={contentValue} /> : <p>{contentValue}</p>}
               </div>
               {value.source && (
-                <p className="mt-4 text-sm text-violet-600/70 italic pl-13">Source : {value.source}</p>
+                <p className="mt-4 text-sm text-violet-600/70 italic pl-13">Source : {linkifySource(value.source, value.sourceUrl)}</p>
               )}
             </div>
           );
@@ -356,7 +480,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
                   <p>{contentValue}</p>
                 ) : null}
                 {value.source && (
-                  <p className="mt-3 text-sm opacity-70 italic">Source : {value.source}</p>
+                  <p className="mt-3 text-sm opacity-70 italic">Source : {linkifySource(value.source, value.sourceUrl)}</p>
                 )}
               </div>
             </div>
@@ -365,29 +489,17 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
       },
 
       styledQuote: ({ value }: any) => {
+        // Try multiple field names for the quote text
+        const rawQuote = value.quote || value.text || value.content || value.citation || value.body || '';
+        const quoteText = typeof rawQuote === 'string' ? rawQuote : extractText(rawQuote);
         const quoteStyle = value.style || 'classic';
 
-        const renderSource = () => {
-          if (!value.source) return null;
-          if (value.sourceUrl) {
-            return (
-              <a
-                href={value.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-violet-500 transition-colors underline underline-offset-2"
-              >
-                {value.source}
-              </a>
-            );
-          }
-          return <>{value.source}</>;
-        };
+        const renderSource = () => linkifySource(value.source, value.sourceUrl);
 
         if (quoteStyle === 'testimonial' || value.image) {
           return (
             <figure className="my-10 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
-              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                 {value.image?.asset?.url && (
                   <div className="flex-shrink-0">
                     <img
@@ -400,7 +512,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
                 <div className="flex-1">
                   <Quote className="w-8 h-8 text-violet-300 mb-3" />
                   <blockquote className="text-lg md:text-xl text-gray-700 leading-relaxed italic mb-4">
-                    "{value.quote}"
+                    "{quoteText}"
                   </blockquote>
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-0.5 bg-violet-300" />
@@ -421,7 +533,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
             <figure className="my-12 py-8 border-y border-gray-200">
               <blockquote className="text-center">
                 <p className="text-2xl md:text-4xl font-medium text-gray-800 leading-relaxed italic max-w-3xl mx-auto">
-                  "{value.quote}"
+                  "{quoteText}"
                 </p>
               </blockquote>
               {(value.author || value.source) && (
@@ -441,7 +553,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               <Quote className="w-10 h-10 text-white/30 mb-4" />
               <blockquote>
                 <p className="text-xl md:text-2xl font-medium leading-relaxed">
-                  "{value.quote}"
+                  "{quoteText}"
                 </p>
               </blockquote>
               {(value.author || value.source) && (
@@ -463,7 +575,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               <Quote className="absolute -top-4 left-6 w-8 h-8 text-violet-400 bg-white px-1" />
               <blockquote>
                 <p className="text-lg md:text-xl text-gray-700 leading-relaxed italic">
-                  "{value.quote}"
+                  "{quoteText}"
                 </p>
               </blockquote>
               {(value.author || value.source) && (
@@ -483,7 +595,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
             <Quote className="absolute -top-4 -left-2 w-12 h-12 text-violet-200" />
             <blockquote className="pl-8 pr-4">
               <p className="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed italic">
-                "{value.quote}"
+                "{quoteText}"
               </p>
             </blockquote>
             {(value.author || value.source) && (
@@ -499,14 +611,50 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
 
       accordion: ({ value }: any) => <AccordionBlock value={value} themeColor={themeColor} />,
 
-      keyTakeaways: ({ value }: any) => {
-        // Debug: log the value to see what fields are available
-        console.log('keyTakeaways value:', JSON.stringify(value, null, 2));
+      // Handler pour le type "quote" (mapping vers styledQuote)
+      quote: ({ value }: any) => {
+        // Try multiple field names for the quote text
+        const rawQuote = value.quote || value.text || value.content || value.citation || value.body || value.children || '';
+        const author = value.author || value.auteur || '';
+        const role = value.role || value.titre || value.title || '';
+        const source = value.source || '';
+        const sourceUrl = value.sourceUrl || value.url || '';
 
+        // Check if quote content is Portable Text (array of blocks)
+        const isPortableText = Array.isArray(rawQuote) && rawQuote.some((item: any) => item?._type);
+        const quoteText = isPortableText ? '' : (typeof rawQuote === 'string' ? rawQuote : extractText(rawQuote));
+
+        return (
+          <figure className="my-12 relative">
+            <Quote className="absolute -top-4 -left-2 w-12 h-12 text-violet-200" />
+            <blockquote className="pl-8 pr-4">
+              {isPortableText ? (
+                <div className="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed italic">
+                  <PortableText value={rawQuote} />
+                </div>
+              ) : (
+                <p className="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed italic">
+                  "{quoteText}"
+                </p>
+              )}
+            </blockquote>
+            {(author || source) && (
+              <figcaption className="mt-4 pl-8 text-gray-500">
+                {author && <span className="font-semibold text-gray-700">{author}</span>}
+                {role && <span className="text-gray-500">, {role}</span>}
+                {source && <span className="text-gray-400"> — {linkifySource(source, sourceUrl)}</span>}
+              </figcaption>
+            )}
+          </figure>
+        );
+      },
+
+      keyTakeaways: ({ value }: any) => {
         // Try multiple possible field names for items
         const items = value.items || value.points || value.takeaways || value.list ||
                       value.content || value.bullets || value.essentiels || value.keys ||
                       value.highlights || value.children || [];
+
         const style = value.style || 'boxed';
 
         const renderItem = (item: any, index: number) => {
@@ -514,6 +662,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
           const itemTitle = item?.title || item?.heading || item?.label || item?.name;
           const itemContent = item?.content || item?.body || item?.description || item?.text || item?.details || item?.answer;
 
+          // Case 1: Item has both title and content
           if (itemTitle && itemContent) {
             return (
               <li key={index} className="flex items-start gap-3">
@@ -528,6 +677,19 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
             );
           }
 
+          // Case 2: Item has content but no title (Portable Text blocks)
+          if (itemContent && Array.isArray(itemContent)) {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-1.5">{getIcon(itemIcon)}</span>
+                <div className="text-gray-700 flex-1">
+                  <PortableText value={itemContent} />
+                </div>
+              </li>
+            );
+          }
+
+          // Case 3: Simple text item
           const text = extractText(item) || (typeof item === 'string' ? item : '');
           if (text) {
             return (
@@ -559,7 +721,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               <h4 className="text-lg font-bold text-gray-900">{value.title || 'Points clés à retenir'}</h4>
             </div>
             {(!items || items.length === 0) ? (
-              <p className="text-gray-500 text-sm italic">Aucun élément trouvé (debug: vérifier les champs Sanity)</p>
+              <p className="text-gray-500 text-sm italic">Aucun élément trouvé</p>
             ) : (
               <ul className="space-y-3">
                 {Array.isArray(items) && items.map((item: any, index: number) => renderItem(item, index))}
@@ -827,6 +989,14 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
         </div>
       ),
 
+      divider: () => (
+        <hr className="my-12 border-none h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+      ),
+
+      break: () => (
+        <hr className="my-12 border-none h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+      ),
+
       person: ({ value }: any) => (
         <div className="my-8 flex items-center gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-200">
           {value.image && (
@@ -888,10 +1058,14 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
         );
       },
 
-      unknown: ({ value }: any) => {
-        if (value.text || value.content) {
-          return <p className="text-gray-600 mb-6">{value.text || value.content}</p>;
+      // Fallback pour types non gérés
+      unknownType: ({ value }: any) => {
+        // Essayer d'extraire du texte si possible
+        const text = value?.text || value?.content;
+        if (text) {
+          return <p className="text-gray-600 mb-6">{typeof text === 'string' ? text : extractText(text)}</p>;
         }
+        // Sinon ignorer silencieusement
         return null;
       },
     },

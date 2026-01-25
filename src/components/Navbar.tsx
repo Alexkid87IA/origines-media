@@ -156,89 +156,98 @@ const Navbar: React.FC = () => {
     <>
       {/* ============ NAVBAR CONTAINER ============ */}
       <div className={`
-        fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out
-        ${isScrolled ? 'bg-white shadow-sm' : 'bg-white'}
-        border-b border-gray-100
+        fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out
+        bg-white/[0.98] backdrop-blur-xl border-b
+        ${isScrolled
+          ? 'border-gray-200/80 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.1)]'
+          : 'border-gray-100/60'
+        }
         ${isVisible || isMobileMenuOpen || activeDropdown || searchOpen ? 'translate-y-0' : '-translate-y-full'}
       `}>
+        {/* Ligne d'accent premium en haut */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500/0 via-violet-500/40 to-violet-500/0" />
 
         {/* ============ TOP BAR (Desktop) ============ */}
-        <div className="hidden lg:block border-b border-gray-100">
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="grid grid-cols-[1fr_auto_1fr] items-center h-14 gap-4">
+        <div className="hidden lg:block">
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="flex items-center justify-between h-[70px]">
 
-              {/* Logo + Réseaux sociaux (Left - aligned left) */}
-              <div className="flex items-center gap-6">
-                <Link to="/" className="flex-shrink-0">
-                  <motion.img
-                    src="/logo-origines.png"
-                    alt="Origines Media"
-                    className="h-11 w-auto"
-                    loading="eager"
-                    decoding="async"
-                    // @ts-expect-error fetchPriority is valid HTML attribute
-                    fetchpriority="high"
-                    whileHover={{
-                      scale: 1.05,
-                      rotate: [0, -2, 2, 0],
-                      transition: {
-                        scale: { duration: 0.2 },
-                        rotate: { duration: 0.4, ease: "easeInOut" }
-                      }
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  />
-                </Link>
+              {/* Logo (Left) */}
+              <Link to="/" className="flex-shrink-0 group relative">
+                {/* Subtle glow on hover */}
+                <div className="absolute inset-0 bg-violet-500/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <motion.img
+                  src="/logo-origines.png"
+                  alt="Origines Media"
+                  className="h-12 w-auto relative"
+                  loading="eager"
+                  decoding="async"
+                  // @ts-expect-error fetchPriority is valid HTML attribute
+                  fetchpriority="high"
+                  whileHover={{
+                    scale: 1.02,
+                    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                />
+              </Link>
 
-                {/* Réseaux sociaux */}
-                <div className="flex items-center gap-1">
-                  {socialLinks.map((social) => (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 text-gray-400 hover:text-gray-700 transition-colors rounded-lg hover:bg-gray-100"
-                      aria-label={social.label}
-                    >
-                      <social.icon />
-                    </a>
-                  ))}
-                </div>
+              {/* Réseaux sociaux (Center-left) */}
+              <div className="flex items-center gap-0.5">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-xl text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                    aria-label={social.label}
+                  >
+                    <social.icon className="w-[18px] h-[18px]" />
+                  </a>
+                ))}
               </div>
 
-              {/* Recherche (Center - truly centered) */}
-              <div className="w-80">
-                <form onSubmit={handleSearch} className="relative" role="search">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
+              {/* Recherche (Center) - Premium glass effect */}
+              <div className="w-[380px]">
+                <form onSubmit={handleSearch} className="relative group" role="search">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500/10 via-transparent to-pink-500/10 opacity-0 group-focus-within:opacity-100 blur-xl transition-opacity duration-500" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-gray-400 transition-all duration-300 group-focus-within:text-violet-500 group-focus-within:scale-110" aria-hidden="true" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Rechercher..."
+                    placeholder="Rechercher un article, une série..."
                     aria-label="Rechercher sur le site"
-                    className="w-full pl-9 pr-4 py-2 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-full focus:bg-white focus:border-gray-300 focus:outline-none transition-all placeholder:text-gray-400"
+                    className="relative w-full pl-12 pr-5 py-3 text-sm text-gray-800 bg-gray-50/80 border border-gray-200/80 rounded-full focus:bg-white focus:border-violet-400/50 focus:shadow-[0_0_0_4px_rgba(139,92,246,0.08),0_4px_16px_-4px_rgba(139,92,246,0.15)] focus:outline-none transition-all duration-300 placeholder:text-gray-400"
                   />
                 </form>
               </div>
 
-              {/* CTA Principal (Right - aligned right) */}
-              <div className="flex justify-end">
-                <Link
-                  to="/racontez-votre-histoire"
-                  className="group flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-gray-900 border-2 border-gray-900 rounded-full transition-all duration-300 hover:bg-gray-900 hover:text-white hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  <PenLine className="w-4 h-4 transition-transform duration-300 group-hover:rotate-[-8deg]" />
-                  <span>Racontez votre histoire</span>
-                </Link>
-              </div>
+              {/* CTA Principal (Right) - Premium outline */}
+              <Link
+                to="/racontez-votre-histoire"
+                className="group relative flex items-center gap-2.5 px-6 py-2.5 text-sm font-semibold rounded-full overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
+              >
+                {/* Background fill on hover */}
+                <div className="absolute inset-0 bg-gray-900 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                {/* Border */}
+                <div className="absolute inset-0 rounded-full border-2 border-gray-900" />
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                <PenLine className="w-4 h-4 relative z-10 text-gray-900 group-hover:text-white transition-colors duration-300 group-hover:rotate-[-8deg]" />
+                <span className="relative z-10 text-gray-900 group-hover:text-white transition-colors duration-300">Racontez votre histoire</span>
+              </Link>
             </div>
           </div>
         </div>
 
+        {/* Séparateur élégant */}
+        <div className="hidden lg:block h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
         {/* ============ NAV BAR ============ */}
-        <div className="max-w-5xl mx-auto px-4 lg:px-6">
-          <div className="flex items-center justify-center h-14 sm:h-12">
+        <div className="max-w-6xl mx-auto px-8">
+          <div className="flex items-center justify-center h-14 sm:h-12 lg:h-[52px]">
 
             {/* Desktop Navigation */}
             <LayoutGroup>
@@ -246,6 +255,7 @@ const Navbar: React.FC = () => {
               {navItems.map((item) => {
                 const isActive = isActiveRoute(item.href);
                 const isDropdownOpen = activeDropdown === item.label;
+                const isHovered = hoveredNav === item.label;
 
                 return (
                   <div
@@ -258,33 +268,47 @@ const Navbar: React.FC = () => {
                       onClick={() => handleNavigation(item.href)}
                       onMouseEnter={() => setHoveredNav(item.label)}
                       onMouseLeave={() => setHoveredNav(null)}
-                      className="group relative h-7 px-2.5 rounded-md transition-colors duration-300 flex items-center justify-center gap-1 hover:bg-gray-100/60"
+                      className="group relative h-9 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5"
                     >
-                      {isActive && (
+                      {/* Background indicator */}
+                      {(isActive || isHovered || isDropdownOpen) && (
                         <motion.div
                           layoutId="navActiveIndicator"
-                          className="absolute inset-0 rounded-md bg-gray-100"
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          className="absolute inset-0 rounded-xl"
+                          style={{
+                            backgroundColor: `${item.hoverColor}10`,
+                            boxShadow: `inset 0 0 0 1px ${item.hoverColor}15`
+                          }}
+                          transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                        />
+                      )}
+                      {/* Active dot indicator */}
+                      {isActive && (
+                        <motion.div
+                          layoutId="navActiveDot"
+                          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
+                          style={{ backgroundColor: item.hoverColor }}
+                          transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
                         />
                       )}
                       <span
-                        className="relative z-10 text-xs font-semibold transition-colors duration-300"
+                        className="relative z-10 text-[13px] font-semibold transition-colors duration-300"
                         style={{
-                          color: (hoveredNav === item.label || isActive || isDropdownOpen)
+                          color: (isHovered || isActive || isDropdownOpen)
                             ? item.hoverColor
-                            : item.color
+                            : '#4B5563'
                         }}
                       >
                         {item.label}
                       </span>
                       {item.hasDropdown && (
                         <ChevronDown
-                          className="relative z-10 w-2.5 h-2.5 transition-transform duration-300"
+                          className="relative z-10 w-3.5 h-3.5 transition-all duration-300"
                           style={{
                             transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                            color: (hoveredNav === item.label || isActive || isDropdownOpen)
+                            color: (isHovered || isActive || isDropdownOpen)
                               ? item.hoverColor
-                              : item.color
+                              : '#9CA3AF'
                           }}
                         />
                       )}
@@ -298,7 +322,7 @@ const Navbar: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12, ease: "easeOut" }}
-                          className="fixed inset-x-0 top-[104px] z-50"
+                          className="fixed inset-x-0 top-[123px] z-50"
                           onMouseLeave={() => setHoveredUnivers('default')}
                         >
                           <div className="relative bg-white border-b border-gray-200 shadow-xl overflow-hidden">
@@ -411,7 +435,7 @@ const Navbar: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12, ease: "easeOut" }}
-                          className="fixed inset-x-0 top-[104px] z-50"
+                          className="fixed inset-x-0 top-[123px] z-50"
                           onMouseLeave={() => setHoveredUnivers('default')}
                         >
                           <div className="relative bg-white border-b border-gray-200 shadow-xl overflow-hidden">
@@ -524,7 +548,7 @@ const Navbar: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12, ease: "easeOut" }}
-                          className="fixed inset-x-0 top-[104px] z-50"
+                          className="fixed inset-x-0 top-[123px] z-50"
                           onMouseLeave={() => setHoveredUnivers('default')}
                         >
                           <div className="relative bg-white border-b border-gray-200 shadow-xl overflow-hidden">
@@ -637,7 +661,7 @@ const Navbar: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12, ease: "easeOut" }}
-                          className="fixed inset-x-0 top-[104px] z-50"
+                          className="fixed inset-x-0 top-[123px] z-50"
                         >
                           <div className="relative bg-white border-b border-gray-200 shadow-xl overflow-hidden">
                             <div className="max-w-6xl mx-auto px-6 py-6">
@@ -726,7 +750,7 @@ const Navbar: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12, ease: "easeOut" }}
-                          className="fixed inset-x-0 top-[104px] z-50"
+                          className="fixed inset-x-0 top-[123px] z-50"
                           onMouseLeave={() => setHoveredUnivers('default')}
                         >
                           <div className="relative bg-white border-b border-gray-200 shadow-xl overflow-hidden">
@@ -855,7 +879,7 @@ const Navbar: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12, ease: "easeOut" }}
-                          className="fixed inset-x-0 top-[104px] z-50"
+                          className="fixed inset-x-0 top-[123px] z-50"
                           onMouseLeave={() => setHoveredUnivers('default')}
                         >
                           <div className="relative bg-white border-b border-gray-200 shadow-xl overflow-hidden">
@@ -1235,7 +1259,7 @@ const Navbar: React.FC = () => {
       </AnimatePresence>
 
       {/* Spacer */}
-      <div className="h-14 sm:h-12 lg:h-[104px]" />
+      <div className="h-14 sm:h-12 lg:h-[123px]" />
     </>
   );
 };

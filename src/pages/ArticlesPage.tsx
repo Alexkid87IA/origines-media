@@ -156,11 +156,11 @@ const ArticlesPage: React.FC = () => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(a =>
-        a.titre.toLowerCase().includes(query) ||
+        a.titre?.toLowerCase().includes(query) ||
         a.description?.toLowerCase().includes(query) ||
         a.univers?.nom?.toLowerCase().includes(query) ||
         a.verticale?.nom?.toLowerCase().includes(query) ||
-        a.tags?.some(tag => tag.nom?.toLowerCase().includes(query))
+        a.tags?.some(tag => tag?.nom?.toLowerCase().includes(query))
       );
     }
 

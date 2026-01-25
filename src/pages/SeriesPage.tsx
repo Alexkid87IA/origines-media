@@ -346,82 +346,99 @@ const SeriesPage: React.FC = () => {
       <Navbar />
 
       <main>
-        {/* Hero Banner - Série à la une */}
-        <section className="relative h-[65vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden">
-          {/* Background Image */}
+        {/* Hero Banner - Série à la une - Design Premium */}
+        <section className="relative h-[70vh] sm:h-[75vh] lg:h-[85vh] overflow-hidden">
+          {/* Background Image with Cinematic Effect */}
           <AnimatePresence mode="wait">
             <motion.div
               key={featuredSerie.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
               className="absolute inset-0"
             >
               <img
                 src={featuredSerie.bannerUrl}
                 alt={`Bannière de la série ${featuredSerie.titre || 'en vedette'}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover scale-105"
               />
-              {/* Gradients */}
+
+              {/* Gradients essentiels */}
               <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/90 to-gray-950/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/40 to-transparent" />
             </motion.div>
           </AnimatePresence>
 
           {/* Content : Gauche (texte) + Droite (poster en grand) */}
-          <div className="absolute inset-0 flex items-end sm:items-center pb-32 sm:pb-28">
-            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-8">
+          <div className="absolute inset-0 flex items-end sm:items-center pb-36 sm:pb-32">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-12 lg:gap-16">
 
               {/* Left: Content */}
-              <div className="flex-1 max-w-xl">
+              <div className="flex-1 max-w-xl lg:max-w-lg xl:max-w-xl">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={featuredSerie.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -20, filter: 'blur(5px)' }}
+                    transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                   >
-                    {/* Badge avec couleur de la série */}
-                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <span
-                        className="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-                        style={{ backgroundColor: featuredSerie.couleur }}
-                      >
-                        Série Origines
-                      </span>
-                      <span className="text-white/50 text-xs sm:text-sm">
-                        {featuredSerie.nombreSaisons} saison{featuredSerie.nombreSaisons > 1 ? 's' : ''} • {featuredSerie.nombreEpisodes} épisodes
-                      </span>
+                    {/* Premium Badge */}
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      <div className="relative">
+                        <span
+                          className="relative z-10 px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white"
+                          style={{
+                            backgroundColor: featuredSerie.couleur,
+                            boxShadow: `0 0 20px ${featuredSerie.couleur}60`
+                          }}
+                        >
+                          Série Origines
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/60">
+                        <span className="w-1 h-1 rounded-full bg-white/40" />
+                        <span className="text-xs sm:text-sm font-medium">
+                          {featuredSerie.nombreSaisons} saison{featuredSerie.nombreSaisons > 1 ? 's' : ''}
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-white/40" />
+                        <span className="text-xs sm:text-sm font-medium">
+                          {featuredSerie.nombreEpisodes} épisodes
+                        </span>
+                      </div>
                     </div>
 
                     {/* Title */}
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-5 leading-[1.1] tracking-tight text-white">
                       {typo(featuredSerie.titre)}
                     </h1>
 
-                    {/* Description */}
-                    <p className="text-sm sm:text-base text-white/70 mb-5 sm:mb-6 max-w-lg leading-relaxed">
+                    {/* Description with better typography */}
+                    <p className="text-sm sm:text-base lg:text-lg text-white/70 mb-6 sm:mb-8 max-w-lg leading-relaxed font-light">
                       {featuredSerie.description}
                     </p>
 
-                    {/* Buttons */}
-                    <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 sm:gap-3">
+                    {/* Premium Buttons */}
+                    <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-3 sm:gap-4">
                       <button
                         disabled
                         aria-label="Bientôt disponible"
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-white/20 text-white/70 rounded-md font-semibold text-sm cursor-not-allowed"
+                        className="group relative flex items-center justify-center gap-2.5 px-6 py-3 rounded-lg font-semibold text-sm cursor-not-allowed overflow-hidden"
+                        style={{
+                          background: `linear-gradient(135deg, ${featuredSerie.couleur}30 0%, ${featuredSerie.couleur}10 100%)`,
+                          border: `1px solid ${featuredSerie.couleur}40`
+                        }}
                       >
-                        <Lock className="w-4 h-4" />
-                        <span className="whitespace-nowrap">Bientôt disponible</span>
+                        <Lock className="w-4 h-4 text-white/70" />
+                        <span className="text-white/80 whitespace-nowrap">Bientôt disponible</span>
                       </button>
                       <button
                         onClick={handleMoreInfo}
                         aria-label={`Voir les épisodes de ${featuredSerie.titre}`}
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-white/15 backdrop-blur-sm text-white rounded-md font-medium text-sm hover:bg-white/25 transition-colors"
+                        className="group relative flex items-center justify-center gap-2.5 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-lg font-medium text-sm hover:bg-white/20 hover:border-white/30 transition-all duration-300"
                       >
-                        <Info className="w-4 h-4" />
+                        <Info className="w-4 h-4 group-hover:scale-110 transition-transform" />
                         <span className="whitespace-nowrap">Plus d'infos</span>
                       </button>
                     </div>
@@ -429,71 +446,106 @@ const SeriesPage: React.FC = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Right: Poster de la série active en grand avec glassmorphism */}
+              {/* Right: Poster de la série - Design Premium Flottant */}
               <div className="hidden lg:block">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={featuredSerie.id}
-                    initial={{ opacity: 0, scale: 0.9, x: 20 }}
-                    animate={{ opacity: 1, scale: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, x: -20 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{ opacity: 0, scale: 0.85, y: 30, rotateY: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0, rotateY: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -20, rotateY: 10 }}
+                    transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                     className="relative"
+                    style={{ perspective: '1000px' }}
                   >
-                    {/* Glassmorphism container */}
+                    {/* Outer Glow */}
                     <div
-                      className="relative p-4 xl:p-5 rounded-2xl backdrop-blur-xl"
-                      style={{
-                        background: `linear-gradient(135deg, ${featuredSerie.couleur}15 0%, ${featuredSerie.couleur}08 50%, rgba(255,255,255,0.05) 100%)`,
-                        boxShadow: `
-                          0 0 0 1px ${featuredSerie.couleur}30,
-                          0 0 40px ${featuredSerie.couleur}20,
-                          inset 0 1px 0 rgba(255,255,255,0.1)
-                        `
-                      }}
-                    >
-                      {/* Glow effect derrière le poster */}
-                      <div
-                        className="absolute inset-0 rounded-2xl blur-3xl opacity-40 -z-10"
-                        style={{ backgroundColor: featuredSerie.couleur }}
-                      />
+                      className="absolute -inset-8 rounded-3xl blur-3xl opacity-30"
+                      style={{ backgroundColor: featuredSerie.couleur }}
+                    />
 
-                      {/* Decorative corner accents */}
-                      <div
-                        className="absolute top-2 left-2 w-8 h-8 border-l-2 border-t-2 rounded-tl-lg opacity-50"
-                        style={{ borderColor: featuredSerie.couleur }}
-                      />
-                      <div
-                        className="absolute bottom-2 right-2 w-8 h-8 border-r-2 border-b-2 rounded-br-lg opacity-50"
-                        style={{ borderColor: featuredSerie.couleur }}
-                      />
-
-                      {/* Poster */}
-                      <div
-                        className="relative w-44 xl:w-52 rounded-lg overflow-hidden shadow-2xl"
-                        style={{
-                          boxShadow: `0 20px 40px -12px ${featuredSerie.couleur}50, 0 0 0 1px ${featuredSerie.couleur}40`
-                        }}
+                    {/* Main Container */}
+                    <div className="relative">
+                      {/* Floating Poster Card */}
+                      <motion.div
+                        className="relative"
+                        animate={{ y: [0, -8, 0] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                       >
-                        <img
-                          src={featuredSerie.posterUrl}
-                          alt={featuredSerie.titre}
-                          className="w-full h-auto"
-                        />
-
-                        {/* Shine effect on poster */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
-                      </div>
-
-                      {/* Series badge under poster */}
-                      <div className="mt-3 text-center">
-                        <span
-                          className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-                          style={{ backgroundColor: featuredSerie.couleur }}
+                        {/* Glass Frame */}
+                        <div
+                          className="relative p-3 rounded-2xl backdrop-blur-xl"
+                          style={{
+                            background: `linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%)`,
+                            boxShadow: `
+                              0 0 0 1px rgba(255,255,255,0.1),
+                              0 25px 50px -12px rgba(0,0,0,0.5),
+                              0 0 80px ${featuredSerie.couleur}25,
+                              inset 0 1px 0 rgba(255,255,255,0.15)
+                            `
+                          }}
                         >
-                          {featuredSerie.nombreEpisodes} épisodes
-                        </span>
-                      </div>
+                          {/* Decorative Corner Lines */}
+                          <div className="absolute top-0 left-0 w-12 h-12">
+                            <div
+                              className="absolute top-0 left-0 w-full h-[2px] rounded-full"
+                              style={{ background: `linear-gradient(to right, ${featuredSerie.couleur}, transparent)` }}
+                            />
+                            <div
+                              className="absolute top-0 left-0 w-[2px] h-full rounded-full"
+                              style={{ background: `linear-gradient(to bottom, ${featuredSerie.couleur}, transparent)` }}
+                            />
+                          </div>
+                          <div className="absolute bottom-0 right-0 w-12 h-12">
+                            <div
+                              className="absolute bottom-0 right-0 w-full h-[2px] rounded-full"
+                              style={{ background: `linear-gradient(to left, ${featuredSerie.couleur}, transparent)` }}
+                            />
+                            <div
+                              className="absolute bottom-0 right-0 w-[2px] h-full rounded-full"
+                              style={{ background: `linear-gradient(to top, ${featuredSerie.couleur}, transparent)` }}
+                            />
+                          </div>
+
+                          {/* Poster Image */}
+                          <div
+                            className="relative w-48 xl:w-56 rounded-xl overflow-hidden"
+                            style={{
+                              boxShadow: `0 20px 40px -12px ${featuredSerie.couleur}40`
+                            }}
+                          >
+                            <img
+                              src={featuredSerie.posterUrl}
+                              alt={featuredSerie.titre}
+                              className="w-full h-auto"
+                            />
+
+                            {/* Shine Sweep Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-transparent pointer-events-none" />
+
+                            {/* Bottom Gradient for Info */}
+                            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+                            {/* Episode Count Badge inside poster */}
+                            <div className="absolute bottom-3 left-3 right-3">
+                              <div className="flex items-center justify-between">
+                                <span
+                                  className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm"
+                                  style={{ backgroundColor: `${featuredSerie.couleur}CC` }}
+                                >
+                                  {featuredSerie.nombreEpisodes} ép.
+                                </span>
+                                <span className="text-white/70 text-[10px] font-medium">{featuredSerie.annee}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Reflection Effect */}
+                        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-4 rounded-full blur-xl opacity-30"
+                          style={{ backgroundColor: featuredSerie.couleur }}
+                        />
+                      </motion.div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -501,64 +553,91 @@ const SeriesPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Sélecteur de séries en bas avec miniatures */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent pt-6 pb-3 sm:pb-4">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-12">
-              {/* Miniatures */}
-              <div className="flex items-end justify-center gap-2 sm:gap-3 py-2">
-                {seriesData.map((serie, index) => (
-                  <button
-                    key={serie.id}
-                    onClick={() => handleSelectSerie(index)}
-                    aria-label={`Voir ${serie.titre}`}
-                    aria-current={index === featuredIndex ? 'true' : undefined}
-                    className={`
-                      flex-shrink-0 relative rounded overflow-hidden transition-all duration-300
-                      ${index === featuredIndex
-                        ? 'scale-110 sm:scale-110 z-10'
-                        : 'opacity-50 hover:opacity-90 hover:scale-105'
-                      }
-                    `}
-                    style={{
-                      boxShadow: index === featuredIndex
-                        ? `0 0 0 2px ${serie.couleur}, 0 4px 12px -2px ${serie.couleur}50`
-                        : '0 2px 8px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <div className="w-12 sm:w-11 lg:w-12 aspect-[2/3]">
-                      <img
-                        src={serie.posterUrl}
-                        alt={serie.titre}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </button>
-                ))}
-              </div>
+          {/* Sélecteur de séries Premium */}
+          <div className="absolute bottom-0 left-0 right-0">
+            {/* Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/98 to-transparent" />
 
-              {/* Progress bar */}
-              <div className="flex gap-1 mt-3 max-w-[280px] sm:max-w-[260px] mx-auto" role="tablist" aria-label="Sélecteur de série">
-                {seriesData.map((serie, index) => (
-                  <button
-                    key={serie.id}
-                    onClick={() => handleSelectSerie(index)}
-                    role="tab"
-                    aria-selected={index === featuredIndex}
-                    aria-label={`Série ${index + 1}: ${serie.titre}`}
-                    className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
-                  >
-                    {index === featuredIndex && (
-                      <motion.div
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: serie.couleur }}
-                        initial={{ width: '0%' }}
-                        animate={{ width: '100%' }}
-                        transition={{ duration: 6, ease: 'linear' }}
-                        key={`progress-${featuredIndex}`}
-                      />
-                    )}
-                  </button>
-                ))}
+            <div className="relative pt-8 pb-4 sm:pb-5">
+              <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-12">
+                {/* Series Thumbnails */}
+                <div className="flex items-end justify-center gap-3 sm:gap-4 py-2">
+                  {seriesData.map((serie, index) => (
+                    <motion.button
+                      key={serie.id}
+                      onClick={() => handleSelectSerie(index)}
+                      aria-label={`Voir ${serie.titre}`}
+                      aria-current={index === featuredIndex ? 'true' : undefined}
+                      whileHover={{ scale: index === featuredIndex ? 1.05 : 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`
+                        flex-shrink-0 relative rounded-lg overflow-hidden transition-all duration-500
+                        ${index === featuredIndex
+                          ? 'z-10 ring-2'
+                          : 'opacity-40 hover:opacity-80 grayscale-[30%] hover:grayscale-0'
+                        }
+                      `}
+                      style={{
+                        boxShadow: index === featuredIndex
+                          ? `0 0 0 2px ${serie.couleur}, 0 8px 24px -4px ${serie.couleur}60, 0 0 40px ${serie.couleur}20`
+                          : '0 4px 12px rgba(0,0,0,0.4)',
+                        ringColor: index === featuredIndex ? serie.couleur : 'transparent'
+                      }}
+                    >
+                      <div className={`
+                        transition-all duration-500
+                        ${index === featuredIndex ? 'w-14 sm:w-16 lg:w-14' : 'w-11 sm:w-12 lg:w-11'}
+                        aspect-[2/3]
+                      `}>
+                        <img
+                          src={serie.posterUrl}
+                          alt={serie.titre}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      {/* Active Indicator Dot */}
+                      {index === featuredIndex && (
+                        <motion.div
+                          layoutId="activeSerieIndicator"
+                          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
+                          style={{ backgroundColor: serie.couleur }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        />
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+
+                {/* Premium Progress Bar */}
+                <div className="flex gap-1.5 mt-4 max-w-xs mx-auto" role="tablist" aria-label="Sélecteur de série">
+                  {seriesData.map((serie, index) => (
+                    <button
+                      key={serie.id}
+                      onClick={() => handleSelectSerie(index)}
+                      role="tab"
+                      aria-selected={index === featuredIndex}
+                      aria-label={`Série ${index + 1}: ${serie.titre}`}
+                      className={`
+                        flex-1 h-1 rounded-full overflow-hidden transition-all duration-300
+                        ${index === featuredIndex ? 'bg-white/30' : 'bg-white/10 hover:bg-white/20'}
+                      `}
+                    >
+                      {index === featuredIndex && (
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{
+                            background: `linear-gradient(90deg, ${serie.couleur} 0%, ${serie.couleur}CC 100%)`
+                          }}
+                          initial={{ width: '0%' }}
+                          animate={{ width: '100%' }}
+                          transition={{ duration: 6, ease: 'linear' }}
+                          key={`progress-${featuredIndex}`}
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
