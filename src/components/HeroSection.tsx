@@ -140,8 +140,10 @@ const recommendationColorPalette = [
 
 const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const [isSwiping, setIsSwiping] = useState(false);
   const [recommendations, setRecommendations] = useState<Array<{
     id: string;
     type: string;
@@ -295,32 +297,49 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
     return () => clearInterval(interval);
   }, [allItems.length]);
 
-  // Swipe handlers pour mobile
+  // Swipe handlers pour mobile - améliorés pour ne pas bloquer les clics
   const minSwipeDistance = 50;
 
   const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
+    // Vérifier si le touch commence sur un élément cliquable
+    const target = e.target as HTMLElement;
+    const isClickable = target.closest('a, button');
+
+    if (isClickable) {
+      // Ne pas interférer avec les clics sur les liens/boutons
+      setIsSwiping(false);
+      return;
+    }
+
+    setTouchEndX(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
+    setIsSwiping(true);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (!isSwiping) return;
+    setTouchEndX(e.targetTouches[0].clientX);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
+    if (!isSwiping || !touchStartX || !touchEndX) {
+      setIsSwiping(false);
+      return;
+    }
+
+    const distanceX = touchStartX - touchEndX;
+    const isLeftSwipe = distanceX > minSwipeDistance;
+    const isRightSwipe = distanceX < -minSwipeDistance;
 
     if (isLeftSwipe && allItems.length > 1) {
-      // Swipe vers la gauche = article suivant
       setActiveIndex((prev) => (prev + 1) % allItems.length);
     }
     if (isRightSwipe && allItems.length > 1) {
-      // Swipe vers la droite = article précédent
       setActiveIndex((prev) => (prev - 1 + allItems.length) % allItems.length);
     }
+
+    setIsSwiping(false);
   };
 
 
