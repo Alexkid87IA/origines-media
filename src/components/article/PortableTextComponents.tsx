@@ -621,7 +621,6 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               className="absolute inset-0 w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              loading="lazy"
             />
           </div>
         ) : null;
@@ -637,7 +636,6 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               className="absolute inset-0 w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              loading="lazy"
             />
           </div>
         ) : null;
