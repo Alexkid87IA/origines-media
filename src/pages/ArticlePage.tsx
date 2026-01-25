@@ -519,6 +519,8 @@ export default function ArticlePage() {
 
   // Sidebar sticky via JavaScript - comportement "sticky bottom"
   // La sidebar défile avec la page, puis se fixe quand son bas atteint le bas du viewport
+  const lastSidebarStateRef = useRef<string>('');
+
   useEffect(() => {
     const handleSidebarScroll = () => {
       if (!sidebarRef.current || !sidebarContainerRef.current) {
@@ -534,20 +536,28 @@ export default function ArticlePage() {
       // Position du bas de la sidebar si elle était en position relative (en haut du conteneur)
       const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
 
+      let newState: string;
+      let newStyle: any;
+
       if (sidebarBottomIfRelative > viewportHeight) {
         // État 1: Le bas de la sidebar n'a pas encore atteint le bas du viewport
-        // → Scroll normal avec la page
-        setSidebarStyle({ position: 'relative', top: 0 });
+        newState = 'relative';
+        newStyle = { position: 'relative', top: 0 };
       } else if (containerRect.bottom > sidebarHeight) {
         // État 2: Le bas de la sidebar a atteint le bas du viewport
-        // ET le conteneur n'est pas encore fini
-        // → Fixed avec le bas collé au bas du viewport
         const topPosition = viewportHeight - sidebarHeight;
-        setSidebarStyle({ position: 'fixed', top: topPosition, width: container.offsetWidth });
+        newState = `fixed-${Math.round(topPosition)}-${container.offsetWidth}`;
+        newStyle = { position: 'fixed', top: topPosition, width: container.offsetWidth };
       } else {
         // État 3: Le conteneur est presque fini
-        // → Absolute en bas du conteneur pour finir ensemble
-        setSidebarStyle({ position: 'absolute', bottom: 0, top: 'auto', width: '100%' });
+        newState = 'absolute';
+        newStyle = { position: 'absolute', bottom: 0, top: 'auto', width: '100%' };
+      }
+
+      // Évite les re-renders inutiles
+      if (lastSidebarStateRef.current !== newState) {
+        lastSidebarStateRef.current = newState;
+        setSidebarStyle(newStyle);
       }
     };
 
@@ -1552,11 +1562,12 @@ export default function ArticlePage() {
         return videoId ? (
           <div className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900">
             <iframe
-              src={`https://www.youtube.com/embed/${videoId}`}
+              src={`https://www.youtube.com/embed/${videoId}?rel=0`}
               title={value.title || 'Vidéo'}
               className="absolute inset-0 w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              loading="lazy"
             />
           </div>
         ) : null;
@@ -1571,6 +1582,7 @@ export default function ArticlePage() {
               className="absolute inset-0 w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              loading="lazy"
             />
           </div>
         ) : null;
@@ -2377,7 +2389,8 @@ export default function ArticlePage() {
                             <img
                               src={related.imageUrl || '/placeholder.svg'}
                               alt={related.titre || related.title || 'Article connexe'}
-                              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                              className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-100"
+                              loading="lazy"
                             />
                             <div className="flex-1 min-w-0">
                               <h5 className="text-gray-900 text-xs font-medium line-clamp-2 group-hover:text-violet-600 transition-colors">
@@ -2439,11 +2452,12 @@ export default function ArticlePage() {
                     to={`/article/${related.slug.current}`}
                     className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
                   >
-                    <div className="aspect-video overflow-hidden">
+                    <div className="aspect-video overflow-hidden bg-gray-100">
                       <img
                         src={related.imageUrl || '/placeholder.svg'}
                         alt={related.titre || related.title || 'Article connexe'}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-5">
