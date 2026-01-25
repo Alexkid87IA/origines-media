@@ -610,7 +610,7 @@ const UniversDetailPage: React.FC<{ universId: string }> = ({ universId }) => {
                     Tous les récits
                   </h2>
                   <p className="text-gray-500 text-sm">
-                    {otherProductions.length} articles sur {verticale.nom.toLowerCase()}
+                    {otherProductions.length} articles sur {verticale?.nom?.toLowerCase() || 'cet univers'}
                   </p>
                 </div>
 

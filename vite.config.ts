@@ -14,6 +14,8 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   build: {
+    // Désactiver le modulepreload automatique (évite les warnings console)
+    modulePreload: false,
     // Activer la minification avec esbuild (plus rapide)
     minify: 'esbuild',
     // Target navigateurs modernes pour des bundles plus petits

@@ -121,17 +121,14 @@
     <link rel="dns-prefetch" href="https://www.youtube.com" />
     <link rel="dns-prefetch" href="https://i.ytimg.com" />
 
-    <!-- Preload critical fonts -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" as="style" />
-
-    <!-- Preload hero image for LCP optimization -->
-    <link rel="preload" href="/og-image.png" as="image" type="image/png" fetchpriority="high" />
+    <!-- Fonts loaded via CSS, no preload needed -->
 
     <!-- Modulepreload for critical JS chunks (will be injected by Vite in production) -->
     <!-- These improve Time to Interactive -->
 
-    <!-- Google AdSense -->
+    <!-- Google AdSense - Désactivé temporairement (en attente de validation)
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1236201752351510" crossorigin="anonymous"></script>
+    -->
   </head>
   <body>
     <div id="root" class="js-loading"></div>

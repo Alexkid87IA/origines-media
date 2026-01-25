@@ -1,7 +1,9 @@
 // src/components/AdSense.tsx
 // Composant Google AdSense réutilisable
+// Nécessite le consentement cookies pour s'afficher
 
 import { useEffect, useRef, useState } from 'react';
+import { useCookieConsent } from './CookieConsent';
 
 declare global {
   interface Window {
@@ -27,10 +29,14 @@ const AdSense: React.FC<AdSenseProps> = ({
   const adRef = useRef<HTMLModElement>(null);
   const isAdLoaded = useRef(false);
   const [hasError, setHasError] = useState(false);
+  const { hasConsent } = useCookieConsent();
 
   useEffect(() => {
     // Protection SSR
     if (typeof window === 'undefined') return;
+
+    // Ne pas charger si pas de consentement cookies
+    if (!hasConsent) return;
 
     // Éviter de charger plusieurs fois la même pub
     if (isAdLoaded.current) return;
@@ -39,7 +45,7 @@ const AdSense: React.FC<AdSenseProps> = ({
       if (adRef.current) {
         // Vérifier que le script AdSense est chargé
         if (!window.adsbygoogle) {
-          console.warn('AdSense script not loaded yet');
+          // Pas d'erreur console - AdSense pas encore configuré
           setHasError(true);
           return;
         }
@@ -50,14 +56,14 @@ const AdSense: React.FC<AdSenseProps> = ({
           isAdLoaded.current = true;
         }
       }
-    } catch (error) {
-      console.error('AdSense error:', error);
+    } catch {
+      // Fail silently - pas d'erreur console
       setHasError(true);
     }
-  }, []);
+  }, [hasConsent]);
 
-  // Si erreur, ne rien afficher (fail silently)
-  if (hasError) {
+  // Si pas de consentement ou erreur, ne rien afficher
+  if (!hasConsent || hasError) {
     return null;
   }
 

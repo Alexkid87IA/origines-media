@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import SplashScreen from './components/SplashScreen';
+import CookieConsent from './components/CookieConsent';
 // import SkinWrapper from './components/SkinWrapper';
 
 // Composant pour scroller en haut à chaque changement de page
@@ -96,6 +97,7 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
+      <CookieConsent />
     </>
   );
 }
