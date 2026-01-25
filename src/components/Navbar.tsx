@@ -12,7 +12,7 @@ import {
   socialLinks,
   seriesShowcase,
   seriesFeatured,
-  academieItems,
+  boutiqueItems,
   recoItems,
   articlesItems,
   histoiresItems,
@@ -27,7 +27,7 @@ const mobileSubMenus: Record<string, { items: Array<{ name: string; href: string
   'Histoires': { items: histoiresItems, allLink: '/histoires', allLabel: 'Toutes les histoires' },
   'Séries': { items: seriesShowcase.map(s => ({ name: s.title, href: s.href, color: s.color })), allLink: '/series', allLabel: 'Toutes les séries' },
   'Recos': { items: recoItems, allLink: '/recommandations', allLabel: 'Toutes les recos' },
-  'Académie': { items: academieItems.map(a => ({ name: a.name, href: a.href, color: a.free ? '#10B981' : '#D97706' })), allLink: '/academie', allLabel: 'Toute l\'académie' },
+  'Boutique': { items: boutiqueItems.map(a => ({ name: a.name, href: a.href, color: a.free ? '#10B981' : '#D97706' })), allLink: '/boutique', allLabel: 'Toute la boutique' },
 };
 
 // ============ SERIES CARD COMPONENT ============
@@ -174,6 +174,10 @@ const Navbar: React.FC = () => {
                     src="/logo-origines.png"
                     alt="Origines Media"
                     className="h-11 w-auto"
+                    loading="eager"
+                    decoding="async"
+                    // @ts-expect-error fetchPriority is valid HTML attribute
+                    fetchpriority="high"
                     whileHover={{
                       scale: 1.05,
                       rotate: [0, -2, 2, 0],
@@ -687,6 +691,8 @@ const Navbar: React.FC = () => {
                                             src={content.image}
                                             alt={content.title}
                                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                            loading="lazy"
+                                            decoding="async"
                                           />
                                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                                           <span
@@ -712,9 +718,9 @@ const Navbar: React.FC = () => {
                       )}
                     </AnimatePresence>
 
-                    {/* Mega Menu ACADÉMIE - Style cohérent avec le site */}
+                    {/* Mega Menu BOUTIQUE - Style cohérent avec le site */}
                     <AnimatePresence>
-                      {item.label === 'Académie' && isDropdownOpen && (
+                      {item.label === 'Boutique' && isDropdownOpen && (
                         <motion.div
                           initial={{ opacity: 0, y: -4 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -736,7 +742,7 @@ const Navbar: React.FC = () => {
 
                                   {/* Guides pills */}
                                   <div className="flex flex-wrap gap-2">
-                                    {academieItems.map((item) => {
+                                    {boutiqueItems.map((item) => {
                                       const isHovered = hoveredUnivers === item.name;
                                       const baseColor = item.highlight ? '#F59E0B' : '#D97706';
                                       return (
@@ -807,13 +813,13 @@ const Navbar: React.FC = () => {
                                     </div>
 
                                     <button
-                                      onClick={() => handleNavigation('/academie')}
+                                      onClick={() => handleNavigation('/boutique')}
                                       className="group w-full p-4 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/30 hover:-translate-y-0.5"
                                     >
                                       <div className="flex items-center justify-between">
                                         <div className="text-left">
                                           <p className="text-xs font-medium text-white/70 mb-0.5">Découvrir</p>
-                                          <p className="text-base font-bold">Toute l'Académie</p>
+                                          <p className="text-base font-bold">Toute la Boutique</p>
                                         </div>
                                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
                                           <ArrowRight className="w-5 h-5" />

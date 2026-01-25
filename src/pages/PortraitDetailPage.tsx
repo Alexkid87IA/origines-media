@@ -30,6 +30,7 @@ import { sanityFetch } from '../lib/sanity';
 import { PORTRAIT_BY_SLUG_QUERY, SIMILAR_HISTOIRES_QUERY, ALL_HISTOIRES_SLUGS_QUERY } from '../lib/queries';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { typo } from '../lib/typography';
 import { getTagCategory, getCategoryColors } from '../lib/tagCategories';
 
@@ -668,6 +669,19 @@ function PortraitDetailPage() {
   if (!hasImage) {
     return (
       <div className="min-h-screen bg-gray-50">
+        <SEO
+          title={portrait.titre}
+          description={portrait.accroche || portrait.citation || `Découvrez l'histoire de ${portrait.titre} sur Origines Media.`}
+          image={portrait.imageUrl}
+          url={`/histoire/${portrait.slug?.current || slug}`}
+          type="profile"
+          jsonLd="person"
+          breadcrumbs={[
+            { name: 'Accueil', url: '/' },
+            { name: 'Histoires', url: '/histoires' },
+            { name: portrait.titre, url: `/histoire/${portrait.slug?.current || slug}` }
+          ]}
+        />
         <Navbar />
 
         <main>
@@ -865,6 +879,19 @@ function PortraitDetailPage() {
   // ═══════════════════════════════════════════════════════════════
   return (
     <div className="min-h-screen bg-white text-gray-900">
+      <SEO
+        title={portrait.titre}
+        description={portrait.accroche || portrait.citation || `Découvrez l'histoire de ${portrait.titre} sur Origines Media.`}
+        image={portrait.imageUrl}
+        url={`/histoire/${portrait.slug?.current || slug}`}
+        type="profile"
+        jsonLd="person"
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Histoires', url: '/histoires' },
+          { name: portrait.titre, url: `/histoire/${portrait.slug?.current || slug}` }
+        ]}
+      />
       <Navbar />
 
       <main>

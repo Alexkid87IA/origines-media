@@ -106,7 +106,7 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
 
   return (
     <section className="bg-white py-6 sm:py-8 lg:py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header avec introduction */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 lg:mb-8">
@@ -115,10 +115,10 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
               <div className="h-1 w-8 bg-violet-500 rounded-full" />
               <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Explorer</span>
             </div>
-            <h2 className="text-xl sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
               Nos séries
             </h2>
-            <p className="text-gray-600 text-sm leading-relaxed">
+            <p className="text-gray-600 text-base leading-relaxed">
               {typo("Plongez dans des récits en plusieurs épisodes, conçus pour explorer un thème en profondeur. Chaque série est une invitation à prendre le temps, à réfléchir et à grandir au fil des chapitres.")}
             </p>
           </div>

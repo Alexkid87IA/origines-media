@@ -11,6 +11,7 @@ import ActeEquipeCredits from '../components/formats/ActeEquipeCredits';
 import EngagementSection from '../components/EngagementSection';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 // Types pour les formats
 interface FormatStats {
@@ -402,6 +403,17 @@ function FormatPage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
+      <SEO
+        title={format.name}
+        description={format.description || format.tagline}
+        url={`/format/${slug}`}
+        image={format.imageHero}
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Formats', url: '/formats' },
+          { name: format.name, url: `/format/${slug}` }
+        ]}
+      />
       <Navbar />
 
       <main>

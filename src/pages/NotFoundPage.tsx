@@ -2,10 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Home } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 
 const NotFoundPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
+      <SEO
+        title="Page introuvable"
+        description="La page que vous recherchez n'existe pas ou a été déplacée."
+        noindex={true}
+      />
       <Navbar />
 
       <main className="min-h-screen flex items-center justify-center">

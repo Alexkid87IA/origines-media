@@ -42,16 +42,116 @@
     <meta name="theme-color" content="#0A0A0A" />
     <meta name="msapplication-TileColor" content="#0A0A0A" />
 
-    <!-- Preconnect to external domains -->
+    <!-- Critical CSS - Above the fold styles for faster FCP/LCP -->
+    <style>
+      /* Critical font loading */
+      @font-face {
+        font-family: 'Sora';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url(https://fonts.gstatic.com/s/sora/v12/xMQOuFFYT72X5wkB_18qmnndmSdSnk-DKQJRBg.woff2) format('woff2');
+      }
+      @font-face {
+        font-family: 'Sora';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url(https://fonts.gstatic.com/s/sora/v12/xMQOuFFYT72X5wkB_18qmnndmSe1m0-DKQJRBg.woff2) format('woff2');
+      }
+
+      /* Critical layout - prevents CLS */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; overflow-x: hidden; }
+      body {
+        font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #ffffff;
+        color: #0f172a;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Critical navbar skeleton */
+      #root { min-height: 100vh; }
+      .navbar-skeleton {
+        height: 72px;
+        background: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      /* Loading state */
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 50vh;
+      }
+      .loading-spinner::after {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #8B5CF6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Hide content until React hydrates */
+      .js-loading { opacity: 0; }
+      .js-loaded { opacity: 1; transition: opacity 0.3s; }
+    </style>
+
+    <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://cdn.sanity.io" />
+    <link rel="dns-prefetch" href="https://cdn.sanity.io" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
+    <!-- Preconnect for YouTube embeds -->
+    <link rel="preconnect" href="https://www.youtube.com" />
+    <link rel="preconnect" href="https://i.ytimg.com" />
+    <link rel="dns-prefetch" href="https://www.youtube.com" />
+    <link rel="dns-prefetch" href="https://i.ytimg.com" />
+
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" as="style" />
+
+    <!-- Preload hero image for LCP optimization -->
+    <link rel="preload" href="/og-image.png" as="image" type="image/png" fetchpriority="high" />
+
+    <!-- Modulepreload for critical JS chunks (will be injected by Vite in production) -->
+    <!-- These improve Time to Interactive -->
 
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1236201752351510" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" class="js-loading"></div>
+    <script>
+      // Mark body as loaded once React hydrates
+      window.addEventListener('DOMContentLoaded', function() {
+        requestAnimationFrame(function() {
+          document.getElementById('root').classList.remove('js-loading');
+          document.getElementById('root').classList.add('js-loaded');
+        });
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Fallback for no-JS users -->
+    <noscript>
+      <style>.js-loading { opacity: 1 !important; }</style>
+      <div style="padding: 20px; text-align: center;">
+        <p>JavaScript est nécessaire pour afficher ce site.</p>
+        <p>Veuillez activer JavaScript dans votre navigateur.</p>
+      </div>
+    </noscript>
   </body>
 </html>

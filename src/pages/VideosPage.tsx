@@ -10,6 +10,7 @@ import {
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Skeleton from '../components/ui/Skeleton';
+import SEO from '../components/SEO';
 import { sanityFetch } from '../lib/sanity';
 import { typo } from '../lib/typography';
 
@@ -221,6 +222,11 @@ const VideosPage: React.FC = () => {
 
   return (
     <>
+      <SEO
+        title="Vidéos"
+        description="Explorez notre collection de contenus vidéo inspirants. Documentaires, interviews et reportages sur des thématiques qui comptent."
+        url="/videos"
+      />
       <Navbar />
 
       <main className="min-h-screen bg-white pt-8 pb-16">

@@ -493,16 +493,16 @@ const ArticlesPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Promo Académie - 9:16 */}
+                {/* Promo Boutique - 9:16 */}
                 <Link
-                  to="/academie"
+                  to="/boutique"
                   className="group block rounded-2xl overflow-hidden relative"
                   style={{ aspectRatio: '9/16' }}
                 >
                   {/* Image de fond */}
                   <img
                     src="/academy/masterclass-storytelling.jpg"
-                    alt="Académie Origines"
+                    alt="Boutique Origines"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
 
@@ -519,7 +519,7 @@ const ArticlesPage: React.FC = () => {
                     {/* Content en bas */}
                     <div>
                       <h3 className="text-white text-lg font-bold leading-tight mb-2 drop-shadow-lg">
-                        L'Académie Origines
+                        L'Boutique Origines
                       </h3>
                       <p className="text-white/90 text-xs leading-relaxed mb-4 drop-shadow">
                         Formations et masterclasses pour développer vos compétences.

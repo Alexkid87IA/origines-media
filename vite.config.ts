@@ -14,12 +14,26 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   build: {
+    // Activer la minification avec esbuild (plus rapide)
+    minify: 'esbuild',
+    // Target navigateurs modernes pour des bundles plus petits
+    target: 'es2020',
+    // Activer le tree shaking agressif
+    treeshake: true,
     rollupOptions: {
       output: {
+        // Noms de fichiers optimisés avec hash court
+        chunkFileNames: 'assets/[name]-[hash:8].js',
+        entryFileNames: 'assets/[name]-[hash:8].js',
+        assetFileNames: 'assets/[name]-[hash:8].[ext]',
         manualChunks(id) {
-          // React et React Router - chunk séparé
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+          // React core - chunk principal (chargé en premier)
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
             return 'vendor-react';
+          }
+          // React Router - séparé (chargé après React)
+          if (id.includes('node_modules/react-router')) {
+            return 'vendor-router';
           }
           // React Query - chunk séparé
           if (id.includes('node_modules/@tanstack')) {
@@ -33,7 +47,7 @@ export default defineConfig({
           if (id.includes('node_modules/lucide-react')) {
             return 'vendor-icons';
           }
-          // Framer Motion - séparé
+          // Framer Motion - séparé (lazy load si possible)
           if (id.includes('node_modules/framer-motion')) {
             return 'vendor-motion';
           }
@@ -41,15 +55,37 @@ export default defineConfig({
           if (id.includes('node_modules/dompurify')) {
             return 'vendor-security';
           }
-          // Univers components - séparés
+          // Helmet - SEO
+          if (id.includes('node_modules/react-helmet-async')) {
+            return 'vendor-seo';
+          }
+          // Partnership components - lazy loaded
+          if (id.includes('src/components/partnership/')) {
+            return 'partnership-components';
+          }
+          // Univers components - lazy loaded
           if (id.includes('src/components/univers/')) {
             return 'univers-components';
+          }
+          // Format components - lazy loaded
+          if (id.includes('src/components/formats/')) {
+            return 'formats-components';
+          }
+          // Article components - lazy loaded
+          if (id.includes('src/components/article/')) {
+            return 'article-components';
           }
         },
       },
     },
     // Augmenter la limite pour éviter les warnings
     chunkSizeWarningLimit: 600,
+    // Activer le rapport de taille des bundles
+    reportCompressedSize: true,
+    // Source maps uniquement en mode non-production
+    sourcemap: false,
+    // Activer CSS code splitting
+    cssCodeSplit: true,
   },
   server: {
     proxy: {
@@ -60,6 +96,12 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/sanity-api/, ''),
         secure: true,
       },
+    },
+  },
+  // Préchargement des modules critiques
+  preview: {
+    headers: {
+      'Cache-Control': 'public, max-age=31536000',
     },
   },
 });

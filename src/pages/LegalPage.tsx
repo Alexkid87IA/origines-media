@@ -1,10 +1,16 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 const LegalPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
+      <SEO
+        title="Mentions légales"
+        description="Consultez les mentions légales d'Origines Media : éditeur, hébergeur, propriété intellectuelle et conditions d'utilisation."
+        url="/mentions-legales"
+      />
       <Navbar />
 
       <main className="min-h-screen">

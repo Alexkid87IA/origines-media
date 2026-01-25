@@ -25,27 +25,39 @@ const STATIC_PAGES = [
   { url: '/cgv', priority: 0.3, changefreq: 'yearly' },
 ]
 
-// Query pour récupérer tous les contenus dynamiques
+// Query pour récupérer tous les contenus dynamiques avec images
 const CONTENT_QUERY = `{
   "articles": *[_type == "production" && defined(slug.current)] | order(datePublication desc) [0...500] {
     "slug": slug.current,
-    "updatedAt": _updatedAt
+    "updatedAt": _updatedAt,
+    "titre": titre,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "typeArticle": typeArticle,
+    "videoUrl": videoUrl
   },
   "series": *[_type == "serie" && defined(slug.current)] | order(_createdAt desc) [0...100] {
     "slug": slug.current,
-    "updatedAt": _updatedAt
+    "updatedAt": _updatedAt,
+    "titre": titre,
+    "imageUrl": imageUrl
   },
   "histoires": *[_type == "portrait" && defined(slug.current)] | order(datePublication desc) [0...200] {
     "slug": slug.current,
-    "updatedAt": _updatedAt
+    "updatedAt": _updatedAt,
+    "titre": titre,
+    "imageUrl": imageUrl
   },
   "recommandations": *[_type == "recommandation" && defined(slug.current)] | order(_createdAt desc) [0...100] {
     "slug": slug.current,
-    "updatedAt": _updatedAt
+    "updatedAt": _updatedAt,
+    "titre": titre,
+    "imageUrl": imageUrl
   },
   "univers": *[_type == "verticale" && defined(slug.current)] [0...20] {
     "slug": slug.current,
-    "updatedAt": _updatedAt
+    "updatedAt": _updatedAt,
+    "nom": nom,
+    "imageUrl": image.asset->url
   }
 }`
 
@@ -69,33 +81,74 @@ function formatDate(date: string | undefined): string {
   return new Date(date).toISOString().split('T')[0]
 }
 
+// Helper pour échapper les caractères XML
+function escapeXml(str: string | undefined): string {
+  if (!str) return ''
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
+}
+
+// Helper pour générer la balise image
+function generateImageTag(imageUrl: string | undefined, title: string | undefined): string {
+  if (!imageUrl) return ''
+  return `
+    <image:image>
+      <image:loc>${escapeXml(imageUrl)}</image:loc>
+      <image:title>${escapeXml(title)}</image:title>
+    </image:image>`
+}
+
+// Helper pour générer la balise video
+function generateVideoTag(videoUrl: string | undefined, title: string | undefined, imageUrl: string | undefined): string {
+  if (!videoUrl) return ''
+  // Extraire l'ID YouTube si présent
+  const youtubeMatch = videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/)
+  const thumbnailUrl = youtubeMatch
+    ? `https://img.youtube.com/vi/${youtubeMatch[1]}/maxresdefault.jpg`
+    : imageUrl
+
+  return `
+    <video:video>
+      <video:thumbnail_loc>${escapeXml(thumbnailUrl)}</video:thumbnail_loc>
+      <video:title>${escapeXml(title)}</video:title>
+      <video:player_loc>${escapeXml(videoUrl)}</video:player_loc>
+    </video:video>`
+}
+
 function generateSitemapXML(content: any): string {
+  const today = new Date().toISOString().split('T')[0]
   let urls = ''
 
-  // Pages statiques
+  // Pages statiques avec lastmod
   for (const page of STATIC_PAGES) {
     urls += `
   <url>
     <loc>${BASE_URL}${page.url}</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>`
   }
 
-  // Articles dynamiques
+  // Articles dynamiques avec images
   if (content?.articles) {
     for (const article of content.articles) {
+      const isVideo = article.typeArticle === 'video' && article.videoUrl
       urls += `
   <url>
     <loc>${BASE_URL}/article/${article.slug}</loc>
     <lastmod>${formatDate(article.updatedAt)}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.8</priority>${generateImageTag(article.imageUrl, article.titre)}${isVideo ? generateVideoTag(article.videoUrl, article.titre, article.imageUrl) : ''}
   </url>`
     }
   }
 
-  // Séries
+  // Séries avec images
   if (content?.series) {
     for (const serie of content.series) {
       urls += `
@@ -103,12 +156,12 @@ function generateSitemapXML(content: any): string {
     <loc>${BASE_URL}/series/${serie.slug}</loc>
     <lastmod>${formatDate(serie.updatedAt)}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.7</priority>${generateImageTag(serie.imageUrl, serie.titre)}
   </url>`
     }
   }
 
-  // Histoires/Portraits
+  // Histoires/Portraits avec images
   if (content?.histoires) {
     for (const histoire of content.histoires) {
       urls += `
@@ -116,12 +169,12 @@ function generateSitemapXML(content: any): string {
     <loc>${BASE_URL}/histoire/${histoire.slug}</loc>
     <lastmod>${formatDate(histoire.updatedAt)}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.7</priority>${generateImageTag(histoire.imageUrl, histoire.titre)}
   </url>`
     }
   }
 
-  // Recommandations
+  // Recommandations avec images
   if (content?.recommandations) {
     for (const reco of content.recommandations) {
       urls += `
@@ -129,12 +182,12 @@ function generateSitemapXML(content: any): string {
     <loc>${BASE_URL}/recommandation/${reco.slug}</loc>
     <lastmod>${formatDate(reco.updatedAt)}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.6</priority>${generateImageTag(reco.imageUrl, reco.titre)}
   </url>`
     }
   }
 
-  // Univers
+  // Univers avec images
   if (content?.univers) {
     for (const uni of content.univers) {
       urls += `
@@ -142,7 +195,7 @@ function generateSitemapXML(content: any): string {
     <loc>${BASE_URL}/univers/${uni.slug}</loc>
     <lastmod>${formatDate(uni.updatedAt)}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.7</priority>${generateImageTag(uni.imageUrl, uni.nom)}
   </url>`
     }
   }
@@ -151,7 +204,8 @@ function generateSitemapXML(content: any): string {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 ${urls}
 </urlset>`
 }

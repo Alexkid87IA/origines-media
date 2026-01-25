@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Info, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { typo } from '../lib/typography';
 
 // Types
@@ -337,6 +338,11 @@ const SeriesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
+      <SEO
+        title="Séries"
+        description="Découvrez nos séries documentaires originales. Des récits immersifs qui explorent des thématiques profondes à travers plusieurs épisodes."
+        url="/series"
+      />
       <Navbar />
 
       <main>
@@ -354,7 +360,7 @@ const SeriesPage: React.FC = () => {
             >
               <img
                 src={featuredSerie.bannerUrl}
-                alt=""
+                alt={`Bannière de la série ${featuredSerie.titre || 'en vedette'}`}
                 className="w-full h-full object-cover"
               />
               {/* Gradients */}

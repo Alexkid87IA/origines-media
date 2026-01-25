@@ -157,6 +157,12 @@ const SeriesDetailPage: React.FC = () => {
         title={serie.titre}
         description={serie.description}
         url={`/series/${serie.slug}`}
+        image={serie.imageUrl}
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Séries', url: '/series' },
+          { name: serie.titre, url: `/series/${serie.slug}` }
+        ]}
       />
 
       <Navbar />
@@ -168,7 +174,7 @@ const SeriesDetailPage: React.FC = () => {
           <div className="absolute inset-0">
             <img
               src={serie.imageUrl}
-              alt=""
+              alt={`Image de couverture : ${serie.titre || 'Série'}`}
               className="w-full h-full object-cover"
             />
             {/* Overlays */}

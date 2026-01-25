@@ -1,32 +1,51 @@
 // src/components/RecommandationsSection.tsx
-// Section recommandations - Design épuré avec 5 recos + carte "Voir plus"
+// Section recommandations homepage - Design avec image featured + 3 recos
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, BookOpen, Film, Headphones, Youtube, Music,
-  Share2, Heart, Sparkles, Dumbbell, MapPin, Palette,
-  ShoppingBag, Loader2, Plus
+  Heart, Star, Loader2, MapPin, Palette, Globe,
+  ShoppingBag, AtSign
 } from 'lucide-react';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
 
-// Configuration des catégories avec couleurs (synchronisé avec Sanity)
-const categories = [
-  { id: 'livres', name: 'Livres', icon: BookOpen, color: '#EC4899', gradient: 'from-pink-500 to-rose-600' },
-  { id: 'films-series', name: 'Films & Séries', icon: Film, color: '#8B5CF6', gradient: 'from-violet-500 to-purple-600' },
-  { id: 'musique', name: 'Musique', icon: Music, color: '#6366F1', gradient: 'from-indigo-500 to-blue-600' },
-  { id: 'podcasts', name: 'Podcasts', icon: Headphones, color: '#14B8A6', gradient: 'from-teal-500 to-emerald-600' },
-  { id: 'reseaux-sociaux', name: 'Réseaux', icon: Share2, color: '#F59E0B', gradient: 'from-amber-500 to-orange-600' },
-  { id: 'youtube', name: 'YouTube', icon: Youtube, color: '#EF4444', gradient: 'from-red-500 to-rose-600' },
-  { id: 'activite', name: 'Activité', icon: Dumbbell, color: '#10B981', gradient: 'from-emerald-500 to-green-600' },
-  { id: 'destination', name: 'Voyage', icon: MapPin, color: '#0EA5E9', gradient: 'from-sky-500 to-blue-600' },
-  { id: 'culture', name: 'Culture', icon: Palette, color: '#A855F7', gradient: 'from-purple-500 to-fuchsia-600' },
-  { id: 'produit', name: 'Produits', icon: ShoppingBag, color: '#F59E0B', gradient: 'from-amber-500 to-yellow-600' },
-];
+// Types de recommandations (SYNCHRONISÉ avec RecommandationsPage)
+const recommendationTypes = {
+  'livres': { color: '#E11D48', lightBg: '#FFF1F2', label: 'Livre', icon: BookOpen },
+  'films-series': { color: '#7C3AED', lightBg: '#F5F3FF', label: 'Film & Série', icon: Film },
+  'musique': { color: '#2563EB', lightBg: '#EFF6FF', label: 'Musique', icon: Music },
+  'podcasts': { color: '#0D9488', lightBg: '#F0FDFA', label: 'Podcast', icon: Headphones },
+  'youtube': { color: '#DC2626', lightBg: '#FEF2F2', label: 'YouTube', icon: Youtube },
+  'reseaux-sociaux': { color: '#0891B2', lightBg: '#ECFEFF', label: 'Social', icon: AtSign },
+  'activite': { color: '#16A34A', lightBg: '#F0FDF4', label: 'Activité', icon: Globe },
+  'destination': { color: '#EA580C', lightBg: '#FFF7ED', label: 'Destination', icon: MapPin },
+  'culture': { color: '#9333EA', lightBg: '#FAF5FF', label: 'Culture', icon: Palette },
+  'produit': { color: '#CA8A04', lightBg: '#FEFCE8', label: 'Produit', icon: ShoppingBag },
+};
 
-// Query pour récupérer les recommandations depuis Sanity
+type RecommendationType = keyof typeof recommendationTypes;
+
+// Mapping des valeurs Sanity vers les clés internes
+const typeMapping: Record<string, RecommendationType> = {
+  'livres': 'livres',
+  'films-series': 'films-series',
+  'musique': 'musique',
+  'podcasts': 'podcasts',
+  'youtube': 'youtube',
+  'reseaux-sociaux': 'reseaux-sociaux',
+  'activite': 'activite',
+  'destination': 'destination',
+  'culture': 'culture',
+  'produit': 'produit',
+  'livre': 'livres',
+  'film': 'films-series',
+  'podcast': 'podcasts',
+};
+
+// Query pour récupérer les recommandations avec image
 const RECOS_FOR_HOME_QUERY = `
   *[_type == "recommendation"] | order(coupDeCoeur desc, datePublication desc) {
     _id,
@@ -36,12 +55,12 @@ const RECOS_FOR_HOME_QUERY = `
     note,
     coupDeCoeur,
     accroche,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
     "datePublication": coalesce(datePublication, _createdAt)
   }
 `;
 
-// Interface pour les données Sanity
 interface SanityReco {
   _id: string;
   titre: string;
@@ -50,175 +69,191 @@ interface SanityReco {
   note?: number;
   coupDeCoeur?: boolean;
   accroche?: string;
+  imageUrl?: string;
   slug: string;
   datePublication?: string;
 }
 
-// Composant carte de recommandation - Design compact
-interface RecoCardProps {
-  reco: SanityReco;
-  index: number;
-  category: typeof categories[0];
+interface Reco {
+  id: string;
+  titre: string;
+  type: RecommendationType;
+  auteur?: string;
+  note?: number;
+  coupDeCoeur?: boolean;
+  accroche?: string;
+  imageUrl?: string;
+  slug: string;
 }
 
-const RecoCard: React.FC<RecoCardProps> = ({ reco, index, category }) => {
+const transformReco = (reco: SanityReco): Reco => {
+  const mappedType = reco.type ? typeMapping[reco.type] : undefined;
+  return {
+    id: reco._id,
+    titre: reco.titre,
+    type: mappedType || 'livres',
+    auteur: reco.auteur,
+    note: reco.note,
+    coupDeCoeur: reco.coupDeCoeur,
+    accroche: reco.accroche,
+    imageUrl: reco.imageUrl,
+    slug: reco.slug,
+  };
+};
+
+// Images d'illustration par catégorie
+const categoryImages: Record<RecommendationType, string> = {
+  'livres': '/recos/reco_livre.png',
+  'films-series': '/recos/reco_film_serie.png',
+  'musique': '/recos/reco_musique.png',
+  'podcasts': '/recos/reco_podcast.png',
+  'youtube': '/recos/reco_youtube.png',
+  'reseaux-sociaux': '/recos/reco_social.png',
+  'activite': '/recos/reco_activite.png',
+  'destination': '/recos/reco_destination.png',
+  'culture': '/recos/reco_culture.png',
+  'produit': '/recos/reco_produit.png',
+};
+
+// Composant image d'illustration de catégorie (gauche)
+const CategoryIllustration: React.FC<{ type: RecommendationType }> = ({ type }) => {
+  const config = recommendationTypes[type];
+  const Icon = config.icon;
+  const imageUrl = categoryImages[type];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="h-full"
-    >
-      <Link
-        to={`/recommandation/${reco.slug}`}
-        className="group block h-full"
-      >
-        <div className="relative h-full bg-white rounded-xl overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl border border-gray-100">
-          {/* Header compact avec icône */}
-          <div
-            className="relative h-20 overflow-hidden flex items-center justify-center"
-            style={{
-              background: `linear-gradient(135deg, ${category.color}10 0%, ${category.color}20 100%)`
-            }}
-          >
-            {/* Cercles décoratifs subtils */}
-            <div
-              className="absolute -top-6 -right-6 w-16 h-16 rounded-full opacity-20"
-              style={{ backgroundColor: category.color }}
-            />
-
-            {/* Icône */}
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center bg-white shadow-sm transition-transform duration-300 group-hover:scale-110"
-              style={{ boxShadow: `0 4px 12px -4px ${category.color}40` }}
-            >
-              <category.icon
-                className="w-5 h-5"
-                style={{ color: category.color }}
-              />
-            </div>
-
-            {/* Coup de coeur badge */}
-            {reco.coupDeCoeur && (
-              <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center">
-                <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
-              </span>
-            )}
-          </div>
-
-          {/* Contenu */}
-          <div className="p-3">
-            {/* Badge catégorie */}
-            <span
-              className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white mb-2"
-              style={{ backgroundColor: category.color }}
-            >
-              {category.name}
-            </span>
-
-            {/* Titre */}
-            <h3 className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug group-hover:text-gray-700 transition-colors min-h-[2.5rem]">
-              {typo(reco.titre)}
-            </h3>
-
-            {/* Note si présente */}
-            {reco.note && (
-              <div className="flex items-center gap-1 mt-2">
-                <Sparkles className="w-3 h-3 text-amber-500" />
-                <span className="text-[10px] font-semibold text-amber-600">{reco.note}/5</span>
-              </div>
-            )}
-          </div>
-
-          {/* Barre de progression au hover */}
-          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-50">
-            <div
-              className="h-full w-0 group-hover:w-full transition-all duration-500"
-              style={{ backgroundColor: category.color }}
-            />
-          </div>
+    <div className="relative h-full rounded-2xl overflow-hidden shadow-sm ring-1 ring-gray-100">
+      {/* Image 4/5 */}
+      <div className="relative aspect-[4/5] overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={`Illustration ${config.label}`}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback si l'image n'existe pas
+            e.currentTarget.style.display = 'none';
+            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+          }}
+        />
+        {/* Fallback coloré si pas d'image */}
+        <div
+          className="hidden w-full h-full absolute inset-0 flex items-center justify-center"
+          style={{ backgroundColor: config.lightBg }}
+        >
+          <Icon className="w-20 h-20 opacity-30" style={{ color: config.color }} />
         </div>
-      </Link>
-    </motion.div>
+
+        {/* Overlay gradient subtil */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        {/* Badge catégorie en bas */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <span
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold text-white"
+            style={{ backgroundColor: config.color }}
+          >
+            <Icon className="w-4 h-4" />
+            {config.label}
+          </span>
+          <p className="text-white/80 text-sm mt-2">
+            Nos coups de cœur
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
-// Carte "Voir plus"
-interface SeeMoreCardProps {
-  categoryColor: string;
-  totalCount: number;
-}
+// Composant mini carte (pour la liste à droite)
+const MiniRecoCard: React.FC<{ reco: Reco; index: number }> = ({ reco, index }) => {
+  const config = recommendationTypes[reco.type];
+  const Icon = config.icon;
+  const hasImage = reco.imageUrl && !reco.imageUrl.includes('placeholder');
 
-const SeeMoreCard: React.FC<SeeMoreCardProps> = ({ categoryColor, totalCount }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.25 }}
-      className="h-full"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <Link
-        to="/recommandations"
-        className="group block h-full"
-      >
-        <div
-          className="relative h-full rounded-xl overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl flex flex-col items-center justify-center min-h-[180px] border-2 border-dashed"
-          style={{
-            borderColor: `${categoryColor}40`,
-            background: `linear-gradient(135deg, ${categoryColor}05 0%, ${categoryColor}10 100%)`
-          }}
-        >
-          {/* Icône Plus */}
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110"
-            style={{
-              backgroundColor: `${categoryColor}15`,
-              color: categoryColor
-            }}
-          >
-            <Plus className="w-6 h-6" />
-          </div>
+      <Link to={`/recommandation/${reco.slug}`} className="group flex gap-3 p-3 rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+        {/* Image miniature carrée */}
+        <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden">
+          {hasImage ? (
+            <img
+              src={reco.imageUrl}
+              alt={reco.titre}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            />
+          ) : (
+            <div
+              className="w-full h-full flex items-center justify-center"
+              style={{ backgroundColor: config.lightBg }}
+            >
+              <Icon className="w-6 h-6 opacity-50" style={{ color: config.color }} />
+            </div>
+          )}
 
-          {/* Texte */}
-          <span
-            className="text-sm font-bold mb-1"
-            style={{ color: categoryColor }}
-          >
-            Voir plus
-          </span>
-          <span className="text-xs text-gray-400">
-            {totalCount}+ recos
-          </span>
-
-          {/* Flèche animée */}
-          <ArrowRight
-            className="w-4 h-4 mt-2 transition-transform duration-300 group-hover:translate-x-1"
-            style={{ color: categoryColor }}
-          />
+          {/* Coup de coeur mini */}
+          {reco.coupDeCoeur && (
+            <div className="absolute top-1 right-1">
+              <Heart className="w-3 h-3 fill-rose-500 text-rose-500 drop-shadow" />
+            </div>
+          )}
         </div>
+
+        {/* Contenu */}
+        <div className="flex-1 min-w-0 flex flex-col justify-center">
+          {/* Badge type */}
+          <span
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider text-white self-start mb-1.5"
+            style={{ backgroundColor: config.color }}
+          >
+            <Icon className="w-2.5 h-2.5" />
+            {config.label}
+          </span>
+
+          {/* Titre */}
+          <h4 className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug group-hover:text-gray-700 transition-colors">
+            {typo(reco.titre)}
+          </h4>
+
+          {/* Note ou auteur */}
+          <div className="flex items-center gap-2 mt-1">
+            {reco.note && (
+              <div className="flex items-center gap-0.5">
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                <span className="text-[10px] font-semibold text-amber-600">{reco.note}/5</span>
+              </div>
+            )}
+            {reco.auteur && (
+              <span className="text-[10px] text-gray-500 truncate">{reco.auteur}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Flèche */}
+        <ArrowRight className="w-4 h-4 text-gray-300 self-center flex-shrink-0 transition-all duration-300 group-hover:text-gray-500 group-hover:translate-x-1" />
       </Link>
     </motion.div>
   );
 };
 
 export default function RecommandationsSection() {
-  const [recommendations, setRecommendations] = useState<SanityReco[]>([]);
+  const [recommendations, setRecommendations] = useState<Reco[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeType, setActiveType] = useState<RecommendationType | null>(null);
   const [isAutoRotating, setIsAutoRotating] = useState(true);
 
-  // Fetch des données Sanity
   useEffect(() => {
     const fetchRecos = async () => {
       try {
         const data = await sanityFetch(RECOS_FOR_HOME_QUERY) as SanityReco[];
-        setRecommendations(data || []);
+        const transformed = (data || []).map(transformReco);
+        setRecommendations(transformed);
 
-        // Définir la première catégorie qui a des recos
-        if (data && data.length > 0) {
-          const firstType = data[0].type;
-          setActiveCategory(firstType);
+        if (transformed.length > 0) {
+          setActiveType(transformed[0].type);
         }
       } catch (error) {
         console.error('Erreur fetch recommandations:', error);
@@ -230,68 +265,63 @@ export default function RecommandationsSection() {
     fetchRecos();
   }, []);
 
-  // Catégories qui ont des recommandations
-  const availableCategories = categories.filter(cat =>
-    recommendations.some(r => r.type === cat.id)
+  const availableTypes = (Object.keys(recommendationTypes) as RecommendationType[]).filter(type =>
+    recommendations.some(r => r.type === type)
   );
 
-  // Auto-rotation des catégories toutes les 6 secondes
   useEffect(() => {
-    if (!isAutoRotating || availableCategories.length === 0) return;
+    if (!isAutoRotating || availableTypes.length === 0) return;
 
     const interval = setInterval(() => {
-      setActiveCategory(current => {
-        const currentIndex = availableCategories.findIndex(c => c.id === current);
-        const nextIndex = (currentIndex + 1) % availableCategories.length;
-        return availableCategories[nextIndex].id;
+      setActiveType(current => {
+        const currentIndex = availableTypes.findIndex(t => t === current);
+        const nextIndex = (currentIndex + 1) % availableTypes.length;
+        return availableTypes[nextIndex];
       });
     }, 6000);
 
     return () => clearInterval(interval);
-  }, [isAutoRotating, availableCategories]);
+  }, [isAutoRotating, availableTypes]);
 
-  // Filtrer les recommandations par catégorie active
-  const filteredRecos = recommendations.filter(r => r.type === activeCategory);
-  const activeConfig = categories.find(c => c.id === activeCategory) || categories[0];
+  const filteredRecos = recommendations.filter(r => r.type === activeType);
+  const activeConfig = activeType ? recommendationTypes[activeType] : recommendationTypes['livres'];
+  const sideRecos = filteredRecos.slice(0, 6); // 6 recos à droite
 
-  // Quand l'utilisateur clique, on arrête l'auto-rotation
-  const handleCategoryClick = (categoryId: string) => {
+  const handleTypeClick = (type: RecommendationType) => {
     setIsAutoRotating(false);
-    setActiveCategory(categoryId);
+    setActiveType(type);
   };
 
-  // État de chargement
   if (loading) {
     return (
       <section className="py-10 sm:py-12 lg:py-16 bg-gray-50/50">
-        <div className="max-w-4xl mx-auto px-4 flex justify-center">
+        <div className="max-w-7xl mx-auto px-4 flex justify-center">
           <Loader2 className="w-6 h-6 text-rose-500 animate-spin" />
         </div>
       </section>
     );
   }
 
-  // Pas de recommandations
   if (recommendations.length === 0) {
     return null;
   }
 
   return (
     <section className="py-10 sm:py-12 lg:py-16 bg-gray-50/50 overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header - même style que les autres sections */}
+        {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
           <div className="max-w-xl">
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-1 w-8 bg-rose-500 rounded-full" />
+              <div className="h-1 w-8 rounded-full" style={{ backgroundColor: activeConfig.color }} />
               <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Découvrir</span>
             </div>
-            <h2 className="text-xl sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
               Nos recommandations
             </h2>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              {typo("Livres, films, podcasts, chaînes YouTube, destinations... Découvrez les coups de cœur soigneusement sélectionnés par notre équipe pour enrichir votre quotidien.")}
+            <p className="text-gray-600 text-base leading-relaxed">
+              {typo("Livres, films, podcasts, chaînes YouTube... Les coups de cœur sélectionnés par notre équipe.")}
             </p>
           </div>
 
@@ -304,89 +334,87 @@ export default function RecommandationsSection() {
           </Link>
         </div>
 
-        {/* Catégories - Pills compacts sans chiffre */}
-        {availableCategories.length > 1 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {availableCategories.map((category) => {
-              const isActive = activeCategory === category.id;
-              const Icon = category.icon;
+        {/* Catégories avec animation layoutId */}
+        {availableTypes.length > 1 && (
+          <div className="flex flex-wrap gap-1.5 mb-6">
+            {availableTypes.map((type) => {
+              const isActive = activeType === type;
+              const config = recommendationTypes[type];
+              const count = recommendations.filter(r => r.type === type).length;
 
               return (
                 <button
-                  key={category.id}
-                  onClick={() => handleCategoryClick(category.id)}
-                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium text-xs transition-all duration-300 ${
-                    isActive
-                      ? 'text-white shadow-md'
-                      : 'bg-white text-gray-500 hover:text-gray-700 shadow-sm hover:shadow-md'
-                  }`}
-                  style={{
-                    backgroundColor: isActive ? category.color : undefined,
-                    boxShadow: isActive ? `0 4px 12px -2px ${category.color}50` : undefined,
-                  }}
+                  key={type}
+                  onClick={() => handleTypeClick(type)}
+                  className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium text-xs transition-all duration-300"
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{category.name}</span>
-
-                  {/* Indicateur actif animé */}
                   {isActive && (
                     <motion.div
-                      layoutId="recoActiveIndicator"
-                      className="absolute inset-0 rounded-full -z-10"
-                      style={{ backgroundColor: category.color }}
-                      transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+                      layoutId="recosTabIndicator"
+                      className="absolute inset-0 rounded-full"
+                      style={{ backgroundColor: config.color }}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
+                  <span
+                    className="relative z-10 transition-colors duration-300"
+                    style={{ color: isActive ? 'white' : '#6B7280' }}
+                  >
+                    {config.label}
+                  </span>
+                  <span
+                    className="relative z-10 text-[10px] px-1.5 py-0.5 rounded-full transition-all duration-300"
+                    style={{
+                      backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : `${config.color}15`,
+                      color: isActive ? 'white' : config.color,
+                    }}
+                  >
+                    {count}
+                  </span>
                 </button>
               );
             })}
           </div>
         )}
 
-        {/* Grille : 5 recommandations + carte "Voir plus" */}
+        {/* Layout: Image illustration + 5 mini cards */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeCategory}
+            key={activeType}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6"
           >
-            {/* 5 premières recommandations */}
-            {filteredRecos.slice(0, 5).map((reco, index) => (
-              <div
-                key={reco._id}
-                className={`${index >= 4 ? 'hidden sm:block' : ''} ${index >= 2 && index < 4 ? 'hidden sm:block' : ''}`}
-              >
-                <RecoCard reco={reco} index={index} category={activeConfig} />
+            {/* Colonne gauche: Image d'illustration de la catégorie */}
+            {activeType && (
+              <div className="lg:row-span-1">
+                <CategoryIllustration type={activeType} />
               </div>
-            ))}
+            )}
 
-            {/* Carte "Voir plus" */}
-            <div className={filteredRecos.length <= 2 ? '' : 'hidden sm:block'}>
-              <SeeMoreCard
-                categoryColor={activeConfig.color}
-                totalCount={recommendations.length}
-              />
+            {/* Colonne droite: 3 mini cards empilées */}
+            <div className="flex flex-col gap-3">
+              {sideRecos.map((reco, index) => (
+                <MiniRecoCard key={reco.id} reco={reco} index={index} />
+              ))}
+
+              {/* Bouton voir plus */}
+              <Link
+                to="/recommandations"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all group"
+                style={{
+                  backgroundColor: `${activeConfig.color}10`,
+                  color: activeConfig.color
+                }}
+              >
+                <span>Voir toutes les recommandations</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Mobile: Afficher 2 recos + voir plus */}
-        <div className="sm:hidden mt-4">
-          <Link
-            to="/recommandations"
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all"
-            style={{
-              backgroundColor: `${activeConfig.color}10`,
-              color: activeConfig.color
-            }}
-          >
-            <span>Voir toutes les recommandations</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
       </div>
     </section>
   );

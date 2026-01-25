@@ -72,7 +72,7 @@ const navigationColumns = [
     links: [
       { label: 'Tous les univers', href: '/univers' },
       { label: 'Recommandations', href: '/recommandations' },
-      { label: 'Académie', href: '/academie' },
+      { label: 'Boutique', href: '/boutique' },
     ]
   },
   {
@@ -121,22 +121,22 @@ const Footer: React.FC = () => {
 
       {/* Newsletter Section - Top */}
       <div className="border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-6 lg:px-8 py-12">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-8">
             {/* Left - Text */}
-            <div className="lg:max-w-md">
-              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
+            <div className="lg:max-w-md text-center sm:text-left">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">
                 Restez inspirés
               </h3>
-              <p className="text-gray-500 text-sm">
-                Recevez nos meilleurs récits et recommandations directement dans votre boîte mail.
+              <p className="text-gray-500 text-xs sm:text-sm">
+                Recevez nos meilleurs récits directement dans votre boîte mail.
               </p>
             </div>
 
             {/* Right - Form */}
             <div className="flex-1 lg:max-w-md">
               {!isSubmitted ? (
-                <form onSubmit={handleNewsletterSubmit} className="flex gap-3" aria-label="Inscription à la newsletter">
+                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2 sm:gap-3" aria-label="Inscription à la newsletter">
                   <input
                     type="email"
                     value={email}
@@ -144,13 +144,13 @@ const Footer: React.FC = () => {
                     placeholder="votre@email.com"
                     required
                     aria-label="Adresse email pour la newsletter"
-                    className="flex-1 px-5 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all text-sm"
+                    className="flex-1 px-4 py-2.5 sm:px-5 sm:py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all text-sm"
                   />
                   <button
                     type="submit"
                     disabled={!email.trim() || isSubmitting}
                     aria-label={isSubmitting ? "Envoi en cours..." : "S'inscrire à la newsletter"}
-                    className="px-6 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center gap-2 bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 text-white shadow-md hover:shadow-lg"
+                    className="px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 text-white shadow-md hover:shadow-lg"
                   >
                     {isSubmitting ? (
                       'Envoi...'
@@ -163,11 +163,11 @@ const Footer: React.FC = () => {
                   </button>
                 </form>
               ) : (
-                <div className="flex items-center gap-3 px-5 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
-                    <Check className="w-4 h-4 text-white" />
+                <div className="flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <p className="text-emerald-700 text-sm">
+                  <p className="text-emerald-700 text-xs sm:text-sm">
                     Merci ! Vous recevrez bientôt nos récits inspirants.
                   </p>
                 </div>
@@ -178,11 +178,41 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Main Footer Content */}
-      <div className="max-w-5xl mx-auto px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
 
-          {/* Left - Brand & Social */}
-          <div className="lg:col-span-4">
+        {/* Mobile: Logo + Social centré en haut */}
+        <div className="sm:hidden flex flex-col items-center mb-8">
+          <Link to="/" className="inline-block mb-4">
+            <img
+              src="/logo-origines.png"
+              alt="Origines Media"
+              className="h-10 w-auto"
+            />
+          </Link>
+
+          {/* Social Links - Mobile */}
+          <div className="flex items-center gap-0.5">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg"
+                aria-label={social.label}
+              >
+                <span style={{ color: social.color }}>
+                  <social.icon />
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8">
+
+          {/* Left - Brand & Social (Desktop only) */}
+          <div className="hidden sm:block lg:col-span-4">
             <Link to="/" className="inline-block mb-6">
               <img
                 src="/logo-origines.png"
@@ -191,11 +221,11 @@ const Footer: React.FC = () => {
               />
             </Link>
 
-            <p className="text-gray-500 mb-8 max-w-xs leading-relaxed">
+            <p className="text-gray-500 mb-8 max-w-xs leading-relaxed text-sm">
               Des récits qui inspirent, transforment et éclairent. Rejoignez notre communauté de lecteurs passionnés.
             </p>
 
-            {/* Social Links - couleurs de marque par défaut */}
+            {/* Social Links - Desktop */}
             <div className="flex items-center gap-1">
               {socialLinks.map((social) => (
                 <a
@@ -224,7 +254,48 @@ const Footer: React.FC = () => {
 
           {/* Right - Navigation Columns */}
           <div className="lg:col-span-8">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+            {/* Mobile: Grille 2x2 compacte avec liens horizontaux */}
+            <div className="sm:hidden grid grid-cols-2 gap-6">
+              {navigationColumns.map((column) => (
+                <div key={column.title}>
+                  <Link
+                    to={column.titleHref}
+                    className="text-xs font-bold mb-3 uppercase tracking-wider flex items-center gap-1.5 hover:opacity-70 transition-opacity"
+                  >
+                    <span
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: column.color }}
+                    />
+                    <span className="text-gray-900">{column.title}</span>
+                  </Link>
+                  <ul className="space-y-2">
+                    {column.links.map((link) => (
+                      <li key={link.href}>
+                        {'download' in link && link.download ? (
+                          <a
+                            href={link.href}
+                            download="Kit-Media-Origines-2024.pdf"
+                            className="text-xs text-gray-500 hover:text-gray-900 transition-colors inline-block"
+                          >
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link
+                            to={link.href}
+                            className="text-xs text-gray-500 hover:text-gray-900 transition-colors inline-block"
+                          >
+                            {link.label}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop/Tablet: Grille 4 colonnes */}
+            <div className="hidden sm:grid sm:grid-cols-4 gap-8">
               {navigationColumns.map((column) => (
                 <div key={column.title}>
                   <Link
@@ -268,8 +339,33 @@ const Footer: React.FC = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-200">
-        <div className="max-w-5xl mx-auto px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          {/* Mobile: Layout vertical compact */}
+          <div className="sm:hidden flex flex-col items-center gap-3 text-center">
+            {/* Legal Links - En premier sur mobile */}
+            <div className="flex items-center gap-4 text-xs">
+              <Link to="/mentions-legales" className="text-gray-400 hover:text-gray-600 transition-colors">
+                Mentions légales
+              </Link>
+              <Link to="/cgu" className="text-gray-400 hover:text-gray-600 transition-colors">
+                CGU
+              </Link>
+              <Link to="/cgv" className="text-gray-400 hover:text-gray-600 transition-colors">
+                CGV
+              </Link>
+            </div>
+            {/* Copyright */}
+            <p className="text-xs text-gray-400 flex items-center gap-1.5">
+              <span>© {currentYear} Origines Media</span>
+              <span className="text-gray-300">•</span>
+              <span className="flex items-center gap-1">
+                <Heart className="w-3 h-3 text-rose-400 fill-rose-400" /> France
+              </span>
+            </p>
+          </div>
+
+          {/* Desktop: Layout horizontal */}
+          <div className="hidden sm:flex flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <p className="text-sm text-gray-400 flex items-center gap-2">
               <span>© {currentYear} Origines Media</span>

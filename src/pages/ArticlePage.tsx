@@ -1745,7 +1745,7 @@ export default function ArticlePage() {
       person: ({ value }: any) => (
         <div className="my-8 flex items-center gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-200">
           {value.image && (
-            <img src={value.image.asset?.url || value.image} alt="" className="w-16 h-16 rounded-full object-cover" />
+            <img src={value.image.asset?.url || value.image} alt={`Portrait de ${value.name || 'l\'auteur'}`} className="w-16 h-16 rounded-full object-cover" />
           )}
           <div>
             <p className="font-semibold text-gray-900">{value.name}</p>
@@ -1879,6 +1879,13 @@ export default function ArticlePage() {
         author={authorName}
         publishedTime={date}
         section={verticale?.nom}
+        jsonLd="article"
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Bibliothèque', url: '/bibliotheque' },
+          ...(verticale ? [{ name: verticale.nom, url: `/univers/${verticale.slug?.current || verticale.nom.toLowerCase()}` }] : []),
+          { name: title, url: `/article/${slug}` }
+        ]}
       />
 
       {/* Progress Bar */}
@@ -2232,7 +2239,7 @@ export default function ArticlePage() {
                       <div className="relative aspect-video">
                         <img
                           src={imageUrl || '/placeholder.svg'}
-                          alt=""
+                          alt={`Miniature vidéo : ${article?.titre || 'Vidéo'}`}
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -2337,7 +2344,7 @@ export default function ArticlePage() {
                             <div className="relative flex-shrink-0">
                               <img
                                 src={pop.imageUrl || '/placeholder.svg'}
-                                alt=""
+                                alt={pop.title || 'Article populaire'}
                                 className="w-12 h-12 rounded-lg object-cover"
                               />
                               <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
@@ -2369,7 +2376,7 @@ export default function ArticlePage() {
                           >
                             <img
                               src={related.imageUrl || '/placeholder.svg'}
-                              alt=""
+                              alt={related.titre || related.title || 'Article connexe'}
                               className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                             />
                             <div className="flex-1 min-w-0">
@@ -2435,7 +2442,7 @@ export default function ArticlePage() {
                     <div className="aspect-video overflow-hidden">
                       <img
                         src={related.imageUrl || '/placeholder.svg'}
-                        alt=""
+                        alt={related.titre || related.title || 'Article connexe'}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>

@@ -204,17 +204,18 @@ export const VERTICALE_DETAIL_QUERY = `
 // EXPLORER (BIBLIOTHÈQUE)
 // ========================================
 
-// Articles pour Explorer
+// Articles pour Explorer (exclut les vidéos et histoires qui ont leurs propres catégories)
 export const EXPLORER_ARTICLES_QUERY = `
-  *[_type == "production"] | order(datePublication desc) {
+  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"])] | order(datePublication desc, _createdAt desc) {
     _id,
     titre,
     description,
     typeArticle,
     "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
-    datePublication,
+    "datePublication": coalesce(datePublication, _createdAt),
     tempsLecture,
+    "vues": coalesce(stats.views, views, vues, 0),
     "verticale": verticale->{
       _id,
       nom,
@@ -224,18 +225,19 @@ export const EXPLORER_ARTICLES_QUERY = `
   }
 `
 
-// Vidéos pour Explorer
+// Vidéos pour Explorer (productions avec typeArticle == "video")
 export const EXPLORER_VIDEOS_QUERY = `
-  *[_type == "video"] | order(datePublication desc, _createdAt desc) {
+  *[_type == "production" && typeArticle == "video"] | order(datePublication desc, _createdAt desc) {
     _id,
     titre,
     description,
-    "imageUrl": coalesce(thumbnail.asset->url, thumbnailUrl),
+    "imageUrl": coalesce(image.asset->url, imageUrl),
     videoUrl,
     duree,
-    vues,
+    tempsLecture,
     "slug": slug.current,
     "datePublication": coalesce(datePublication, _createdAt),
+    "vues": coalesce(stats.views, views, vues, 0),
     "verticale": verticale->{
       _id,
       nom,
@@ -274,9 +276,11 @@ export const EXPLORER_RECOS_QUERY = `
     note,
     coupDeCoeur,
     accroche,
+    "description": accroche,
     "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
-    "datePublication": coalesce(datePublication, _createdAt)
+    "datePublication": coalesce(datePublication, _createdAt),
+    "vues": coalesce(stats.views, views, vues, 0)
   }
 `
 
@@ -336,9 +340,11 @@ export const EXPLORER_HISTOIRES_QUERY = `
     titre,
     categorie,
     accroche,
+    "description": accroche,
     "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
     "datePublication": coalesce(datePublication, _createdAt),
+    "vues": coalesce(stats.views, views, vues, 0),
     "verticale": verticale->{
       _id,
       nom,

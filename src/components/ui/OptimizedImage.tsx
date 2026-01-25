@@ -1,5 +1,6 @@
 // src/components/ui/OptimizedImage.tsx
 import React, { useState, useEffect, useRef } from 'react';
+import { urlFor, generateSrcSet, getBlurPlaceholder } from '../../lib/sanity';
 
 export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -8,49 +9,32 @@ export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageEl
   height?: number;
   aspectRatio?: 'square' | 'video' | 'portrait' | 'landscape' | 'auto';
   priority?: boolean;
+  fetchPriority?: 'high' | 'low' | 'auto';
   placeholder?: 'blur' | 'empty';
   onLoadComplete?: () => void;
   className?: string;
   imgClassName?: string;
 }
 
-// Helper to add Cloudinary transformations
-const getCloudinaryUrl = (src: string, width?: number, quality = 80): string => {
-  if (!src.includes('cloudinary.com')) return src;
-
-  // Parse Cloudinary URL and add transformations
-  const transformations = [];
-  if (width) transformations.push(`w_${width}`);
-  transformations.push(`q_${quality}`);
-  transformations.push('f_auto'); // Auto format (webp, avif)
-
-  const transformString = transformations.join(',');
-
-  // Insert transformations into URL
-  return src.replace('/upload/', `/upload/${transformString}/`);
-};
-
-// Helper to add Sanity image transformations
-const getSanityUrl = (src: string, width?: number, quality = 80): string => {
-  if (!src.includes('cdn.sanity.io')) return src;
-
-  const params = new URLSearchParams();
-  if (width) params.set('w', String(width));
-  params.set('q', String(quality));
-  params.set('auto', 'format');
-
-  const separator = src.includes('?') ? '&' : '?';
-  return `${src}${separator}${params.toString()}`;
-};
-
-// Get optimized URL
+// Get optimized URL - utilise les helpers Sanity
 const getOptimizedUrl = (src: string, width?: number): string => {
-  if (src.includes('cloudinary.com')) {
-    return getCloudinaryUrl(src, width);
-  }
+  if (!src) return '';
+
+  // Utiliser urlFor pour les images Sanity
   if (src.includes('cdn.sanity.io')) {
-    return getSanityUrl(src, width);
+    return urlFor(src, { width, format: 'auto' });
   }
+
+  // Cloudinary transformations
+  if (src.includes('cloudinary.com')) {
+    const transformations = [];
+    if (width) transformations.push(`w_${width}`);
+    transformations.push('q_80');
+    transformations.push('f_auto');
+    const transformString = transformations.join(',');
+    return src.replace('/upload/', `/upload/${transformString}/`);
+  }
+
   return src;
 };
 
@@ -61,6 +45,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   height,
   aspectRatio = 'auto',
   priority = false,
+  fetchPriority = 'auto',
   placeholder = 'empty',
   onLoadComplete,
   className = '',
@@ -81,9 +66,15 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   };
 
   // Generate srcset for responsive images
-  const generateSrcSet = (): string | undefined => {
+  const getSrcSet = (): string | undefined => {
     if (!src || src.startsWith('data:')) return undefined;
 
+    // Utiliser generateSrcSet pour images Sanity
+    if (src.includes('cdn.sanity.io')) {
+      return generateSrcSet(src);
+    }
+
+    // Fallback pour autres sources
     const widths = [320, 640, 768, 1024, 1280, 1536];
     return widths
       .map(w => `${getOptimizedUrl(src, w)} ${w}w`)
@@ -145,7 +136,13 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       {/* Placeholder blur effect */}
       {placeholder === 'blur' && !isLoaded && (
         <div
-          className="absolute inset-0 bg-gradient-to-br from-violet-900/20 to-pink-900/20 animate-pulse"
+          className="absolute inset-0 bg-cover bg-center animate-pulse"
+          style={{
+            backgroundImage: src.includes('cdn.sanity.io')
+              ? `url(${getBlurPlaceholder(src)})`
+              : undefined,
+            backgroundColor: !src.includes('cdn.sanity.io') ? 'rgba(139, 92, 246, 0.1)' : undefined,
+          }}
           aria-hidden="true"
         />
       )}
@@ -154,13 +151,15 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       <img
         ref={imgRef}
         src={getOptimizedUrl(src, width)}
-        srcSet={generateSrcSet()}
+        srcSet={getSrcSet()}
         sizes={generateSizes()}
         alt={alt}
         width={width}
         height={height}
         loading={priority ? 'eager' : 'lazy'}
         decoding={priority ? 'sync' : 'async'}
+        // @ts-expect-error fetchPriority is a valid HTML attribute but not yet in React types
+        fetchpriority={priority ? 'high' : fetchPriority}
         onLoad={handleLoad}
         onError={handleError}
         className={`

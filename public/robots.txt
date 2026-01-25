@@ -1,16 +1,81 @@
 # Robots.txt pour Origines Media
 # https://www.origines.media
 
+# Règles générales pour tous les robots
 User-agent: *
 Allow: /
 
-# Bloquer les pages d'admin et API
+# Pages de contenu à indexer en priorité
+Allow: /article/
+Allow: /video/
+Allow: /histoire/
+Allow: /series/
+Allow: /univers/
+Allow: /recommandation/
+
+# Pages statiques importantes
+Allow: /articles
+Allow: /videos
+Allow: /histoires
+Allow: /bibliotheque
+Allow: /recommandations
+Allow: /a-propos
+Allow: /contact
+
+# Bloquer les pages d'administration et API
 Disallow: /api/
 Disallow: /_next/
+Disallow: /admin/
+Disallow: /studio/
+
+# Bloquer les fichiers techniques
 Disallow: /*.json$
+Disallow: /*.js.map$
+Disallow: /*.css.map$
+
+# Bloquer les pages protégées/privées
+Disallow: /rejoindre-partenaire
+Disallow: /join
+
+# Bloquer les paramètres de recherche inutiles
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+Disallow: /*?*page=
+
+# Règles spécifiques pour Googlebot (crawl plus agressif autorisé)
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Règles pour les robots d'images
+User-agent: Googlebot-Image
+Allow: /
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.webp$
+Allow: /*.gif$
+
+# Règles pour les robots vidéo
+User-agent: Googlebot-Video
+Allow: /video/
+Allow: /series/
+
+# Bloquer les robots abusifs connus
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
 
 # Sitemap
 Sitemap: https://www.origines.media/sitemap.xml
 
-# Crawl-delay recommandé
-Crawl-delay: 1
+# Host préféré
+Host: https://www.origines.media

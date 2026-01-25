@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 // Import des sections modulaires
 import PartnershipHeroSection from '../components/partnership/PartnershipHeroSection';
@@ -165,6 +166,12 @@ function JoinPartnerPage() {
   // Si authentifié, afficher la page normale
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
+      <SEO
+        title="Devenir partenaire"
+        description="Rejoignez Origines Media en tant que partenaire. Découvrez nos opportunités de collaboration et participez à une aventure médiatique unique."
+        url="/rejoindre-partenaire"
+        noindex={true}
+      />
       <Navbar />
 
       <main>

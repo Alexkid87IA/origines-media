@@ -158,6 +158,7 @@ function HomePage() {
         title="Accueil"
         description="Origines Media - Des récits qui inspirent, transforment et éclairent. Découvrez nos histoires."
         url="/"
+        jsonLd="organization"
       />
 
       <Navbar />

@@ -111,12 +111,12 @@ export const universItems: UniversItem[] = [
   { name: 'Business', href: '/univers/business', color: '#14B8A6' },
 ];
 
-// Items pour le dropdown Académie
-export const academieItems: AcademieItem[] = [
-  { name: 'Kit d\'Introspection', subtitle: 'Démarrez votre voyage', href: '/academie/kit-introspection', price: 'Gratuit', free: true },
-  { name: 'Masterclass Storytelling', subtitle: 'L\'art du récit', href: '/academie/masterclass-storytelling', price: '29€', originalPrice: '49€', highlight: true },
-  { name: 'Guide Mindset', subtitle: 'Transformez votre mental', href: '/academie/guide-mindset', price: '19€' },
-  { name: 'Programme Complet', subtitle: 'Accès illimité à vie', href: '/academie/programme-complet', price: '79€', originalPrice: '147€' },
+// Items pour le dropdown Boutique
+export const boutiqueItems: AcademieItem[] = [
+  { name: 'Kit d\'Introspection', subtitle: 'Démarrez votre voyage', href: '/boutique/kit-introspection', price: 'Gratuit', free: true },
+  { name: 'Masterclass Storytelling', subtitle: 'L\'art du récit', href: '/boutique/masterclass-storytelling', price: '29€', originalPrice: '49€', highlight: true },
+  { name: 'Guide Mindset', subtitle: 'Transformez votre mental', href: '/boutique/guide-mindset', price: '19€' },
+  { name: 'Programme Complet', subtitle: 'Accès illimité à vie', href: '/boutique/programme-complet', price: '79€', originalPrice: '147€' },
 ];
 
 // Items pour le dropdown Recos
@@ -178,5 +178,5 @@ export const navItems: NavItem[] = [
   { label: 'Histoires', href: '/histoires', hasDropdown: true, color: '#374151', hoverColor: '#DB2777', hoverBg: 'bg-rose-50' },
   { label: 'Séries', href: '/series', hasDropdown: true, color: '#374151', hoverColor: '#8B5CF6', hoverBg: 'bg-violet-50' },
   { label: 'Recos', href: '/recommandations', hasDropdown: true, color: '#374151', hoverColor: '#EC4899', hoverBg: 'bg-pink-50' },
-  { label: 'Académie', href: '/academie', hasDropdown: true, color: '#374151', hoverColor: '#D97706', hoverBg: 'bg-amber-50' },
+  { label: 'Boutique', href: '/boutique', hasDropdown: true, color: '#374151', hoverColor: '#D97706', hoverBg: 'bg-amber-50' },
 ];

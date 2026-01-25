@@ -31,7 +31,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ articles }) => {
               <div className="aspect-video overflow-hidden">
                 <img
                   src={related.imageUrl || '/placeholder.svg'}
-                  alt=""
+                  alt={related.titre || related.title || 'Article recommandé'}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />

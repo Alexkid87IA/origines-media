@@ -1524,7 +1524,16 @@ function ProductionDetailPage() {
         title={production.titre}
         description={production.description}
         url={`/article/${production.slug.current}`}
-        imageUrl={production.imageUrl}
+        image={production.imageUrl}
+        type="article"
+        jsonLd="article"
+        section={production.verticale?.nom}
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Bibliothèque', url: '/bibliotheque' },
+          ...(production.verticale ? [{ name: production.verticale.nom, url: `/univers/${production.verticale.slug?.current || production.verticale.nom.toLowerCase()}` }] : []),
+          { name: production.titre, url: `/article/${production.slug.current}` }
+        ]}
       />
 
       {/* Progress Bar */}
@@ -1774,7 +1783,7 @@ function ProductionDetailPage() {
                         >
                           {item.imageUrl && (
                             <div className="w-14 h-10 rounded-md overflow-hidden flex-shrink-0 bg-gray-200">
-                              <img src={item.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
+                              <img src={item.imageUrl} alt={item.titre || 'Article connexe'} className="w-full h-full object-cover" loading="lazy" />
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
@@ -1834,7 +1843,7 @@ function ProductionDetailPage() {
                         >
                           <div className="w-14 h-10 rounded-md overflow-hidden flex-shrink-0 bg-gray-200">
                             {related.imageUrl && (
-                              <img src={related.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
+                              <img src={related.imageUrl} alt={related.titre || 'Article à lire'} className="w-full h-full object-cover" loading="lazy" />
                             )}
                           </div>
                           <h4 className="flex-1 text-xs text-gray-700 group-hover:text-gray-900 transition-colors line-clamp-2">
@@ -1871,7 +1880,7 @@ function ProductionDetailPage() {
                     <div className="aspect-video overflow-hidden">
                       <img
                         src={related.imageUrl || '/placeholder.svg'}
-                        alt=""
+                        alt={related.titre || 'Article recommandé'}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>

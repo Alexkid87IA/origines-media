@@ -6,7 +6,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './contexts/ThemeContext.tsx';
 import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
+import { registerServiceWorker } from './lib/registerSW.ts';
 import './index.css';
+
+// Enregistrer le Service Worker en production
+registerServiceWorker({
+  onSuccess: () => console.log('Origines Media disponible hors ligne'),
+  onUpdate: () => console.log('Nouvelle version disponible'),
+});
 
 // Configuration React Query avec cache optimisé
 const queryClient = new QueryClient({

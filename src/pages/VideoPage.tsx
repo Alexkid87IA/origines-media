@@ -1767,7 +1767,7 @@ export default function VideoPage() {
       person: ({ value }: any) => (
         <div className="my-8 flex items-center gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-200">
           {value.image && (
-            <img src={value.image.asset?.url || value.image} alt="" className="w-16 h-16 rounded-full object-cover" />
+            <img src={value.image.asset?.url || value.image} alt={`Portrait de ${value.name || 'l\'auteur'}`} className="w-16 h-16 rounded-full object-cover" />
           )}
           <div>
             <p className="font-semibold text-gray-900">{value.name}</p>
@@ -1885,6 +1885,14 @@ export default function VideoPage() {
         type="video.other"
         author={authorName}
         section={verticale?.nom}
+        jsonLd="video"
+        videoUrl={article?.videoUrl}
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Vidéos', url: '/videos' },
+          ...(verticale ? [{ name: verticale.nom, url: `/univers/${verticale.slug?.current || verticale.nom.toLowerCase()}` }] : []),
+          { name: title, url: `/video/${slug}` }
+        ]}
       />
 
       {/* Progress Bar */}
@@ -2210,7 +2218,7 @@ export default function VideoPage() {
                       <div className="relative aspect-video">
                         <img
                           src={imageUrl || '/placeholder.svg'}
-                          alt=""
+                          alt={`Miniature vidéo : ${article?.titre || 'Vidéo'}`}
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -2333,7 +2341,7 @@ export default function VideoPage() {
                             <div className="relative flex-shrink-0">
                               <img
                                 src={pop.imageUrl || '/placeholder.svg'}
-                                alt=""
+                                alt={pop.title || 'Vidéo populaire'}
                                 className="w-12 h-12 rounded-lg object-cover"
                               />
                               <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
@@ -2365,7 +2373,7 @@ export default function VideoPage() {
                           >
                             <img
                               src={related.imageUrl || '/placeholder.svg'}
-                              alt=""
+                              alt={related.titre || related.title || 'Vidéo connexe'}
                               className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                             />
                             <div className="flex-1 min-w-0">
@@ -2435,7 +2443,7 @@ export default function VideoPage() {
                     <div className="aspect-video overflow-hidden">
                       <img
                         src={related.imageUrl || '/placeholder.svg'}
-                        alt=""
+                        alt={related.titre || related.title || 'Vidéo connexe'}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>

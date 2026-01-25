@@ -1,10 +1,16 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 const CGVPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
+      <SEO
+        title="Conditions Générales de Vente"
+        description="Consultez les conditions générales de vente d'Origines Media. Modalités de commande, paiement, livraison et garanties."
+        url="/cgv"
+      />
       <Navbar />
 
       <main className="min-h-screen">

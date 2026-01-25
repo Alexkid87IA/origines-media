@@ -740,6 +740,11 @@ export default function RecommandationPage() {
         description={reco.accroche || reco.description}
         image={reco.imageUrl}
         url={`/recommandation/${reco.slug}`}
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Recommandations', url: '/recommandations' },
+          { name: reco.titre, url: `/recommandation/${reco.slug}` }
+        ]}
       />
       <Navbar />
 
@@ -760,7 +765,7 @@ export default function RecommandationPage() {
           <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
             {reco.imageUrl && (
               <div className="absolute inset-0">
-                <img src={reco.imageUrl} alt="" className="w-full h-full object-cover opacity-30" />
+                <img src={reco.imageUrl} alt={`Illustration de la recommandation : ${reco.titre || ''}`} className="w-full h-full object-cover opacity-30" />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent" />
               </div>
             )}
@@ -961,7 +966,7 @@ export default function RecommandationPage() {
                             {related.imageUrl ? (
                               <img
                                 src={related.imageUrl}
-                                alt=""
+                                alt={related.titre || 'Recommandation similaire'}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                               />
                             ) : (

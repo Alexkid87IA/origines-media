@@ -1,10 +1,10 @@
 // src/components/RecentProductionsSection.tsx
-// Style pop avec couleurs par univers
+// Carrousel horizontal avec cartes 4/5
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getUniversColors } from '../lib/universColors';
 import { typo } from '../lib/typography';
 
@@ -59,6 +59,9 @@ function shuffleArray<T>(array: T[]): T[] {
 
 const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ verticales = [] }) => {
   const [activeTab, setActiveTab] = useState('tous');
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
   // Protection: si pas de verticales, ne pas afficher la section
   if (!verticales || verticales.length === 0) {
@@ -88,28 +91,58 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
 
   const verticaleNames = [...new Set(verticales.map(v => v.verticale?.nom).filter(Boolean))];
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  // Vérifier si on peut scroller
+  const checkScrollability = () => {
+    if (carouselRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  // Effet pour vérifier le scroll au chargement et lors des changements de filtre
+  useEffect(() => {
+    checkScrollability();
+    // Reset scroll position when filter changes
+    if (carouselRef.current) {
+      carouselRef.current.scrollLeft = 0;
+    }
+  }, [activeTab, filteredProductions]);
+
+  // Scroll functions
+  const scroll = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const cardWidth = carouselRef.current.querySelector('article')?.offsetWidth || 300;
+      const scrollAmount = cardWidth + 16; // card width + gap
+      carouselRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
-    <section className="bg-gray-50 py-6 sm:py-8 lg:py-10">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-gray-50 py-10 sm:py-12 lg:py-16">
+      {/* Style pour cacher la scrollbar */}
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header avec introduction étoffée */}
-        <div className="mb-5 sm:mb-6">
+        <div className="mb-6 sm:mb-8">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-4">
             <div className="max-w-xl">
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-1 w-8 bg-emerald-500 rounded-full" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lire</span>
               </div>
-              <h2 className="text-xl sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+              <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Nos articles
               </h2>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 text-base leading-relaxed">
                 {typo("Chaque univers est un monde à explorer : psychologie, carrière, famille, spiritualité... Trouvez les récits qui résonnent avec vos questionnements du moment et laissez-vous guider par vos centres d'intérêt.")}
               </p>
             </div>
@@ -123,47 +156,11 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
             </Link>
           </div>
 
-          {/* Tabs - Style avec animation layoutId */}
-          {/* Version Mobile - Boutons outline comme navbar */}
-          <div className="flex flex-wrap gap-1.5 sm:hidden">
+          {/* Tabs - Style unifié avec HistoiresSection et RecommandationsSection */}
+          <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setActiveTab('tous')}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 ${
-                activeTab === 'tous'
-                  ? 'bg-gray-900 text-white border border-gray-900'
-                  : 'bg-white text-gray-900 border border-gray-900'
-              }`}
-            >
-              Tous
-              <ArrowRight className="w-3 h-3" />
-            </button>
-            {verticaleNames.map(name => {
-              const colors = getUniversColors(name);
-              const isActive = activeTab === name;
-
-              return (
-                <button
-                  key={name}
-                  onClick={() => setActiveTab(name)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300"
-                  style={{
-                    backgroundColor: isActive ? colors.bg : 'white',
-                    color: isActive ? colors.text : colors.bg,
-                    border: `1px solid ${colors.bg}`,
-                  }}
-                >
-                  {name}
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Version Desktop - Animation layoutId */}
-          <div className="hidden sm:flex flex-wrap gap-1.5">
-            <button
-              onClick={() => setActiveTab('tous')}
-              className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-300 rounded-full"
+              className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300"
             >
               {activeTab === 'tous' && (
                 <motion.div
@@ -172,19 +169,32 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
-              <span className={`relative z-10 ${activeTab === 'tous' ? 'text-white' : 'text-gray-600 hover:text-gray-900'}`}>
+              <span
+                className="relative z-10 transition-colors duration-300"
+                style={{ color: activeTab === 'tous' ? 'white' : '#6B7280' }}
+              >
                 Tous
+              </span>
+              <span
+                className="relative z-10 text-[10px] px-1.5 py-0.5 rounded-full font-medium transition-all duration-300"
+                style={{
+                  backgroundColor: activeTab === 'tous' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.08)',
+                  color: activeTab === 'tous' ? 'white' : '#6B7280',
+                }}
+              >
+                {allProductions.length}
               </span>
             </button>
             {verticaleNames.map(name => {
               const colors = getUniversColors(name);
               const isActive = activeTab === name;
+              const count = allProductions.filter(p => p.verticale?.nom === name).length;
 
               return (
                 <button
                   key={name}
                   onClick={() => setActiveTab(name)}
-                  className="relative px-3 py-1.5 text-[10px] font-semibold transition-all duration-300 rounded-full"
+                  className="relative inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300"
                 >
                   {isActive && (
                     <motion.div
@@ -197,14 +207,17 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                   <span
                     className="relative z-10 transition-colors duration-300"
                     style={{ color: isActive ? colors.text : '#6B7280' }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) e.currentTarget.style.color = colors.bg;
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) e.currentTarget.style.color = '#6B7280';
-                    }}
                   >
                     {name}
+                  </span>
+                  <span
+                    className="relative z-10 text-[10px] px-1.5 py-0.5 rounded-full font-medium transition-all duration-300"
+                    style={{
+                      backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : `${colors.bg}15`,
+                      color: isActive ? 'white' : colors.bg,
+                    }}
+                  >
+                    {count}
                   </span>
                 </button>
               );
@@ -212,145 +225,128 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
           </div>
         </div>
 
-        {/* Productions Grid - Glassmorphism Premium */}
-        {/* Responsive: 6 sur mobile (3×2), 9 sur tablette (3×3), 8 sur desktop (2×4) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3 lg:gap-3 mb-5 sm:mb-6">
-          {filteredProductions.slice(0, 9).map((production, index) => {
-            const colors = getUniversColors(production.verticale?.nom);
+        {/* ═══════════════════════════════════════════════════════════════════════ */}
+        {/* CARROUSEL PREMIUM - Aligné à gauche, déborde à droite                  */}
+        {/* ═══════════════════════════════════════════════════════════════════════ */}
 
-            // Gestion visibilité responsive pour éviter les trous
-            // Cartes 1-6: visibles partout
-            // Cartes 7-8: cachées sur mobile
-            // Carte 9: visible tablette uniquement
-            const visibilityClass = index === 8
-              ? 'hidden sm:block lg:hidden' // 9ème carte: tablette uniquement
-              : index >= 6
-              ? 'hidden sm:block' // 7ème et 8ème: cachées sur mobile
-              : ''; // 1-6: partout
+        {/* Carrousel - reste dans le flow mais déborde à droite */}
+        <div className="relative mt-6 -mr-4 sm:-mr-6 lg:-mr-8">
+          {/* Masque de dégradé uniquement à droite */}
+          <div className="hidden sm:block absolute right-0 top-0 bottom-0 w-24 lg:w-40 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
 
-            return (
-              <motion.article
-                key={production.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(index, 6) * 0.05 }}
-                className={`group ${visibilityClass}`}
-              >
-                <Link to={production.url} className="block">
-                  {/* Card avec glassmorphism */}
-                  <div
-                    className="relative rounded-2xl p-[1.5px] transition-all duration-500 group-hover:-translate-y-2 lg:group-hover:-translate-y-4"
-                    style={{
-                      background: `linear-gradient(145deg, rgba(255,255,255,0.5), rgba(255,255,255,0.1))`,
-                    }}
-                  >
-                    {/* Inner card */}
+          {/* Bouton navigation droite uniquement */}
+          <button
+            onClick={() => scroll('right')}
+            className={`hidden sm:flex absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-xl border border-white/50 transition-all duration-300 hover:scale-110 hover:bg-white ${
+              canScrollRight ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
+          >
+            <ChevronRight className="w-6 h-6 text-gray-800" />
+          </button>
+
+          {/* Bouton navigation gauche - apparaît quand on a scrollé */}
+          <button
+            onClick={() => scroll('left')}
+            className={`hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-xl border border-white/50 transition-all duration-300 hover:scale-110 hover:bg-white ${
+              canScrollLeft ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-800" />
+          </button>
+
+          {/* Container du carrousel - aligné à gauche, déborde à droite */}
+          <div
+            ref={carouselRef}
+            onScroll={checkScrollability}
+            className="flex gap-4 lg:gap-5 overflow-x-auto scrollbar-hide scroll-smooth py-2 pr-4 sm:pr-6 lg:pr-8"
+            style={{
+              scrollSnapType: 'x mandatory',
+              WebkitOverflowScrolling: 'touch',
+              msOverflowStyle: 'none',
+              scrollbarWidth: 'none',
+            }}
+          >
+          <AnimatePresence mode="popLayout">
+            {filteredProductions.slice(0, 15).map((production, index) => {
+              const colors = getUniversColors(production.verticale?.nom);
+
+              return (
+                <motion.article
+                  key={production.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3, delay: Math.min(index, 4) * 0.05 }}
+                  className="group flex-shrink-0 w-[70vw] sm:w-[280px] lg:w-[260px]"
+                  style={{ scrollSnapAlign: 'center' }}
+                >
+                  <Link to={production.url} className="block">
                     <div
-                      className="relative rounded-[14px] overflow-visible"
+                      className="relative rounded-2xl overflow-hidden aspect-[4/5] transition-all duration-500 group-hover:scale-[1.02]"
                       style={{
-                        boxShadow: `0 20px 40px -15px ${colors.shadow}, 0 8px 20px -8px rgba(0,0,0,0.1)`,
+                        boxShadow: '0 4px 20px -4px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05)',
                       }}
                     >
-                      {/* Image - 16:9 sur mobile, 4:5 sur tablette/desktop */}
-                      <div className="relative aspect-[16/9] sm:aspect-[4/5] lg:aspect-[4/5.5] overflow-hidden rounded-[14px]">
-                        <img
-                          src={production.imageUrl || '/placeholder.svg'}
-                          alt={production.titre}
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
+                      <img
+                        src={production.imageUrl || '/placeholder.svg'}
+                        alt={production.titre}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
 
-                        {/* Overlay gradient subtil sur l'image */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-black/5 to-transparent opacity-50 group-hover:opacity-30 transition-opacity duration-500" />
+                      {/* Overlay gradient sophistiqué */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
 
-                        {/* Badge - Dot coloré + texte blanc */}
-                        {production.verticale?.nom && (
-                          <div className="absolute top-3 left-3 sm:top-1.5 sm:left-1.5 z-10">
-                            <span className="inline-flex items-center gap-1.5 sm:gap-0.5 px-3 py-1.5 sm:px-1.5 sm:py-0.5 rounded-full text-xs sm:text-[8px] font-bold uppercase tracking-wider text-white bg-black/50 sm:bg-black/40 backdrop-blur-sm shadow-lg sm:shadow-none">
-                              <span
-                                className="w-1.5 h-1.5 sm:w-1 sm:h-1 rounded-full"
-                                style={{ backgroundColor: colors.bg }}
-                              />
-                              {production.verticale.nom}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Titre en bas de l'image - Version tablette simple */}
-                        <div className="hidden sm:block lg:hidden absolute inset-x-0 bottom-0 p-2 pt-8 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
-                          <h3 className="text-white font-bold text-[10px] leading-tight drop-shadow-lg line-clamp-2">
-                            {typo(production.titre)}
-                          </h3>
-                        </div>
-
-                        {/* Effet brillance au hover */}
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-3000" />
-                        </div>
-
-                        {/* Bordure intérieure subtile */}
-                        <div className="absolute inset-0 rounded-[14px] ring-1 ring-inset ring-white/20 group-hover:ring-white/40 transition-all duration-300" />
-                      </div>
-
-                      {/* OVERLAY COMPLET - Mobile (par défaut) + Desktop (par défaut aussi) */}
-                      <div
-                        className="block sm:hidden lg:block absolute inset-x-0 bottom-0 rounded-b-[14px] overflow-hidden"
-                      >
-                        <div
-                          className="p-5 sm:p-3 lg:p-4 pt-16 sm:pt-10 lg:pt-16 bg-gradient-to-t from-black via-black/90 to-transparent"
-                        >
-                          {/* Titre - plus grand sur mobile */}
-                          <h3 className="text-white font-bold text-lg sm:text-sm lg:text-[13px] leading-tight lg:leading-snug mb-2 sm:mb-2 drop-shadow-lg line-clamp-3 lg:line-clamp-4">
-                            {typo(production.titre)}
-                          </h3>
-
-                          {/* Extrait (avec fallback sur contenu) */}
-                          {getExtrait(production) && (
-                            <p className="text-white/90 text-sm sm:text-[10px] lg:text-[11px] leading-relaxed mb-3 sm:mb-2 line-clamp-2">
-                              {typo(getExtrait(production))}
-                            </p>
-                          )}
-
-                          {/* Bouton Lire plus */}
+                      {/* Badge catégorie avec glow subtil */}
+                      {production.verticale?.nom && (
+                        <div className="absolute top-4 left-4">
                           <span
-                            className="inline-flex items-center gap-2 text-sm sm:text-[10px] lg:text-[11px] font-bold transition-all"
-                            style={{ color: colors.bg }}
+                            className="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide text-white"
+                            style={{
+                              backgroundColor: colors.bg,
+                              boxShadow: `0 4px 12px ${colors.bg}50`
+                            }}
                           >
-                            Lire l'article
-                            <ArrowRight className="w-4 h-4 sm:w-3 sm:h-3" />
+                            {production.verticale.nom}
                           </span>
                         </div>
+                      )}
+
+                      {/* Contenu en bas avec effet de lift au hover */}
+                      <div className="absolute inset-x-0 bottom-0 p-5 transform transition-transform duration-300 group-hover:translate-y-[-4px]">
+                        <h3 className="font-bold text-white text-base leading-snug line-clamp-3 mb-3 drop-shadow-sm">
+                          {typo(production.titre)}
+                        </h3>
+                        <span
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold transition-all duration-300 group-hover:gap-2.5"
+                          style={{ color: colors.bg }}
+                        >
+                          Lire l'article
+                          <ArrowRight className="w-4 h-4" />
+                        </span>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              </motion.article>
-            );
-          })}
+                  </Link>
+                </motion.article>
+              );
+            })}
+          </AnimatePresence>
+        </div>
         </div>
 
-        {/* Footer - Desktop */}
-        <div className="hidden sm:flex items-center justify-between pt-3 sm:pt-4 border-t border-gray-200">
-          <span className="text-[10px] text-gray-400">
-            {allProductions.length} récits disponibles
+        {/* Footer avec CTA */}
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+          <span className="text-xs text-gray-400 hidden sm:block">
+            {filteredProductions.length} articles affichés sur {allProductions.length}
           </span>
 
           <Link
-            to="/bibliotheque"
-            className="inline-flex items-center px-3 py-1.5 bg-gray-900 text-white text-[10px] font-bold rounded-full hover:bg-gray-800 transition-all hover:scale-105"
-          >
-            Voir la bibliothèque
-            <span className="ml-1">&rarr;</span>
-          </Link>
-        </div>
-
-        {/* Mobile: Bouton voir tout */}
-        <div className="sm:hidden mt-4">
-          <Link
             to="/articles"
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+            className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-full hover:bg-gray-800 transition-all hover:scale-105 mx-auto sm:mx-0"
           >
-            <span>Voir tous les articles</span>
-            <ArrowRight className="w-4 h-4" />
+            Voir tous les articles
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>

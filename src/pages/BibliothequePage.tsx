@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, Grid3X3, FileText, Play, Film, Heart, User,
+  Search, Grid3X3, FileText, Play, Heart, User,
   Clock, Eye, Star, BookOpen, ChevronDown, SlidersHorizontal,
   ArrowRight, X, ChevronLeft, ChevronRight
 } from 'lucide-react';
@@ -13,7 +13,6 @@ import { sanityFetch } from '../lib/sanity';
 import {
   EXPLORER_ARTICLES_QUERY,
   EXPLORER_VIDEOS_QUERY,
-  EXPLORER_SERIES_QUERY,
   EXPLORER_RECOS_QUERY,
   EXPLORER_HISTOIRES_QUERY,
   VERTICALES_QUERY
@@ -21,7 +20,6 @@ import {
 import type {
   ExplorerArticle,
   ExplorerVideo,
-  ExplorerSerie,
   ExplorerReco,
   ExplorerHistoire,
   ExplorerVerticale
@@ -45,7 +43,7 @@ interface ContentItem {
   imageUrl?: string;
   slug: string;
   datePublication?: string;
-  contentType: 'article' | 'video' | 'serie' | 'reco' | 'histoire';
+  contentType: 'article' | 'video' | 'reco' | 'histoire';
   // Article specific
   typeArticle?: string;
   tempsLecture?: number;
@@ -53,8 +51,6 @@ interface ContentItem {
   duree?: number;
   vues?: number;
   videoUrl?: string;
-  // Serie specific
-  episodeCount?: number;
   // Reco specific
   type?: string;
   auteur?: string;
@@ -77,7 +73,6 @@ const CONTENT_TYPES = [
   { id: 'all', label: 'Tout', icon: Grid3X3, color: '#6B7280' },
   { id: 'article', label: 'Articles', icon: FileText, color: '#10B981' },
   { id: 'video', label: 'Vidéos', icon: Play, color: '#06B6D4' },
-  { id: 'serie', label: 'Séries', icon: Film, color: '#8B5CF6' },
   { id: 'reco', label: 'Recos', icon: Heart, color: '#EC4899' },
   { id: 'histoire', label: 'Histoires', icon: User, color: '#F59E0B' },
 ];
@@ -121,8 +116,6 @@ function getContentLink(item: ContentItem): string {
       return `/article/${item.slug}`;
     case 'video':
       return `/video/${item.slug}`;
-    case 'serie':
-      return `/series/${item.slug}`;
     case 'reco':
       return `/recommandation/${item.slug}`;
     case 'histoire':
@@ -132,19 +125,23 @@ function getContentLink(item: ContentItem): string {
   }
 }
 
-// ============ CARD COMPONENT - Design unifié 16:9 ============
+// ============ CARD COMPONENT - Design unifié avec variante sans image ============
 
 const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
   const color = item.verticale?.couleurDominante || CONTENT_TYPES.find(t => t.id === item.contentType)?.color || '#6B7280';
   const typeConfig = CONTENT_TYPES.find(t => t.id === item.contentType);
   const TypeIcon = typeConfig?.icon || FileText;
 
+  // Détecte si l'image est valide (pas placeholder, pas vide, pas undefined)
+  const hasValidImage = item.imageUrl &&
+    !item.imageUrl.includes('placeholder') &&
+    item.imageUrl.trim() !== '';
+
   // Label du type de contenu
   const getTypeLabel = () => {
     switch (item.contentType) {
       case 'article': return 'Article';
       case 'video': return 'Vidéo';
-      case 'serie': return 'Série';
       case 'reco': return item.type || 'Reco';
       case 'histoire': return 'Histoire';
       default: return 'Contenu';
@@ -155,18 +152,107 @@ const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
   const getSubInfo = () => {
     if (item.contentType === 'video' && item.duree) return formatDuration(item.duree);
     if (item.contentType === 'article' && item.tempsLecture) return `${item.tempsLecture} min`;
-    if (item.contentType === 'serie' && item.episodeCount) return `${item.episodeCount} ép.`;
     if (item.contentType === 'histoire') return item.categorie || '';
+    if (item.contentType === 'reco' && item.auteur) return item.auteur;
     return '';
   };
 
+  // ═══════════════════════════════════════════════════════════════
+  // CARD SANS IMAGE - Design texte avec fond coloré
+  // ═══════════════════════════════════════════════════════════════
+  if (!hasValidImage) {
+    return (
+      <Link to={getContentLink(item)} className="group block">
+        <div className="relative rounded-xl overflow-hidden shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+          {/* Zone principale avec fond coloré */}
+          <div
+            className="relative aspect-video overflow-hidden p-4 flex flex-col justify-between"
+            style={{
+              background: `linear-gradient(135deg, ${color}15 0%, ${color}05 100%)`,
+              borderLeft: `4px solid ${color}`,
+            }}
+          >
+            {/* Motif décoratif subtil */}
+            <div
+              className="absolute top-0 right-0 w-32 h-32 opacity-10 transform translate-x-8 -translate-y-8"
+              style={{ color }}
+            >
+              <TypeIcon className="w-full h-full" strokeWidth={0.5} />
+            </div>
+
+            {/* Header avec badges */}
+            <div className="flex items-start justify-between gap-2 relative z-10">
+              <span
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
+                style={{ backgroundColor: typeConfig?.color || color }}
+              >
+                <TypeIcon className="w-3 h-3" />
+                {getTypeLabel()}
+              </span>
+
+              {item.coupDeCoeur && (
+                <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-rose-500 text-white flex items-center gap-1">
+                  <Heart className="w-3 h-3" fill="currentColor" />
+                </span>
+              )}
+            </div>
+
+            {/* Titre et description */}
+            <div className="relative z-10 mt-auto">
+              <h3
+                className="text-base font-bold line-clamp-2 mb-1 transition-colors leading-snug"
+                style={{ color: color }}
+              >
+                {item.titre}
+              </h3>
+              {(item.description || item.accroche) && (
+                <p className="text-xs text-gray-500 line-clamp-2">
+                  {item.description || item.accroche}
+                </p>
+              )}
+            </div>
+
+            {/* Footer avec info et note */}
+            <div className="flex items-center justify-between mt-2 relative z-10">
+              {getSubInfo() && (
+                <span className="text-[10px] font-medium text-gray-500">
+                  {getSubInfo()}
+                </span>
+              )}
+              {item.note && (
+                <span className="flex items-center gap-0.5 text-[10px] font-semibold text-amber-500">
+                  <Star className="w-3 h-3" fill="currentColor" />
+                  {item.note}/5
+                </span>
+              )}
+              {item.verticale?.nom && (
+                <span
+                  className="px-2 py-0.5 rounded-full text-[10px] font-medium"
+                  style={{
+                    backgroundColor: `${color}20`,
+                    color: color
+                  }}
+                >
+                  {item.verticale.nom}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // CARD AVEC IMAGE - Design standard 16:9
+  // ═══════════════════════════════════════════════════════════════
   return (
     <Link to={getContentLink(item)} className="group block">
       <div className="relative rounded-xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
         {/* Image 16:9 */}
         <div className="relative aspect-video overflow-hidden">
           <img
-            src={item.imageUrl || '/placeholder.svg'}
+            src={item.imageUrl}
             alt={item.titre}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -221,6 +307,16 @@ const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
               </span>
             </div>
           )}
+
+          {/* Note pour recos */}
+          {item.note && !item.coupDeCoeur && (
+            <div className="absolute bottom-2 left-2">
+              <span className="flex items-center gap-0.5 px-2 py-1 rounded-full text-[10px] font-bold bg-amber-500 text-white">
+                <Star className="w-3 h-3" fill="currentColor" />
+                {item.note}/5
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -228,6 +324,9 @@ const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
           <h3 className="text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors leading-snug">
             {item.titre}
           </h3>
+          {item.contentType === 'reco' && item.auteur && (
+            <p className="text-xs text-gray-500 mt-1">{item.auteur}</p>
+          )}
         </div>
       </div>
     </Link>
@@ -238,17 +337,16 @@ const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
 function BibliothequePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [activeType, setActiveType] = useState<string>(searchParams.get('type') || 'all');
   const [activeVerticale, setActiveVerticale] = useState<string | null>(searchParams.get('categorie') || null);
-  const [sortBy, setSortBy] = useState('recent');
+  const [sortBy, setSortBy] = useState(searchParams.get('tri') || 'recent');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
 
   // Data states
   const [articles, setArticles] = useState<ContentItem[]>([]);
   const [videos, setVideos] = useState<ContentItem[]>([]);
-  const [series, setSeries] = useState<ContentItem[]>([]);
   const [recos, setRecos] = useState<ContentItem[]>([]);
   const [histoires, setHistoires] = useState<ContentItem[]>([]);
   const [verticales, setVerticales] = useState<Verticale[]>([]);
@@ -258,10 +356,9 @@ function BibliothequePage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [articlesData, videosData, seriesData, recosData, histoiresData, verticalesData] = await Promise.all([
+        const [articlesData, videosData, recosData, histoiresData, verticalesData] = await Promise.all([
           sanityFetch<ExplorerArticle[]>(EXPLORER_ARTICLES_QUERY),
           sanityFetch<ExplorerVideo[]>(EXPLORER_VIDEOS_QUERY),
-          sanityFetch<ExplorerSerie[]>(EXPLORER_SERIES_QUERY),
           sanityFetch<ExplorerReco[]>(EXPLORER_RECOS_QUERY),
           sanityFetch<ExplorerHistoire[]>(EXPLORER_HISTOIRES_QUERY),
           sanityFetch<ExplorerVerticale[]>(VERTICALES_QUERY),
@@ -270,7 +367,6 @@ function BibliothequePage() {
         // Transform data with content type
         setArticles((articlesData || []).map((a) => ({ ...a, contentType: 'article' as const })));
         setVideos((videosData || []).map((v) => ({ ...v, contentType: 'video' as const })));
-        setSeries((seriesData || []).map((s) => ({ ...s, contentType: 'serie' as const })));
         setRecos((recosData || []).map((r) => ({ ...r, contentType: 'reco' as const })));
         setHistoires((histoiresData || []).map((h) => ({ ...h, contentType: 'histoire' as const })));
         setVerticales(verticalesData || []);
@@ -289,13 +385,11 @@ function BibliothequePage() {
 
     // Filter by type
     if (activeType === 'all') {
-      content = [...articles, ...videos, ...series, ...recos, ...histoires];
+      content = [...articles, ...videos, ...recos, ...histoires];
     } else if (activeType === 'article') {
       content = articles;
     } else if (activeType === 'video') {
       content = videos;
-    } else if (activeType === 'serie') {
-      content = series;
     } else if (activeType === 'reco') {
       content = recos;
     } else if (activeType === 'histoire') {
@@ -327,7 +421,7 @@ function BibliothequePage() {
     }
 
     return content;
-  }, [articles, videos, series, recos, histoires, activeType, activeVerticale, searchTerm, sortBy]);
+  }, [articles, videos, recos, histoires, activeType, activeVerticale, searchTerm, sortBy]);
 
   // Pagination calculation
   const totalPages = Math.ceil(allContent.length / ITEMS_PER_PAGE);
@@ -336,25 +430,21 @@ function BibliothequePage() {
     return allContent.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [allContent, currentPage]);
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeType, activeVerticale, searchTerm, sortBy]);
 
   // Stats
   const stats = useMemo(() => ({
-    total: articles.length + videos.length + series.length + recos.length + histoires.length,
+    total: articles.length + videos.length + recos.length + histoires.length,
     articles: articles.length,
     videos: videos.length,
-    series: series.length,
     recos: recos.length,
     histoires: histoires.length,
-  }), [articles, videos, series, recos, histoires]);
+  }), [articles, videos, recos, histoires]);
 
   // Handle type change
   const handleTypeChange = (type: string) => {
     setActiveType(type);
     setActiveVerticale(null);
+    setCurrentPage(1);
     const params = new URLSearchParams(searchParams);
     if (type === 'all') {
       params.delete('type');
@@ -362,6 +452,7 @@ function BibliothequePage() {
       params.set('type', type);
     }
     params.delete('categorie');
+    params.delete('page');
     setSearchParams(params);
   };
 
@@ -374,7 +465,47 @@ function BibliothequePage() {
     } else {
       params.delete('categorie');
     }
+    params.delete('page');
     setSearchParams(params);
+  };
+
+  // Handle sort change
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort);
+    const params = new URLSearchParams(searchParams);
+    if (sort === 'recent') {
+      params.delete('tri');
+    } else {
+      params.set('tri', sort);
+    }
+    params.delete('page');
+    setSearchParams(params);
+  };
+
+  // Handle search change
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set('q', term);
+    } else {
+      params.delete('q');
+    }
+    params.delete('page');
+    setSearchParams(params);
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    const params = new URLSearchParams(searchParams);
+    if (page === 1) {
+      params.delete('page');
+    } else {
+      params.set('page', page.toString());
+    }
+    setSearchParams(params);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -421,12 +552,12 @@ function BibliothequePage() {
                   type="text"
                   placeholder="Rechercher un contenu..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="w-full pl-12 pr-4 py-3.5 text-base bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-100 transition-all"
                 />
                 {searchTerm && (
                   <button
-                    onClick={() => setSearchTerm('')}
+                    onClick={() => handleSearchChange('')}
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
                   >
                     <X className="w-4 h-4" />
@@ -461,7 +592,6 @@ function BibliothequePage() {
                   const count = type.id === 'all' ? stats.total :
                     type.id === 'article' ? stats.articles :
                     type.id === 'video' ? stats.videos :
-                    type.id === 'serie' ? stats.series :
                     type.id === 'reco' ? stats.recos :
                     type.id === 'histoire' ? stats.histoires : 0;
 
@@ -494,7 +624,7 @@ function BibliothequePage() {
                 <div className="hidden md:block ml-auto">
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(e) => handleSortChange(e.target.value)}
                     className="px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer"
                   >
                     {SORT_OPTIONS.map(option => (
@@ -600,10 +730,7 @@ function BibliothequePage() {
                 <div className="flex items-center justify-center gap-2 mt-10">
                   {/* Previous Button */}
                   <button
-                    onClick={() => {
-                      setCurrentPage(p => Math.max(1, p - 1));
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
                     className={`
                       flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all
@@ -642,10 +769,7 @@ function BibliothequePage() {
                       return (
                         <button
                           key={page}
-                          onClick={() => {
-                            setCurrentPage(page);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
+                          onClick={() => handlePageChange(page)}
                           className={`
                             w-10 h-10 rounded-full text-sm font-semibold transition-all
                             ${currentPage === page
@@ -662,10 +786,7 @@ function BibliothequePage() {
 
                   {/* Next Button */}
                   <button
-                    onClick={() => {
-                      setCurrentPage(p => Math.min(totalPages, p + 1));
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                     disabled={currentPage === totalPages}
                     className={`
                       flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all
@@ -704,6 +825,9 @@ function BibliothequePage() {
                   setSearchTerm('');
                   setActiveType('all');
                   setActiveVerticale(null);
+                  setSortBy('recent');
+                  setCurrentPage(1);
+                  setSearchParams(new URLSearchParams());
                 }}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
               >
@@ -742,7 +866,7 @@ function BibliothequePage() {
                   <label className="text-sm font-medium text-gray-700 mb-2 block">Trier par</label>
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(e) => handleSortChange(e.target.value)}
                     className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:border-gray-300"
                   >
                     {SORT_OPTIONS.map(option => (
