@@ -748,13 +748,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                       <div className="p-4 flex items-center justify-between">
                         {/* Preview des items */}
                         {reco.items.length > 0 ? (
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-xs text-gray-400">Inclut :</span>
-                            <span className="text-xs font-medium text-gray-600 truncate">
+                          <p className="text-xs text-gray-600 truncate flex-1 min-w-0">
+                            <span className="text-gray-400">Inclut{'\u00A0'}: </span>
+                            <span className="font-medium">
                               {reco.items.slice(0, 2).join(', ')}
                               {reco.items.length > 2 && ` +${reco.items.length - 2}`}
                             </span>
-                          </div>
+                          </p>
                         ) : (
                           <span className="text-xs text-gray-400">Notre sélection</span>
                         )}
