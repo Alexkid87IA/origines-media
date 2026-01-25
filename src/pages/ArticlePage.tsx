@@ -56,9 +56,6 @@ export default function ArticlePage() {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const sidebarContainerRef = useRef<HTMLDivElement>(null);
 
-  // Sidebar sticky via JavaScript (plus fiable que CSS sticky)
-  const [sidebarStyle, setSidebarStyle] = useState<React.CSSProperties>({});
-
   // Extract headings from content
   useEffect(() => {
     if (article?.contenu || article?.body) {
@@ -116,60 +113,7 @@ export default function ArticlePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [headings, article]);
 
-  // Sidebar sticky via JavaScript - comportement "sticky bottom"
-  // La sidebar défile avec la page, puis se fixe quand son bas atteint le bas du viewport
-  const lastSidebarStateRef = useRef<string>('');
-
-  useEffect(() => {
-    const handleSidebarScroll = () => {
-      if (!sidebarRef.current || !sidebarContainerRef.current) {
-        return;
-      }
-
-      const container = sidebarContainerRef.current;
-      const sidebar = sidebarRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const sidebarHeight = sidebar.offsetHeight;
-      const viewportHeight = window.innerHeight;
-
-      // Position du bas de la sidebar si elle était en position relative (en haut du conteneur)
-      const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
-
-      let newState: string;
-      let newStyle: any;
-
-      if (sidebarBottomIfRelative > viewportHeight) {
-        // État 1: Le bas de la sidebar n'a pas encore atteint le bas du viewport
-        newState = 'relative';
-        newStyle = { position: 'relative', top: 0 };
-      } else if (containerRect.bottom > sidebarHeight) {
-        // État 2: Le bas de la sidebar a atteint le bas du viewport
-        const topPosition = viewportHeight - sidebarHeight;
-        newState = `fixed-${Math.round(topPosition)}-${container.offsetWidth}`;
-        newStyle = { position: 'fixed', top: topPosition, width: container.offsetWidth };
-      } else {
-        // État 3: Le conteneur est presque fini
-        newState = 'absolute';
-        newStyle = { position: 'absolute', bottom: 0, top: 'auto', width: '100%' };
-      }
-
-      // Évite les re-renders inutiles
-      if (lastSidebarStateRef.current !== newState) {
-        lastSidebarStateRef.current = newState;
-        setSidebarStyle(newStyle);
-      }
-    };
-
-    window.addEventListener('scroll', handleSidebarScroll, { passive: true });
-    window.addEventListener('resize', handleSidebarScroll);
-
-    setTimeout(handleSidebarScroll, 100);
-
-    return () => {
-      window.removeEventListener('scroll', handleSidebarScroll);
-      window.removeEventListener('resize', handleSidebarScroll);
-    };
-  }, [article]);
+  // Sidebar sticky via CSS (plus fluide, pas de re-renders)
 
   // Fetch article data
   useEffect(() => {
@@ -620,8 +564,7 @@ export default function ArticlePage() {
               >
                 <div
                   ref={sidebarRef}
-                  className="space-y-4"
-                  style={sidebarStyle}
+                  className="space-y-4 sticky top-24"
                 >
                   {/* 1. Table of Contents - Repliée par défaut */}
                   {headings.length > 0 && (
