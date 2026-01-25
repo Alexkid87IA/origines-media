@@ -500,7 +500,13 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
       accordion: ({ value }: any) => <AccordionBlock value={value} themeColor={themeColor} />,
 
       keyTakeaways: ({ value }: any) => {
-        const items = value.items || value.points || value.takeaways || value.list || value.content || value.bullets || [];
+        // Debug: log the value to see what fields are available
+        console.log('keyTakeaways value:', JSON.stringify(value, null, 2));
+
+        // Try multiple possible field names for items
+        const items = value.items || value.points || value.takeaways || value.list ||
+                      value.content || value.bullets || value.essentiels || value.keys ||
+                      value.highlights || value.children || [];
         const style = value.style || 'boxed';
 
         const renderItem = (item: any, index: number) => {
@@ -552,9 +558,13 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
               <CheckCircle className="w-6 h-6 text-violet-600" />
               <h4 className="text-lg font-bold text-gray-900">{value.title || 'Points clés à retenir'}</h4>
             </div>
-            <ul className="space-y-3">
-              {Array.isArray(items) && items.map((item: any, index: number) => renderItem(item, index))}
-            </ul>
+            {(!items || items.length === 0) ? (
+              <p className="text-gray-500 text-sm italic">Aucun élément trouvé (debug: vérifier les champs Sanity)</p>
+            ) : (
+              <ul className="space-y-3">
+                {Array.isArray(items) && items.map((item: any, index: number) => renderItem(item, index))}
+              </ul>
+            )}
           </div>
         );
       },
