@@ -154,6 +154,10 @@ export default function VideosSection() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Touch swipe state
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
   // Nombre de cartes visibles selon la taille d'écran
   const [visibleCards, setVisibleCards] = useState(3);
 
@@ -242,6 +246,32 @@ export default function VideosSection() {
   const canGoPrev = currentIndex > 0;
   const canGoNext = currentIndex < maxIndex;
 
+  // Touch swipe handlers
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && canGoNext) {
+      goToNext();
+    }
+    if (isRightSwipe && canGoPrev) {
+      goToPrev();
+    }
+  };
+
   return (
     <section className="bg-gray-50 py-10 sm:py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -311,6 +341,9 @@ export default function VideosSection() {
           className="relative overflow-hidden"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         >
           {/* Cards grid avec animation */}
           <motion.div
