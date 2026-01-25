@@ -238,7 +238,7 @@ const Navbar: React.FC = () => {
 
         {/* ============ NAV BAR ============ */}
         <div className="max-w-5xl mx-auto px-4 lg:px-6">
-          <div className="flex items-center justify-center h-12">
+          <div className="flex items-center justify-center h-14 sm:h-12">
 
             {/* Desktop Navigation */}
             <LayoutGroup>
@@ -917,7 +917,7 @@ const Navbar: React.FC = () => {
                 <motion.img
                   src="/logo-origines.png"
                   alt="Origines Media"
-                  className="h-9 w-auto"
+                  className="h-10 w-auto"
                   whileHover={{
                     scale: 1.05,
                     rotate: [0, -2, 2, 0],
@@ -1235,7 +1235,7 @@ const Navbar: React.FC = () => {
       </AnimatePresence>
 
       {/* Spacer */}
-      <div className="h-12 lg:h-[104px]" />
+      <div className="h-14 sm:h-12 lg:h-[104px]" />
     </>
   );
 };

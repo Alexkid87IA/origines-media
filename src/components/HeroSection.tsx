@@ -140,6 +140,8 @@ const recommendationColorPalette = [
 
 const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [recommendations, setRecommendations] = useState<Array<{
     id: string;
     type: string;
@@ -293,6 +295,34 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
     return () => clearInterval(interval);
   }, [allItems.length]);
 
+  // Swipe handlers pour mobile
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && allItems.length > 1) {
+      // Swipe vers la gauche = article suivant
+      setActiveIndex((prev) => (prev + 1) % allItems.length);
+    }
+    if (isRightSwipe && allItems.length > 1) {
+      // Swipe vers la droite = article précédent
+      setActiveIndex((prev) => (prev - 1 + allItems.length) % allItems.length);
+    }
+  };
+
 
   // Couleurs utilisées par les articles
   const usedColors = React.useMemo(() => {
@@ -327,8 +357,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
       {/* HERO PRINCIPAL - FULL WIDTH CINÉMATIQUE                                 */}
       {/* ═══════════════════════════════════════════════════════════════════════ */}
       <div className="relative">
-        {/* Image de fond full-width */}
-        <div className="relative h-[70vh] sm:h-[75vh] lg:h-[80vh] min-h-[550px] max-h-[900px]">
+        {/* Image de fond full-width - avec swipe sur mobile */}
+        <div
+          className="relative h-[70vh] sm:h-[75vh] lg:h-[80vh] min-h-[550px] max-h-[900px]"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={safeIndex}
