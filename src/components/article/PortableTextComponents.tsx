@@ -660,7 +660,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
         const renderItem = (item: any, index: number) => {
           const itemIcon = item?.icon;
           const itemTitle = item?.title || item?.heading || item?.label || item?.name;
-          const itemContent = item?.content || item?.body || item?.description || item?.text || item?.details || item?.answer;
+          const itemContent = item?.content || item?.body || item?.description || item?.text || item?.point || item?.details || item?.answer;
 
           // Case 1: Item has both title and content
           if (itemTitle && itemContent) {
@@ -685,6 +685,16 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
                 <div className="text-gray-700 flex-1">
                   <PortableText value={itemContent} />
                 </div>
+              </li>
+            );
+          }
+
+          // Case 2.5: Item has content as simple string (no title)
+          if (itemContent && typeof itemContent === 'string') {
+            return (
+              <li key={index} className="flex items-start gap-3">
+                <span className="mt-0.5">{getIcon(itemIcon)}</span>
+                <span className="text-gray-700">{itemContent}</span>
               </li>
             );
           }
