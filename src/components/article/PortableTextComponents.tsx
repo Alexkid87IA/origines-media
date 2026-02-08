@@ -379,7 +379,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
         if (!imageUrl) return null;
 
         return (
-          <figure className="my-8 flex justify-center">
+          <figure className="my-8 flex flex-col items-center">
             <img
               src={imageUrl}
               alt={value.alt || ''}

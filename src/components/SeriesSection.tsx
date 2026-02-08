@@ -115,8 +115,11 @@ const SeriesSection: React.FC<SeriesSectionProps> = ({ series = [] }) => {
               <div className="h-1 w-8 bg-violet-500 rounded-full" />
               <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Explorer</span>
             </div>
-            <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
-              Nos séries
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+              Nos{' '}
+              <span className="bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text text-transparent">
+                séries
+              </span>
             </h2>
             <p className="text-gray-600 text-base leading-relaxed">
               {typo("Plongez dans des récits en plusieurs épisodes, conçus pour explorer un thème en profondeur. Chaque série est une invitation à prendre le temps, à réfléchir et à grandir au fil des chapitres.")}

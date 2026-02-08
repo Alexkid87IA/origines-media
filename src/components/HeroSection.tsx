@@ -237,11 +237,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
   const allItems = portraits.slice(0, 7);
 
-  // Sélectionner 3 articles pour "À découvrir aussi" :
+  // Sélectionner des articles pour le carrousel "À découvrir aussi" :
   // - Articles Sanity (productions) EXCLUSIVEMENT
   // - Exclure ceux qui sont déjà dans le slideshow hero
-  // - Shuffle pour la variété
-  // - Jamais 2 verticales identiques
+  // - Shuffle pour la variété, groupés par 3
   const discoverItems = React.useMemo(() => {
     if (articles.length === 0) return [];
 
@@ -255,38 +254,23 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
     if (availableArticles.length === 0) return [];
 
-    // Shuffle (Fisher-Yates)
-    const shuffled = [...availableArticles];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    // Sélectionner 3 articles avec verticales différentes
-    const selected: SanityArticle[] = [];
-    const usedVerticales = new Set<string>();
-
-    for (const article of shuffled) {
-      if (selected.length >= 3) break;
-      const verticaleName = article.verticale?.nom || 'default';
-      if (!usedVerticales.has(verticaleName)) {
-        selected.push(article);
-        usedVerticales.add(verticaleName);
-      }
-    }
-
-    // Si on n'a pas 3 articles avec verticales différentes, compléter
-    if (selected.length < 3) {
-      for (const article of shuffled) {
-        if (selected.length >= 3) break;
-        if (!selected.includes(article)) {
-          selected.push(article);
-        }
-      }
-    }
-
-    return selected;
+    // Garder jusqu'à 12 articles (4 pages de 3) pour le carrousel
+    // Pas de shuffle : l'ordre est celui de la query Sanity (datePublication desc)
+    return availableArticles.slice(0, 12);
   }, [articles, allItems]);
+
+  // Carrousel "À découvrir" : pages de 3 articles
+  const discoverPages = React.useMemo(() => {
+    const pages: SanityArticle[][] = [];
+    for (let i = 0; i < discoverItems.length; i += 3) {
+      const page = discoverItems.slice(i, i + 3);
+      if (page.length === 3) pages.push(page);
+    }
+    return pages;
+  }, [discoverItems]);
+
+  const [discoverPage, setDiscoverPage] = useState(0);
+
 
   // Auto-slide every 5 seconds
   useEffect(() => {
@@ -560,18 +544,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
       {/* ═══════════════════════════════════════════════════════════════════════ */}
       {/* SECTION À DÉCOUVRIR - 3 ARTICLES PREMIUM                               */}
       {/* ═══════════════════════════════════════════════════════════════════════ */}
-      {discoverItems.length > 0 && (
+      {discoverPages.length > 0 && (
         <div className="bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
             {/* Header - Format standard homepage */}
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
-              <div className="max-w-xl">
+              <div>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="h-1 w-8 bg-violet-500 rounded-full" />
                   <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lire</span>
                 </div>
-                <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
-                  À découvrir aussi
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+                  À découvrir{' '}
+                  <span className="bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text text-transparent">
+                    aussi
+                  </span>
                 </h2>
                 <p className="text-gray-600 text-base leading-relaxed">
                   {typo("D'autres récits sélectionnés pour vous, à explorer selon vos envies du moment.")}
@@ -587,72 +574,101 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
               </Link>
             </div>
 
-            {/* Grid 3 colonnes - Cartes premium avec image + contenu séparé */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6 items-stretch">
-              {discoverItems.map((article, index) => {
-                const verticaleName = article.verticale?.nom || 'Actualité';
-                const itemColors = getUniversColors(verticaleName);
+            {/* Carrousel 3 colonnes - Rotation automatique */}
+            <div className="relative overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={discoverPage}
+                  initial={{ opacity: 0, x: 60 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -60 }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6 items-stretch"
+                >
+                  {(discoverPages[discoverPage] || []).map((article, index) => {
+                    const verticaleName = article.verticale?.nom || 'Actualité';
+                    const itemColors = getUniversColors(verticaleName);
 
-                return (
-                  <motion.div
-                    key={article._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="h-full"
-                  >
-                    <Link
-                      to={`/article/${article.slug}`}
-                      className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-                      style={{
-                        boxShadow: '0 4px 25px -5px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.03)',
-                      }}
-                    >
-                      {/* Image container */}
-                      <div className="relative aspect-[16/10] overflow-hidden">
-                        <img
-                          src={article.imageUrl || '/placeholder.svg'}
-                          alt={article.titre}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-
-                        {/* Subtle gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                        {/* Badge catégorie */}
-                        <div className="absolute top-4 left-4">
-                          <span
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-white shadow-lg"
-                            style={{
-                              backgroundColor: itemColors.bg,
-                            }}
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
-                            {verticaleName}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Content area */}
-                      <div className="flex-1 flex flex-col p-5 sm:p-6">
-                        {/* Title - 4 lignes max */}
-                        <h3 className="flex-1 text-base sm:text-lg font-bold text-gray-900 leading-snug line-clamp-4 mb-3 group-hover:text-gray-700 transition-colors">
-                          {typo(article.titre)}
-                        </h3>
-
-                        {/* CTA */}
-                        <span
-                          className="inline-flex items-center gap-2 text-sm font-bold transition-all duration-300 group-hover:gap-3 mt-auto"
-                          style={{ color: itemColors.bg }}
+                    return (
+                      <motion.div
+                        key={article._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                        className="h-full"
+                      >
+                        <Link
+                          to={`/article/${article.slug}`}
+                          className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                          style={{
+                            boxShadow: '0 4px 25px -5px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.03)',
+                          }}
                         >
-                          Lire l'article
-                          <ArrowRight className="w-4 h-4" />
-                        </span>
-                      </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
+                          {/* Image container */}
+                          <div className="relative aspect-[16/10] overflow-hidden">
+                            <img
+                              src={article.imageUrl || '/placeholder.svg'}
+                              alt={article.titre}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+
+                            {/* Subtle gradient overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                            {/* Badge catégorie */}
+                            <div className="absolute top-4 left-4">
+                              <span
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-white shadow-lg"
+                                style={{
+                                  backgroundColor: itemColors.bg,
+                                }}
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                                {verticaleName}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Content area */}
+                          <div className="flex-1 flex flex-col p-5 sm:p-6">
+                            {/* Title - 4 lignes max */}
+                            <h3 className="flex-1 text-base sm:text-lg font-bold text-gray-900 leading-snug line-clamp-4 mb-3 group-hover:text-gray-700 transition-colors">
+                              {typo(article.titre)}
+                            </h3>
+
+                            {/* CTA */}
+                            <span
+                              className="inline-flex items-center gap-2 text-sm font-bold transition-all duration-300 group-hover:gap-3 mt-auto"
+                              style={{ color: itemColors.bg }}
+                            >
+                              Lire l'article
+                              <ArrowRight className="w-4 h-4" />
+                            </span>
+                          </div>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Dots de pagination */}
+              {discoverPages.length > 1 && (
+                <div className="flex justify-center gap-2 mt-6">
+                  {discoverPages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setDiscoverPage(i)}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        i === discoverPage
+                          ? 'w-6 bg-violet-500'
+                          : 'w-2 bg-gray-300 hover:bg-gray-400'
+                      }`}
+                      aria-label={`Page ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -666,13 +682,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
             {/* Header - Format standard homepage */}
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
-              <div className="max-w-xl">
+              <div>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="h-1 w-8 bg-orange-500 rounded-full" />
                   <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Découvrir</span>
                 </div>
-                <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
-                  Aujourd'hui, on recommande
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+                  Aujourd'hui, on{' '}
+                  <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                    recommande
+                  </span>
                 </h2>
                 <p className="text-gray-600 text-base leading-relaxed">
                   {typo("Livres, films, podcasts... Les coups de cœur sélectionnés par notre équipe.")}

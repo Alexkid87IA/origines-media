@@ -317,8 +317,11 @@ export default function RecommandationsSection() {
               <div className="h-1 w-8 rounded-full" style={{ backgroundColor: activeConfig.color }} />
               <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Découvrir</span>
             </div>
-            <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
-              Nos recommandations
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+              Nos{' '}
+              <span className="bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
+                recommandations
+              </span>
             </h2>
             <p className="text-gray-600 text-base leading-relaxed">
               {typo("Livres, films, podcasts, chaînes YouTube... Les coups de cœur sélectionnés par notre équipe.")}

@@ -198,7 +198,7 @@ const EngagementSection: React.FC = () => {
               <div className="h-1.5 w-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" />
               <span className="text-sm font-bold uppercase tracking-widest text-gray-400">Apprendre</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
               Notre{' '}
               <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
                 Boutique

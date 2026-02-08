@@ -139,8 +139,11 @@ const RecentProductionsSection: React.FC<RecentProductionsSectionProps> = ({ ver
                 <div className="h-1 w-8 bg-emerald-500 rounded-full" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lire</span>
               </div>
-              <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
-                Nos articles
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+                Nos{' '}
+                <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                  articles
+                </span>
               </h2>
               <p className="text-gray-600 text-base leading-relaxed">
                 {typo("Chaque univers est un monde à explorer : psychologie, carrière, famille, spiritualité... Trouvez les récits qui résonnent avec vos questionnements du moment et laissez-vous guider par vos centres d'intérêt.")}
