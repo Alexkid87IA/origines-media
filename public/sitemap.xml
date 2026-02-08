@@ -2,103 +2,103 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Page d'accueil -->
   <url>
-    <loc>https://origines.media/</loc>
+    <loc>https://www.origines.media/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Pages principales -->
   <url>
-    <loc>https://origines.media/articles</loc>
+    <loc>https://www.origines.media/articles</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://origines.media/videos</loc>
+    <loc>https://www.origines.media/videos</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://origines.media/series</loc>
+    <loc>https://www.origines.media/series</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://origines.media/histoires</loc>
+    <loc>https://www.origines.media/histoires</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://origines.media/recommandations</loc>
+    <loc>https://www.origines.media/recommandations</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://origines.media/univers</loc>
+    <loc>https://www.origines.media/univers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://origines.media/boutique</loc>
+    <loc>https://www.origines.media/boutique</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://origines.media/academy</loc>
+    <loc>https://www.origines.media/academy</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://origines.media/bibliotheque</loc>
+    <loc>https://www.origines.media/bibliotheque</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- Pages communauté -->
   <url>
-    <loc>https://origines.media/communaute</loc>
+    <loc>https://www.origines.media/communaute</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://origines.media/newsletter</loc>
+    <loc>https://www.origines.media/newsletter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://origines.media/racontez-votre-histoire</loc>
+    <loc>https://www.origines.media/racontez-votre-histoire</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://origines.media/partenariats</loc>
+    <loc>https://www.origines.media/partenariats</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- Pages institutionnelles -->
   <url>
-    <loc>https://origines.media/a-propos</loc>
+    <loc>https://www.origines.media/a-propos</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://origines.media/contact</loc>
+    <loc>https://www.origines.media/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://origines.media/mentions-legales</loc>
+    <loc>https://www.origines.media/mentions-legales</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://origines.media/cgu</loc>
+    <loc>https://www.origines.media/cgu</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://origines.media/cgv</loc>
+    <loc>https://www.origines.media/cgv</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
