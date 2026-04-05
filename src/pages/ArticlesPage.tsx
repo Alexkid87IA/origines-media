@@ -62,6 +62,12 @@ interface Article {
 
 const ITEMS_PER_PAGE = 6;
 
+const SORT_OPTIONS = [
+  { id: 'recent', label: 'Plus récents' },
+  { id: 'popular', label: 'Populaires' },
+  { id: 'alpha', label: 'A-Z' },
+];
+
 // Labels pour les types d'articles (hors "article" standard qui est redondant)
 const TYPE_LABELS: Record<string, { label: string; color: string }> = {
   actu: { label: 'Actualité', color: '#DC2626' },
@@ -93,6 +99,7 @@ const ArticlesPage: React.FC = () => {
   const activeType = searchParams.get('type') || '';
   const activeVerticale = searchParams.get('verticale') || '';
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const [sortBy, setSortBy] = useState(searchParams.get('tri') || 'recent');
 
   // État local pour le champ de recherche
   const [searchInput, setSearchInput] = useState(searchQuery);
@@ -169,11 +176,20 @@ const ArticlesPage: React.FC = () => {
     }
 
     if (activeVerticale) {
-      // Si une verticale est sélectionnée, afficher tous ses articles
       result = result.filter(a => a.verticale?.slug === activeVerticale);
-    } else {
-      // Mode "Tous les articles" : 1 article par verticale, shufflé
-      // Grouper par verticale
+    }
+
+    // Tri
+    if (sortBy === 'recent') {
+      result.sort((a, b) => new Date(b.datePublication || '').getTime() - new Date(a.datePublication || '').getTime());
+    } else if (sortBy === 'alpha') {
+      result.sort((a, b) => (a.titre || '').localeCompare(b.titre || ''));
+    } else if (sortBy === 'popular') {
+      result.sort((a, b) => ((b as any).vues || 0) - ((a as any).vues || 0));
+    }
+
+    // Shuffle diversifié uniquement en mode "Tous" sans recherche et tri par défaut
+    if (!activeVerticale && !searchQuery && !activeType && sortBy === 'recent') {
       const byVerticale: Record<string, Article[]> = {};
       result.forEach(article => {
         const vSlug = article.verticale?.slug || 'sans-verticale';
@@ -183,10 +199,7 @@ const ArticlesPage: React.FC = () => {
         byVerticale[vSlug].push(article);
       });
 
-      // Shuffler chaque groupe puis prendre un article de chaque
       const shuffledGroups = Object.values(byVerticale).map(group => shuffleArray(group));
-
-      // Créer un pool d'articles diversifiés (1 par verticale à chaque tour)
       const diversified: Article[] = [];
       let hasMore = true;
       let roundIndex = 0;
@@ -206,7 +219,7 @@ const ArticlesPage: React.FC = () => {
     }
 
     return result;
-  }, [articles, searchQuery, activeType, activeVerticale]);
+  }, [articles, searchQuery, activeType, activeVerticale, sortBy]);
 
   // Pagination
   const totalPages = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE);
@@ -250,6 +263,18 @@ const ArticlesPage: React.FC = () => {
     setSearchParams(params);
   };
 
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort);
+    const params = new URLSearchParams(searchParams);
+    if (sort === 'recent') {
+      params.delete('tri');
+    } else {
+      params.set('tri', sort);
+    }
+    params.delete('page');
+    setSearchParams(params);
+  };
+
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', page.toString());
@@ -258,6 +283,7 @@ const ArticlesPage: React.FC = () => {
   };
 
   const clearFilters = () => {
+    setSortBy('recent');
     setSearchParams({});
     setSearchInput('');
   };
@@ -493,6 +519,32 @@ const ArticlesPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Tri */}
+                <div className="bg-white rounded-2xl ring-1 ring-gray-200/50 overflow-hidden" style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.06)' }}>
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      Trier par
+                    </h3>
+                  </div>
+                  <div className="p-2">
+                    {SORT_OPTIONS.map((option) => {
+                      const isActive = sortBy === option.id;
+                      return (
+                        <button
+                          key={option.id}
+                          onClick={() => handleSortChange(option.id)}
+                          className={`
+                            w-full flex items-center px-3 py-2 rounded-xl text-sm transition-all duration-300 mt-0.5
+                            ${isActive ? 'bg-gray-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}
+                          `}
+                        >
+                          <span className="font-medium">{option.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Promo Boutique - 9:16 */}
                 <Link
                   to="/boutique"
@@ -624,6 +676,20 @@ const ArticlesPage: React.FC = () => {
                             </button>
                           ))}
                         </div>
+                      </div>
+
+                      {/* Tri */}
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Trier par</p>
+                        <select
+                          value={sortBy}
+                          onChange={(e) => { handleSortChange(e.target.value); setShowMobileFilters(false); }}
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-gray-300"
+                        >
+                          {SORT_OPTIONS.map(option => (
+                            <option key={option.id} value={option.id}>{option.label}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </motion.div>
