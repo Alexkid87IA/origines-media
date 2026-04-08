@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Heart } from 'lucide-react';
+import Button from './ui/Button';
 
 // ============ ICÔNES RÉSEAUX SOCIAUX ============
 const YouTubeIcon = () => (
@@ -146,21 +147,16 @@ const Footer: React.FC = () => {
                     aria-label="Adresse email pour la newsletter"
                     className="flex-1 px-4 py-2.5 sm:px-5 sm:py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all text-sm"
                   />
-                  <button
+                  <Button
                     type="submit"
-                    disabled={!email.trim() || isSubmitting}
-                    aria-label={isSubmitting ? "Envoi en cours..." : "S'inscrire à la newsletter"}
-                    className="px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 text-white shadow-md hover:shadow-lg"
+                    disabled={!email.trim()}
+                    isLoading={isSubmitting}
+                    rightIcon={ArrowRight}
+                    aria-label={isSubmitting ? 'Envoi en cours...' : "S'inscrire à la newsletter"}
+                    className="!bg-none bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 text-white font-bold shadow-md hover:shadow-lg !rounded-xl"
                   >
-                    {isSubmitting ? (
-                      'Envoi...'
-                    ) : (
-                      <>
-                        S'inscrire
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
+                    {isSubmitting ? 'Envoi...' : "S'inscrire"}
+                  </Button>
                 </form>
               ) : (
                 <div className="flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3 bg-emerald-50 border border-emerald-200 rounded-xl">

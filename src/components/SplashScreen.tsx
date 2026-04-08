@@ -305,19 +305,49 @@ const MagneticLogo: React.FC<{
 // COMPOSANT PRINCIPAL: SplashScreen
 // ============================================
 const SplashScreen: React.FC = () => {
-  // Vérifier si déjà vu cette session
-  const [hasSeenSplash] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('splashSeen') === 'true';
-    }
-    return false;
+  // Vérifier si déjà vu cette session OU si l'utilisateur préfère reduced motion
+  const [shouldSkip] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const seen = sessionStorage.getItem('splashSeen') === 'true';
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return seen || reducedMotion;
   });
 
-  const [isVisible, setIsVisible] = useState(!hasSeenSplash);
+  // Différer l'affichage initial pour ne pas bloquer le first paint :
+  // on commence invisible, puis on active après que la page ait eu une chance de se rendre.
+  const [isVisible, setIsVisible] = useState(false);
   const [stage, setStage] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
   const [showExplosion, setShowExplosion] = useState(false);
   const [showShockwave, setShowShockwave] = useState(false);
+
+  // Activer le splash après que la page principale soit rendue (non-bloquant)
+  useEffect(() => {
+    if (shouldSkip) return;
+    type IdleCallbackHandle = number;
+    type IdleDeadline = { didTimeout: boolean; timeRemaining: () => number };
+    type IdleCallback = (deadline: IdleDeadline) => void;
+    interface WindowWithIdle extends Window {
+      requestIdleCallback?: (cb: IdleCallback, opts?: { timeout: number }) => IdleCallbackHandle;
+      cancelIdleCallback?: (handle: IdleCallbackHandle) => void;
+    }
+    const w = window as WindowWithIdle;
+    let idleHandle: number | null = null;
+    let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
+
+    if (typeof w.requestIdleCallback === 'function') {
+      idleHandle = w.requestIdleCallback(() => setIsVisible(true), { timeout: 100 });
+    } else {
+      timeoutHandle = setTimeout(() => setIsVisible(true), 0);
+    }
+
+    return () => {
+      if (idleHandle !== null && typeof w.cancelIdleCallback === 'function') {
+        w.cancelIdleCallback(idleHandle);
+      }
+      if (timeoutHandle !== null) clearTimeout(timeoutHandle);
+    };
+  }, [shouldSkip]);
 
   // Mouse tracking
   const mouseX = useMotionValue(0);
@@ -337,8 +367,11 @@ const SplashScreen: React.FC = () => {
   const { displayText } = useScrambleText(tagline, stage >= 2, 25);
 
   useEffect(() => {
-    // Si déjà vu, ne rien faire
-    if (hasSeenSplash) return;
+    // Si déjà vu ou reduced-motion, ne rien faire
+    if (shouldSkip) return;
+
+    // Attendre que le splash soit visible avant de lancer l'animation
+    if (!isVisible) return;
 
     // Marquer comme vu
     sessionStorage.setItem('splashSeen', 'true');
@@ -357,10 +390,10 @@ const SplashScreen: React.FC = () => {
     ];
 
     return () => timers.forEach(clearTimeout);
-  }, [hasSeenSplash]);
+  }, [shouldSkip, isVisible]);
 
-  // Si déjà vu cette session, ne rien afficher
-  if (hasSeenSplash) return null;
+  // Si déjà vu cette session ou reduced-motion, ne rien afficher
+  if (shouldSkip) return null;
 
   return (
     <AnimatePresence>

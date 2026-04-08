@@ -2,6 +2,7 @@
 import imageUrlBuilder from '@sanity/image-url';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { client } from './sanity';
+import { PROJECT_ID, DATASET } from './sanityConfig';
 
 // Créer une instance du builder
 const builder = imageUrlBuilder(client);
@@ -25,12 +26,10 @@ export function getImageUrl(asset: ImageAsset | null | undefined): string {
     return urlFor(asset).url();
   } catch {
     // Fallback : construction manuelle
-    const projectId = 'r941i081';
-    const dataset = 'production';
     const ref = asset._ref;
 
     // Format: image-{id}-{width}x{height}-{format}
     const [, id, dimensions, format] = ref.split('-');
-    return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${format}`;
+    return `https://cdn.sanity.io/images/${PROJECT_ID}/${DATASET}/${id}-${dimensions}.${format}`;
   }
 }

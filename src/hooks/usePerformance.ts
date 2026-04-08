@@ -10,6 +10,8 @@ interface PerformanceMetrics {
 }
 
 // Store pour les métriques (accessible globalement pour debug)
+// Limité pour éviter les fuites mémoire en sessions longues
+const MAX_METRICS = 200;
 const metricsStore: PerformanceMetrics[] = [];
 
 /**
@@ -33,6 +35,10 @@ export function usePerformance(componentName: string): void {
       };
 
       metricsStore.push(metrics);
+      // Borner le store pour éviter une croissance illimitée en SPA longue session
+      if (metricsStore.length > MAX_METRICS) {
+        metricsStore.shift();
+      }
 
       // Log en développement uniquement
       if (import.meta.env.DEV && mountTime > 16) {

@@ -191,13 +191,16 @@ const SEO: React.FC<SEOProps> = ({
   };
 
   const jsonLdData = getJsonLd();
-  const breadcrumbData = breadcrumbs ? generateBreadcrumbSchema(breadcrumbs) : null;
+  // Ne générer le breadcrumb additionnel que si jsonLd ne l'inclut pas déjà
+  // (sinon on aurait un doublon de schema BreadcrumbList)
+  const breadcrumbData = breadcrumbs && jsonLd !== 'breadcrumb'
+    ? generateBreadcrumbSchema(breadcrumbs)
+    : null;
 
   return (
     <Helmet>
       {/* Primary Meta Tags */}
       <title>{fullTitle}</title>
-      <meta name="title" content={fullTitle} />
       <meta name="description" content={description} />
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
@@ -250,7 +253,7 @@ const SEO: React.FC<SEOProps> = ({
           {JSON.stringify(jsonLdData)}
         </script>
       )}
-      {breadcrumbData && jsonLd !== 'breadcrumb' && (
+      {breadcrumbData && (
         <script type="application/ld+json">
           {JSON.stringify(breadcrumbData)}
         </script>

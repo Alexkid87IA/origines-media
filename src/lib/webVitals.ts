@@ -32,7 +32,7 @@ function getRating(name: MetricName, value: number): 'good' | 'needs-improvement
 
 // Report to console in development
 function reportToConsole(metric: Metric) {
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     const colors = {
       good: 'color: green',
       'needs-improvement': 'color: orange',
@@ -85,9 +85,11 @@ export async function initWebVitals(onReport?: ReportCallback) {
     onINP(handleMetric);
     onLCP(handleMetric);
     onTTFB(handleMetric);
-  } catch (error) {
+  } catch {
     // web-vitals library not available, silently ignore
-    console.debug('Web Vitals tracking not available');
+    if (import.meta.env.DEV) {
+      console.debug('Web Vitals tracking not available');
+    }
   }
 }
 

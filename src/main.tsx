@@ -10,9 +10,14 @@ import { registerServiceWorker } from './lib/registerSW.ts';
 import './index.css';
 
 // Enregistrer le Service Worker en production
+const isDev = import.meta.env.DEV;
 registerServiceWorker({
-  onSuccess: () => console.log('Origines Media disponible hors ligne'),
-  onUpdate: () => console.log('Nouvelle version disponible'),
+  onSuccess: () => {
+    if (isDev) console.log('Origines Media disponible hors ligne');
+  },
+  onUpdate: () => {
+    if (isDev) console.log('Nouvelle version disponible');
+  },
 });
 
 // Configuration React Query avec cache optimisé

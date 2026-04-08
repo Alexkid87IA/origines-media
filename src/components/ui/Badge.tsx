@@ -1,6 +1,10 @@
 // src/components/ui/Badge.tsx
 import React from 'react';
 
+// Texte blanc pur appliqué sur un fond coloré (badge solid).
+// Distinct de tokens.colors.neutral.white (#F5F5F5) qui est le fond app.
+const SOLID_TEXT_COLOR = '#FFFFFF';
+
 export interface BadgeProps {
   variant?: 'default' | 'solid' | 'outline' | 'subtle';
   size?: 'sm' | 'md' | 'lg';
@@ -39,7 +43,7 @@ const Badge: React.FC<BadgeProps> = ({
       case 'solid':
         return {
           backgroundColor: color,
-          color: '#FFFFFF',
+          color: SOLID_TEXT_COLOR,
         };
       case 'outline':
         return {
