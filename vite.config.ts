@@ -2,6 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+// NOTE : Sanity project ID dupliqué ici car vite.config.ts ne peut pas
+// importer depuis src/ (ESM/loader). Source de vérité : src/lib/sanityConfig.ts
+const SANITY_PROJECT_ID = 'r941i081';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -93,7 +97,7 @@ export default defineConfig({
     proxy: {
       // Proxy pour l'API Sanity - évite les problèmes CORS en développement
       '/sanity-api': {
-        target: 'https://r941i081.api.sanity.io',
+        target: `https://${SANITY_PROJECT_ID}.api.sanity.io`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/sanity-api/, ''),
         secure: true,

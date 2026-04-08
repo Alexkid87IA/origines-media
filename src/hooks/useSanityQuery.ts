@@ -1,10 +1,34 @@
 // src/hooks/useSanityQuery.ts
 // Hook custom pour utiliser React Query avec Sanity
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { sanityFetch } from '../lib/sanity';
 
 interface UseSanityQueryOptions<T> extends Omit<UseQueryOptions<T, Error, T, string[]>, 'queryKey' | 'queryFn'> {
   params?: Record<string, unknown>;
+}
+
+/**
+ * Sérialisation déterministe d'un objet : trie les clés pour garantir
+ * que {a:1,b:2} et {b:2,a:1} produisent la même chaîne (cache key stable).
+ */
+function stableStringify(value: unknown): string {
+  if (value === null || typeof value !== 'object') {
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) {
+    return '[' + value.map(stableStringify).join(',') + ']';
+  }
+  const keys = Object.keys(value as Record<string, unknown>).sort();
+  return '{' + keys
+    .map(k => JSON.stringify(k) + ':' + stableStringify((value as Record<string, unknown>)[k]))
+    .join(',') + '}';
+}
+
+function buildCacheKey(queryKey: string | string[], params?: Record<string, unknown>): string[] {
+  const key = Array.isArray(queryKey) ? queryKey : [queryKey];
+  return params && Object.keys(params).length > 0
+    ? [...key, stableStringify(params)]
+    : key;
 }
 
 /**
@@ -24,14 +48,7 @@ export function useSanityQuery<T>(
   options?: UseSanityQueryOptions<T>
 ) {
   const { params = {}, ...queryOptions } = options || {};
-
-  // Normaliser la clé de query
-  const key = Array.isArray(queryKey) ? queryKey : [queryKey];
-
-  // Ajouter les params à la clé pour différencier les variantes
-  const fullKey = params && Object.keys(params).length > 0
-    ? [...key, JSON.stringify(params)]
-    : key;
+  const fullKey = buildCacheKey(queryKey, params);
 
   return useQuery<T, Error>({
     queryKey: fullKey,
@@ -45,15 +62,10 @@ export function useSanityQuery<T>(
  * Utile pour le prefetching au survol d'un lien
  */
 export function usePrefetchSanity() {
-  // Import dynamique pour éviter les dépendances circulaires
-  const { useQueryClient } = require('@tanstack/react-query');
   const queryClient = useQueryClient();
 
   return <T,>(queryKey: string | string[], query: string, params?: Record<string, unknown>) => {
-    const key = Array.isArray(queryKey) ? queryKey : [queryKey];
-    const fullKey = params && Object.keys(params).length > 0
-      ? [...key, JSON.stringify(params)]
-      : key;
+    const fullKey = buildCacheKey(queryKey, params);
 
     queryClient.prefetchQuery({
       queryKey: fullKey,

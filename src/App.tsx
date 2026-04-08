@@ -55,7 +55,6 @@ const LoadingFallback = () => (
 function App() {
   return (
     <>
-      <SplashScreen />
       <ScrollToTop />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
@@ -97,6 +96,8 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
+      {/* SplashScreen rendu après les routes pour ne pas bloquer le first paint */}
+      <SplashScreen />
       <CookieConsent />
     </>
   );

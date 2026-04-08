@@ -1,9 +1,6 @@
 // src/lib/sanity.ts
 import { createClient } from '@sanity/client'
-
-const PROJECT_ID = 'r941i081'
-const DATASET = 'production'
-const API_VERSION = '2024-03-01'
+import { PROJECT_ID, DATASET, API_VERSION } from './sanityConfig'
 
 // Détection de l'environnement de développement
 const isDev = import.meta.env.DEV
@@ -26,22 +23,13 @@ async function fetchWithRetry<T>(
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      // Créer un AbortController pour le timeout
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), timeout)
-
-      try {
-        const result = await Promise.race([
-          fetchFn(),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('Request timeout')), timeout)
-          )
-        ])
-        clearTimeout(timeoutId)
-        return result
-      } finally {
-        clearTimeout(timeoutId)
-      }
+      const result = await Promise.race([
+        fetchFn(),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Request timeout')), timeout)
+        )
+      ])
+      return result
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
 
@@ -52,7 +40,9 @@ async function fetchWithRetry<T>(
 
       // Exponential backoff: 500ms, 1s, 2s
       const delay = Math.min(500 * Math.pow(2, attempt), 3000)
-      console.warn(`Sanity fetch attempt ${attempt + 1} failed, retrying in ${delay}ms...`, lastError.message)
+      if (isDev) {
+        console.warn(`Sanity fetch attempt ${attempt + 1} failed, retrying in ${delay}ms...`, lastError.message)
+      }
       await new Promise(resolve => setTimeout(resolve, delay))
     }
   }
@@ -84,16 +74,6 @@ export async function sanityFetch<T>(query: string, params: Record<string, unkno
     return fetchWithRetry(async () => {
       return client.fetch<T>(query, params)
     })
-  }
-}
-
-// Fonction helper pour récupérer des données
-export async function fetchFromSanity(query: string, params = {}) {
-  try {
-    const data = await client.fetch(query, params)
-    return data
-  } catch (error) {
-    throw error
   }
 }
 
@@ -133,12 +113,10 @@ export function urlFor(source: ImageSource, options: ImageOptions = {}): string 
   // Si c'est une référence d'image Sanity
   if (typeof source === 'object' && source._type === 'image' && source.asset?._ref) {
     const ref = source.asset._ref
-    const projectId = 'r941i081'
-    const dataset = 'production'
 
     // Format: image-{id}-{width}x{height}-{format}
     const [, id, dimensions, format] = ref.split('-')
-    const baseUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${format}`
+    const baseUrl = `https://cdn.sanity.io/images/${PROJECT_ID}/${DATASET}/${id}-${dimensions}.${format}`
 
     return buildSanityImageUrl(baseUrl, options)
   }
