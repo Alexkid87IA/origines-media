@@ -406,22 +406,28 @@ const HistoiresPage: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        console.log('🔄 Fetching histoires from Sanity...');
-        console.log('📋 Query utilisée:', HISTOIRES_PAGE_QUERY);
+        if (import.meta.env.DEV) {
+          console.log('🔄 Fetching histoires from Sanity...');
+          console.log('📋 Query utilisée:', HISTOIRES_PAGE_QUERY);
+        }
 
         const [histoiresData, tagsData] = await Promise.all([
           sanityFetch<Histoire[]>(HISTOIRES_PAGE_QUERY),
           sanityFetch<Tag[]>(TAGS_QUERY)
         ]);
 
-        console.log('✅ Histoires récupérées:', histoiresData?.length || 0);
-        console.log('📋 Premiers résultats:', histoiresData?.slice(0, 3));
-        console.log('🏷️ Tags récupérés:', tagsData?.length || 0);
+        if (import.meta.env.DEV) {
+          console.log('✅ Histoires récupérées:', histoiresData?.length || 0);
+          console.log('📋 Premiers résultats:', histoiresData?.slice(0, 3));
+          console.log('🏷️ Tags récupérés:', tagsData?.length || 0);
+        }
 
         setHistoires(histoiresData || []);
         setCmsTags(tagsData || []);
       } catch (err) {
-        console.error('❌ Erreur chargement histoires:', err);
+        if (import.meta.env.DEV) {
+          console.error('❌ Erreur chargement histoires:', err);
+        }
       } finally {
         setLoading(false);
       }

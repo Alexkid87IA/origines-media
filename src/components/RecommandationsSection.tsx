@@ -256,7 +256,9 @@ export default function RecommandationsSection() {
           setActiveType(transformed[0].type);
         }
       } catch (error) {
-        console.error('Erreur fetch recommandations:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur fetch recommandations:', error);
+        }
       } finally {
         setLoading(false);
       }

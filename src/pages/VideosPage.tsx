@@ -159,7 +159,9 @@ const VideosPage: React.FC = () => {
         const data = await sanityFetch(VIDEOS_QUERY);
         setVideos(data || []);
       } catch (error) {
-        console.error('Erreur chargement vidéos:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur chargement vidéos:', error);
+        }
       } finally {
         setLoading(false);
       }

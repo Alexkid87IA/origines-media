@@ -44,7 +44,9 @@ class ErrorBoundary extends Component<Props, State> {
     };
 
     // Log to browser console for debugging
-    console.error('[ErrorBoundary] Error captured:', errorData);
+    if (import.meta.env.DEV) {
+      console.error('[ErrorBoundary] Error captured:', errorData);
+    }
 
     // TODO: Sentry integration
     // If you add Sentry, uncomment and configure:

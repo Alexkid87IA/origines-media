@@ -149,11 +149,12 @@ const Footer: React.FC = () => {
                   />
                   <Button
                     type="submit"
+                    variant="gradient"
                     disabled={!email.trim()}
                     isLoading={isSubmitting}
                     rightIcon={ArrowRight}
                     aria-label={isSubmitting ? 'Envoi en cours...' : "S'inscrire à la newsletter"}
-                    className="!bg-none bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 text-white font-bold shadow-md hover:shadow-lg !rounded-xl"
+                    className="shadow-md hover:shadow-lg"
                   >
                     {isSubmitting ? 'Envoi...' : "S'inscrire"}
                   </Button>

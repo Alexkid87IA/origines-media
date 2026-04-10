@@ -265,7 +265,9 @@ const RecherchePage: React.FC = () => {
 
         setAllData([...transformedArticles, ...transformedHistoires, ...transformedRecos]);
       } catch (error) {
-        console.error('Erreur chargement données:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur chargement données:', error);
+        }
       } finally {
         setLoading(false);
       }

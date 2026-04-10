@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight, Play, Video, Star } from 'lucide-react';
+import Button from './ui/Button';
+import IconButton from './ui/IconButton';
 
 interface Univers {
   id: string;
@@ -188,22 +190,16 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
       }`}>
         <div className="flex items-center justify-center gap-6">
           {/* Left Arrow Button */}
-          <button
+          <IconButton
+            icon={ChevronLeft}
+            aria-label="Faire défiler vers la gauche"
+            variant="default"
+            size="lg"
             onClick={scrollLeft}
             disabled={!canScrollLeft}
-            className={`
-              w-12 h-12 rounded-full border border-white/20 backdrop-blur-sm
-              flex items-center justify-center transition-all duration-300
-              ${canScrollLeft
-                ? 'text-white hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110 cursor-pointer'
-                : 'text-white/30 cursor-not-allowed'
-              }
-            `}
+            className={canScrollLeft ? 'hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110' : ''}
             style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
-            aria-label="Faire défiler vers la gauche"
-          >
-            <ChevronLeft className="w-6 h-6" aria-hidden="true" />
-          </button>
+          />
 
           {/* Instructions */}
           <div className="inline-flex items-center gap-3 text-white/70 text-sm font-inter tracking-wider bg-black/20 backdrop-blur-sm px-6 py-3 rounded-full border border-white/10">
@@ -213,64 +209,58 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
           </div>
 
           {/* Right Arrow Button */}
-          <button
+          <IconButton
+            icon={ChevronRight}
+            aria-label="Faire défiler vers la droite"
+            variant="default"
+            size="lg"
             onClick={scrollRight}
             disabled={!canScrollRight}
-            className={`
-              w-12 h-12 rounded-full border border-white/20 backdrop-blur-sm
-              flex items-center justify-center transition-all duration-300
-              ${canScrollRight
-                ? 'text-white hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110 cursor-pointer'
-                : 'text-white/30 cursor-not-allowed'
-              }
-            `}
+            className={canScrollRight ? 'hover:border-fuchsia-500/50 hover:bg-fuchsia-500/10 hover:scale-110' : ''}
             style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
-            aria-label="Faire défiler vers la droite"
-          >
-            <ChevronRight className="w-6 h-6" aria-hidden="true" />
-          </button>
+          />
         </div>
       </div>
 
       {/* Horizontal Scroll Container with Navigation Arrows */}
       <div className="relative">
         {/* Large Navigation Arrows - Left */}
-        <button
+        <IconButton
+          icon={ChevronLeft}
+          aria-label="Univers précédents"
+          variant="default"
+          size="xl"
           onClick={scrollLeft}
           disabled={!canScrollLeft}
           className={`
             absolute left-4 top-1/2 -translate-y-1/2 z-30
-            w-16 h-16 rounded-full bg-black/60 backdrop-blur-md border border-white/20
-            flex items-center justify-center transition-all duration-300
+            !w-16 !h-16 !bg-black/60 backdrop-blur-md
             ${canScrollLeft
-              ? 'text-white hover:bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 cursor-pointer shadow-2xl'
-              : 'text-white/30 cursor-not-allowed opacity-50'
+              ? 'hover:!bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 shadow-2xl'
+              : ''
             }
           `}
           style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
-          aria-label="Univers précédents"
-        >
-          <ChevronLeft className="w-8 h-8" aria-hidden="true" />
-        </button>
+        />
 
         {/* Large Navigation Arrows - Right */}
-        <button
+        <IconButton
+          icon={ChevronRight}
+          aria-label="Univers suivants"
+          variant="default"
+          size="xl"
           onClick={scrollRight}
           disabled={!canScrollRight}
           className={`
             absolute right-4 top-1/2 -translate-y-1/2 z-30
-            w-16 h-16 rounded-full bg-black/60 backdrop-blur-md border border-white/20
-            flex items-center justify-center transition-all duration-300
+            !w-16 !h-16 !bg-black/60 backdrop-blur-md
             ${canScrollRight
-              ? 'text-white hover:bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 cursor-pointer shadow-2xl'
-              : 'text-white/30 cursor-not-allowed opacity-50'
+              ? 'hover:!bg-black/80 hover:border-fuchsia-500/50 hover:scale-110 shadow-2xl'
+              : ''
             }
           `}
           style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
-          aria-label="Univers suivants"
-        >
-          <ChevronRight className="w-8 h-8" aria-hidden="true" />
-        </button>
+        />
 
         {/* Scroll Container */}
         <div 
@@ -633,14 +623,17 @@ const UniversSection: React.FC<UniversSectionProps> = ({ univers }) => {
           </div>
         </div>
         
-        {/* ✅ CORRECTION : Lien vers /univers */}
-        <a
-          href="/univers"
-          className="group inline-flex items-center gap-4 px-8 py-4 border border-white/20 text-white font-inter font-medium tracking-widest uppercase text-sm hover:border-white/40 hover:bg-white/5 transition-all duration-500 backdrop-blur-sm rounded-full"
+        {/* Lien vers /univers */}
+        <Button
+          as="link"
+          to="/univers"
+          variant="secondary"
+          size="lg"
+          withArrow
+          className="!rounded-full tracking-widest uppercase backdrop-blur-sm"
         >
-          <span>Découvrir tous nos univers</span>
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" aria-hidden="true" />
-        </a>
+          Découvrir tous nos univers
+        </Button>
       </div>
     </section>
   );

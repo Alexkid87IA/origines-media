@@ -111,7 +111,9 @@ const SafeHTML: React.FC<SafeHTMLProps> = ({
 
     // Pour les embeds, vérifier le domaine source
     if (isEmbed && !isAllowedEmbedDomain(html)) {
-      console.warn('SafeHTML: Blocked iframe from untrusted domain');
+      if (import.meta.env.DEV) {
+        console.warn('SafeHTML: Blocked iframe from untrusted domain');
+      }
       return '<p class="text-gray-500 italic">Contenu non disponible</p>';
     }
 

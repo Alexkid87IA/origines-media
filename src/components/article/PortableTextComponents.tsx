@@ -12,6 +12,29 @@ import { getImageUrl } from '../../lib/imageUrl';
 import { AccordionBlock, extractText } from './Accordion';
 import SafeHTML from '../ui/SafeHTML';
 
+// Domaines autorisés pour les iframes embed/videoEmbed
+const ALLOWED_IFRAME_DOMAINS = [
+  'youtube.com', 'www.youtube.com',
+  'youtube-nocookie.com', 'www.youtube-nocookie.com',
+  'player.vimeo.com', 'vimeo.com',
+  'open.spotify.com',
+  'soundcloud.com', 'w.soundcloud.com',
+  'twitter.com', 'platform.twitter.com',
+  'instagram.com', 'www.instagram.com',
+  'dailymotion.com', 'www.dailymotion.com',
+];
+
+function isAllowedIframeDomain(url: string): boolean {
+  try {
+    const hostname = new URL(url).hostname;
+    return ALLOWED_IFRAME_DOMAINS.some(
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 interface PortableTextConfig {
   themeColor: string;
   article?: any;
@@ -819,7 +842,8 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
 
       videoEmbed: ({ value }: any) => {
         const url = value.url || value.videoUrl;
-        return url ? (
+        if (!url || !isAllowedIframeDomain(url)) return null;
+        return (
           <div
             className="my-10 relative rounded-2xl overflow-hidden aspect-video bg-gray-900 group"
             onClick={(e) => {
@@ -836,7 +860,7 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
             />
             <div className="scroll-overlay absolute inset-0 cursor-pointer" />
           </div>
-        ) : null;
+        );
       },
 
       video: ({ value }: any) => {
@@ -988,16 +1012,19 @@ export const createPortableTextComponents = ({ themeColor, article }: PortableTe
         </a>
       ),
 
-      embed: ({ value }: any) => (
-        <div className="my-8 rounded-2xl overflow-hidden aspect-video bg-gray-100">
-          <iframe
-            src={value.url}
-            title={value.title || 'Contenu intégré'}
-            className="w-full h-full"
-            allowFullScreen
-          />
-        </div>
-      ),
+      embed: ({ value }: any) => {
+        if (!value.url || !isAllowedIframeDomain(value.url)) return null;
+        return (
+          <div className="my-8 rounded-2xl overflow-hidden aspect-video bg-gray-100">
+            <iframe
+              src={value.url}
+              title={value.title || 'Contenu intégré'}
+              className="w-full h-full"
+              allowFullScreen
+            />
+          </div>
+        );
+      },
 
       divider: () => (
         <hr className="my-12 border-none h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />

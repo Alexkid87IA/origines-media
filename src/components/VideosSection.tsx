@@ -200,7 +200,9 @@ export default function VideosSection() {
           setVideos(selected.map(transformSanityVideo));
         }
       } catch (error) {
-        console.error('Erreur chargement vidéos:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur chargement vidéos:', error);
+        }
       } finally {
         setLoading(false);
       }

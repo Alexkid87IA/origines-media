@@ -8,6 +8,7 @@ import { ArrowRight, Play } from 'lucide-react';
 import { getUniversColors } from '../lib/universColors';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
+import Button from './ui/Button';
 
 interface Portrait {
   id: number;
@@ -211,7 +212,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
           setRecommendations(transformed);
         }
       } catch (error) {
-        console.error('Erreur fetch recommandations hero:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur fetch recommandations hero:', error);
+        }
       }
     };
 
@@ -227,7 +230,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
           setArticles(data);
         }
       } catch (error) {
-        console.error('Erreur fetch articles discover:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur fetch articles discover:', error);
+        }
       }
     };
 
@@ -442,19 +447,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                       )}
 
                       {/* CTA Premium */}
-                      <Link
+                      <Button
+                        as="link"
                         to={currentItem.url}
-                        className="group inline-flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold text-sm sm:text-base transition-all duration-300 hover:scale-105"
-                        style={{
-                          backgroundColor: currentColors.bg,
-                          color: currentColors.text,
-                          boxShadow: `0 4px 20px ${currentColors.bg}50`,
-                        }}
+                        variant="cta"
+                        size="lg"
+                        color={currentColors.bg}
+                        leftIcon={Play}
+                        withArrow
                       >
-                        <Play className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" />
-                        <span>Lire l'histoire</span>
-                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                      </Link>
+                        Lire l'histoire
+                      </Button>
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -565,13 +568,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 </p>
               </div>
 
-              <Link
+              <Button
+                as="link"
                 to="/articles"
-                className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
+                variant="primary"
+                size="sm"
+                color="#111827"
+                withArrow
+                className="!rounded-full self-start lg:self-center flex-shrink-0"
               >
-                <span>Tous les articles</span>
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-              </Link>
+                Tous les articles
+              </Button>
             </div>
 
             {/* Carrousel 3 colonnes - Rotation automatique */}
@@ -698,13 +705,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 </p>
               </div>
 
-              <Link
+              <Button
+                as="link"
                 to="/recommandations"
-                className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
+                variant="primary"
+                size="sm"
+                color="#111827"
+                withArrow
+                className="!rounded-full self-start lg:self-center flex-shrink-0"
               >
-                <span>Toutes les recos</span>
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-              </Link>
+                Toutes les recos
+              </Button>
             </div>
 
             {/* Grille de recommandations avec images de catégorie */}
