@@ -4,22 +4,8 @@
 @tailwind utilities;
 
 @layer base {
-  /* Theme Variables */
+  /* Theme Variables — Light only (dark mode removed, see ThemeContext) */
   :root {
-    /* Dark Theme (default) */
-    --bg-primary: #000000;
-    --bg-secondary: #0a0a0a;
-    --bg-card: rgba(255, 255, 255, 0.03);
-    --bg-card-hover: rgba(255, 255, 255, 0.06);
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --border-color-hover: rgba(255, 255, 255, 0.2);
-  }
-
-  html.light {
-    /* Light Theme */
     --bg-primary: #ffffff;
     --bg-secondary: #f8fafc;
     --bg-card: rgba(0, 0, 0, 0.02);
