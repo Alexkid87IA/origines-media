@@ -604,7 +604,9 @@ export default function RecommandationPage() {
           setRelatedRecos(related || []);
         }
       } catch (err) {
-        console.error('Erreur:', err);
+        if (import.meta.env.DEV) {
+          console.error('Erreur:', err);
+        }
         setError('Erreur de chargement');
       } finally {
         setLoading(false);

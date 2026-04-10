@@ -355,7 +355,9 @@ export default function RecommandationsPage() {
         }
         setError(null);
       } catch (err) {
-        console.error('Erreur chargement recommandations:', err);
+        if (import.meta.env.DEV) {
+          console.error('Erreur chargement recommandations:', err);
+        }
         setError('Impossible de charger les recommandations');
       } finally {
         setLoading(false);

@@ -67,7 +67,7 @@ export function registerServiceWorker(config: SWConfig = {}): () => void {
         };
       };
     } catch (error) {
-      console.error('[SW] Registration failed:', error);
+      if (import.meta.env.DEV) console.error('[SW] Registration failed:', error);
       config.onError?.(error instanceof Error ? error : new Error(String(error)));
     }
   };

@@ -32,7 +32,9 @@ function JoinPartnerPage() {
         setIsAuthenticated(true);
       }
     } catch (error) {
-      console.error('Error accessing sessionStorage:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error accessing sessionStorage:', error);
+      }
     }
   }, []);
 
@@ -68,7 +70,9 @@ function JoinPartnerPage() {
           try {
             sessionStorage.setItem('joinPageAuth', 'true');
           } catch (error) {
-            console.error('Error setting sessionStorage:', error);
+            if (import.meta.env.DEV) {
+              console.error('Error setting sessionStorage:', error);
+            }
           }
         }
       } else {
@@ -76,7 +80,9 @@ function JoinPartnerPage() {
         setTimeout(() => setShowError(false), 3000);
       }
     } catch (error) {
-      console.error('Authentication error:', error);
+      if (import.meta.env.DEV) {
+        console.error('Authentication error:', error);
+      }
       setShowError(true);
       setTimeout(() => setShowError(false), 3000);
     } finally {

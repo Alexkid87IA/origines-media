@@ -267,7 +267,9 @@ const ShareStoryPage: React.FC = () => {
           setRandomVideos(shuffled);
         }
       } catch (error) {
-        console.error('Erreur fetch vidéos:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur fetch vidéos:', error);
+        }
       } finally {
         setIsLoadingVideos(false);
       }

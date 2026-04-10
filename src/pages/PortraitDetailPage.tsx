@@ -5,26 +5,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  ArrowLeft,
-  MapPin,
-  Calendar,
-  Quote,
-  Share2,
-  Heart,
-  BookOpen,
-  ArrowRight,
-  TrendingUp,
-  Route,
-  Users,
-  Brain,
-  Flame,
-  LucideIcon,
-  ChevronLeft,
-  ChevronRight,
-  List,
-  PenLine,
-  ChevronDown,
-  ChevronUp
+  ArrowLeft, MapPin, Calendar, Quote, Share2, Heart, BookOpen,
+  TrendingUp, Route, Users, Brain, Flame, LucideIcon
 } from 'lucide-react';
 import { sanityFetch } from '../lib/sanity';
 import { PORTRAIT_BY_SLUG_QUERY, SIMILAR_HISTOIRES_QUERY, ALL_HISTOIRES_SLUGS_QUERY } from '../lib/queries';
@@ -33,77 +15,11 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { typo } from '../lib/typography';
 import { getTagCategory, getCategoryColors } from '../lib/tagCategories';
-
-interface Tag {
-  _id: string;
-  nom: string;
-  slug: string;
-  couleur?: string;
-}
-
-interface PortableTextBlock {
-  _type: string;
-  _key: string;
-  style?: string;
-  children?: Array<{
-    _type: string;
-    _key: string;
-    text?: string;
-    marks?: string[];
-  }>;
-  url?: string;
-}
-
-interface Production {
-  _id: string;
-  titre: string;
-  imageUrl?: string;
-  slug: string;
-  description?: string;
-  typeArticle?: string;
-  videoUrl?: string;
-  contenu?: PortableTextBlock[];
-}
-
-interface Portrait {
-  _id: string;
-  titre: string;
-  categorie: string;
-  accroche: string;
-  imageUrl?: string;
-  slug: { current: string };
-  biographie?: string;
-  citation?: string;
-  dateNaissance?: string;
-  lieuNaissance?: string;
-  tags?: Tag[];
-  univers?: { _id: string; nom: string; couleur: string };
-  productions?: Production[];
-}
-
-interface HistoireNav {
-  _id: string;
-  titre: string;
-  categorie?: string;
-  slug: string;
-  tags?: { nom: string; couleur?: string };
-}
-
-interface SimilarHistoire {
-  _id: string;
-  titre: string;
-  categorie?: string;
-  accroche?: string;
-  slug: string | { current: string };
-  citation?: string;
-  tags?: Tag[];
-}
-
-interface Heading {
-  id: string;
-  text: string;
-  level: number;
-}
+import { PortraitSidebar, PortraitNavigationFooter } from '../components/portrait';
+import type {
+  Tag, PortableTextBlock, Production, Portrait,
+  HistoireNav, SimilarHistoire, Heading
+} from '../components/portrait/types';
 
 // Extraire l'ID YouTube d'une URL
 function getYouTubeId(url: string): string | null {
@@ -199,7 +115,7 @@ function PortraitDetailPage() {
   const [similarHistoires, setSimilarHistoires] = useState<SimilarHistoire[]>([]);
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeHeading, setActiveHeading] = useState<string>('');
-  const [tocExpanded, setTocExpanded] = useState(true);
+  // tocExpanded state moved to PortraitSidebar component
 
   // Refs
   const contentRef = useRef<HTMLDivElement>(null);
@@ -237,7 +153,9 @@ function PortraitDetailPage() {
         const data = await sanityFetch<HistoireNav[]>(ALL_HISTOIRES_SLUGS_QUERY);
         setAllHistoires(data || []);
       } catch (error) {
-        console.error('Erreur chargement navigation histoires:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur chargement navigation histoires:', error);
+        }
       }
     };
     fetchAllHistoires();
@@ -252,7 +170,9 @@ function PortraitDetailPage() {
         const tagIds = portrait.tags?.map(t => t._id) || [];
         const universId = portrait.univers?._id || '';
 
-        console.log('🔍 Fetching similar histoires with:', { currentId: portrait._id, tagIds, universId });
+        if (import.meta.env.DEV) {
+          console.log('🔍 Fetching similar histoires with:', { currentId: portrait._id, tagIds, universId });
+        }
 
         const data = await sanityFetch<SimilarHistoire[]>(SIMILAR_HISTOIRES_QUERY, {
           currentId: portrait._id,
@@ -260,11 +180,15 @@ function PortraitDetailPage() {
           universId
         });
 
-        console.log('📋 Similar histoires found:', data?.length || 0, data);
+        if (import.meta.env.DEV) {
+          console.log('📋 Similar histoires found:', data?.length || 0, data);
+        }
 
         setSimilarHistoires(data || []);
       } catch (error) {
-        console.error('❌ Erreur chargement histoires similaires:', error);
+        if (import.meta.env.DEV) {
+          console.error('❌ Erreur chargement histoires similaires:', error);
+        }
       }
     };
     fetchSimilar();
@@ -381,287 +305,33 @@ function PortraitDetailPage() {
   const categoryLabel = mainCategory?.nom || portrait.categorie || 'Histoire';
 
   // ═══════════════════════════════════════════════════════════════
-  // SIDEBAR JSX (variable, pas composant pour éviter problèmes de re-render)
+  // SIDEBAR
   // ═══════════════════════════════════════════════════════════════
   const sidebarJSX = (
-    <div className="sticky top-24 space-y-4">
-      {/* Navigation rapide */}
-      {currentIndex >= 0 && (
-        <div className="bg-white rounded-2xl ring-1 ring-gray-200/50 p-4" style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.06)' }}>
-          <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
-            <span>Histoire {currentIndex + 1} / {totalHistoires}</span>
-          </div>
-          <div className="flex gap-2">
-            {prevHistoire ? (
-              <Link
-                to={`/histoire/${prevHistoire.slug}`}
-                className="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-sm text-gray-700"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="truncate">Précédente</span>
-              </Link>
-            ) : (
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 text-gray-300 text-sm cursor-not-allowed">
-                <ChevronLeft className="w-4 h-4" />
-                <span>Précédente</span>
-              </div>
-            )}
-            {nextHistoire ? (
-              <Link
-                to={`/histoire/${nextHistoire.slug}`}
-                className="flex-1 flex items-center justify-end gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-sm text-gray-700"
-              >
-                <span className="truncate">Suivante</span>
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            ) : (
-              <div className="flex-1 flex items-center justify-end gap-2 px-3 py-2 rounded-xl bg-gray-50 text-gray-300 text-sm cursor-not-allowed">
-                <span>Suivante</span>
-                <ChevronRight className="w-4 h-4" />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Table des matières */}
-      {headings.length > 0 && (
-        <div className="bg-white rounded-2xl ring-1 ring-gray-200/50 overflow-hidden" style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.06)' }}>
-          <button
-            onClick={() => setTocExpanded(!tocExpanded)}
-            className="w-full flex items-center justify-between px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <List className="w-4 h-4 text-gray-400" />
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Sommaire</span>
-            </div>
-            {tocExpanded ? (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
-
-          {tocExpanded && (
-            <nav className="p-3 max-h-64 overflow-y-auto">
-              <ul className="space-y-1">
-                {headings.map((heading) => (
-                  <li key={heading.id}>
-                    <button
-                      onClick={() => scrollToSection(heading.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${
-                        activeHeading === heading.id
-                          ? 'font-medium'
-                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                      }`}
-                      style={{
-                        paddingLeft: `${12 + (heading.level - 1) * 12}px`,
-                        color: activeHeading === heading.id ? colors.bg : undefined,
-                        backgroundColor: activeHeading === heading.id ? `${colors.bg}10` : undefined
-                      }}
-                    >
-                      <span className="line-clamp-2">{heading.text}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
-        </div>
-      )}
-
-      {/* Histoires similaires */}
-      {similarHistoires.length > 0 && (
-        <div className="bg-white rounded-2xl ring-1 ring-gray-200/50 overflow-hidden" style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.06)' }}>
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              Histoires similaires
-            </h3>
-          </div>
-          <div className="p-3 space-y-2">
-            {similarHistoires.slice(0, 4).map((histoire) => {
-              const histoireCategory = histoire.tags?.[0] ? getTagCategory(histoire.tags[0].slug) : null;
-              const histoireColors = histoireCategory ? getCategoryColors(histoireCategory.id) : colors;
-              // Handle slug as string or object
-              const histoireSlug = typeof histoire.slug === 'string' ? histoire.slug : histoire.slug?.current;
-
-              if (!histoireSlug) return null;
-
-              return (
-                <Link
-                  key={histoire._id}
-                  to={`/histoire/${histoireSlug}`}
-                  className="block p-3 rounded-xl hover:bg-gray-50 transition-colors group"
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: `${histoireColors.bg}15` }}
-                    >
-                      <Quote className="w-4 h-4" style={{ color: histoireColors.bg }} />
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="font-medium text-gray-900 text-sm line-clamp-2 group-hover:text-gray-700 transition-colors">
-                        {typo(histoire.titre)}
-                      </h4>
-                      {histoire.citation && (
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-1 italic">
-                          "{histoire.citation}"
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          <Link
-            to="/histoires"
-            className="flex items-center justify-center gap-2 px-4 py-3 border-t border-gray-100 text-sm font-medium hover:bg-gray-50 transition-colors"
-            style={{ color: colors.bg }}
-          >
-            Voir toutes les histoires
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      )}
-
-      {/* CTA Raconter */}
-      <div
-        className="p-4 rounded-2xl ring-1 ring-gray-200/50"
-        style={{ background: 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)' }}
-      >
-        <div className="flex items-center gap-2 mb-2">
-          <PenLine className="w-4 h-4" style={{ color: colors.bg }} />
-          <h4 className="font-semibold text-gray-900 text-sm">
-            Vous avez une histoire ?
-          </h4>
-        </div>
-        <p className="text-xs text-gray-500 mb-3">
-          {typo("Partagez votre parcours et inspirez des milliers de lecteurs.")}
-        </p>
-        <Link
-          to="/racontez-votre-histoire"
-          className="group inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-full transition-all hover:opacity-90"
-          style={{ backgroundColor: colors.bg }}
-        >
-          Racontez la vôtre
-          <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-        </Link>
-      </div>
-    </div>
+    <PortraitSidebar
+      currentIndex={currentIndex}
+      totalHistoires={totalHistoires}
+      prevHistoire={prevHistoire}
+      nextHistoire={nextHistoire}
+      headings={headings}
+      activeHeading={activeHeading}
+      onScrollToSection={scrollToSection}
+      similarHistoires={similarHistoires}
+      colors={colors}
+    />
   );
 
   // ═══════════════════════════════════════════════════════════════
-  // NAVIGATION PREV/NEXT EN BAS - Design Premium (variable JSX)
+  // NAVIGATION PREV/NEXT EN BAS
   // ═══════════════════════════════════════════════════════════════
-  const navigationFooterJSX = (prevHistoire || nextHistoire) ? (
-    <div className="mt-16">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-          <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Continuer la lecture</span>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-        </div>
+  const navigationFooterJSX = (
+    <PortraitNavigationFooter
+      prevHistoire={prevHistoire}
+      nextHistoire={nextHistoire}
+      colors={colors}
+    />
+  );
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Précédent */}
-          {prevHistoire ? (
-            <Link
-              to={`/histoire/${prevHistoire.slug}`}
-              className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1"
-              style={{
-                backgroundColor: colors.bg,
-                boxShadow: `0 4px 20px -4px ${colors.bg}50`
-              }}
-            >
-              {/* Decorative */}
-              <div className="absolute top-0 right-0 opacity-10">
-                <Quote className="w-24 h-24 text-white -mt-6 -mr-6" />
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 text-white/60 mb-3">
-                  <ChevronLeft className="w-4 h-4" />
-                  <span className="text-xs font-medium uppercase tracking-wider">Histoire précédente</span>
-                </div>
-                <h4 className="font-bold text-white text-lg leading-snug line-clamp-2 group-hover:text-white/90 transition-colors">
-                  {typo(prevHistoire.titre)}
-                </h4>
-                {prevHistoire.categorie && (
-                  <span className="inline-block mt-3 px-2.5 py-1 rounded-full text-[10px] font-medium bg-white/20 text-white/80">
-                    {prevHistoire.categorie}
-                  </span>
-                )}
-              </div>
-
-              {/* Hover effect */}
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: `linear-gradient(135deg, transparent 0%, ${colors.bg}30 100%)` }}
-              />
-            </Link>
-          ) : (
-            <div className="rounded-2xl p-6 bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center">
-              <span className="text-sm text-gray-400">Vous êtes au début</span>
-            </div>
-          )}
-
-          {/* Suivant */}
-          {nextHistoire ? (
-            <Link
-              to={`/histoire/${nextHistoire.slug}`}
-              className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1"
-              style={{
-                backgroundColor: colors.bg,
-                boxShadow: `0 4px 20px -4px ${colors.bg}50`
-              }}
-            >
-              {/* Decorative */}
-              <div className="absolute top-0 left-0 opacity-10">
-                <Quote className="w-24 h-24 text-white -mt-6 -ml-6 transform scale-x-[-1]" />
-              </div>
-
-              <div className="relative z-10 text-right">
-                <div className="flex items-center justify-end gap-2 text-white/60 mb-3">
-                  <span className="text-xs font-medium uppercase tracking-wider">Histoire suivante</span>
-                  <ChevronRight className="w-4 h-4" />
-                </div>
-                <h4 className="font-bold text-white text-lg leading-snug line-clamp-2 group-hover:text-white/90 transition-colors">
-                  {typo(nextHistoire.titre)}
-                </h4>
-                {nextHistoire.categorie && (
-                  <span className="inline-block mt-3 px-2.5 py-1 rounded-full text-[10px] font-medium bg-white/20 text-white/80">
-                    {nextHistoire.categorie}
-                  </span>
-                )}
-              </div>
-
-              {/* Hover effect */}
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: `linear-gradient(225deg, transparent 0%, ${colors.bg}30 100%)` }}
-              />
-            </Link>
-          ) : (
-            <div className="rounded-2xl p-6 bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center">
-              <span className="text-sm text-gray-400">Vous êtes à la fin</span>
-            </div>
-          )}
-        </div>
-
-        {/* Retour à la liste */}
-        <div className="flex justify-center mt-6">
-          <Link
-            to="/histoires"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            <BookOpen className="w-4 h-4" />
-            Voir toutes les histoires
-          </Link>
-        </div>
-      </div>
-  ) : null;
 
   // ═══════════════════════════════════════════════════════════════
   // LAYOUT TEXT-FIRST (pas d'image)

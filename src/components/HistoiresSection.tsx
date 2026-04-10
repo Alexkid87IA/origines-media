@@ -234,7 +234,9 @@ export default function HistoiresSection() {
           setActiveCategory(firstAvailable.id);
         }
       } catch (error) {
-        console.error('Erreur fetch histoires:', error);
+        if (import.meta.env.DEV) {
+          console.error('Erreur fetch histoires:', error);
+        }
       } finally {
         setLoading(false);
       }
