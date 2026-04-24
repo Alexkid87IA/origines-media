@@ -3,7 +3,7 @@ import { useScrolled } from "@/hooks/useScrollDirection";
 import { UNIVERS } from "@/data/univers";
 import styles from "./SiteHeader.module.css";
 
-const COMING_SOON_SECTIONS = new Set(["04", "05", "06"]);
+const COMING_SOON_SECTIONS = new Set(["03", "04", "05"]);
 
 interface DropdownItem {
   href: string;
@@ -38,24 +38,9 @@ const SECONDARY: SecondaryNav[] = [
     ],
   },
   {
-    href: "/collections",
-    label: "Collections",
-    num: "02",
-    hoverColor: "#D64C90",
-    dropdownLabel: "Nos collections",
-    allLabel: "Toutes les collections",
-    items: [
-      { href: "/collections/le-divan", label: "Le Divan", color: "#7B5CD6" },
-      { href: "/collections/le-signal", label: "Le Signal", color: "#5AA352" },
-      { href: "/collections/la-lettre", label: "La Lettre", color: "#E67839" },
-      { href: "/collections/le-carnet", label: "Le Carnet", color: "#2E9B74" },
-      { href: "/collections/le-virage", label: "Le Virage", color: "#2E94B5" },
-    ],
-  },
-  {
     href: "/videos",
     label: "Vidéos",
-    num: "03",
+    num: "02",
     hoverColor: "#2E94B5",
     dropdownLabel: "Par format",
     allLabel: "Toutes les vidéos",
@@ -71,7 +56,7 @@ const SECONDARY: SecondaryNav[] = [
   {
     href: "/guides",
     label: "Guides",
-    num: "04",
+    num: "03",
     hoverColor: "#E67839",
     dropdownLabel: "Nos programmes",
     allLabel: "Tous les guides",
@@ -85,8 +70,8 @@ const SECONDARY: SecondaryNav[] = [
   {
     href: "/ensemble",
     label: "Ensemble",
-    num: "05",
-    hoverColor: "#C99B1E",
+    num: "04",
+    hoverColor: "#D64C90",
     dropdownLabel: "Vie du média",
     allLabel: "Voir tout",
     items: [
@@ -101,7 +86,7 @@ const SECONDARY: SecondaryNav[] = [
   {
     href: "/boutique",
     label: "Boutique",
-    num: "06",
+    num: "05",
     hoverColor: "#5AA352",
     dropdownLabel: "Nos produits",
     allLabel: "Voir la boutique",
@@ -266,18 +251,6 @@ export default function SiteHeader() {
           </nav>
 
           <div className={styles.headerActions}>
-            <button
-              className={`${styles.actionBtn}${searchOpen ? ` ${styles.actionBtnActive}` : ""}`}
-              type="button"
-              aria-label="Rechercher"
-              onClick={toggleSearch}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" />
-                <path d="M16 16l5 5" />
-              </svg>
-            </button>
-
             <button className={styles.cta} type="button">
               <span>Racontez votre histoire</span>
               <svg
@@ -335,6 +308,19 @@ export default function SiteHeader() {
             </button>
           </div>
         </div>
+        <button
+          type="button"
+          className={styles.searchBar}
+          onClick={toggleSearch}
+          aria-label="Rechercher"
+        >
+          <svg className={styles.searchBarIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M16 16l5 5" />
+          </svg>
+          <span className={styles.searchBarText}>Rechercher un article, un sujet&hellip;</span>
+          <kbd className={styles.searchBarKbd}>/</kbd>
+        </button>
       </div>
 
       <div
