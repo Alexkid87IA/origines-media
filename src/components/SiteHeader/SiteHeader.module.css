@@ -67,9 +67,9 @@
   align-items: center;
   gap: 16px;
   position: relative;
-  width: 300px;
+  width: 270px;
   --spacer-narrow: 72px;
-  --spacer-wide: 178px;
+  --spacer-wide: 148px;
 }
 
 .logoLockup {
@@ -170,6 +170,8 @@
   align-items: center;
   justify-content: flex-end;
   gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
 .megaTrigger {
