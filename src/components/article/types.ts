@@ -74,6 +74,7 @@ export interface RelatedArticle {
   title?: string;
   slug: { current: string };
   imageUrl?: string;
+  excerpt?: string;
   verticale?: ArticleVerticale;
 }
 

@@ -1,10 +1,11 @@
 // src/components/HeroSection.tsx
-// Hero Premium - Cinématique, Glassmorphisme, Magazine de luxe
+// Hero — Split layout : image à gauche, contenu à droite
+// Brand Bible v1.0 — Angular, Archivo, JetBrains Mono, papier #F7F5F0
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { getUniversColors } from '../lib/universColors';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
@@ -22,7 +23,6 @@ interface HeroSectionProps {
   portraits?: Portrait[];
 }
 
-// Interface pour les articles Sanity
 interface SanityArticle {
   _id: string;
   titre: string;
@@ -37,7 +37,6 @@ interface SanityArticle {
   };
 }
 
-// Interface pour les recommandations Sanity
 interface SanityRecoItem {
   _key: string;
   titre: string;
@@ -53,7 +52,6 @@ interface SanityReco {
   items?: SanityRecoItem[];
 }
 
-// Query pour récupérer 2 recommandations aléatoires de types différents
 const HERO_RECOS_QUERY = `
   *[_type == "recommendation"] | order(_createdAt desc) {
     _id,
@@ -66,7 +64,6 @@ const HERO_RECOS_QUERY = `
   }
 `;
 
-// Query pour récupérer les articles (productions) pour "À découvrir aussi"
 const ARTICLES_DISCOVER_QUERY = `
   *[_type == "production" && coalesce(typeArticle, "article") in ["article", "actu", "guide", "interview"]] | order(datePublication desc) [0...50] {
     _id,
@@ -83,7 +80,6 @@ const ARTICLES_DISCOVER_QUERY = `
   }
 `;
 
-// Mapping des types Sanity vers labels affichés
 const typeLabels: Record<string, string> = {
   'livres': 'Livres',
   'films-series': 'Films & Séries',
@@ -97,8 +93,6 @@ const typeLabels: Record<string, string> = {
   'produit': 'Produits',
 };
 
-// Images de catégorie pour les recommandations (synchronisé avec RecommandationsSection)
-// Inclut les variantes de noms possibles venant de Sanity
 const categoryImages: Record<string, string> = {
   'livres': '/recos/reco_livre.png',
   'livre': '/recos/reco_livre.png',
@@ -114,29 +108,6 @@ const categoryImages: Record<string, string> = {
   'culture': '/recos/reco_culture.png',
   'produit': '/recos/reco_produit.png',
 };
-
-// Couleurs par type de recommandation (avec variantes)
-const typeColors: Record<string, string> = {
-  'livres': '#E11D48',
-  'livre': '#E11D48',
-  'films-series': '#7C3AED',
-  'film': '#7C3AED',
-  'musique': '#2563EB',
-  'podcasts': '#0D9488',
-  'podcast': '#0D9488',
-  'youtube': '#DC2626',
-  'reseaux-sociaux': '#0891B2',
-  'activite': '#16A34A',
-  'destination': '#EA580C',
-  'culture': '#9333EA',
-  'produit': '#CA8A04',
-};
-
-// Palette de couleurs disponibles pour les recommandations
-const recommendationColorPalette = [
-  '#FBBF24', '#F97316', '#EC4899', '#10B981', '#8B5CF6',
-  '#EF4444', '#6366F1', '#14B8A6', '#0EA5E9',
-];
 
 const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -156,7 +127,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
   }>>([]);
   const [articles, setArticles] = useState<SanityArticle[]>([]);
 
-  // Fetch des recommandations depuis Sanity
+  // --- Fetch recommandations ---
   useEffect(() => {
     const fetchRecos = async () => {
       try {
@@ -182,7 +153,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
           const shuffled = seededShuffle(data, seed);
           const selected: SanityReco[] = [];
-
           for (const reco of shuffled) {
             if (selected.length === 0) {
               selected.push(reco);
@@ -191,13 +161,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
               break;
             }
           }
-
           if (selected.length < 2 && shuffled.length >= 2) {
             const nextReco = shuffled.find(r => !selected.includes(r));
             if (nextReco) selected.push(nextReco);
           }
 
-          const transformed = selected.slice(0, 2).map(reco => ({
+          setRecommendations(selected.slice(0, 2).map(reco => ({
             id: reco._id,
             type: typeLabels[reco.type] || reco.type,
             typeKey: reco.type,
@@ -206,60 +175,37 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
             slug: reco.slug,
             description: reco.accroche || '',
             items: reco.items?.map(item => item.titre) || [],
-          }));
-
-          setRecommendations(transformed);
+          })));
         }
       } catch (error) {
         console.error('Erreur fetch recommandations hero:', error);
       }
     };
-
     fetchRecos();
   }, []);
 
-  // Fetch des articles depuis Sanity pour "À découvrir aussi"
+  // --- Fetch articles ---
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         const data = await sanityFetch(ARTICLES_DISCOVER_QUERY) as SanityArticle[];
-        if (data && data.length > 0) {
-          setArticles(data);
-        }
+        if (data && data.length > 0) setArticles(data);
       } catch (error) {
         console.error('Erreur fetch articles discover:', error);
       }
     };
-
     fetchArticles();
   }, []);
 
-
   const allItems = portraits.slice(0, 7);
 
-  // Sélectionner des articles pour le carrousel "À découvrir aussi" :
-  // - Articles Sanity (productions) EXCLUSIVEMENT
-  // - Exclure ceux qui sont déjà dans le slideshow hero
-  // - Shuffle pour la variété, groupés par 3
   const discoverItems = React.useMemo(() => {
     if (articles.length === 0) return [];
-
-    // Récupérer les titres des articles dans le slideshow pour les exclure
     const slideshowTitles = new Set(allItems.map(p => p.titre.toLowerCase().trim()));
-
-    // Filtrer les articles qui ne sont pas dans le slideshow
-    const availableArticles = articles.filter(
-      article => !slideshowTitles.has(article.titre.toLowerCase().trim())
-    );
-
-    if (availableArticles.length === 0) return [];
-
-    // Garder jusqu'à 12 articles (4 pages de 3) pour le carrousel
-    // Pas de shuffle : l'ordre est celui de la query Sanity (datePublication desc)
-    return availableArticles.slice(0, 12);
+    const available = articles.filter(a => !slideshowTitles.has(a.titre.toLowerCase().trim()));
+    return available.slice(0, 12);
   }, [articles, allItems]);
 
-  // Carrousel "À découvrir" : pages de 3 articles
   const discoverPages = React.useMemo(() => {
     const pages: SanityArticle[][] = [];
     for (let i = 0; i < discoverItems.length; i += 3) {
@@ -271,319 +217,206 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
 
   const [discoverPage, setDiscoverPage] = useState(0);
 
-
-  // Auto-slide every 5 seconds
+  // Auto-slide
   useEffect(() => {
     if (allItems.length <= 1) return;
     const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % allItems.length);
+      setActiveIndex(prev => (prev + 1) % allItems.length);
     }, 5000);
     return () => clearInterval(interval);
   }, [allItems.length]);
 
-  // Swipe handlers pour mobile - améliorés pour ne pas bloquer les clics
+  // Swipe
   const minSwipeDistance = 50;
-
   const onTouchStart = (e: React.TouchEvent) => {
-    // Vérifier si le touch commence sur un élément cliquable
     const target = e.target as HTMLElement;
-    const isClickable = target.closest('a, button');
-
-    if (isClickable) {
-      // Ne pas interférer avec les clics sur les liens/boutons
-      setIsSwiping(false);
-      return;
-    }
-
+    if (target.closest('a, button')) { setIsSwiping(false); return; }
     setTouchEndX(null);
     setTouchStartX(e.targetTouches[0].clientX);
     setTouchStartY(e.targetTouches[0].clientY);
     setIsSwiping(true);
   };
-
   const onTouchMove = (e: React.TouchEvent) => {
     if (!isSwiping) return;
     setTouchEndX(e.targetTouches[0].clientX);
   };
-
   const onTouchEnd = () => {
-    if (!isSwiping || !touchStartX || !touchEndX) {
-      setIsSwiping(false);
-      return;
-    }
-
-    const distanceX = touchStartX - touchEndX;
-    const isLeftSwipe = distanceX > minSwipeDistance;
-    const isRightSwipe = distanceX < -minSwipeDistance;
-
-    if (isLeftSwipe && allItems.length > 1) {
-      setActiveIndex((prev) => (prev + 1) % allItems.length);
-    }
-    if (isRightSwipe && allItems.length > 1) {
-      setActiveIndex((prev) => (prev - 1 + allItems.length) % allItems.length);
-    }
-
+    if (!isSwiping || !touchStartX || !touchEndX) { setIsSwiping(false); return; }
+    const d = touchStartX - touchEndX;
+    if (d > minSwipeDistance && allItems.length > 1) setActiveIndex(prev => (prev + 1) % allItems.length);
+    if (d < -minSwipeDistance && allItems.length > 1) setActiveIndex(prev => (prev - 1 + allItems.length) % allItems.length);
     setIsSwiping(false);
   };
 
-
-  // Couleurs utilisées par les articles
-  const usedColors = React.useMemo(() => {
-    const colors = new Set<string>();
-    allItems.forEach(item => {
-      const itemColors = getUniversColors(item.categorie);
-      colors.add(itemColors.bg.toLowerCase());
-    });
-    return colors;
-  }, [allItems]);
-
-  // Couleurs pour les recommandations
-  const recommendationColors = React.useMemo(() => {
-    const availableColors = recommendationColorPalette.filter(
-      color => !usedColors.has(color.toLowerCase())
-    );
-    const colorsToUse = availableColors.length >= 2 ? availableColors : recommendationColorPalette;
-    return [colorsToUse[0], colorsToUse[1] || colorsToUse[0]];
-  }, [usedColors]);
-
   if (allItems.length === 0) return null;
-
   const safeIndex = Math.min(activeIndex, allItems.length - 1);
   const currentItem = allItems[safeIndex];
   if (!currentItem) return null;
-
   const currentColors = getUniversColors(currentItem.categorie);
 
   return (
-    <section className="relative overflow-hidden">
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
-      {/* HERO PRINCIPAL - FULL WIDTH CINÉMATIQUE                                 */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
-      <div className="relative">
-        {/* Image de fond full-width - avec swipe sur mobile */}
+    <section style={{ backgroundColor: '#F7F5F0' }}>
+
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* HERO — Split layout : image à gauche, contenu à droite     */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10 pb-10 sm:pb-12 lg:pb-14">
+
+        {/* Filet fin + compteur */}
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+          <div className="h-px flex-1" style={{ backgroundColor: '#E8E5DE' }} />
+          <span className="font-jetbrains text-[11px] tracking-[0.14em] pl-4" style={{ color: '#B8B6AF' }}>
+            {String(safeIndex + 1).padStart(2, '0')} / {String(allItems.length).padStart(2, '0')}
+          </span>
+        </div>
+
+        {/* Split grid */}
         <div
-          className="relative h-[70vh] sm:h-[75vh] lg:h-[80vh] min-h-[550px] max-h-[900px]"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-0"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={safeIndex}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-              className="absolute inset-0"
-            >
-              <img
+          {/* ── Image ── */}
+          <div
+            className="relative overflow-hidden cursor-pointer"
+            style={{ aspectRatio: '4 / 5' }}
+            onClick={() => {
+              if (!isSwiping && allItems.length > 1) setActiveIndex(prev => (prev + 1) % allItems.length);
+            }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={safeIndex}
                 src={currentItem.imageUrl}
                 alt={currentItem.titre}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
                 loading="eager"
                 decoding="async"
-                // @ts-expect-error fetchPriority is valid but not in React types yet
-                fetchpriority="high"
               />
-            </motion.div>
-          </AnimatePresence>
+            </AnimatePresence>
 
-          {/* Overlay gradient sophistiqué */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
+            {/* Progress bar en bas de l'image */}
+            <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ backgroundColor: 'rgba(0,0,0,0.1)' }}>
+              <motion.div
+                className="h-full"
+                style={{ backgroundColor: currentColors.bg }}
+                initial={{ width: '0%' }}
+                animate={{ width: '100%' }}
+                transition={{ duration: 5, ease: 'linear' }}
+                key={`bar-${safeIndex}`}
+              />
+            </div>
+          </div>
 
-          {/* Effets visuels premium */}
-          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/30 to-transparent" />
+          {/* ── Contenu ── */}
+          <div className="flex flex-col justify-center pt-6 lg:pt-0 lg:pl-12 xl:pl-16">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`text-${safeIndex}`}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+              >
+                {/* Catégorie — eyebrow */}
+                <span
+                  className="font-jetbrains text-[11px] font-medium uppercase tracking-[0.14em]"
+                  style={{ color: currentColors.dark }}
+                >
+                  {currentItem.categorie}
+                </span>
 
-          {/* Contenu principal */}
-          <div className="absolute inset-0 flex flex-col justify-end">
-            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-16 sm:pb-12 lg:pb-16">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end">
+                {/* Titre */}
+                <Link to={currentItem.url} className="group block mt-5">
+                  <h1
+                    className="font-archivo font-black text-[28px] sm:text-[36px] lg:text-[40px] xl:text-[44px] leading-[1.05] tracking-[-0.03em]"
+                    style={{ color: '#0A0A0A' }}
+                  >
+                    {typo(currentItem.titre)}
+                  </h1>
+                </Link>
 
-                {/* Colonne gauche: Contenu featured */}
-                <div className="lg:col-span-7">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={safeIndex}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                    >
-                      {/* Badge catégorie avec glow */}
-                      <motion.span
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 sm:mb-5"
-                        style={{
-                          backgroundColor: currentColors.bg,
-                          color: currentColors.text,
-                          boxShadow: `0 0 30px ${currentColors.bg}60, 0 4px 20px ${currentColors.bg}40`,
-                        }}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <span
-                          className="w-2 h-2 rounded-full animate-pulse"
-                          style={{ backgroundColor: currentColors.text }}
-                        />
-                        {currentItem.categorie}
-                      </motion.span>
+                {/* Accroche */}
+                {currentItem.accroche && (
+                  <p
+                    className="font-inter-tight text-[15px] sm:text-[16px] lg:text-[17px] leading-[1.55] mt-5 max-w-lg"
+                    style={{ color: '#6B6B6B' }}
+                  >
+                    {typo(currentItem.accroche)}
+                  </p>
+                )}
 
-                      {/* Titre principal - Grand et impactant */}
-                      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.1] mb-4 sm:mb-5 max-w-2xl">
-                        {typo(currentItem.titre)}
-                      </h1>
+                {/* CTA — lien discret */}
+                <Link
+                  to={currentItem.url}
+                  className="group inline-flex items-center gap-2 mt-6 font-jetbrains text-[11px] font-medium uppercase tracking-[0.14em] transition-opacity hover:opacity-70"
+                  style={{ color: currentColors.dark }}
+                >
+                  Lire l'histoire
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+            </AnimatePresence>
 
-                      {/* Accroche - Si disponible */}
-                      {currentItem.accroche && (
-                        <p className="text-white/80 text-base sm:text-lg leading-relaxed mb-5 sm:mb-6 max-w-xl line-clamp-2">
-                          {typo(currentItem.accroche)}
-                        </p>
-                      )}
-
-                      {/* CTA Premium */}
-                      <Link
-                        to={currentItem.url}
-                        className="group inline-flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold text-sm sm:text-base transition-all duration-300 hover:scale-105"
-                        style={{
-                          backgroundColor: currentColors.bg,
-                          color: currentColors.text,
-                          boxShadow: `0 4px 20px ${currentColors.bg}50`,
-                        }}
-                      >
-                        <Play className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" />
-                        <span>Lire l'histoire</span>
-                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                      </Link>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                {/* Colonne droite: Navigation dots + Info */}
-                <div className="hidden lg:flex lg:col-span-5 flex-col items-end gap-4">
-                  {/* Indicateur de progression */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-white/60 text-sm font-medium">
-                      {String(safeIndex + 1).padStart(2, '0')}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      {allItems.map((item, index) => {
-                        const dotColors = getUniversColors(item.categorie);
-                        const isActive = index === safeIndex;
-
-                        return (
-                          <button
-                            key={index}
-                            onClick={() => setActiveIndex(index)}
-                            className="relative h-1 rounded-full transition-all duration-500 overflow-hidden"
-                            style={{
-                              width: isActive ? '48px' : '16px',
-                              backgroundColor: isActive ? 'transparent' : 'rgba(255,255,255,0.3)',
-                            }}
-                          >
-                            {isActive && (
-                              <>
-                                <div
-                                  className="absolute inset-0 rounded-full opacity-30"
-                                  style={{ backgroundColor: dotColors.bg }}
-                                />
-                                <motion.div
-                                  className="absolute inset-0 rounded-full"
-                                  style={{ backgroundColor: dotColors.bg }}
-                                  initial={{ scaleX: 0, transformOrigin: 'left' }}
-                                  animate={{ scaleX: 1 }}
-                                  transition={{ duration: 5, ease: 'linear' }}
-                                />
-                              </>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <span className="text-white/40 text-sm font-medium">
-                      {String(allItems.length).padStart(2, '0')}
-                    </span>
-                  </div>
-                </div>
-              </div>
+            {/* Dots navigation */}
+            <div className="flex items-center gap-1.5 mt-8 pt-6" style={{ borderTop: '1px solid #E8E5DE' }}>
+              {allItems.map((_, index) => {
+                const isActive = index === safeIndex;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setActiveIndex(index)}
+                    className="h-[3px] rounded-full transition-all duration-300"
+                    style={{
+                      width: isActive ? '20px' : '8px',
+                      backgroundColor: isActive ? '#0A0A0A' : '#E8E5DE',
+                    }}
+                    aria-label={`Slide ${index + 1}`}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
-
-        {/* Navigation dots - Mobile */}
-        <div className="lg:hidden absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md">
-          {allItems.map((item, index) => {
-            const dotColors = getUniversColors(item.categorie);
-            const isActive = index === safeIndex;
-
-            return (
-              <button
-                key={index}
-                onClick={() => setActiveIndex(index)}
-                className="relative h-1.5 rounded-full transition-all duration-300 overflow-hidden"
-                style={{
-                  width: isActive ? '24px' : '8px',
-                  backgroundColor: isActive ? dotColors.bg : 'rgba(255,255,255,0.4)',
-                }}
-              >
-                {isActive && (
-                  <motion.div
-                    className="absolute inset-0 rounded-full"
-                    style={{ backgroundColor: dotColors.bg, filter: 'brightness(0.7)' }}
-                    initial={{ scaleX: 0, transformOrigin: 'left' }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 5, ease: 'linear' }}
-                  />
-                )}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
-      {/* SECTION À DÉCOUVRIR - 3 ARTICLES PREMIUM                               */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* À LIRE AUSSI — grille minimale                              */}
+      {/* ════════════════════════════════════════════════════════════ */}
       {discoverPages.length > 0 && (
-        <div className="bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
-            {/* Header - Format standard homepage */}
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="h-1 w-8 bg-violet-500 rounded-full" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Lire</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                  À découvrir{' '}
-                  <span className="bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text text-transparent">
-                    aussi
-                  </span>
-                </h2>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  {typo("D'autres récits sélectionnés pour vous, à explorer selon vos envies du moment.")}
-                </p>
-              </div>
+        <div style={{ borderTop: '1px solid #E8E5DE' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
 
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-archivo font-black text-[20px] sm:text-[24px] tracking-[-0.03em] leading-[1.1]" style={{ color: '#0A0A0A' }}>
+                À lire aussi
+              </h2>
               <Link
                 to="/articles"
-                className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
+                className="group inline-flex items-center gap-1.5 font-jetbrains text-[10px] font-medium uppercase tracking-[0.14em] transition-opacity hover:opacity-60"
+                style={{ color: '#6B6B6B' }}
               >
-                <span>Tous les articles</span>
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                Tout voir
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
 
-            {/* Carrousel 3 colonnes - Rotation automatique */}
+            {/* Grille 3 colonnes */}
             <div className="relative overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={discoverPage}
-                  initial={{ opacity: 0, x: 60 }}
+                  initial={{ opacity: 0, x: 40 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -60 }}
-                  transition={{ duration: 0.5, ease: 'easeInOut' }}
-                  className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6 items-stretch"
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8"
                 >
                   {(discoverPages[discoverPage] || []).map((article, index) => {
                     const verticaleName = article.verticale?.nom || 'Actualité';
@@ -592,59 +425,30 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                     return (
                       <motion.div
                         key={article._id}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                        className="h-full"
+                        transition={{ duration: 0.35, delay: index * 0.08 }}
                       >
-                        <Link
-                          to={`/article/${article.slug}`}
-                          className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-                          style={{
-                            boxShadow: '0 4px 25px -5px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.03)',
-                          }}
-                        >
-                          {/* Image container */}
-                          <div className="relative aspect-[16/10] overflow-hidden">
+                        <Link to={`/article/${article.slug}`} className="group block">
+                          <div className="aspect-[4/3] overflow-hidden mb-4">
                             <img
                               src={article.imageUrl || '/placeholder.svg'}
                               alt={article.titre}
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                             />
-
-                            {/* Subtle gradient overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                            {/* Badge catégorie */}
-                            <div className="absolute top-4 left-4">
-                              <span
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-white shadow-lg"
-                                style={{
-                                  backgroundColor: itemColors.bg,
-                                }}
-                              >
-                                <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
-                                {verticaleName}
-                              </span>
-                            </div>
                           </div>
-
-                          {/* Content area */}
-                          <div className="flex-1 flex flex-col p-5 sm:p-6">
-                            {/* Title - 4 lignes max */}
-                            <h3 className="flex-1 text-base sm:text-lg font-bold text-gray-900 leading-snug line-clamp-4 mb-3 group-hover:text-gray-700 transition-colors">
-                              {typo(article.titre)}
-                            </h3>
-
-                            {/* CTA */}
-                            <span
-                              className="inline-flex items-center gap-2 text-sm font-bold transition-all duration-300 group-hover:gap-3 mt-auto"
-                              style={{ color: itemColors.bg }}
-                            >
-                              Lire l'article
-                              <ArrowRight className="w-4 h-4" />
-                            </span>
-                          </div>
+                          <span
+                            className="font-jetbrains text-[10px] font-medium uppercase tracking-[0.12em]"
+                            style={{ color: itemColors.dark }}
+                          >
+                            {verticaleName}
+                          </span>
+                          <h3
+                            className="font-archivo font-extrabold text-[17px] sm:text-[18px] leading-[1.2] tracking-[-0.015em] mt-1.5 line-clamp-3 group-hover:opacity-70 transition-opacity"
+                            style={{ color: '#0A0A0A' }}
+                          >
+                            {typo(article.titre)}
+                          </h3>
                         </Link>
                       </motion.div>
                     );
@@ -652,18 +456,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Dots de pagination */}
+              {/* Pagination */}
               {discoverPages.length > 1 && (
-                <div className="flex justify-center gap-2 mt-6">
+                <div className="flex items-center gap-1.5 mt-8">
                   {discoverPages.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setDiscoverPage(i)}
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        i === discoverPage
-                          ? 'w-6 bg-violet-500'
-                          : 'w-2 bg-gray-300 hover:bg-gray-400'
-                      }`}
+                      className="h-[3px] rounded-full transition-all duration-300"
+                      style={{
+                        width: i === discoverPage ? '20px' : '8px',
+                        backgroundColor: i === discoverPage ? '#0A0A0A' : '#E8E5DE',
+                      }}
                       aria-label={`Page ${i + 1}`}
                     />
                   ))}
@@ -674,121 +478,68 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
-      {/* SECTION RECOMMANDATIONS - STYLE CLEAN AVEC IMAGES CATÉGORIE            */}
-      {/* ═══════════════════════════════════════════════════════════════════════ */}
+      {/* ════════════════════════════════════════════════════════════ */}
+      {/* RECOMMANDATIONS — compact, image + texte côte à côte        */}
+      {/* ════════════════════════════════════════════════════════════ */}
       {recommendations.length > 0 && (
-        <div className="bg-white border-t border-gray-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
-            {/* Header - Format standard homepage */}
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="h-1 w-8 bg-orange-500 rounded-full" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Découvrir</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                  Aujourd'hui, on{' '}
-                  <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                    recommande
-                  </span>
-                </h2>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  {typo("Livres, films, podcasts... Les coups de cœur sélectionnés par notre équipe.")}
-                </p>
-              </div>
+        <div style={{ borderTop: '1px solid #E8E5DE' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-14">
 
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-archivo font-black text-[20px] sm:text-[24px] tracking-[-0.03em] leading-[1.1]" style={{ color: '#0A0A0A' }}>
+                On recommande
+              </h2>
               <Link
                 to="/recommandations"
-                className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors self-start lg:self-center flex-shrink-0"
+                className="group inline-flex items-center gap-1.5 font-jetbrains text-[10px] font-medium uppercase tracking-[0.14em] transition-opacity hover:opacity-60"
+                style={{ color: '#6B6B6B' }}
               >
-                <span>Toutes les recos</span>
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                Tout voir
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
               </Link>
             </div>
 
-            {/* Grille de recommandations avec images de catégorie */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
               {recommendations.map((reco, index) => {
-                const accentColor = typeColors[reco.typeKey] || recommendationColors[index];
+                const recoColors = getUniversColors(reco.type);
                 const categoryImage = categoryImages[reco.typeKey];
 
                 return (
                   <motion.div
                     key={reco.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                    transition={{ duration: 0.4, delay: 0.15 + index * 0.08 }}
                   >
                     <Link
                       to={`/recommandation/${reco.slug}`}
-                      className="group block rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
-                      style={{
-                        boxShadow: '0 4px 20px -4px rgba(0,0,0,0.1)',
-                      }}
+                      className="group flex gap-4 sm:gap-5"
                     >
-                      {/* Image de catégorie en 16:9 */}
-                      <div className="relative aspect-[16/9] overflow-hidden">
+                      <div className="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 overflow-hidden">
                         <img
                           src={categoryImage}
                           alt={reco.type}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         />
-                        {/* Overlay gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                        {/* Badge type en haut à gauche */}
-                        <div className="absolute top-3 left-3">
-                          <span
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-white"
-                            style={{
-                              backgroundColor: accentColor,
-                              boxShadow: `0 2px 10px ${accentColor}50`,
-                            }}
-                          >
-                            {reco.type}
-                          </span>
-                        </div>
-
-                        {/* Titre sur l'image */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <h3 className="text-lg sm:text-xl font-bold text-white leading-snug line-clamp-2 mb-1">
-                            {typo(reco.title)}
-                          </h3>
-                          {reco.description && (
-                            <p className="text-white/70 text-sm line-clamp-1">
-                              {reco.description}
-                            </p>
-                          )}
-                        </div>
                       </div>
-
-                      {/* Footer avec items preview + CTA */}
-                      <div className="p-4 flex items-center justify-between">
-                        {/* Preview des items */}
-                        {reco.items.length > 0 ? (
-                          <p className="text-xs text-gray-600 truncate flex-1 min-w-0">
-                            <span className="text-gray-400">Inclut{'\u00A0'}: </span>
-                            <span className="font-medium">
-                              {reco.items.slice(0, 2).join(', ')}
-                              {reco.items.length > 2 && ` +${reco.items.length - 2}`}
-                            </span>
-                          </p>
-                        ) : (
-                          <span className="text-xs text-gray-400">Notre sélection</span>
-                        )}
-
-                        {/* CTA */}
+                      <div className="flex flex-col justify-center min-w-0">
                         <span
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 group-hover:scale-105"
-                          style={{
-                            backgroundColor: `${accentColor}15`,
-                            color: accentColor,
-                          }}
+                          className="font-jetbrains text-[10px] font-medium uppercase tracking-[0.12em] mb-1"
+                          style={{ color: recoColors.dark }}
                         >
-                          Voir
-                          <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                          {reco.type}
                         </span>
+                        <h3
+                          className="font-archivo font-extrabold text-[17px] sm:text-[19px] leading-[1.15] tracking-[-0.015em] line-clamp-2 group-hover:opacity-70 transition-opacity mb-1.5"
+                          style={{ color: '#0A0A0A' }}
+                        >
+                          {typo(reco.title)}
+                        </h3>
+                        {reco.items.length > 0 && (
+                          <p className="font-inter-tight text-[13px] leading-[1.4] truncate" style={{ color: '#B8B6AF' }}>
+                            {reco.items.slice(0, 3).join(' · ')}
+                          </p>
+                        )}
                       </div>
                     </Link>
                   </motion.div>

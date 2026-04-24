@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, Star, Check } from 'lucide-react';
 import { typo } from '../lib/typography';
+import EmailCapture from './EmailCapture';
 
 // Produits de la Boutique
 const academyProducts = [
@@ -224,6 +225,34 @@ const EngagementSection: React.FC = () => {
             <ProductCard key={product.id} product={product} index={index} />
           ))}
         </div>
+
+        {/* Newsletter CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="mt-10 sm:mt-12 bg-gray-900 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6"
+        >
+          <div className="flex-1 text-center md:text-left">
+            <h3 className="text-white font-bold text-lg sm:text-xl mb-1">
+              {typo("Restez inspiré chaque semaine")}
+            </h3>
+            <p className="text-gray-400 text-sm">
+              {typo("Recevez nos meilleurs récits et ressources directement dans votre boîte mail.")}
+            </p>
+          </div>
+          <div className="w-full md:w-auto md:min-w-[320px]">
+            <EmailCapture
+              source="homepage"
+              variant="dark"
+              placeholder="votre@email.com"
+              buttonText="S'inscrire"
+              successMessage="Bienvenue !"
+              successDescription="Vous recevrez notre prochaine newsletter."
+            />
+          </div>
+        </motion.div>
 
         {/* Footer stats */}
         <motion.div

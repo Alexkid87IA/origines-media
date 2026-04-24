@@ -7,9 +7,19 @@ export default {
         'xs': '475px',
       },
       fontFamily: {
-        'montserrat': ['Montserrat', 'sans-serif'],
-        'inter': ['Inter', 'sans-serif'],
-        'playfair': ['Playfair Display', 'serif'],
+        'archivo': ['Archivo', 'Arial Black', 'sans-serif'],
+        'inter-tight': ['Inter Tight', 'Helvetica Neue', 'sans-serif'],
+        'jetbrains': ['JetBrains Mono', 'Menlo', 'monospace'],
+        'fraunces': ['Fraunces', 'Georgia', 'serif'],
+        // Legacy aliases — prevent breaking ~58 files that use font-montserrat / font-inter
+        'montserrat': ['Archivo', 'Arial Black', 'sans-serif'],
+        'inter': ['Inter Tight', 'Helvetica Neue', 'sans-serif'],
+        'playfair': ['Fraunces', 'Georgia', 'serif'],
+      },
+      letterSpacing: {
+        'archivo': '-0.03em',
+        'mono': '0.14em',
+        'eyebrow': '0.12em',
       },
       backdropBlur: {
         'xs': '2px',

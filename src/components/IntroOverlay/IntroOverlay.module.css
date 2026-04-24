@@ -1,0 +1,241 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+}
+
+.fading {
+  opacity: 0;
+}
+
+.intro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(247,245,240,0.04) 0%, transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(247,245,240,0.03) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.introMono {
+  position: absolute;
+  top: 32px;
+  left: 48px;
+  right: 48px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 0;
+  animation: introMonoIn 0.8s ease 0.1s forwards;
+}
+
+@keyframes introMonoIn {
+  to { opacity: 0.5; }
+}
+
+.introMonoBottom {
+  position: absolute;
+  bottom: 32px;
+  left: 48px;
+  right: 48px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 0;
+  animation: introMonoIn 0.8s ease 0.3s forwards;
+}
+
+.progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar {
+  width: 120px;
+  height: 1px;
+  background: rgba(247,245,240,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: var(--paper);
+  transform: translateX(-100%);
+  animation: introBar 3.4s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+
+@keyframes introBar {
+  to { transform: translateX(0); }
+}
+
+.introWord {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition: transform 0.9s cubic-bezier(0.6, 0, 0.2, 1), opacity 0.5s ease 0.2s;
+}
+
+.morphing {
+  transform: translateX(42%);
+}
+
+.outro {
+  transform: translateX(42%) scale(0.18);
+  opacity: 0;
+}
+
+.introLetter {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(48px, 10vw, 140px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--paper);
+  display: inline-block;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(10px);
+  transition:
+    transform 0.8s cubic-bezier(0.4, 0, 0.1, 1),
+    opacity 0.6s ease,
+    filter 0.7s ease,
+    letter-spacing 0.9s cubic-bezier(0.6, 0, 0.2, 1);
+  will-change: transform, opacity, filter;
+}
+
+.letterIn {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.morphing .introLetter:not([data-i="0"]) {
+  opacity: 0;
+  transform: translateX(-40px) scale(0.7);
+  filter: blur(6px);
+  letter-spacing: -0.3em;
+}
+
+.morphing .introLetter[data-i="7"] { transition-delay: 0ms; }
+.morphing .introLetter[data-i="6"] { transition-delay: 40ms; }
+.morphing .introLetter[data-i="5"] { transition-delay: 80ms; }
+.morphing .introLetter[data-i="4"] { transition-delay: 120ms; }
+.morphing .introLetter[data-i="3"] { transition-delay: 160ms; }
+.morphing .introLetter[data-i="2"] { transition-delay: 200ms; }
+.morphing .introLetter[data-i="1"] { transition-delay: 240ms; }
+
+.introLogoFinal {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: clamp(110px, 14vw, 200px);
+  height: clamp(110px, 14vw, 200px);
+  transform: translate(-8%, -50%) scale(0.85);
+  opacity: 0;
+  transition:
+    opacity 0.5s ease,
+    transform 0.7s cubic-bezier(0.34, 1.35, 0.64, 1);
+  pointer-events: none;
+  filter: invert(1);
+}
+
+.introLogoFinal img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.morphing .introLogoFinal {
+  opacity: 1;
+  transform: translate(-8%, -50%) scale(1);
+  transition-delay: 550ms;
+}
+
+.morphing .introLetter[data-i="0"] {
+  opacity: 0;
+  transition-delay: 550ms;
+}
+
+.introSkip {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 0;
+  animation: introSkipIn 0.8s ease 1.2s forwards;
+  cursor: pointer;
+  padding: 8px 16px;
+  border: 1px solid rgba(247,245,240,0.4);
+  background: transparent;
+  z-index: 10;
+}
+
+@keyframes introSkipIn {
+  to { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    animation: introOutroFast 0.3s ease 0.3s forwards;
+  }
+  .introLetter {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  .introWord {
+    animation: none !important;
+  }
+  .introMono,
+  .introMonoBottom,
+  .introSkip {
+    animation: introMonoFast 0.2s ease forwards !important;
+  }
+  .bar::after {
+    animation: none !important;
+  }
+}
+
+@keyframes introOutroFast {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes introMonoFast {
+  to { opacity: 0.5; }
+}

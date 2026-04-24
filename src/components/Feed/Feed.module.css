@@ -1,0 +1,886 @@
+/* ===== Section 03 — "Dernières publications" ===== */
+
+.feed {
+  margin-top: 72px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ----- Chapter mark (unified with Ch.01 / Ch.02) ----- */
+
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 20px;
+}
+
+.cNum { letter-spacing: 0.2em; font-weight: 500; }
+.cSep { opacity: 0.3; }
+.cLabel {
+  opacity: 0.75;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+/* ----- Section intro ----- */
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 40px;
+  margin-bottom: 44px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.sectionLabel { max-width: 62ch; }
+
+.sectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 18px;
+}
+
+.sectionKickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.sectionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.sectionTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.sectionDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone700);
+  margin: 18px 0 0;
+  max-width: 58ch;
+}
+
+.sectionAll {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.sectionAll:hover { color: var(--ink); }
+
+.sectionAllArrow {
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.sectionAll:hover .sectionAllArrow { transform: translateX(4px); }
+
+/* Filtres */
+.feedFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+}
+
+.feedFilter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid rgba(10, 10, 10, 0.1);
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.feedFilterDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--chip-color, var(--stone400));
+  flex-shrink: 0;
+}
+
+.feedFilterDotAll {
+  background: var(--ink);
+}
+
+.feedFilterCount {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--stone400);
+  padding-left: 8px;
+  border-left: 1px solid rgba(10, 10, 10, 0.08);
+  margin-left: 2px;
+}
+
+.feedFilter:hover {
+  border-color: var(--chip-color, var(--ink));
+  background: var(--stone50);
+}
+
+.feedFilterActive {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.feedFilterActive .feedFilterDot {
+  background: var(--chip-color, var(--paper));
+}
+
+.feedFilterActive .feedFilterCount {
+  color: rgba(247, 245, 240, 0.6);
+  border-left-color: rgba(247, 245, 240, 0.2);
+}
+
+/* Toolbar : filtre actif + tri */
+.feedToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.feedToolbarLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedToolbarSep {
+  opacity: 0.35;
+}
+
+/* Sort selector */
+.feedSort {
+  display: inline-flex;
+  align-items: center;
+}
+
+.feedSortWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.feedSortSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid rgba(10, 10, 10, 0.1);
+  padding: 6px 30px 6px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.feedSortSelect:hover {
+  border-color: var(--ink);
+}
+
+.feedSortSelect:focus {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.feedSortChevron {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: var(--stone500);
+  transition: color 0.2s ease;
+}
+
+.feedSortWrap:hover .feedSortChevron {
+  color: var(--ink);
+}
+
+/* Animated filter transition (replaces display:none) */
+.isFilteredOut {
+  display: none;
+}
+/* Smooth entrance on filter change */
+.feedEntering {
+  animation: feedItemIn 0.4s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes feedItemIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Message "aucun résultat" */
+.feedEmpty {
+  text-align: center;
+  padding: 48px 24px;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--stone500);
+  border: 1px dashed var(--stone100);
+  border-radius: 8px;
+  margin: 0 0 16px;
+}
+.feedEmpty a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Grille 2 colonnes */
+.feedGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(10, 10, 10, 0.08);
+  border: 1px solid rgba(10, 10, 10, 0.1);
+}
+
+/* Standard item — left column, every even-indexed item */
+
+/* ── Cinematic card — full-bleed photo + text overlay (right column) ── */
+.feedItemCinematic {
+  grid-column: auto;
+}
+.feedItemCinematic::before {
+  display: none;
+}
+.feedCineLink {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  min-height: 240px;
+  overflow: hidden;
+}
+.feedCineImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.3, 0, 0.2, 1);
+}
+.feedItemCinematic:hover .feedCineImg {
+  transform: scale(1.04);
+}
+.feedCineGrad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(10, 10, 10, 0.1) 0%,
+    rgba(10, 10, 10, 0.55) 40%,
+    rgba(10, 10, 10, 0.85) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+.feedCineBody {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 32px;
+  height: 100%;
+  margin-left: 45%;
+}
+.feedCineBody .feedMeta {
+  color: rgba(247, 245, 240, 0.6);
+}
+.feedCineBody .feedDot {
+  background: var(--cat-color, rgba(247, 245, 240, 0.5));
+}
+.feedCineBody .feedTime {
+  color: rgba(247, 245, 240, 0.8);
+}
+.feedCineBody .feedFormat {
+  color: rgba(247, 245, 240, 0.5);
+}
+.feedCineBody .feedSep {
+  color: rgba(247, 245, 240, 0.3);
+}
+.feedCineH {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+  margin: 0;
+  text-wrap: balance;
+  transition: color 0.3s ease;
+}
+.feedCineH em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+}
+.feedCineExcerpt {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(247, 245, 240, 0.6);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.feedCineFoot {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.5);
+  margin-top: 4px;
+}
+.feedCinePlay {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(247, 245, 240, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(247, 245, 240, 0.25);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.feedItemCinematic:hover .feedCinePlay {
+  transform: scale(1.1);
+  background: rgba(247, 245, 240, 0.25);
+}
+
+/* ── In-grid CTA — cassure encre + pastilles univers ── */
+.feedGridCta {
+  grid-column: 1 / -1;
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.feedGridCtaLink {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  text-decoration: none;
+  color: var(--paper);
+  height: 100%;
+}
+
+/* ── Colonne gauche : nombre + Fraunces ── */
+.feedGridCtaLeft {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 52px 56px;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(247, 245, 240, 0.08);
+  min-width: 220px;
+}
+
+.feedGridCtaNum {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 88px;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: var(--paper);
+  opacity: 0.15;
+  transition: opacity 0.5s cubic-bezier(.2,.7,.2,1),
+              transform 0.5s cubic-bezier(.2,.7,.2,1),
+              letter-spacing 0.5s cubic-bezier(.2,.7,.2,1);
+}
+.feedGridCtaLink:hover .feedGridCtaNum {
+  opacity: 1;
+  transform: scale(1.06);
+  letter-spacing: -0.03em;
+}
+
+.feedGridCtaItalic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.3;
+  color: rgba(247, 245, 240, 0.35);
+  transition: color 0.4s ease;
+  white-space: nowrap;
+}
+.feedGridCtaLink:hover .feedGridCtaItalic {
+  color: rgba(247, 245, 240, 0.7);
+}
+
+/* ── Colonne droite : pastilles + action ── */
+.feedGridCtaRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 48px;
+  flex: 1;
+  min-width: 0;
+}
+
+.feedGridCtaUniversLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+
+/* ── Pastilles colorées ── */
+.feedGridCtaPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.feedGridCtaPill {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 5px 14px;
+  border-radius: 0;
+  border: 1px solid var(--pill);
+  color: var(--pill);
+  opacity: 0.5;
+  transition: opacity 0.35s ease,
+              background 0.35s ease,
+              color 0.35s ease,
+              transform 0.35s ease;
+}
+.feedGridCtaLink:hover .feedGridCtaPill {
+  opacity: 1;
+  background: var(--pill);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+/* Stagger l'apparition des pastilles au hover */
+.feedGridCtaPill:nth-child(1)  { transition-delay: 0ms; }
+.feedGridCtaPill:nth-child(2)  { transition-delay: 30ms; }
+.feedGridCtaPill:nth-child(3)  { transition-delay: 60ms; }
+.feedGridCtaPill:nth-child(4)  { transition-delay: 90ms; }
+.feedGridCtaPill:nth-child(5)  { transition-delay: 120ms; }
+.feedGridCtaPill:nth-child(6)  { transition-delay: 150ms; }
+.feedGridCtaPill:nth-child(7)  { transition-delay: 180ms; }
+.feedGridCtaPill:nth-child(8)  { transition-delay: 210ms; }
+.feedGridCtaPill:nth-child(9)  { transition-delay: 240ms; }
+.feedGridCtaPill:nth-child(10) { transition-delay: 270ms; }
+
+/* ── Filet + action ── */
+.feedGridCtaRule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: rgba(247, 245, 240, 0.08);
+  transition: background 0.4s ease;
+}
+.feedGridCtaLink:hover .feedGridCtaRule {
+  background: rgba(247, 245, 240, 0.2);
+}
+
+.feedGridCtaAction {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.feedGridCtaLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.4);
+  transition: color 0.3s ease;
+}
+.feedGridCtaLink:hover .feedGridCtaLabel {
+  color: var(--paper);
+}
+
+.feedGridCtaArrow {
+  width: 24px;
+  height: 24px;
+  color: rgba(247, 245, 240, 0.3);
+  flex-shrink: 0;
+  transition: color 0.3s ease,
+              transform 0.5s cubic-bezier(.2,.7,.2,1);
+}
+.feedGridCtaLink:hover .feedGridCtaArrow {
+  color: var(--paper);
+  transform: translateX(8px);
+}
+
+.feedItem {
+  background: var(--pure);
+  position: relative;
+  transition: background 0.25s ease, box-shadow 0.3s ease;
+}
+/* Colored left accent bar on hover — Brand Bible category accent */
+.feedItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--cat-color, var(--stone300));
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.35s cubic-bezier(.2,.7,.2,1);
+  z-index: 3;
+}
+.feedItem:hover::before {
+  transform: scaleY(1);
+  transform-origin: top;
+}
+.feedItem:hover {
+  background: var(--stone50);
+  box-shadow: inset 0 0 0 0 transparent;
+}
+
+/* Feed items — no stagger animation */
+
+.feedLink {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 14px;
+  padding: 18px 16px 18px 14px;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  align-items: start;
+}
+
+/* Vignette 88x88 */
+.feedThumb {
+  position: relative;
+  margin: 0;
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
+  background: var(--stone50);
+  border: 1px solid rgba(10,10,10,0.08);
+  flex-shrink: 0;
+  transition: border-color 0.3s ease;
+}
+.feedItem:hover .feedThumb {
+  border-color: var(--cat-color, rgba(10,10,10,0.15));
+}
+.feedThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.3, 0, 0.2, 1);
+}
+.feedItem:hover .feedThumb img {
+  transform: scale(1.08);
+}
+/* Petit badge play coin bas-droite pour vidéo/short */
+.feedThumbBadge {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--cat-dark, var(--ink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feedItem:hover .feedThumbBadge {
+  transform: scale(1.1);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+.feedThumbBadge svg { margin-left: 1px; }
+/* Cadenas paywall pour immersion */
+.feedThumbLock {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Body : meta + titre + byline */
+.feedBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.feedMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+.feedDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cat-color, var(--stone500));
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.feedItem:hover .feedDot {
+  transform: scale(1.5);
+}
+.feedTime {
+  color: var(--cat-dark, var(--stone700));
+  font-weight: 500;
+}
+.feedFormat { color: var(--stone500); }
+.feedSep { opacity: 0.45; }
+
+/* Title — Brand Bible: Archivo 800, bigger than before */
+.feedH {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 2px 0 0;
+  text-wrap: balance;
+  transition: color 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.feedH em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+}
+.feedItem:hover .feedH { color: var(--cat-dark, var(--ink)); }
+
+/* Excerpt — 2 lines, subtle */
+.feedExcerpt {
+  font-family: var(--body);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--stone500);
+  margin: 2px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* "Lire ->" link that appears on hover — Brand Bible ArticleCard pattern */
+.feedFoot {
+  margin-top: auto;
+  padding-top: 4px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+.feedFootRead {
+  margin-left: auto;
+  color: var(--cat-dark, var(--stone500));
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  font-weight: 600;
+}
+.feedItem:hover .feedFootRead {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Paywall modifier */
+.feedItemPaywall {}
+
+/* ── Responsive — CTA at 700px ── */
+@media (max-width: 700px) {
+  .feedGridCtaLink {
+    flex-direction: column;
+  }
+  .feedGridCtaLeft {
+    flex-direction: row;
+    padding: 28px 24px;
+    border-right: none;
+    border-bottom: 1px solid rgba(247, 245, 240, 0.08);
+    min-width: 0;
+    gap: 16px;
+  }
+  .feedGridCtaNum {
+    font-size: 48px;
+  }
+  .feedGridCtaItalic {
+    font-size: 13px;
+  }
+  .feedGridCtaRight {
+    padding: 24px;
+    gap: 16px;
+  }
+  .feedGridCtaPills {
+    gap: 6px;
+  }
+  .feedGridCtaPill {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+}
+
+/* ── Responsive — narrow laptops (<=1080px) ── */
+@media (max-width: 1080px) {
+  .feedLink { grid-template-columns: 76px 1fr; padding: 14px 14px 14px 12px; gap: 12px; }
+  .feedThumb { width: 76px; height: 76px; }
+  .feedH { font-size: 14px; }
+  .feedCineH { font-size: 18px; }
+  .feedGridCtaNum { font-size: 64px; }
+}
+
+/* ── Responsive — tablets (<=880px) ── */
+@media (max-width: 880px) {
+  .sectionHead { grid-template-columns: 1fr; gap: 20px; }
+  .feedCineBody { padding: 20px; }
+  .feedCineH { font-size: 17px; }
+  .feedChapter { margin-bottom: 16px; }
+
+  .feedFilter { min-height: 40px; }
+  .feedAll { min-height: 40px; }
+  .feedDot, .feedMeta, .feedSep { font-size: 11px !important; }
+  .feedAllCount, .feedFilterCount { font-size: 10px; }
+}
+
+/* ── Responsive — small phones (<=640px) ── */
+@media (max-width: 640px) {
+  .sectionHead { margin-bottom: 28px; }
+  .sectionTitle { font-size: clamp(26px, 6vw, 36px); }
+  .sectionDeck { font-size: 14px; }
+  .feedGrid { grid-template-columns: 1fr; }
+  .feedItemCinematic { grid-column: span 1; }
+  .feedCineLink { min-height: 200px; }
+  .feedCineH { font-size: 16px; }
+  .feedCineExcerpt { display: none; }
+  .feedCinePlay { left: 16px; bottom: auto; top: 16px; width: 36px; height: 36px; }
+  .feedGridCta { grid-column: span 1; }
+  .feedGridCtaLink { padding: 14px 16px; gap: 12px; }
+  .feedGridCtaNum { font-size: 40px; }
+  .feedHead { grid-template-columns: 1fr; align-items: start; gap: 14px; }
+  .feedLink { padding: 14px 14px 14px 12px; }
+  .feedH { font-size: 14px; }
+  .feedChapter { margin-bottom: 14px; }
+  .feedFootRead { display: none; }
+}
+
+/* ── Responsive — petits mobiles (<=480px) ── */
+@media (max-width: 480px) {
+  .feedFilters { gap: 5px; padding-bottom: 14px; margin-bottom: 16px; }
+  .feedFilter { font-size: 11px; padding: 6px 12px; }
+  .feedFilterCount { font-size: 9px; padding-left: 5px; margin-left: 1px; }
+  .feedTitle { font-size: 22px !important; }
+  .feedDeck { font-size: 13px; }
+  .feedLink { grid-template-columns: 64px 1fr; gap: 10px; padding: 12px; }
+  .feedThumb { width: 64px; height: 64px; }
+  .feedH { font-size: 13px; }
+  .feedExcerpt { font-size: 11.5px; -webkit-line-clamp: 2; }
+  .feedChapter { font-size: 12px; margin-bottom: 12px; }
+  .feedFilter { font-size: 11px; padding: 7px 10px; }
+  .feedGridCtaNum { font-size: 32px; }
+}
+
+/* ── Responsive — très petits mobiles (<=360px) ── */
+@media (max-width: 360px) {
+  .feedTitle { font-size: 20px !important; }
+}

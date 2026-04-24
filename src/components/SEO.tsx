@@ -18,12 +18,23 @@ interface SEOProps {
   breadcrumbs?: Array<{ name: string; url: string }>;
   videoUrl?: string;
   duration?: string; // ISO 8601 format for video
+  // Additional structured data (rendered alongside jsonLd)
+  itemListData?: Array<{
+    name: string;
+    description: string;
+    image: string;
+    url?: string;
+  }>;
+  faqData?: Array<{
+    question: string;
+    answer: string;
+  }>;
 }
 
 const DEFAULT_TITLE = 'Origines Media';
 const DEFAULT_DESCRIPTION = 'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.';
-const DEFAULT_IMAGE = 'https://origines.media/og-image.png';
-const SITE_URL = 'https://origines.media';
+const DEFAULT_IMAGE = 'https://www.origines.media/og-image.png';
+const SITE_URL = 'https://www.origines.media';
 
 // Structured Data JSON-LD generators
 const generateOrganizationSchema = () => ({
@@ -128,6 +139,40 @@ const generateVideoSchema = (props: {
   duration: props.duration
 });
 
+const generateItemListSchema = (items: Array<{
+  name: string;
+  description: string;
+  image: string;
+  url?: string;
+}>) => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'Product',
+      name: item.name,
+      description: item.description,
+      image: item.image.startsWith('http') ? item.image : `${SITE_URL}${item.image}`,
+      ...(item.url ? { url: item.url.startsWith('http') ? item.url : `${SITE_URL}${item.url}` } : {}),
+    }
+  }))
+});
+
+const generateFAQSchema = (faqs: Array<{ question: string; answer: string }>) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(faq => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    }
+  }))
+});
+
 const SEO: React.FC<SEOProps> = ({
   title,
   description = DEFAULT_DESCRIPTION,
@@ -144,6 +189,8 @@ const SEO: React.FC<SEOProps> = ({
   breadcrumbs,
   videoUrl,
   duration,
+  itemListData,
+  faqData,
 }) => {
   const fullTitle = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE;
   const canonicalUrl = url ? `${SITE_URL}${url}` : SITE_URL;
@@ -253,6 +300,16 @@ const SEO: React.FC<SEOProps> = ({
       {breadcrumbData && jsonLd !== 'breadcrumb' && (
         <script type="application/ld+json">
           {JSON.stringify(breadcrumbData)}
+        </script>
+      )}
+      {itemListData && itemListData.length > 0 && (
+        <script type="application/ld+json">
+          {JSON.stringify(generateItemListSchema(itemListData))}
+        </script>
+      )}
+      {faqData && faqData.length > 0 && (
+        <script type="application/ld+json">
+          {JSON.stringify(generateFAQSchema(faqData))}
         </script>
       )}
     </Helmet>

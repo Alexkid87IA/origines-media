@@ -1,343 +1,250 @@
 // src/pages/AboutPage.tsx
-// Design épuré - Style minimaliste blanc
+// V2 — Angular editorial design
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  ArrowRight, Users, Heart, Target, Globe, Lightbulb, Quote
-} from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import EngagementSection from '../components/EngagementSection';
-import SEO from '../components/SEO';
+import SiteHeader from "@/components/SiteHeader/SiteHeader";
+import Footer2 from "@/components/Footer2/Footer2";
+import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
+import SEO from "../components/SEO";
+import { Link } from "react-router-dom";
+import s from "./AboutPage.module.css";
 
-const AboutPage: React.FC = () => {
-  // Team members data
-  const teamMembers = [
-    {
-      id: 1,
-      name: "Alexandre Quilghini",
-      role: "Co-fondateur & Direction éditoriale",
-      color: "#8B5CF6"
-    },
-    {
-      id: 2,
-      name: "Alexis Chavetnoir",
-      role: "Co-fondateur & Direction social media",
-      color: "#EC4899"
-    },
-    {
-      id: 3,
-      name: "Tabatha Vannieu",
-      role: "Directrice des opérations",
-      color: "#F59E0B"
-    },
-    {
-      id: 4,
-      name: "Vincent Dubois",
-      role: "Journaliste",
-      color: "#10B981"
-    }
-  ];
+/* ── Data ── */
 
-  // Values data
-  const values = [
-    {
-      icon: Heart,
-      title: "Authenticité",
-      description: "Nous privilégions les récits vrais, sans filtre, qui touchent au cœur de l'expérience humaine.",
-      color: "#EC4899"
-    },
-    {
-      icon: Target,
-      title: "Profondeur",
-      description: "Nous creusons au-delà de la surface pour révéler les nuances et la complexité de chaque histoire.",
-      color: "#8B5CF6"
-    },
-    {
-      icon: Globe,
-      title: "Diversité",
-      description: "Nous célébrons la richesse des perspectives et des expériences de toutes les communautés.",
-      color: "#10B981"
-    },
-    {
-      icon: Lightbulb,
-      title: "Inspiration",
-      description: "Nous croyons au pouvoir transformateur des récits pour éclairer et guider nos vies.",
-      color: "#F59E0B"
-    }
-  ];
+const teamMembers = [
+  {
+    id: 1,
+    name: "Alexandre Quilghini",
+    role: "Co-fondateur & Direction editoriale",
+    color: "#8B5CF6",
+  },
+  {
+    id: 2,
+    name: "Alexis Chavetnoir",
+    role: "Co-fondateur & Direction social media",
+    color: "#EC4899",
+  },
+  {
+    id: 3,
+    name: "Tabatha Vannieu",
+    role: "Directrice des operations",
+    color: "#F59E0B",
+  },
+  {
+    id: 4,
+    name: "Vincent Dubois",
+    role: "Journaliste",
+    color: "#10B981",
+  },
+];
 
-  // Stats data
-  const stats = [
-    { value: "2021", label: "Création", color: "#8B5CF6" },
-    { value: "500+", label: "Récits", color: "#D946EF" },
-    { value: "50K+", label: "Lecteurs", color: "#10B981" },
-    { value: "10", label: "Univers", color: "#F59E0B" },
-  ];
+const values = [
+  {
+    title: "Authenticite",
+    description:
+      "Nous privilegions les recits vrais, sans filtre, qui touchent au coeur de l’experience humaine.",
+    color: "#EC4899",
+  },
+  {
+    title: "Profondeur",
+    description:
+      "Nous creusons au-dela de la surface pour reveler les nuances et la complexite de chaque histoire.",
+    color: "#8B5CF6",
+  },
+  {
+    title: "Diversite",
+    description:
+      "Nous celebrons la richesse des perspectives et des experiences de toutes les communautes.",
+    color: "#10B981",
+  },
+  {
+    title: "Inspiration",
+    description:
+      "Nous croyons au pouvoir transformateur des recits pour eclairer et guider nos vies.",
+    color: "#F59E0B",
+  },
+];
 
+const stats = [
+  { value: "2021", label: "Creation", color: "#8B5CF6" },
+  { value: "500+", label: "Recits", color: "#D946EF" },
+  { value: "50K+", label: "Lecteurs", color: "#10B981" },
+  { value: "10", label: "Univers", color: "#F59E0B" },
+];
+
+/* ── Helpers ── */
+
+function initials(name: string): string {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("");
+}
+
+/* ── Component ── */
+
+export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className={s.page}>
       <SEO
-        title="À propos - Qui sommes-nous"
-        description="Origines Media produit des contenus d'utilité publique. Découvrez notre équipe, notre mission et nos valeurs. Des récits authentiques qui inspirent et transforment."
+        title="A propos - Qui sommes-nous"
+        description="Origines Media produit des contenus d'utilite publique. Decouvrez notre equipe, notre mission et nos valeurs. Des recits authentiques qui inspirent et transforment."
         url="/a-propos"
       />
-      <Navbar />
+      <SiteHeader />
 
       <main>
-        {/* Hero Section - Compact */}
-        <section className="py-4 lg:py-6">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-              <div>
-                <div className="h-0.5 w-10 bg-violet-500 rounded-full mb-2" />
-                <h1 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-                  À propos d'Origines
-                </h1>
-                <p className="text-gray-500 text-xs">
-                  Notre histoire, mission et valeurs
-                </p>
-              </div>
+        {/* ── Page header ── */}
+        <header className={s.header}>
+          <div className={s.inner}>
+            <span className={s.headerKicker}>
+              <span className={s.headerKickerDot} />
+              A propos
+            </span>
+            <h1 className={s.headerTitle}>Qui sommes-nous</h1>
+            <p className={s.headerDeck}>
+              Notre histoire, notre mission et les valeurs qui guident chaque
+              recit que nous publions.
+            </p>
+          </div>
+        </header>
 
-              {/* Quick stats inline */}
-              <div className="flex items-center gap-2">
-                {[
-                  { value: "2021", label: "Création", color: "#8B5CF6" },
-                  { value: "500+", label: "Récits", color: "#EC4899" },
-                ].map((stat, index) => (
-                  <div key={index} className="flex items-center gap-1 px-2 py-1 bg-white border border-gray-200 rounded-full">
-                    <span className="text-xs font-bold" style={{ color: stat.color }}>{stat.value}</span>
-                    <span className="text-[8px] text-gray-500 uppercase tracking-wider">{stat.label}</span>
-                  </div>
-                ))}
-              </div>
+        {/* ── Mission ── */}
+        <section className={s.mission}>
+          <div className={s.inner}>
+            <div className={s.missionLabel}>Mission</div>
+            <h2 className={s.missionTitle}>
+              Des contenus d&rsquo;utilite publique
+            </h2>
+            <div className={s.missionBody}>
+              <p>
+                <strong>Origines Media</strong> produit des contenus d&rsquo;utilite
+                publique : des recits authentiques qui ont le pouvoir de
+                transformer nos vies et nos perspectives.
+              </p>
+              <p>
+                Dans un monde sature d&rsquo;informations superficielles, nous
+                creons un espace dedie aux histoires qui comptent vraiment
+                &mdash; celles qui inspirent, eclairent et font avancer.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Mission Section - Compact Bento */}
-        <section className="py-6 lg:py-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
-
-              {/* Main Mission Card (3 cols) */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="lg:col-span-3 bg-white rounded-xl p-4 border border-gray-200"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="h-0.5 w-6 bg-violet-500 rounded-full" />
-                  <span className="text-[9px] font-bold text-violet-600 uppercase tracking-wider">Mission</span>
-                </div>
-
-                <h2 className="text-sm lg:text-base font-bold text-gray-900 mb-2">
-                  Des contenus d'utilité publique
-                </h2>
-
-                <div className="space-y-2 text-gray-600 text-[11px] leading-relaxed">
-                  <p>
-                    <strong className="text-gray-900">Origines Media</strong> produit des contenus d'utilité publique :
-                    des récits authentiques qui ont le pouvoir de transformer nos vies et nos perspectives.
-                  </p>
-                  <p>
-                    Dans un monde saturé d'informations superficielles, nous créons un espace dédié
-                    aux histoires qui comptent vraiment — celles qui inspirent, éclairent et font avancer.
-                  </p>
-                </div>
-
-                <div className="mt-4">
-                  <Link
-                    to="/contact"
-                    className="group inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 text-white text-[10px] font-bold rounded-full hover:bg-violet-700 transition-all"
-                  >
-                    <span>Nous contacter</span>
-                    <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                </div>
-              </motion.div>
-
-              {/* Stats Grid (2 cols) */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="lg:col-span-2 grid grid-cols-2 gap-2"
-              >
-                {stats.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-xl p-3 border border-gray-200 text-center hover:shadow-md transition-shadow"
-                  >
-                    <div
-                      className="text-xl lg:text-2xl font-bold mb-0.5"
-                      style={{ color: stat.color }}
-                    >
-                      {stat.value}
-                    </div>
-                    <div className="text-[8px] text-gray-500 uppercase tracking-wider">
-                      {stat.label}
-                    </div>
+        {/* ── Stats ── */}
+        <section className={s.stats}>
+          <div className={s.inner}>
+            <div className={s.statsGrid}>
+              {stats.map((stat) => (
+                <div key={stat.label} className={s.statCard}>
+                  <div className={s.statValue} style={{ color: stat.color }}>
+                    {stat.value}
                   </div>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Values Section - Compact */}
-        <section className="py-6 lg:py-8 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section Header */}
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-4">
-              <div>
-                <div className="h-0.5 w-10 bg-pink-500 rounded-full mb-2" />
-                <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-                  Nos valeurs
-                </h2>
-                <p className="text-gray-500 text-xs">
-                  Les principes qui guident notre travail éditorial
-                </p>
-              </div>
-            </div>
-
-            {/* Values Grid - Horizontal scroll on mobile */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
-              {values.map((value, index) => {
-                const IconComponent = value.icon;
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.05 }}
-                    className="group bg-gray-50 border border-gray-200 rounded-xl p-3 hover:border-gray-300 hover:shadow-md transition-all duration-300"
-                  >
-                    {/* Icon */}
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-transform group-hover:scale-110"
-                      style={{ backgroundColor: `${value.color}15` }}
-                    >
-                      <IconComponent className="w-4 h-4" style={{ color: value.color }} />
-                    </div>
-
-                    {/* Content */}
-                    <h3 className="font-bold text-xs text-gray-900 mb-1">
-                      {value.title}
-                    </h3>
-                    <p className="text-gray-500 text-[10px] leading-relaxed line-clamp-2">
-                      {value.description}
-                    </p>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Quote Section - Compact */}
-        <section className="py-6 lg:py-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white border border-gray-200 rounded-xl p-4 lg:p-6"
-            >
-              <div className="flex items-start gap-3">
-                <Quote className="w-6 h-6 text-violet-300 flex-shrink-0 mt-0.5" />
-
-                <div className="flex-1">
-                  <blockquote className="text-sm lg:text-base text-gray-900 font-medium leading-relaxed mb-3">
-                    "Les récits qui nous transforment ne sont pas ceux qui nous divertissent,
-                    mais ceux qui nous révèlent à nous-mêmes."
-                  </blockquote>
-
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full overflow-hidden">
-                      <img
-                        src="/placeholder.svg"
-                        alt="Marie Dubois"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-[11px] text-gray-900">Marie Dubois</div>
-                      <div className="text-[9px] text-violet-600">Fondatrice, Origines Media</div>
-                    </div>
-                  </div>
+                  <div className={s.statLabel}>{stat.label}</div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Team Section - Compact */}
-        <section className="py-6 lg:py-8 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section Header */}
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-4">
-              <div>
-                <div className="h-0.5 w-10 bg-amber-500 rounded-full mb-2" />
-                <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-                  Notre équipe
-                </h2>
-                <p className="text-gray-500 text-xs">
-                  Les personnes qui donnent vie à Origines Media
-                </p>
-              </div>
-
-            </div>
-
-            {/* Team Grid - Compact cards sans photos */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-              {teamMembers.map((member, index) => (
-                <motion.div
-                  key={member.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-white border border-gray-200 rounded-xl p-3 hover:shadow-md transition-all relative overflow-hidden"
-                >
-                  {/* Barre colorée */}
-                  <div
-                    className="absolute top-0 left-0 right-0 h-1"
-                    style={{ backgroundColor: member.color }}
-                  />
-
-                  {/* Avatar initiales */}
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold mb-2"
-                    style={{ backgroundColor: member.color }}
-                  >
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-
-                  <h3 className="font-bold text-[11px] text-gray-900 mb-0.5">
-                    {member.name}
-                  </h3>
-                  <div className="text-[9px] text-gray-500">
-                    {member.role}
-                  </div>
-                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Engagement Section */}
-        <EngagementSection />
+        {/* ── Values ── */}
+        <section className={s.values}>
+          <div className={s.inner}>
+            <span className={s.sectionKicker}>
+              <span className={s.sectionKickerDot} />
+              Nos valeurs
+            </span>
+            <h2 className={s.sectionTitle}>
+              Les principes qui guident notre travail editorial
+            </h2>
+            <div className={s.valuesGrid}>
+              {values.map((v) => (
+                <div key={v.title} className={s.valueCard}>
+                  <div
+                    className={s.valueAccent}
+                    style={{ background: v.color }}
+                  />
+                  <h3 className={s.valueTitle}>{v.title}</h3>
+                  <p className={s.valueDesc}>{v.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Team ── */}
+        <section className={s.team}>
+          <div className={s.inner}>
+            <span className={s.sectionKicker}>
+              <span className={s.sectionKickerDot} />
+              L&rsquo;equipe
+            </span>
+            <h2 className={s.sectionTitle}>
+              Les personnes qui donnent vie a Origines Media
+            </h2>
+            <div className={s.teamGrid}>
+              {teamMembers.map((member) => (
+                <div key={member.id} className={s.teamCard}>
+                  <div
+                    className={s.teamAccent}
+                    style={{ background: member.color }}
+                  />
+                  <div
+                    className={s.teamAvatar}
+                    style={{ background: member.color }}
+                  >
+                    {initials(member.name)}
+                  </div>
+                  <div className={s.teamInfo}>
+                    <h3 className={s.teamName}>{member.name}</h3>
+                    <p className={s.teamRole}>{member.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Quote ── */}
+        <section className={s.quote}>
+          <div className={s.quoteInner}>
+            <div className={s.quoteMark}>&ldquo;</div>
+            <blockquote className={s.quoteText}>
+              Les recits qui nous transforment ne sont pas ceux qui nous
+              divertissent, mais ceux qui nous revelent a nous-memes.
+            </blockquote>
+            <div className={s.quoteAuthor}>
+              Alexandre Quilghini &mdash; Co-fondateur, Origines Media
+            </div>
+          </div>
+        </section>
+
+        {/* ── CTA ── */}
+        <section className={s.cta}>
+          <div className={s.inner}>
+            <h2 className={s.ctaTitle}>Envie de collaborer&nbsp;?</h2>
+            <p className={s.ctaDeck}>
+              Vous avez un projet, une histoire a raconter ou une question a
+              nous poser&nbsp;? On serait ravis d&rsquo;echanger avec vous.
+            </p>
+            <Link to="/contact" className={s.ctaBtn}>
+              <span>Nous contacter</span>
+              <svg
+                className={s.ctaBtnArrow}
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="square"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </Link>
+          </div>
+        </section>
       </main>
 
-      <Footer />
+      <Footer2 />
+      <ScrollToTopV2 />
     </div>
   );
-};
-
-export default AboutPage;
+}

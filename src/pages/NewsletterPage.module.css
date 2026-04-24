@@ -1,0 +1,635 @@
+/* ===== NewsletterPage V2 — Newsletter subscription ===== */
+
+/* ──────────────────────────────────────────────────────────
+   Page wrapper
+   ────────────────────────────────────────────────────────── */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Container
+   ────────────────────────────────────────────────────────── */
+
+.container {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Page header (kicker + title + stats)
+   ────────────────────────────────────────────────────────── */
+
+.header {
+  padding-top: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.headerInner {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .headerInner {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 14px;
+}
+
+.kickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.deck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone700);
+  margin: 10px 0 0;
+  max-width: 50ch;
+}
+
+/* Stats pills */
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--stone100);
+  background: var(--pure);
+}
+
+.statValue {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Main signup section (ink background, inverted)
+   ────────────────────────────────────────────────────────── */
+
+.signupSection {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 56px 0;
+}
+
+.signupGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 1024px) {
+  .signupGrid {
+    grid-template-columns: 3fr 2fr;
+    gap: 40px;
+  }
+}
+
+/* — Form panel — */
+
+.formPanel {
+  background: rgba(247, 245, 240, 0.06);
+  border: 1px solid rgba(247, 245, 240, 0.1);
+  padding: 32px;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.formIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 245, 240, 0.1);
+  color: var(--paper);
+}
+
+.formIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.formTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  margin: 0;
+}
+
+.formSubtitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.5);
+  margin: 0;
+}
+
+.formDesc {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(247, 245, 240, 0.75);
+  margin: 0 0 24px;
+}
+
+.formDisclaimer {
+  font-family: var(--body);
+  font-size: 11px;
+  color: rgba(247, 245, 240, 0.35);
+  margin: 16px 0 0;
+  text-align: center;
+}
+
+/* — Info sidebar — */
+
+.infoSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoCard {
+  background: rgba(247, 245, 240, 0.06);
+  border: 1px solid rgba(247, 245, 240, 0.1);
+  padding: 20px;
+}
+
+.infoCardTitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(247, 245, 240, 0.1);
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(247, 245, 240, 0.75);
+}
+
+.checkIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #10B981;
+}
+
+/* Frequency card */
+
+.freqCard {
+  composes: infoCard;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.freqIcon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(123, 92, 214, 0.15);
+  flex-shrink: 0;
+}
+
+.freqIcon svg {
+  width: 18px;
+  height: 18px;
+  color: #7B5CD6;
+}
+
+.freqTitle {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+  margin: 0;
+}
+
+.freqSub {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.45);
+  margin: 2px 0 0;
+}
+
+/* Disclaimer card */
+
+.disclaimerCard {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  padding: 16px 20px;
+}
+
+.disclaimerText {
+  font-family: var(--body);
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(245, 158, 11, 0.85);
+  margin: 0;
+}
+
+.disclaimerText strong {
+  font-weight: 700;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Benefits section
+   ────────────────────────────────────────────────────────── */
+
+.benefitsSection {
+  padding: 56px 0;
+  background: var(--paper);
+}
+
+.sectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 32px;
+}
+
+.sectionKickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+@media (min-width: 1024px) {
+  .benefitsGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.benefitCard {
+  background: var(--pure);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.25s ease;
+}
+
+.benefitCard:hover {
+  background: var(--stone50);
+}
+
+.benefitIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.benefitIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.benefitTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+.benefitDesc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--stone600);
+  margin: 0;
+}
+
+.benefitLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Testimonials section
+   ────────────────────────────────────────────────────────── */
+
+.testimonialsSection {
+  padding: 56px 0;
+  background: var(--pure);
+  border-top: 1px solid var(--stone100);
+}
+
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+@media (min-width: 640px) {
+  .testimonialsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.testimonialCard {
+  background: var(--paper);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.testimonialAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.testimonialQuote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone700);
+  margin: 0 0 20px;
+  flex: 1;
+}
+
+.testimonialQuote::before {
+  content: '\201C';
+  font-family: var(--serif);
+  font-size: 28px;
+  line-height: 0.5;
+  color: var(--stone300);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.testimonialAuthor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--stone100);
+}
+
+.authorAvatar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pure);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.authorName {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.authorRole {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 2px 0 0;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Bottom CTA section (ink background)
+   ────────────────────────────────────────────────────────── */
+
+.ctaSection {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 64px 0;
+}
+
+.ctaInner {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ctaTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+  margin: 0 0 12px;
+}
+
+.ctaDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(247, 245, 240, 0.6);
+  margin: 0 0 32px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Responsive
+   ────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .header {
+    padding-top: 32px;
+    padding-bottom: 20px;
+  }
+
+  .title {
+    font-size: clamp(24px, 6vw, 34px);
+  }
+
+  .deck {
+    font-size: 14px;
+  }
+
+  .signupSection {
+    padding: 40px 0;
+  }
+
+  .formPanel {
+    padding: 24px;
+  }
+
+  .benefitsSection {
+    padding: 40px 0;
+  }
+
+  .benefitsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .testimonialsSection {
+    padding: 40px 0;
+  }
+
+  .ctaSection {
+    padding: 48px 0;
+  }
+
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: clamp(22px, 6vw, 28px);
+  }
+
+  .benefitCard {
+    padding: 18px;
+  }
+
+  .testimonialCard {
+    padding: 20px 18px;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────
+   Reduced motion
+   ────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .benefitCard {
+    transition: none !important;
+  }
+}

@@ -1,426 +1,530 @@
 // src/pages/JoinPage.tsx
-// Page Rejoindre l'équipe - Style minimaliste avec couleurs
+// V2 — Angular editorial design, CSS modules, no lucide-react
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import {
-  Users, Heart, Briefcase, MapPin, Clock, ArrowRight,
-  Send, CheckCircle, Video, Pen, Megaphone, Code,
-  Camera, Music, Palette, BookOpen, Mail
-} from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import SEO from '../components/SEO';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import SiteHeader from "@/components/SiteHeader/SiteHeader";
+import Footer2 from "@/components/Footer2/Footer2";
+import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
+import SEO from "../components/SEO";
+import s from "./JoinPage.module.css";
 
-const JoinPage: React.FC = () => {
+/* ------------------------------------------------------------------ */
+/*  Inline SVG icons                                                   */
+/* ------------------------------------------------------------------ */
+
+const IconHeart = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  </svg>
+);
+
+const IconUsers = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
+const IconPalette = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <circle cx="13.5" cy="6.5" r="2.5" />
+    <circle cx="19" cy="11.5" r="2.5" />
+    <circle cx="6" cy="12.5" r="2.5" />
+    <circle cx="17" cy="18.5" r="2.5" />
+    <path d="M12 2a10 10 0 0 0 0 20c1 0 2-.5 2-2 0-.5-.2-1-.5-1.5-.3-.4-.5-.9-.5-1.5 0-1.1.9-2 2-2h2.3c3 0 5.7-2.5 5.7-5.5C23 5.8 18 2 12 2z" />
+  </svg>
+);
+
+const IconBook = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+  </svg>
+);
+
+const IconPen = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" />
+  </svg>
+);
+
+const IconVideo = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <rect x="2" y="4" width="15" height="16" rx="0" />
+    <path d="m17 8 5-3v14l-5-3z" />
+  </svg>
+);
+
+const IconMegaphone = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+  </svg>
+);
+
+const IconCode = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <polyline points="16 18 22 12 16 6" />
+    <polyline points="8 6 2 12 8 18" />
+  </svg>
+);
+
+const IconBriefcase = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <rect x="2" y="7" width="20" height="14" rx="0" />
+    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+  </svg>
+);
+
+const IconMapPin = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+);
+
+const IconSend = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="m22 2-7 20-4-9-9-4z" />
+    <path d="m22 2-11 11" />
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+    <path d="M20 6 9 17l-5-5" />
+  </svg>
+);
+
+const IconUser = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const IconMail = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <rect x="2" y="4" width="20" height="16" rx="0" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
+
+const IconArrowRight = () => (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+    <path d="M3 8h10M9 4l4 4-4 4" />
+  </svg>
+);
+
+const IconLink = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+  </svg>
+);
+
+const IconClipboard = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <rect x="8" y="2" width="8" height="4" rx="0" />
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+  </svg>
+);
+
+/* ------------------------------------------------------------------ */
+/*  Data                                                               */
+/* ------------------------------------------------------------------ */
+
+interface JobOpening {
+  id: string;
+  title: string;
+  type: string;
+  location: string;
+  description: string;
+  Icon: React.FC;
+  color: string;
+}
+
+const jobOpenings: JobOpening[] = [
+  {
+    id: "journaliste",
+    title: "Journaliste / Redacteur",
+    type: "CDI",
+    location: "Paris",
+    description:
+      "Vous redigez des recits authentiques et menez des interviews inspirantes.",
+    Icon: IconPen,
+    color: "#8B5CF6",
+  },
+  {
+    id: "realisateur",
+    title: "Realisateur / Videaste",
+    type: "CDI",
+    location: "Paris",
+    description:
+      "Vous donnez vie a nos histoires a travers des productions video de qualite.",
+    Icon: IconVideo,
+    color: "#EC4899",
+  },
+  {
+    id: "community",
+    title: "Community Manager",
+    type: "CDI",
+    location: "Paris / Remote",
+    description:
+      "Vous animez notre communaute et developpez notre presence sur les reseaux.",
+    Icon: IconMegaphone,
+    color: "#F59E0B",
+  },
+  {
+    id: "dev",
+    title: "Developpeur Full Stack",
+    type: "CDI",
+    location: "Remote",
+    description:
+      "Vous construisez les outils qui permettent a nos recits de toucher des millions de personnes.",
+    Icon: IconCode,
+    color: "#10B981",
+  },
+];
+
+const teamValues = [
+  { title: "Passion", description: "L'amour des belles histoires", Icon: IconHeart },
+  { title: "Collaboration", description: "On construit ensemble", Icon: IconUsers },
+  { title: "Creativite", description: "L'innovation au quotidien", Icon: IconPalette },
+  { title: "Authenticite", description: "La verite avant tout", Icon: IconBook },
+];
+
+const teamStats = [
+  { value: "15+", label: "Membres", color: "#8B5CF6" },
+  { value: "5B", label: "Vues generees", color: "#EC4899" },
+  { value: "100%", label: "Remote-friendly", color: "#10B981" },
+];
+
+const whyReasons = [
+  { text: "Impact reel sur des millions de vies", Icon: IconHeart, color: "#EC4899" },
+  { text: "Equipe jeune et dynamique", Icon: IconUsers, color: "#8B5CF6" },
+  { text: "Flexibilite remote / hybride", Icon: IconMapPin, color: "#10B981" },
+  { text: "Projets creatifs varies", Icon: IconPalette, color: "#F59E0B" },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
+export default function JoinPage() {
   const [selectedJob, setSelectedJob] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    linkedin: '',
-    message: '',
+    name: "",
+    email: "",
+    linkedin: "",
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // Offres d'emploi
-  const jobOpenings = [
-    {
-      id: 'journaliste',
-      title: 'Journaliste / Rédacteur',
-      type: 'CDI',
-      location: 'Paris',
-      description: 'Vous rédigez des récits authentiques et menez des interviews inspirantes.',
-      icon: Pen,
-      color: '#8B5CF6',
-    },
-    {
-      id: 'realisateur',
-      title: 'Réalisateur / Vidéaste',
-      type: 'CDI',
-      location: 'Paris',
-      description: 'Vous donnez vie à nos histoires à travers des productions vidéo de qualité.',
-      icon: Video,
-      color: '#EC4899',
-    },
-    {
-      id: 'community',
-      title: 'Community Manager',
-      type: 'CDI',
-      location: 'Paris / Remote',
-      description: 'Vous animez notre communauté et développez notre présence sur les réseaux.',
-      icon: Megaphone,
-      color: '#F59E0B',
-    },
-    {
-      id: 'dev',
-      title: 'Développeur Full Stack',
-      type: 'CDI',
-      location: 'Remote',
-      description: 'Vous construisez les outils qui permettent à nos récits de toucher des millions de personnes.',
-      icon: Code,
-      color: '#10B981',
-    },
-  ];
-
-  // Valeurs de l'équipe
-  const teamValues = [
-    {
-      icon: Heart,
-      title: 'Passion',
-      description: 'L\'amour des belles histoires',
-      color: '#EC4899',
-    },
-    {
-      icon: Users,
-      title: 'Collaboration',
-      description: 'On construit ensemble',
-      color: '#8B5CF6',
-    },
-    {
-      icon: Palette,
-      title: 'Créativité',
-      description: 'L\'innovation au quotidien',
-      color: '#F59E0B',
-    },
-    {
-      icon: BookOpen,
-      title: 'Authenticité',
-      description: 'La vérité avant tout',
-      color: '#10B981',
-    },
-  ];
-
-  // Stats équipe
-  const teamStats = [
-    { value: '15+', label: 'Membres', color: '#8B5CF6' },
-    { value: '5B', label: 'Vues générées', color: '#EC4899' },
-    { value: '100%', label: 'Remote-friendly', color: '#10B981' },
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSubmitted(true);
     setIsSubmitting(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className={s.page}>
       <SEO
-        title="Rejoindre l'équipe - Carrières"
-        description="Rejoignez l'équipe Origines Media. Découvrez nos offres d'emploi et participez à la création de contenus qui inspirent des millions de personnes."
+        title="Rejoindre l'equipe - Carrieres"
+        description="Rejoignez l'equipe Origines Media. Decouvrez nos offres d'emploi et participez a la creation de contenus qui inspirent des millions de personnes."
         url="/rejoindre"
       />
-
-      <Navbar />
+      <SiteHeader />
 
       <main>
-        {/* Hero Section - Compact */}
-        <section className="py-4 lg:py-6">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-              <div>
-                <div className="h-0.5 w-10 bg-violet-500 rounded-full mb-2" />
-                <h1 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-                  Rejoindre l'équipe
-                </h1>
-                <p className="text-gray-500 text-xs">
-                  Créez l'impact avec nous
-                </p>
-              </div>
+        {/* ── Page header ── */}
+        <header className={s.header}>
+          <div className={s.headerInner}>
+            <div className={s.headerLabel}>
+              <span className={s.kicker}>
+                <span className={s.kickerDot} />
+                Carrieres
+              </span>
+              <h1 className={s.headerTitle}>
+                Rejoindre l&rsquo;<em>equipe</em>
+              </h1>
+              <p className={s.headerDeck}>
+                Creez l&rsquo;impact avec nous. Rejoignez une equipe passionnee
+                qui produit des contenus vus par des millions de personnes.
+              </p>
+            </div>
 
-              {/* Quick stats inline */}
-              <div className="flex items-center gap-2">
-                {teamStats.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-1 px-2 py-1 bg-white border border-gray-200 rounded-full"
+            <div className={s.statsRow}>
+              {teamStats.map((stat) => (
+                <div key={stat.label} className={s.statPill}>
+                  <span
+                    className={s.statPillValue}
+                    style={{ color: stat.color }}
                   >
-                    <span className="text-xs font-bold" style={{ color: stat.color }}>
-                      {stat.value}
-                    </span>
-                    <span className="text-[8px] text-gray-500 uppercase tracking-wider">
-                      {stat.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                    {stat.value}
+                  </span>
+                  <span className={s.statPillLabel}>{stat.label}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </section>
+        </header>
 
-        {/* Intro Section */}
-        <section className="py-6 lg:py-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
-
-              {/* Main intro */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="lg:col-span-3 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-xl p-5 text-white"
-              >
-                <h2 className="text-base lg:text-lg font-bold mb-2">
-                  Construisez l'avenir du média avec nous
+        {/* ── Intro section ── */}
+        <section className={s.intro}>
+          <div className={s.inner}>
+            <div className={s.introGrid}>
+              {/* Main dark panel */}
+              <div className={s.introMain}>
+                <h2 className={s.introTitle}>
+                  Construisez l&rsquo;avenir du media avec nous
                 </h2>
-                <p className="text-white/80 text-xs leading-relaxed mb-4">
-                  Chez <strong className="text-white">Origines</strong>, nous croyons au pouvoir des histoires pour transformer les vies.
-                  Rejoignez une équipe passionnée qui produit des contenus vus par des millions de personnes.
+                <p className={s.introBody}>
+                  Chez <strong>Origines</strong>, nous croyons au pouvoir des
+                  histoires pour transformer les vies. Rejoignez une equipe
+                  passionnee qui produit des contenus vus par des millions de
+                  personnes.
                 </p>
 
-                <div className="grid grid-cols-2 gap-2">
-                  {teamValues.map((value, index) => {
-                    const IconComponent = value.icon;
-                    return (
-                      <div
-                        key={index}
-                        className="bg-white/10 backdrop-blur rounded-lg p-2 flex items-center gap-2"
-                      >
-                        <IconComponent className="w-4 h-4 text-white/80" />
-                        <div>
-                          <div className="text-[10px] font-bold">{value.title}</div>
-                          <div className="text-[8px] text-white/60">{value.description}</div>
-                        </div>
+                <div className={s.valuesGrid}>
+                  {teamValues.map((v) => (
+                    <div key={v.title} className={s.valueCard}>
+                      <div className={s.valueIcon}>
+                        <v.Icon />
                       </div>
-                    );
-                  })}
+                      <div>
+                        <div className={s.valueTitle}>{v.title}</div>
+                        <div className={s.valueDesc}>{v.description}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </motion.div>
+              </div>
 
-              {/* Avantages */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="lg:col-span-2 space-y-2"
-              >
-                <div className="bg-white border border-gray-200 rounded-xl p-3">
-                  <h3 className="font-semibold text-[11px] text-gray-900 mb-2">
-                    Pourquoi nous rejoindre
-                  </h3>
-                  <ul className="space-y-1.5">
-                    {[
-                      { text: 'Impact réel sur des millions de vies', icon: Heart, color: '#EC4899' },
-                      { text: 'Équipe jeune et dynamique', icon: Users, color: '#8B5CF6' },
-                      { text: 'Flexibilité remote / hybride', icon: MapPin, color: '#10B981' },
-                      { text: 'Projets créatifs variés', icon: Palette, color: '#F59E0B' },
-                    ].map((item, index) => {
-                      const IconComponent = item.icon;
-                      return (
-                        <li key={index} className="flex items-center gap-2">
-                          <div
-                            className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
-                            style={{ backgroundColor: `${item.color}15` }}
-                          >
-                            <IconComponent className="w-2.5 h-2.5" style={{ color: item.color }} />
-                          </div>
-                          <span className="text-[10px] text-gray-700">{item.text}</span>
-                        </li>
-                      );
-                    })}
+              {/* Right side */}
+              <div className={s.introSide}>
+                <div className={s.whyCard}>
+                  <h3 className={s.whyTitle}>Pourquoi nous rejoindre</h3>
+                  <ul className={s.whyList}>
+                    {whyReasons.map((item) => (
+                      <li key={item.text} className={s.whyItem}>
+                        <div
+                          className={s.whyItemIcon}
+                          style={{ background: `${item.color}12` }}
+                        >
+                          <span style={{ color: item.color }}>
+                            <item.Icon />
+                          </span>
+                        </div>
+                        <span className={s.whyItemText}>{item.text}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
-                <div className="bg-amber-50 border border-amber-100 rounded-xl p-3">
-                  <p className="text-[10px] text-amber-700">
-                    <strong>Candidatures spontanées :</strong> Même si aucune offre ne correspond à votre profil, n'hésitez pas à nous écrire !
+                <div className={s.noticeCard}>
+                  <p className={s.noticeText}>
+                    <strong>Candidatures spontanees :</strong> Meme si aucune
+                    offre ne correspond a votre profil, n&rsquo;hesitez pas a
+                    nous ecrire !
                   </p>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Offres d'emploi */}
-        <section className="py-6 lg:py-8 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-0.5 w-6 bg-pink-500 rounded-full" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                Offres actuelles
-              </span>
-            </div>
+        {/* ── Job openings ── */}
+        <section className={s.jobs}>
+          <div className={s.inner}>
+            <span className={s.sectionKicker}>
+              <span className={s.sectionKickerDot} />
+              Offres actuelles
+            </span>
+            <h2 className={s.sectionTitle}>Postes ouverts</h2>
 
-            <h2 className="text-base lg:text-lg font-bold text-gray-900 mb-4">
-              Postes ouverts
-            </h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {jobOpenings.map((job, index) => {
-                const IconComponent = job.icon;
+            <div className={s.jobsGrid}>
+              {jobOpenings.map((job) => {
                 const isSelected = selectedJob === job.id;
 
                 return (
-                  <motion.div
+                  <div
                     key={job.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => setSelectedJob(isSelected ? null : job.id)}
-                    className={`bg-white rounded-xl p-4 border cursor-pointer transition-all relative overflow-hidden ${
-                      isSelected
-                        ? 'border-gray-300 shadow-md'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                    }`}
+                    className={`${s.jobCard} ${isSelected ? s.jobCardSelected : ""}`}
+                    onClick={() =>
+                      setSelectedJob(isSelected ? null : job.id)
+                    }
                   >
-                    {/* Colored top bar */}
                     <div
-                      className="absolute top-0 left-0 right-0 h-1"
-                      style={{ backgroundColor: job.color }}
+                      className={s.jobAccent}
+                      style={{ background: job.color }}
                     />
 
-                    <div className="flex items-start gap-3">
+                    <div className={s.jobTop}>
                       <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: `${job.color}15` }}
+                        className={s.jobIcon}
+                        style={{ background: `${job.color}12` }}
                       >
-                        <IconComponent className="w-5 h-5" style={{ color: job.color }} />
+                        <span style={{ color: job.color }}>
+                          <job.Icon />
+                        </span>
                       </div>
 
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-sm text-gray-900 mb-1">
-                          {job.title}
-                        </h3>
+                      <div className={s.jobContent}>
+                        <h3 className={s.jobTitle}>{job.title}</h3>
 
-                        <div className="flex flex-wrap gap-1.5 mb-2">
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 rounded text-[8px] font-medium text-gray-600">
-                            <Briefcase className="w-2 h-2" />
+                        <div className={s.jobMeta}>
+                          <span className={s.jobTag}>
+                            <IconBriefcase />
                             {job.type}
                           </span>
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 rounded text-[8px] font-medium text-gray-600">
-                            <MapPin className="w-2 h-2" />
+                          <span className={s.jobTag}>
+                            <IconMapPin />
                             {job.location}
                           </span>
                         </div>
 
-                        <p className="text-[10px] text-gray-500 leading-relaxed">
-                          {job.description}
-                        </p>
+                        <p className={s.jobDesc}>{job.description}</p>
 
                         {isSelected && (
-                          <motion.button
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
+                          <button
+                            className={s.jobApplyBtn}
+                            style={{ background: job.color }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              document.getElementById('candidature-form')?.scrollIntoView({ behavior: 'smooth' });
+                              document
+                                .getElementById("candidature-form")
+                                ?.scrollIntoView({ behavior: "smooth" });
                             }}
-                            className="mt-3 inline-flex items-center gap-1 px-3 py-1.5 text-white text-[10px] font-bold rounded-lg transition-all"
-                            style={{ backgroundColor: job.color }}
                           >
                             Postuler
-                            <ArrowRight className="w-2.5 h-2.5" />
-                          </motion.button>
+                            <IconArrowRight />
+                          </button>
                         )}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
           </div>
         </section>
 
-        {/* Formulaire de candidature */}
-        <section id="candidature-form" className="py-6 lg:py-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-0.5 w-6 bg-violet-500 rounded-full" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                Candidature
-              </span>
-            </div>
+        {/* ── Application form ── */}
+        <section id="candidature-form" className={s.formSection}>
+          <div className={s.inner}>
+            <span className={s.sectionKicker}>
+              <span className={s.sectionKickerDot} />
+              Candidature
+            </span>
 
             {!isSubmitted ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl p-4 border border-gray-200 max-w-2xl"
-              >
-                <h2 className="text-sm font-bold text-gray-900 mb-1">
+              <div className={s.formCard}>
+                <div className={s.formHeader}>
+                  <div className={s.formIcon}>
+                    <IconClipboard />
+                  </div>
+                  <h2 className={s.formTitle}>
+                    {selectedJob
+                      ? `Postuler pour : ${jobOpenings.find((j) => j.id === selectedJob)?.title}`
+                      : "Envoyez votre candidature"}
+                  </h2>
+                </div>
+
+                <p className={s.formDeck}>
                   {selectedJob
-                    ? `Postuler pour : ${jobOpenings.find(j => j.id === selectedJob)?.title}`
-                    : 'Envoyez votre candidature'}
-                </h2>
-                <p className="text-[10px] text-gray-500 mb-4">
-                  {selectedJob
-                    ? 'Remplissez le formulaire ci-dessous'
-                    : 'Candidature spontanée ou pour un poste spécifique'}
+                    ? "Remplissez le formulaire ci-dessous"
+                    : "Candidature spontanee ou pour un poste specifique"}
                 </p>
 
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {/* Name */}
-                    <div>
-                      <label htmlFor="name" className="block text-[10px] font-medium text-gray-700 mb-1">
-                        Nom complet *
+                <form onSubmit={handleSubmit} className={s.form}>
+                  {/* Name + Email row */}
+                  <div className={s.fieldRow}>
+                    <div className={s.fieldGroup}>
+                      <label htmlFor="name" className={s.label}>
+                        Nom complet <span className={s.required}>*</span>
                       </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-300"
-                        placeholder="Jean Dupont"
-                      />
+                      <div className={s.inputWrap}>
+                        <span className={s.inputIcon}>
+                          <IconUser />
+                        </span>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                          className={s.input}
+                          placeholder="Jean Dupont"
+                        />
+                      </div>
                     </div>
 
-                    {/* Email */}
-                    <div>
-                      <label htmlFor="email" className="block text-[10px] font-medium text-gray-700 mb-1">
-                        Email *
+                    <div className={s.fieldGroup}>
+                      <label htmlFor="email" className={s.label}>
+                        Email <span className={s.required}>*</span>
                       </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-300"
-                        placeholder="votre@email.com"
-                      />
+                      <div className={s.inputWrap}>
+                        <span className={s.inputIcon}>
+                          <IconMail />
+                        </span>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          className={s.input}
+                          placeholder="votre@email.com"
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* LinkedIn */}
-                  <div>
-                    <label htmlFor="linkedin" className="block text-[10px] font-medium text-gray-700 mb-1">
+                  {/* LinkedIn / Portfolio */}
+                  <div className={s.fieldGroup}>
+                    <label htmlFor="linkedin" className={s.label}>
                       LinkedIn / Portfolio (optionnel)
                     </label>
-                    <input
-                      type="url"
-                      id="linkedin"
-                      name="linkedin"
-                      value={formData.linkedin}
-                      onChange={handleChange}
-                      className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-300"
-                      placeholder="https://linkedin.com/in/..."
-                    />
+                    <div className={s.inputWrap}>
+                      <span className={s.inputIcon}>
+                        <IconLink />
+                      </span>
+                      <input
+                        type="url"
+                        id="linkedin"
+                        name="linkedin"
+                        value={formData.linkedin}
+                        onChange={handleChange}
+                        className={s.input}
+                        placeholder="https://linkedin.com/in/..."
+                      />
+                    </div>
                   </div>
 
                   {/* Message */}
-                  <div>
-                    <label htmlFor="message" className="block text-[10px] font-medium text-gray-700 mb-1">
-                      Présentez-vous *
+                  <div className={s.fieldGroup}>
+                    <label htmlFor="message" className={s.label}>
+                      Presentez-vous <span className={s.required}>*</span>
                     </label>
                     <textarea
                       id="message"
@@ -428,8 +532,8 @@ const JoinPage: React.FC = () => {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      rows={4}
-                      className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-300 resize-none"
+                      rows={5}
+                      className={s.textarea}
                       placeholder="Parlez-nous de vous, votre parcours et pourquoi vous souhaitez rejoindre Origines..."
                     />
                   </div>
@@ -437,96 +541,86 @@ const JoinPage: React.FC = () => {
                   {/* Submit */}
                   <button
                     type="submit"
-                    disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
-                    className="w-full sm:w-auto py-2 px-5 bg-violet-600 text-white text-[11px] font-bold rounded-lg hover:bg-violet-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                    disabled={
+                      isSubmitting ||
+                      !formData.name ||
+                      !formData.email ||
+                      !formData.message
+                    }
+                    className={s.submitBtn}
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Envoi...</span>
+                        <span className={s.spinner} />
+                        Envoi...
                       </>
                     ) : (
                       <>
-                        <Send className="w-3 h-3" />
-                        <span>Envoyer ma candidature</span>
+                        <IconSend />
+                        Envoyer ma candidature
                       </>
                     )}
                   </button>
                 </form>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-emerald-50 border border-emerald-100 rounded-xl p-6 max-w-2xl text-center"
-              >
-                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-500" />
+              /* ── Success state ── */
+              <div className={s.successCard}>
+                <div className={s.successIcon}>
+                  <IconCheck />
                 </div>
-
-                <h3 className="text-sm font-bold text-gray-900 mb-1">
-                  Candidature envoyée !
-                </h3>
-
-                <p className="text-gray-600 text-xs mb-4">
-                  Merci {formData.name.split(' ')[0]} ! Nous étudions votre profil et reviendrons vers vous très vite.
+                <h3 className={s.successTitle}>Candidature envoyee !</h3>
+                <p className={s.successText}>
+                  Merci {formData.name.split(" ")[0]} ! Nous etudions votre
+                  profil et reviendrons vers vous tres vite.
                 </p>
-
                 <button
                   onClick={() => {
                     setIsSubmitted(false);
-                    setFormData({ name: '', email: '', linkedin: '', message: '' });
+                    setFormData({
+                      name: "",
+                      email: "",
+                      linkedin: "",
+                      message: "",
+                    });
                     setSelectedJob(null);
                   }}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 text-[10px] font-medium rounded-lg hover:bg-gray-50 transition-all"
+                  className={s.resetBtn}
                 >
-                  <span>Nouvelle candidature</span>
+                  Nouvelle candidature
                 </button>
-              </motion.div>
+              </div>
             )}
           </div>
         </section>
 
-        {/* CTA Final */}
-        <section className="py-8 lg:py-10 bg-gray-900 text-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-lg lg:text-xl font-bold mb-2">
-                Une question sur nos offres ?
-              </h2>
-              <p className="text-gray-400 text-xs mb-5 max-w-md mx-auto">
-                N'hésitez pas à nous contacter pour en savoir plus sur la vie chez Origines.
-              </p>
+        {/* ── CTA Final ── */}
+        <section className={s.ctaSection}>
+          <div className={`${s.inner} ${s.ctaInner}`}>
+            <h2 className={s.ctaTitle}>
+              Une question sur nos offres&nbsp;?
+            </h2>
+            <p className={s.ctaDeck}>
+              N&rsquo;hesitez pas a nous contacter pour en savoir plus sur la
+              vie chez Origines.
+            </p>
 
-              <div className="flex flex-col sm:flex-row justify-center gap-3">
-                <a
-                  href="mailto:jobs@origines.media"
-                  className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-gray-900 text-xs font-bold rounded-lg hover:bg-gray-100 transition-all"
-                >
-                  <Mail className="w-3.5 h-3.5" />
-                  jobs@origines.media
-                </a>
-
-                <Link
-                  to="/a-propos"
-                  className="group inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-white/10 text-white text-xs font-bold rounded-lg border border-white/20 hover:bg-white/20 transition-all"
-                >
-                  En savoir plus sur nous
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </div>
-            </motion.div>
+            <div className={s.ctaActions}>
+              <a href="mailto:jobs@origines.media" className={s.ctaBtnPrimary}>
+                <IconMail />
+                jobs@origines.media
+              </a>
+              <Link to="/a-propos" className={s.ctaBtnSecondary}>
+                En savoir plus sur nous
+                <IconArrowRight />
+              </Link>
+            </div>
           </div>
         </section>
       </main>
 
-      <Footer />
+      <Footer2 />
+      <ScrollToTopV2 />
     </div>
   );
-};
-
-export default JoinPage;
+}

@@ -1,28 +1,83 @@
 // src/pages/RecherchePage.tsx
-// Page de recherche globale - Filtrage côté client
+// V2 — angular design system, CSS modules, no lucide-react
+// Page de recherche globale - Filtrage cote client
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search,
-  X,
-  ArrowRight,
-  FileText,
-  Play,
-  Heart,
-  Star,
-  Loader2,
-  BookOpen
-} from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import SiteHeader from '@/components/SiteHeader/SiteHeader';
+import Footer2 from '@/components/Footer2/Footer2';
+import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
 import { sanityFetch } from '../lib/sanity';
 import { typo } from '../lib/typography';
 import { getUniversColors } from '../lib/universColors';
+import s from './RecherchePage.module.css';
 
-// Types
+/* ------------------------------------------------------------------ */
+/*  Inline SVG icons                                                   */
+/* ------------------------------------------------------------------ */
+
+const IconSearch = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
+  </svg>
+);
+
+const IconX = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
+  </svg>
+);
+
+const IconArrowRight = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
+  </svg>
+);
+
+const IconFileText = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <path d="M14 2v6h6" />
+    <path d="M16 13H8" />
+    <path d="M16 17H8" />
+    <path d="M10 9H8" />
+  </svg>
+);
+
+const IconPlay = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <polygon points="5 3 19 12 5 21 5 3" />
+  </svg>
+);
+
+const IconHeart = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </svg>
+);
+
+const IconStar = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);
+
+const IconBookOpen = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+  </svg>
+);
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
 interface SearchResult {
   _id: string;
   titre: string;
@@ -34,7 +89,40 @@ interface SearchResult {
   categorie?: string;
 }
 
-// Queries pour charger toutes les données
+interface RawArticle {
+  _id: string;
+  titre: string;
+  slug: string;
+  typeArticle?: string;
+  imageUrl?: string;
+  extrait?: string;
+  description?: string;
+  verticale?: { nom: string; couleurDominante: string };
+}
+
+interface RawHistoire {
+  _id: string;
+  titre: string;
+  slug: string;
+  imageUrl?: string;
+  accroche?: string;
+  citation?: string;
+  categorie?: string;
+}
+
+interface RawReco {
+  _id: string;
+  titre: string;
+  slug: string;
+  imageUrl?: string;
+  accroche?: string;
+  type?: string;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Sanity queries                                                     */
+/* ------------------------------------------------------------------ */
+
 const ALL_ARTICLES_QUERY = `
   *[_type == "production"] | order(datePublication desc) {
     _id,
@@ -74,106 +162,116 @@ const ALL_RECOS_QUERY = `
   }
 `;
 
-// Fonction pour normaliser le texte (retire les accents, met en minuscules)
+/* ------------------------------------------------------------------ */
+/*  Text normalisation (accent-tolerant search)                        */
+/* ------------------------------------------------------------------ */
+
 const normalizeText = (text: string): string => {
   return text
     .toLowerCase()
-    .normalize('NFD') // Décompose les caractères accentués (é -> e + accent)
-    .replace(/[\u0300-\u036f]/g, '') // Supprime les accents
+    .normalize('NFD') // Decompose accented characters (e -> e + accent)
+    .replace(/[̀-ͯ]/g, '') // Remove accent marks
     .replace(/[œ]/g, 'oe') // Ligatures
     .replace(/[æ]/g, 'ae')
     .trim();
 };
 
-// Config par type de résultat
-const TYPE_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string; path: string }> = {
-  article: { label: 'Article', icon: FileText, color: '#10B981', path: '/article' },
-  video: { label: 'Vidéo', icon: Play, color: '#06B6D4', path: '/video' },
-  histoire: { label: 'Histoire', icon: Heart, color: '#EC4899', path: '/histoire' },
-  recommandation: { label: 'Recommandation', icon: Star, color: '#F59E0B', path: '/recommandation' },
+/* ------------------------------------------------------------------ */
+/*  Type config                                                        */
+/* ------------------------------------------------------------------ */
+
+const TYPE_CONFIG: Record<
+  string,
+  {
+    label: string;
+    Icon: React.FC;
+    color: string;
+    path: string;
+  }
+> = {
+  article: { label: 'Article', Icon: IconFileText, color: '#10B981', path: '/article' },
+  video: { label: 'Video', Icon: IconPlay, color: '#06B6D4', path: '/video' },
+  histoire: { label: 'Histoire', Icon: IconHeart, color: '#EC4899', path: '/histoire' },
+  recommandation: { label: 'Reco', Icon: IconStar, color: '#F59E0B', path: '/recommandation' },
 };
 
-// Composant carte de résultat
-const ResultCard: React.FC<{ result: SearchResult; index: number }> = ({ result, index }) => {
+/* ------------------------------------------------------------------ */
+/*  Result card                                                        */
+/* ------------------------------------------------------------------ */
+
+const ResultCard: React.FC<{ result: SearchResult; index: number }> = ({
+  result,
+  index,
+}) => {
   const config = TYPE_CONFIG[result.type];
-  const Icon = config.icon;
+  const { Icon } = config;
   const colors = result.verticale
     ? getUniversColors(result.verticale.nom)
     : { bg: config.color, text: '#FFFFFF' };
 
+  const catColor = result.verticale ? colors.bg : config.color;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
     >
       <Link
         to={`${config.path}/${result.slug}`}
-        className="group flex gap-4 p-4 bg-white rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-        style={{
-          boxShadow: '0 4px 20px -4px rgba(0,0,0,0.08)',
-        }}
+        className={s.card}
+        style={{ '--cat-color': catColor } as React.CSSProperties}
       >
         {/* Image */}
-        <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl overflow-hidden">
+        <div className={s.cardImgWrap}>
           {result.imageUrl ? (
             <img
               src={result.imageUrl}
               alt={result.titre}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className={s.cardImg}
+              loading="lazy"
             />
           ) : (
-            <div
-              className="w-full h-full flex items-center justify-center"
-              style={{ backgroundColor: `${config.color}15` }}
-            >
-              <Icon className="w-8 h-8" style={{ color: config.color }} />
+            <div className={s.cardImgFallback}>
+              <Icon />
             </div>
           )}
 
-          {/* Badge type */}
-          <div className="absolute top-2 left-2">
-            <span
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-              style={{ backgroundColor: config.color }}
-            >
-              <Icon className="w-2.5 h-2.5" />
-              {config.label}
-            </span>
-          </div>
+          {/* Type badge */}
+          <span className={s.cardBadge}>
+            <Icon />
+            {config.label}
+          </span>
         </div>
 
-        {/* Contenu */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center">
-          {/* Catégorie / Verticale */}
+        {/* Body */}
+        <div className={s.cardBody}>
           {(result.verticale?.nom || result.categorie) && (
-            <span
-              className="text-xs font-semibold mb-1"
-              style={{ color: colors.bg }}
-            >
+            <span className={s.cardCategory}>
+              <span className={s.cardCategoryDot} />
               {result.verticale?.nom || result.categorie}
             </span>
           )}
 
-          {/* Titre */}
-          <h3 className="text-base sm:text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors mb-2">
-            {typo(result.titre)}
-          </h3>
+          <h3 className={s.cardTitle}>{typo(result.titre)}</h3>
 
-          {/* Extrait */}
           {result.extrait && (
-            <p className="text-sm text-gray-500 line-clamp-2 hidden sm:block">
-              {typo(result.extrait)}
-            </p>
+            <p className={s.cardExcerpt}>{typo(result.extrait)}</p>
           )}
 
-          {/* CTA */}
-          <span
-            className="inline-flex items-center gap-1.5 text-sm font-semibold mt-2 transition-all group-hover:gap-2"
-            style={{ color: config.color }}
-          >
-            Voir
-            <ArrowRight className="w-4 h-4" />
+          <span className={s.cardCta}>
+            Lire
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
           </span>
         </div>
       </Link>
@@ -181,36 +279,28 @@ const ResultCard: React.FC<{ result: SearchResult; index: number }> = ({ result,
   );
 };
 
-// Interface pour les données brutes
-interface RawArticle {
-  _id: string;
-  titre: string;
-  slug: string;
-  typeArticle?: string;
-  imageUrl?: string;
-  extrait?: string;
-  description?: string;
-  verticale?: { nom: string; couleurDominante: string };
-}
+/* ------------------------------------------------------------------ */
+/*  Skeleton loader                                                    */
+/* ------------------------------------------------------------------ */
 
-interface RawHistoire {
-  _id: string;
-  titre: string;
-  slug: string;
-  imageUrl?: string;
-  accroche?: string;
-  citation?: string;
-  categorie?: string;
-}
+const SkeletonGrid: React.FC = () => (
+  <div className={s.skeleton}>
+    {Array.from({ length: 6 }).map((_, i) => (
+      <div key={i} className={s.skelCard}>
+        <div className={`${s.skelImg} ${s.skelPulse}`} />
+        <div className={s.skelBody}>
+          <div className={s.skelLineTiny} />
+          <div className={s.skelLine} />
+          <div className={s.skelLineShort} />
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
-interface RawReco {
-  _id: string;
-  titre: string;
-  slug: string;
-  imageUrl?: string;
-  accroche?: string;
-  type?: string;
-}
+/* ================================================================== */
+/*  Page component                                                     */
+/* ================================================================== */
 
 const RecherchePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -220,7 +310,7 @@ const RecherchePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<string>('tous');
 
-  // Charger toutes les données au montage
+  /* — Load all data on mount — */
   useEffect(() => {
     const loadAllData = async () => {
       try {
@@ -230,30 +320,31 @@ const RecherchePage: React.FC = () => {
           sanityFetch<RawReco[]>(ALL_RECOS_QUERY),
         ]);
 
-        // Transformer les articles
-        const transformedArticles: SearchResult[] = (articles || []).map(a => ({
-          _id: a._id,
-          titre: a.titre,
-          slug: a.slug,
-          type: a.typeArticle === 'video' ? 'video' : 'article',
-          imageUrl: a.imageUrl,
-          extrait: a.extrait || a.description,
-          verticale: a.verticale,
-        }));
+        const transformedArticles: SearchResult[] = (articles || []).map(
+          (a) => ({
+            _id: a._id,
+            titre: a.titre,
+            slug: a.slug,
+            type: a.typeArticle === 'video' ? 'video' : 'article',
+            imageUrl: a.imageUrl,
+            extrait: a.extrait || a.description,
+            verticale: a.verticale,
+          }),
+        );
 
-        // Transformer les histoires
-        const transformedHistoires: SearchResult[] = (histoires || []).map(h => ({
-          _id: h._id,
-          titre: h.titre,
-          slug: h.slug,
-          type: 'histoire',
-          imageUrl: h.imageUrl,
-          extrait: h.accroche || h.citation,
-          categorie: h.categorie,
-        }));
+        const transformedHistoires: SearchResult[] = (histoires || []).map(
+          (h) => ({
+            _id: h._id,
+            titre: h.titre,
+            slug: h.slug,
+            type: 'histoire',
+            imageUrl: h.imageUrl,
+            extrait: h.accroche || h.citation,
+            categorie: h.categorie,
+          }),
+        );
 
-        // Transformer les recommandations
-        const transformedRecos: SearchResult[] = (recos || []).map(r => ({
+        const transformedRecos: SearchResult[] = (recos || []).map((r) => ({
           _id: r._id,
           titre: r.titre,
           slug: r.slug,
@@ -263,9 +354,13 @@ const RecherchePage: React.FC = () => {
           categorie: r.type,
         }));
 
-        setAllData([...transformedArticles, ...transformedHistoires, ...transformedRecos]);
+        setAllData([
+          ...transformedArticles,
+          ...transformedHistoires,
+          ...transformedRecos,
+        ]);
       } catch (error) {
-        console.error('Erreur chargement données:', error);
+        console.error('Erreur chargement donnees:', error);
       } finally {
         setLoading(false);
       }
@@ -274,12 +369,12 @@ const RecherchePage: React.FC = () => {
     loadAllData();
   }, []);
 
-  // Synchroniser searchInput avec l'URL
+  /* — Sync search input with URL — */
   useEffect(() => {
     setSearchInput(query);
   }, [query]);
 
-  // Soumettre la recherche
+  /* — Submit search — */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
@@ -287,60 +382,55 @@ const RecherchePage: React.FC = () => {
     }
   };
 
-  // Effacer la recherche
+  /* — Clear search — */
   const handleClear = () => {
     setSearchInput('');
     setSearchParams({});
   };
 
-  // Filtrer les résultats côté client (tolérant aux accents)
+  /* — Filter results client-side (accent-tolerant) — */
   const filteredResults = useMemo(() => {
     if (!query.trim()) return [];
 
-    // Normaliser les termes de recherche (sans accents)
-    const searchTerms = normalizeText(query).split(/\s+/).filter(Boolean);
+    const searchTerms = normalizeText(query)
+      .split(/\s+/)
+      .filter(Boolean);
 
-    // Filtrer par recherche
-    let results = allData.filter(item => {
-      // Construire le texte searchable et le normaliser
-      const searchableText = normalizeText([
-        item.titre,
-        item.extrait,
-        item.verticale?.nom,
-        item.categorie,
-      ].filter(Boolean).join(' '));
-
-      // Tous les termes doivent être présents (recherche tolérante)
-      return searchTerms.every(term => searchableText.includes(term));
+    let results = allData.filter((item) => {
+      const searchableText = normalizeText(
+        [item.titre, item.extrait, item.verticale?.nom, item.categorie]
+          .filter(Boolean)
+          .join(' '),
+      );
+      return searchTerms.every((term) => searchableText.includes(term));
     });
 
-    // Filtrer par type si nécessaire
     if (activeFilter !== 'tous') {
-      results = results.filter(r => r.type === activeFilter);
+      results = results.filter((r) => r.type === activeFilter);
     }
 
     return results;
   }, [allData, query, activeFilter]);
 
-  // Compter par type (avec normalisation)
+  /* — Count by type (with normalisation) — */
   const countByType = useMemo(() => {
     if (!query.trim()) return { tous: 0 };
 
-    const searchTerms = normalizeText(query).split(/\s+/).filter(Boolean);
+    const searchTerms = normalizeText(query)
+      .split(/\s+/)
+      .filter(Boolean);
 
-    const matchingResults = allData.filter(item => {
-      const searchableText = normalizeText([
-        item.titre,
-        item.extrait,
-        item.verticale?.nom,
-        item.categorie,
-      ].filter(Boolean).join(' '));
-
-      return searchTerms.every(term => searchableText.includes(term));
+    const matchingResults = allData.filter((item) => {
+      const searchableText = normalizeText(
+        [item.titre, item.extrait, item.verticale?.nom, item.categorie]
+          .filter(Boolean)
+          .join(' '),
+      );
+      return searchTerms.every((term) => searchableText.includes(term));
     });
 
     const counts: Record<string, number> = { tous: matchingResults.length };
-    matchingResults.forEach(r => {
+    matchingResults.forEach((r) => {
       counts[r.type] = (counts[r.type] || 0) + 1;
     });
     return counts;
@@ -348,188 +438,183 @@ const RecherchePage: React.FC = () => {
 
   const hasSearched = query.trim().length > 0;
 
+  /* ================================================================ */
+  /*  Render                                                           */
+  /* ================================================================ */
+
   return (
-    <>
+    <div className={s.page}>
       <SEO
         title={query ? `Recherche : ${query}` : 'Recherche'}
-        description="Recherchez parmi nos articles, histoires, vidéos et recommandations."
+        description="Recherchez parmi nos articles, histoires, videos et recommandations."
         type="website"
       />
-      <Navbar />
+      <SiteHeader />
 
-      <main className="min-h-screen bg-gray-50 pt-8 pb-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+      {/* ── Header ── */}
+      <header className={s.header}>
+        <div className={s.headerInner}>
+          <p className={s.kicker}>
+            <span className={s.kickerDot} />
+            Recherche
+          </p>
+          <h1 className={s.title}>
+            Trouvez votre <em>contenu</em>
+          </h1>
+          <p className={s.deck}>
+            {typo(
+              'Explorez notre catalogue d’articles, d’histoires inspirantes, de videos et de recommandations.',
+            )}
+          </p>
+        </div>
+      </header>
 
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-pink-500 rounded-full" />
-              <Search className="w-6 h-6 text-violet-500" />
-              <div className="h-1 w-12 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full" />
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-              Recherche
-            </h1>
-            <p className="text-gray-600 text-lg">
-              {typo("Trouvez des articles, histoires, vidéos et recommandations.")}
-            </p>
-          </div>
+      {/* ── Search bar ── */}
+      <div className={s.searchSection}>
+        <form onSubmit={handleSubmit} className={s.searchForm}>
+          <span className={s.searchIcon}>
+            <IconSearch />
+          </span>
 
-          {/* Barre de recherche */}
-          <form onSubmit={handleSubmit} className="mb-8">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Tapez votre recherche..."
-                className="w-full pl-12 pr-24 py-4 text-lg bg-white border border-gray-200 rounded-2xl focus:border-violet-400 focus:ring-2 focus:ring-violet-100 focus:outline-none transition-all shadow-sm"
-                autoFocus
-              />
-              {searchInput && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="absolute right-16 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              )}
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-violet-500 text-white font-semibold rounded-xl hover:bg-violet-600 transition-colors"
-              >
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          </form>
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Tapez votre recherche..."
+            className={s.searchInput}
+            autoFocus
+          />
 
-          {/* Loading */}
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <Loader2 className="w-8 h-8 text-violet-500 animate-spin mb-4" />
-              <p className="text-gray-500">Chargement...</p>
-            </div>
-          ) : (
-            <>
-              {/* Filtres par type */}
-              {hasSearched && countByType.tous > 0 && (
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {['tous', 'article', 'video', 'histoire', 'recommandation'].map(type => {
-                    const count = countByType[type] || 0;
-                    if (type !== 'tous' && count === 0) return null;
-
-                    const isActive = activeFilter === type;
-                    const config = type === 'tous'
-                      ? { label: 'Tous', color: '#6B7280' }
-                      : TYPE_CONFIG[type];
-
-                    return (
-                      <button
-                        key={type}
-                        onClick={() => setActiveFilter(type)}
-                        className="relative inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
-                      >
-                        {isActive && (
-                          <motion.div
-                            layoutId="searchFilterIndicator"
-                            className="absolute inset-0 rounded-full"
-                            style={{ backgroundColor: config.color }}
-                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                          />
-                        )}
-                        <span
-                          className="relative z-10 transition-colors"
-                          style={{ color: isActive ? 'white' : '#6B7280' }}
-                        >
-                          {config.label}
-                        </span>
-                        <span
-                          className="relative z-10 text-xs px-1.5 py-0.5 rounded-full transition-all"
-                          style={{
-                            backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : `${config.color}15`,
-                            color: isActive ? 'white' : config.color,
-                          }}
-                        >
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Résultats */}
-              <div className="space-y-4">
-                {hasSearched && filteredResults.length === 0 ? (
-                  <div className="text-center py-16">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                      <Search className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      Aucun résultat
-                    </h3>
-                    <p className="text-gray-500 mb-6">
-                      {typo(`Aucun contenu ne correspond à "${query}".`)}
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-3">
-                      <Link
-                        to="/articles"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-sm font-medium hover:bg-emerald-100 transition-colors"
-                      >
-                        <FileText className="w-4 h-4" />
-                        Voir les articles
-                      </Link>
-                      <Link
-                        to="/histoires"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-pink-50 text-pink-600 rounded-full text-sm font-medium hover:bg-pink-100 transition-colors"
-                      >
-                        <Heart className="w-4 h-4" />
-                        Voir les histoires
-                      </Link>
-                      <Link
-                        to="/videos"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-50 text-cyan-600 rounded-full text-sm font-medium hover:bg-cyan-100 transition-colors"
-                      >
-                        <Play className="w-4 h-4" />
-                        Voir les vidéos
-                      </Link>
-                    </div>
-                  </div>
-                ) : hasSearched ? (
-                  <>
-                    <p className="text-sm text-gray-500 mb-4">
-                      {filteredResults.length} résultat{filteredResults.length > 1 ? 's' : ''} pour "{query}"
-                    </p>
-                    <AnimatePresence mode="popLayout">
-                      {filteredResults.slice(0, 50).map((result, index) => (
-                        <ResultCard key={result._id} result={result} index={index} />
-                      ))}
-                    </AnimatePresence>
-                  </>
-                ) : (
-                  <div className="text-center py-16">
-                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-violet-100 to-pink-100 flex items-center justify-center">
-                      <BookOpen className="w-10 h-10 text-violet-500" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {typo("Que cherchez-vous ?")}
-                    </h3>
-                    <p className="text-gray-500 max-w-md mx-auto">
-                      {typo("Explorez notre catalogue d'articles, d'histoires inspirantes, de vidéos et de recommandations.")}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </>
+          {searchInput && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className={s.searchClear}
+              aria-label="Effacer la recherche"
+            >
+              <IconX />
+            </button>
           )}
 
-        </div>
+          <button
+            type="submit"
+            className={s.searchSubmit}
+            aria-label="Rechercher"
+          >
+            <IconArrowRight />
+          </button>
+        </form>
+      </div>
+
+      {/* ── Main content ── */}
+      <main className={s.main}>
+        {loading ? (
+          /* Loading skeleton */
+          <SkeletonGrid />
+        ) : (
+          <>
+            {/* ── Filter tabs ── */}
+            {hasSearched && countByType.tous > 0 && (
+              <div className={s.filters}>
+                {(
+                  ['tous', 'article', 'video', 'histoire', 'recommandation'] as const
+                ).map((type) => {
+                  const count = countByType[type] || 0;
+                  if (type !== 'tous' && count === 0) return null;
+
+                  const isActive = activeFilter === type;
+                  const label =
+                    type === 'tous'
+                      ? 'Tous'
+                      : TYPE_CONFIG[type].label;
+
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => setActiveFilter(type)}
+                      className={
+                        isActive ? s.filterBtnActive : s.filterBtn
+                      }
+                    >
+                      {label}
+                      <span className={s.filterCount}>{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* ── Results ── */}
+            {hasSearched && filteredResults.length === 0 ? (
+              /* No results */
+              <div className={s.empty}>
+                <div className={s.emptyIcon}>
+                  <IconSearch />
+                </div>
+                <h3 className={s.emptyTitle}>Aucun resultat</h3>
+                <p className={s.emptyText}>
+                  {typo(`Aucun contenu ne correspond a « ${query} ».`)}
+                </p>
+                <div className={s.emptyLinks}>
+                  <Link to="/articles" className={s.emptyLink}>
+                    <IconFileText />
+                    Articles
+                  </Link>
+                  <Link to="/histoires" className={s.emptyLink}>
+                    <IconHeart />
+                    Histoires
+                  </Link>
+                  <Link to="/videos" className={s.emptyLink}>
+                    <IconPlay />
+                    Videos
+                  </Link>
+                </div>
+              </div>
+            ) : hasSearched ? (
+              /* Results list */
+              <>
+                <p className={s.resultCount}>
+                  {filteredResults.length} resultat
+                  {filteredResults.length > 1 ? 's' : ''} pour
+                  {' « '}
+                  {query}
+                  {' »'}
+                </p>
+                <div className={s.grid}>
+                  <AnimatePresence mode="popLayout">
+                    {filteredResults.slice(0, 50).map((result, index) => (
+                      <ResultCard
+                        key={result._id}
+                        result={result}
+                        index={index}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </>
+            ) : (
+              /* Initial state */
+              <div className={s.initial}>
+                <div className={s.initialIcon}>
+                  <IconBookOpen />
+                </div>
+                <h3 className={s.initialTitle}>
+                  {typo('Que cherchez-vous ?')}
+                </h3>
+                <p className={s.initialText}>
+                  {typo(
+                    'Explorez notre catalogue d’articles, d’histoires inspirantes, de videos et de recommandations.',
+                  )}
+                </p>
+              </div>
+            )}
+          </>
+        )}
       </main>
 
-      <Footer />
-    </>
+      <Footer2 />
+      <ScrollToTopV2 />
+    </div>
   );
 };
 

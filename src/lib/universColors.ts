@@ -7,6 +7,8 @@ export interface UniversColor {
   text: string;
   shadow: string;
   light: string;
+  mid: string;
+  dark: string;
 }
 
 // Palette distincte - chaque couleur est sur une teinte différente du cercle chromatique
@@ -15,269 +17,333 @@ export const universColors: Record<string, UniversColor> = {
   // VERTICALES PRINCIPALES (les plus utilisées)
   // ═══════════════════════════════════════════════════════
 
-  // Psychologie - Indigo profond (bleu-violet)
+  // Psychologie — Violet oklch
   'Psychologie': {
-    bg: '#4F46E5',
+    bg: '#7B5CD6',
     text: '#ffffff',
-    shadow: 'rgba(79, 70, 229, 0.35)',
-    light: '#EEF2FF'
+    shadow: 'rgba(123, 92, 214, 0.35)',
+    light: '#A78BE8',
+    mid: '#7B5CD6',
+    dark: '#4A2FA8',
   },
 
-  // Société - Ambre doré (jaune-orange chaud)
+  // Société — Orange oklch
   'Société': {
-    bg: '#D97706',
+    bg: '#E67839',
     text: '#ffffff',
-    shadow: 'rgba(217, 119, 6, 0.35)',
-    light: '#FFFBEB'
+    shadow: 'rgba(230, 120, 57, 0.35)',
+    light: '#F5A878',
+    mid: '#E67839',
+    dark: '#B04E15',
   },
 
-  // Carrière - Bleu ciel (cyan clair)
+  // Carrière — Bleu oklch
   'Carrière': {
-    bg: '#0EA5E9',
+    bg: '#3E7DD6',
     text: '#ffffff',
-    shadow: 'rgba(14, 165, 233, 0.35)',
-    light: '#F0F9FF'
+    shadow: 'rgba(62, 125, 214, 0.35)',
+    light: '#7AA8E8',
+    mid: '#3E7DD6',
+    dark: '#1A4FA0',
   },
 
-  // Voyage - Émeraude (vert vif)
+  // Voyage — Émeraude oklch
   'Voyage': {
-    bg: '#10B981',
+    bg: '#2E9B74',
     text: '#ffffff',
-    shadow: 'rgba(16, 185, 129, 0.35)',
-    light: '#ECFDF5'
+    shadow: 'rgba(46, 155, 116, 0.35)',
+    light: '#6FC9A6',
+    mid: '#2E9B74',
+    dark: '#0A6848',
   },
 
-  // Spiritualité - Pourpre profond (violet mystique)
+  // Spiritualité — Indigo oklch
   'Spiritualité': {
-    bg: '#9333EA',
+    bg: '#5A66D6',
     text: '#ffffff',
-    shadow: 'rgba(147, 51, 234, 0.35)',
-    light: '#FAF5FF'
+    shadow: 'rgba(90, 102, 214, 0.35)',
+    light: '#9098E8',
+    mid: '#5A66D6',
+    dark: '#2A34A0',
   },
 
-  // Santé - Rouge vif
+  // Santé — Vert oklch
   'Santé': {
-    bg: '#DC2626',
+    bg: '#5AA352',
     text: '#ffffff',
-    shadow: 'rgba(220, 38, 38, 0.35)',
-    light: '#FEF2F2'
+    shadow: 'rgba(90, 163, 82, 0.35)',
+    light: '#8FD088',
+    mid: '#5AA352',
+    dark: '#2A6F22',
   },
 
-  // Famille - Rose chaud (rose-corail)
+  // Famille — Or oklch
   'Famille': {
-    bg: '#FB7185',
+    bg: '#C99B1E',
     text: '#ffffff',
-    shadow: 'rgba(251, 113, 133, 0.35)',
-    light: '#FFF1F2'
+    shadow: 'rgba(201, 155, 30, 0.35)',
+    light: '#E8C872',
+    mid: '#C99B1E',
+    dark: '#8A6700',
   },
 
-  // Technologie - Bleu électrique
+  // Technologie — Teal oklch
   'Technologie': {
-    bg: '#2563EB',
+    bg: '#2E94B5',
     text: '#ffffff',
-    shadow: 'rgba(37, 99, 235, 0.35)',
-    light: '#EFF6FF'
+    shadow: 'rgba(46, 148, 181, 0.35)',
+    light: '#6FC5DE',
+    mid: '#2E94B5',
+    dark: '#0A6383',
   },
 
-  // Relations - Rose passion
+  // Relations — Rose oklch (mapped to Art)
   'Relations': {
-    bg: '#E11D48',
+    bg: '#D64C90',
     text: '#ffffff',
-    shadow: 'rgba(225, 29, 72, 0.35)',
-    light: '#FFF1F2'
+    shadow: 'rgba(214, 76, 144, 0.35)',
+    light: '#E88AB8',
+    mid: '#D64C90',
+    dark: '#A01A5F',
   },
 
-  // Culture - Violet vif
+  // Culture — Violet oklch (mapped to Psychologie)
   'Culture': {
-    bg: '#7C3AED',
+    bg: '#7B5CD6',
     text: '#ffffff',
-    shadow: 'rgba(124, 58, 237, 0.35)',
-    light: '#F5F3FF'
+    shadow: 'rgba(123, 92, 214, 0.35)',
+    light: '#A78BE8',
+    mid: '#7B5CD6',
+    dark: '#4A2FA8',
   },
 
   // ═══════════════════════════════════════════════════════
   // VERTICALES SECONDAIRES
   // ═══════════════════════════════════════════════════════
 
-  // Art & Créativité - Fuchsia
+  // Art & Créativité — mapped to Art (Rose oklch)
   'Art & Créativité': {
-    bg: '#D946EF',
+    bg: '#D64C90',
     text: '#ffffff',
-    shadow: 'rgba(217, 70, 239, 0.35)',
-    light: '#FDF4FF'
+    shadow: 'rgba(214, 76, 144, 0.35)',
+    light: '#E88AB8',
+    mid: '#D64C90',
+    dark: '#A01A5F',
   },
 
-  // Environnement - Vert forêt (plus foncé que Voyage)
+  // Environnement — mapped to Voyage (Émeraude oklch)
   'Environnement': {
-    bg: '#059669',
+    bg: '#2E9B74',
     text: '#ffffff',
-    shadow: 'rgba(5, 150, 105, 0.35)',
-    light: '#ECFDF5'
+    shadow: 'rgba(46, 155, 116, 0.35)',
+    light: '#6FC9A6',
+    mid: '#2E9B74',
+    dark: '#0A6848',
   },
 
-  // Histoire - Marron terre
+  // Histoire — mapped to Société (Orange oklch)
   'Histoire': {
-    bg: '#92400E',
+    bg: '#E67839',
     text: '#ffffff',
-    shadow: 'rgba(146, 64, 14, 0.35)',
-    light: '#FFFBEB'
+    shadow: 'rgba(230, 120, 57, 0.35)',
+    light: '#F5A878',
+    mid: '#E67839',
+    dark: '#B04E15',
   },
 
-  // Science - Teal (bleu-vert)
+  // Science — mapped to Tech (Teal oklch)
   'Science': {
-    bg: '#0D9488',
+    bg: '#2E94B5',
     text: '#ffffff',
-    shadow: 'rgba(13, 148, 136, 0.35)',
-    light: '#F0FDFA'
+    shadow: 'rgba(46, 148, 181, 0.35)',
+    light: '#6FC5DE',
+    mid: '#2E94B5',
+    dark: '#0A6383',
   },
 
-  // Économie - Vert dollar
+  // Économie — mapped to Business (Teal oklch)
   'Économie': {
-    bg: '#16A34A',
+    bg: '#1EA0A3',
     text: '#ffffff',
-    shadow: 'rgba(22, 163, 74, 0.35)',
-    light: '#F0FDF4'
+    shadow: 'rgba(30, 160, 163, 0.35)',
+    light: '#5FCED0',
+    mid: '#1EA0A3',
+    dark: '#006D70',
   },
 
-  // Sport - Orange brûlé
+  // Sport — mapped to Société (Orange oklch)
   'Sport': {
-    bg: '#EA580C',
+    bg: '#E67839',
     text: '#ffffff',
-    shadow: 'rgba(234, 88, 12, 0.35)',
-    light: '#FFF7ED'
+    shadow: 'rgba(230, 120, 57, 0.35)',
+    light: '#F5A878',
+    mid: '#E67839',
+    dark: '#B04E15',
   },
 
-  // Musique - Pourpre
+  // Musique — mapped to Spiritualité (Indigo oklch)
   'Musique': {
-    bg: '#9333EA',
+    bg: '#5A66D6',
     text: '#ffffff',
-    shadow: 'rgba(147, 51, 234, 0.35)',
-    light: '#FAF5FF'
+    shadow: 'rgba(90, 102, 214, 0.35)',
+    light: '#9098E8',
+    mid: '#5A66D6',
+    dark: '#2A34A0',
   },
 
-  // Cinéma - Or
+  // Cinéma — mapped to Famille (Or oklch)
   'Cinéma': {
-    bg: '#CA8A04',
+    bg: '#C99B1E',
     text: '#ffffff',
-    shadow: 'rgba(202, 138, 4, 0.35)',
-    light: '#FEFCE8'
+    shadow: 'rgba(201, 155, 30, 0.35)',
+    light: '#E8C872',
+    mid: '#C99B1E',
+    dark: '#8A6700',
   },
 
-  // Politique - Bleu marine
+  // Politique — mapped to Carrière (Bleu oklch)
   'Politique': {
-    bg: '#1E40AF',
+    bg: '#3E7DD6',
     text: '#ffffff',
-    shadow: 'rgba(30, 64, 175, 0.35)',
-    light: '#DBEAFE'
+    shadow: 'rgba(62, 125, 214, 0.35)',
+    light: '#7AA8E8',
+    mid: '#3E7DD6',
+    dark: '#1A4FA0',
   },
 
-  // Éducation - Bleu azur
+  // Éducation — mapped to Carrière (Bleu oklch)
   'Éducation': {
-    bg: '#0284C7',
+    bg: '#3E7DD6',
     text: '#ffffff',
-    shadow: 'rgba(2, 132, 199, 0.35)',
-    light: '#E0F2FE'
+    shadow: 'rgba(62, 125, 214, 0.35)',
+    light: '#7AA8E8',
+    mid: '#3E7DD6',
+    dark: '#1A4FA0',
   },
 
-  // Bien-être - Lavande (violet clair)
+  // Bien-être — mapped to Psychologie (Violet oklch)
   'Bien-être': {
-    bg: '#A855F7',
+    bg: '#7B5CD6',
     text: '#ffffff',
-    shadow: 'rgba(168, 85, 247, 0.35)',
-    light: '#FAF5FF'
+    shadow: 'rgba(123, 92, 214, 0.35)',
+    light: '#A78BE8',
+    mid: '#7B5CD6',
+    dark: '#4A2FA8',
   },
 
-  // Alimentation - Vert lime
+  // Alimentation — mapped to Santé (Vert oklch)
   'Alimentation': {
-    bg: '#65A30D',
+    bg: '#5AA352',
     text: '#ffffff',
-    shadow: 'rgba(101, 163, 13, 0.35)',
-    light: '#F7FEE7'
+    shadow: 'rgba(90, 163, 82, 0.35)',
+    light: '#8FD088',
+    mid: '#5AA352',
+    dark: '#2A6F22',
   },
 
-  // Finance - Vert émeraude foncé
+  // Finance — mapped to Business (Teal oklch)
   'Finance': {
-    bg: '#047857',
+    bg: '#1EA0A3',
     text: '#ffffff',
-    shadow: 'rgba(4, 120, 87, 0.35)',
-    light: '#ECFDF5'
+    shadow: 'rgba(30, 160, 163, 0.35)',
+    light: '#5FCED0',
+    mid: '#1EA0A3',
+    dark: '#006D70',
   },
 
-  // Mode - Rose poudré
+  // Mode — mapped to Art (Rose oklch)
   'Mode': {
-    bg: '#DB2777',
+    bg: '#D64C90',
     text: '#ffffff',
-    shadow: 'rgba(219, 39, 119, 0.35)',
-    light: '#FDF2F8'
+    shadow: 'rgba(214, 76, 144, 0.35)',
+    light: '#E88AB8',
+    mid: '#D64C90',
+    dark: '#A01A5F',
   },
 
-  // Lifestyle - Corail
+  // Lifestyle — mapped to Art (Rose oklch)
   'Lifestyle': {
-    bg: '#F43F5E',
+    bg: '#D64C90',
     text: '#ffffff',
-    shadow: 'rgba(244, 63, 94, 0.35)',
-    light: '#FFF1F2'
+    shadow: 'rgba(214, 76, 144, 0.35)',
+    light: '#E88AB8',
+    mid: '#D64C90',
+    dark: '#A01A5F',
   },
 
   // ═══════════════════════════════════════════════════════
   // CATÉGORIES HISTOIRES (tagCategories)
   // ═══════════════════════════════════════════════════════
 
-  // Émotions & Bien-être - Pink
+  // Émotions & Bien-être — mapped to Art (Rose oklch)
   'Émotions & Bien-être': {
-    bg: '#EC4899',
+    bg: '#D64C90',
     text: '#ffffff',
-    shadow: 'rgba(236, 72, 153, 0.35)',
-    light: '#FDF2F8'
+    shadow: 'rgba(214, 76, 144, 0.35)',
+    light: '#E88AB8',
+    mid: '#D64C90',
+    dark: '#A01A5F',
   },
 
-  // Développement - Emerald
+  // Développement — mapped to Voyage (Émeraude oklch)
   'Développement': {
-    bg: '#10B981',
+    bg: '#2E9B74',
     text: '#ffffff',
-    shadow: 'rgba(16, 185, 129, 0.35)',
-    light: '#ECFDF5'
+    shadow: 'rgba(46, 155, 116, 0.35)',
+    light: '#6FC9A6',
+    mid: '#2E9B74',
+    dark: '#0A6848',
   },
 
-  // Parcours & Résilience - Violet
+  // Parcours & Résilience — mapped to Psychologie (Violet oklch)
   'Parcours & Résilience': {
-    bg: '#8B5CF6',
+    bg: '#7B5CD6',
     text: '#ffffff',
-    shadow: 'rgba(139, 92, 246, 0.35)',
-    light: '#F5F3FF'
+    shadow: 'rgba(123, 92, 214, 0.35)',
+    light: '#A78BE8',
+    mid: '#7B5CD6',
+    dark: '#4A2FA8',
   },
 
-  // Relations & Famille - Amber
+  // Relations & Famille — mapped to Famille (Or oklch)
   'Relations & Famille': {
-    bg: '#F59E0B',
+    bg: '#C99B1E',
     text: '#ffffff',
-    shadow: 'rgba(245, 158, 11, 0.35)',
-    light: '#FFFBEB'
+    shadow: 'rgba(201, 155, 30, 0.35)',
+    light: '#E8C872',
+    mid: '#C99B1E',
+    dark: '#8A6700',
   },
 
-  // Santé mentale - Cyan
+  // Santé mentale — mapped to Tech (Teal oklch)
   'Santé mentale': {
-    bg: '#06B6D4',
+    bg: '#2E94B5',
     text: '#ffffff',
-    shadow: 'rgba(6, 182, 212, 0.35)',
-    light: '#ECFEFF'
+    shadow: 'rgba(46, 148, 181, 0.35)',
+    light: '#6FC5DE',
+    mid: '#2E94B5',
+    dark: '#0A6383',
   },
 
-  // Épreuves & Inspiration - Indigo
+  // Épreuves & Inspiration — mapped to Spiritualité (Indigo oklch)
   'Épreuves & Inspiration': {
-    bg: '#6366F1',
+    bg: '#5A66D6',
     text: '#ffffff',
-    shadow: 'rgba(99, 102, 241, 0.35)',
-    light: '#EEF2FF'
+    shadow: 'rgba(90, 102, 214, 0.35)',
+    light: '#9098E8',
+    mid: '#5A66D6',
+    dark: '#2A34A0',
   },
 };
 
 // Couleur par défaut si l'univers n'est pas trouvé - Gris neutre
 const defaultColor: UniversColor = {
-  bg: '#6B7280',
+  bg: '#6B6B6B',
   text: '#ffffff',
-  shadow: 'rgba(107, 114, 128, 0.35)',
-  light: '#F3F4F6'
+  shadow: 'rgba(107, 107, 107, 0.35)',
+  light: '#B8B6AF',
+  mid: '#6B6B6B',
+  dark: '#3A3A3A',
 };
 
 /**

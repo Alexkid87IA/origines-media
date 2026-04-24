@@ -519,32 +519,6 @@ const ArticlesPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Tri */}
-                <div className="bg-white rounded-2xl ring-1 ring-gray-200/50 overflow-hidden" style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.06)' }}>
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                      Trier par
-                    </h3>
-                  </div>
-                  <div className="p-2">
-                    {SORT_OPTIONS.map((option) => {
-                      const isActive = sortBy === option.id;
-                      return (
-                        <button
-                          key={option.id}
-                          onClick={() => handleSortChange(option.id)}
-                          className={`
-                            w-full flex items-center px-3 py-2 rounded-xl text-sm transition-all duration-300 mt-0.5
-                            ${isActive ? 'bg-gray-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}
-                          `}
-                        >
-                          <span className="font-medium">{option.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
                 {/* Promo Boutique - 9:16 */}
                 <Link
                   to="/boutique"
@@ -733,6 +707,22 @@ const ArticlesPage: React.FC = () => {
                   )}
                 </div>
               )}
+
+              {/* Barre de tri desktop */}
+              <div className="hidden lg:flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-500">
+                  {filteredArticles.length} article{filteredArticles.length > 1 ? 's' : ''}
+                </span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-gray-200 cursor-pointer"
+                >
+                  {SORT_OPTIONS.map(option => (
+                    <option key={option.id} value={option.id}>{option.label}</option>
+                  ))}
+                </select>
+              </div>
 
               {/* Grille d'articles */}
               {paginatedArticles.length > 0 ? (

@@ -1,0 +1,1054 @@
+/* ===== JoinPage V2 — Angular editorial design ===== */
+
+/* ── Page wrapper ── */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Shared inner container ── */
+
+.inner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Page header
+   ══════════════════════════════════════════════════════════ */
+
+.header {
+  padding: 48px 0 36px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.headerInner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.headerLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 14px;
+}
+
+.kickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.headerTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.headerTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.headerDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 12px 0 0;
+  max-width: 48ch;
+}
+
+/* — Quick stats inline — */
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.statPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+}
+
+.statPillValue {
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.statPillLabel {
+  color: var(--stone500);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Intro section
+   ══════════════════════════════════════════════════════════ */
+
+.intro {
+  padding: 56px 0;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.introGrid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+/* — Main intro panel (dark) — */
+
+.introMain {
+  background: var(--ink);
+  padding: 40px 32px;
+}
+
+.introTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(22px, 2.5vw, 32px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--pure, #fff);
+  margin: 0 0 16px;
+}
+
+.introBody {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--stone400);
+  margin: 0 0 28px;
+  max-width: 56ch;
+}
+
+.introBody strong {
+  color: var(--pure, #fff);
+  font-weight: 600;
+}
+
+/* — Values sub-grid (inside dark panel) — */
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(247, 245, 240, 0.1);
+}
+
+.valueCard {
+  background: rgba(247, 245, 240, 0.05);
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.valueIcon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.valueIcon svg {
+  width: 16px;
+  height: 16px;
+  color: rgba(247, 245, 240, 0.6);
+}
+
+.valueTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--pure, #fff);
+  margin: 0 0 2px;
+}
+
+.valueDesc {
+  font-family: var(--body);
+  font-size: 12px;
+  color: rgba(247, 245, 240, 0.45);
+  margin: 0;
+}
+
+/* — Sidebar (why join + notice) — */
+
+.introSide {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--stone100);
+}
+
+.whyCard {
+  background: var(--pure);
+  padding: 28px 24px;
+  flex: 1;
+}
+
+.whyTitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 0 0 18px;
+}
+
+.whyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.whyItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.whyItemIcon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.whyItemIcon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.whyItemText {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--stone700);
+}
+
+.noticeCard {
+  background: var(--stone50);
+  padding: 20px 24px;
+}
+
+.noticeText {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 0;
+}
+
+.noticeText strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Job openings section
+   ══════════════════════════════════════════════════════════ */
+
+.jobs {
+  padding: 56px 0;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.sectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 16px;
+}
+
+.sectionKickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.sectionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.jobsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.jobCard {
+  background: var(--pure, #fff);
+  padding: 28px 24px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.jobCard:hover {
+  background: var(--stone50);
+}
+
+.jobCardSelected {
+  background: var(--stone50);
+}
+
+.jobAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.jobTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.jobIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.jobIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.jobContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.jobTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.jobMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.jobTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  padding: 4px 8px;
+}
+
+.jobTag svg {
+  width: 10px;
+  height: 10px;
+}
+
+.jobDesc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 0;
+}
+
+/* — Apply button inside selected card — */
+
+.jobApplyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pure, #fff);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.jobApplyBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.jobApplyBtn svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.25s ease;
+}
+
+.jobApplyBtn:hover svg {
+  transform: translateX(3px);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Application form section
+   ══════════════════════════════════════════════════════════ */
+
+.formSection {
+  padding: 56px 0;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.formCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 32px;
+  max-width: 720px;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.formIcon {
+  width: 36px;
+  height: 36px;
+  background: var(--stone50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.formIcon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--ink);
+}
+
+.formTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.formDeck {
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--stone500);
+  margin: -16px 0 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.required {
+  color: #D64C90;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: var(--stone400);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.inputWrap:focus-within .inputIcon {
+  color: var(--ink);
+}
+
+.input {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  padding: 12px 14px 12px 38px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.input::placeholder {
+  color: var(--stone400);
+  font-family: var(--body);
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--pure);
+}
+
+.inputNoIcon {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  padding: 12px 14px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.inputNoIcon::placeholder {
+  color: var(--stone400);
+  font-family: var(--body);
+  font-size: 14px;
+}
+
+.inputNoIcon:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--pure);
+}
+
+.textarea {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 140px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.textarea::placeholder {
+  color: var(--stone400);
+  font-family: var(--body);
+  font-size: 14px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--pure);
+}
+
+/* — Submit button — */
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  align-self: flex-start;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.submitBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Success state
+   ══════════════════════════════════════════════════════════ */
+
+.successCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 48px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 720px;
+}
+
+.successIcon {
+  width: 48px;
+  height: 48px;
+  background: var(--stone50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.successIcon svg {
+  width: 24px;
+  height: 24px;
+  color: #34A853;
+}
+
+.successTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.successText {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 0 0 28px;
+  max-width: 40ch;
+}
+
+.resetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--stone100);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.resetBtn:hover {
+  border-color: var(--ink);
+  background: var(--stone50);
+}
+
+/* ══════════════════════════════════════════════════════════
+   CTA Final section
+   ══════════════════════════════════════════════════════════ */
+
+.ctaSection {
+  background: var(--ink);
+  padding: 72px 0;
+}
+
+.ctaInner {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ctaTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--pure, #fff);
+  margin: 0 0 12px;
+}
+
+.ctaDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone500);
+  max-width: 44ch;
+  margin: 0 auto 36px;
+}
+
+.ctaActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ctaBtnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.ctaBtnPrimary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.ctaBtnPrimary svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ctaBtnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pure, #fff);
+  background: transparent;
+  border: 1px solid rgba(247, 245, 240, 0.2);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.ctaBtnSecondary:hover {
+  background: rgba(247, 245, 240, 0.08);
+  border-color: rgba(247, 245, 240, 0.4);
+}
+
+.ctaBtnSecondary svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s ease;
+}
+
+.ctaBtnSecondary:hover svg {
+  transform: translateX(3px);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .introGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .jobsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 36px 0 28px;
+  }
+
+  .headerInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .intro {
+    padding: 40px 0;
+  }
+
+  .introMain {
+    padding: 32px 24px;
+  }
+
+  .jobs {
+    padding: 40px 0;
+  }
+
+  .formSection {
+    padding: 40px 0;
+  }
+
+  .formCard {
+    padding: 24px;
+  }
+
+  .fieldRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ctaSection {
+    padding: 56px 0;
+  }
+
+  .inner {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 24px 0 20px;
+  }
+
+  .headerInner {
+    padding: 0 16px;
+  }
+
+  .headerTitle {
+    font-size: clamp(24px, 6vw, 34px);
+  }
+
+  .statsRow {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .statPill {
+    padding: 6px 10px;
+    font-size: 9px;
+  }
+
+  .intro {
+    padding: 32px 0;
+  }
+
+  .introMain {
+    padding: 24px 16px;
+  }
+
+  .valuesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .whyCard {
+    padding: 20px 16px;
+  }
+
+  .noticeCard {
+    padding: 16px;
+  }
+
+  .jobs {
+    padding: 32px 0;
+  }
+
+  .jobsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .jobCard {
+    padding: 24px 16px;
+  }
+
+  .formSection {
+    padding: 32px 0;
+  }
+
+  .formCard {
+    padding: 20px;
+  }
+
+  .formTitle {
+    font-size: 16px;
+  }
+
+  .ctaSection {
+    padding: 40px 0;
+  }
+
+  .ctaActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ctaBtnPrimary,
+  .ctaBtnSecondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .sectionTitle {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .successCard {
+    padding: 32px 20px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Reduced motion
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .submitBtn,
+  .ctaBtnPrimary,
+  .ctaBtnSecondary,
+  .jobApplyBtn,
+  .resetBtn,
+  .input,
+  .inputNoIcon,
+  .textarea,
+  .jobCard {
+    transition: none !important;
+  }
+
+  .spinner {
+    animation: none !important;
+  }
+}

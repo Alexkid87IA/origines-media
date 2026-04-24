@@ -1,27 +1,25 @@
-// src/pages/VideoPage.tsx
-// Page vidéo : YouTube hero + contenu enrichi + sidebar identique ArticlePage
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { PortableText } from "@portabletext/react";
+import SiteHeader from "@/components/SiteHeader/SiteHeader";
+import Footer2 from "@/components/Footer2/Footer2";
+import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
+import SEO from "@/components/SEO";
+import { sanityFetch } from "@/lib/sanity";
+import { typo } from "@/lib/typography";
+import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
+import { shareButtons } from "@/components/article/SocialIcons";
+import type {
+  Heading,
+  Article,
+  PopularArticle,
+  RelatedArticle,
+} from "@/components/article/types";
+import s from "./VideoPage.module.css";
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowLeft, ArrowRight, Clock, Heart, Share2, Bookmark, Calendar,
-  ChevronUp, Link2, Check, PenLine, TrendingUp, Tag,
-  X, List, ChevronDown, Play
-} from 'lucide-react';
-import { sanityFetch } from '../lib/sanity';
-import { getImageUrl } from '../lib/imageUrl';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import SEO from '../components/SEO';
-import { PortableText } from '@portabletext/react';
-import { typo } from '../lib/typography';
-import SafeHTML from '../components/ui/SafeHTML';
-import { createPortableTextComponents } from '../components/article/PortableTextComponents';
-import { XIcon, LinkedInIcon, InstagramIcon, shareButtons } from '../components/article/SocialIcons';
-import { Heading, Article, PopularArticle, RelatedArticle } from '../components/article/types';
+/* ── Sanity queries ── */
 
-// ============ QUERIES SANITY POUR VIDÉOS ============
 const VIDEO_BY_SLUG_QUERY = `
   *[_type == "production" && slug.current == $slug && typeArticle == "video"][0] {
     _id,
@@ -43,7 +41,7 @@ const VIDEO_BY_SLUG_QUERY = `
 `;
 
 const RELATED_VIDEOS_QUERY = `
-  *[_type == "production" && typeArticle == "video" && slug.current != $slug] | order(datePublication desc)[0...4] {
+  *[_type == "production" && typeArticle == "video" && slug.current != $slug] | order(datePublication desc)[0...8] {
     _id,
     "titre": titre,
     "title": titre,
@@ -63,20 +61,146 @@ const POPULAR_VIDEOS_QUERY = `
   }
 `;
 
-// Extraire l'ID YouTube d'une URL
-const extractYouTubeId = (url: string): string | null => {
-  if (!url) return null;
-  const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-  const match = url.match(regex);
-  return match ? match[1] : null;
-};
+/* ── Helpers ── */
 
+function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+  const m = url.match(
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  );
+  return m ? m[1] : null;
+}
+
+function formatDate(d?: string) {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+/* ── Inline SVG icons ── */
+
+function CalendarSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="18" height="18" x="3" y="4" rx="0" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" />
+    </svg>
+  );
+}
+function ClockSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+function ShareSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
+    </svg>
+  );
+}
+function HeartSvg({ className, filled }: { className?: string; filled?: boolean }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+    </svg>
+  );
+}
+function BookmarkSvg({ className, filled }: { className?: string; filled?: boolean }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+    </svg>
+  );
+}
+function ListSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="8" x2="21" y1="6" y2="6" /><line x1="8" x2="21" y1="12" y2="12" /><line x1="8" x2="21" y1="18" y2="18" /><line x1="3" x2="3.01" y1="6" y2="6" /><line x1="3" x2="3.01" y1="12" y2="12" /><line x1="3" x2="3.01" y1="18" y2="18" />
+    </svg>
+  );
+}
+function ChevronDownSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+function ArrowRightSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+    </svg>
+  );
+}
+function PenSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+    </svg>
+  );
+}
+function XSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+    </svg>
+  );
+}
+function CheckSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+function LinkSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  );
+}
+function TrendingSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
+    </svg>
+  );
+}
+function PlaySvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>
+  );
+}
+function TagSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" /><path d="M7 7h.01" />
+    </svg>
+  );
+}
+function ThreadsSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.182.408-2.256 1.33-3.022.942-.783 2.264-1.217 3.727-1.223h.036c1.26.005 2.378.296 3.322.864.376.226.706.493.99.796.03-.317.043-.636.036-.957-.05-2.358-.756-4.022-2.098-4.942-1.135-.778-2.704-1.18-4.663-1.194-.964.008-1.87.1-2.694.28l-.485-1.947c.985-.216 2.07-.326 3.227-.334 2.431.018 4.396.567 5.844 1.632 1.72 1.266 2.614 3.394 2.674 6.33.003.165.003.33-.001.495.404.252.773.546 1.106.88 1.01 1.016 1.674 2.37 1.885 3.878.257 1.838-.168 3.878-1.282 5.28-1.692 2.131-4.381 3.31-7.57 3.322zm-1.25-8.063c-.06 0-.12.001-.18.003-1.347.06-2.28.537-2.547 1.303-.13.372-.12.784.028 1.16.242.615.857 1.108 1.739 1.392.525.168 1.09.244 1.678.224 1.073-.057 1.896-.453 2.449-1.178.476-.625.78-1.487.902-2.565-.724-.383-1.578-.586-2.534-.59h-.036c-.51.001-1.003.083-1.5.25z" />
+    </svg>
+  );
+}
+
+/* ── Component ── */
 
 export default function VideoPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  // States
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
   const [popularArticles, setPopularArticles] = useState<PopularArticle[]>([]);
@@ -86,290 +210,146 @@ export default function VideoPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [headings, setHeadings] = useState<Heading[]>([]);
-  const [activeHeading, setActiveHeading] = useState('');
+  const [activeHeading, setActiveHeading] = useState("");
   const [showMobileToc, setShowMobileToc] = useState(false);
-  const [readingTimeLeft, setReadingTimeLeft] = useState(0);
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
-  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
   const [tocExpanded, setTocExpanded] = useState(false);
+  const [nlEmail, setNlEmail] = useState("");
+  const [nlLoading, setNlLoading] = useState(false);
+  const [nlDone, setNlDone] = useState(false);
 
-  // Refs
   const contentRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const sidebarContainerRef = useRef<HTMLDivElement>(null);
 
-  // Sidebar sticky via JavaScript (plus fiable que CSS sticky)
-  const [sidebarStyle, setSidebarStyle] = useState<React.CSSProperties>({});
-
-  // Extract headings from content
+  /* Extract headings */
   useEffect(() => {
-    if (article?.contenu || article?.body) {
-      const content = article.contenu || article.body;
-      const extracted: Heading[] = [];
+    const raw = article?.contenu || article?.body;
+    if (!raw) return;
+    const out: Heading[] = [];
+    raw.forEach((block: any, i: number) => {
+      if (block._type === "block" && (block.style === "h2" || block.style === "h3")) {
+        const text = block.children?.map((c: any) => c.text).join("") || "";
+        if (text) out.push({ id: `heading-${i}`, text, level: block.style === "h2" ? 2 : 3 });
+      }
+    });
+    setHeadings(out);
+  }, [article]);
 
-      content.forEach((block: any, index: number) => {
-        if (block._type === 'block' && (block.style === 'h2' || block.style === 'h3')) {
-          const text = block.children?.map((child: any) => child.text).join('') || '';
-          if (text) {
-            extracted.push({
-              id: `heading-${index}`,
-              text,
-              level: block.style === 'h2' ? 2 : 3
-            });
-          }
+  /* Scroll progress + active heading */
+  useEffect(() => {
+    function onScroll() {
+      const top = window.scrollY;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(total > 0 ? Math.min((top / total) * 100, 100) : 0);
+      headings.forEach((h) => {
+        const el = document.getElementById(h.id);
+        if (el) {
+          const r = el.getBoundingClientRect();
+          if (r.top <= 150 && r.bottom >= 0) setActiveHeading(h.id);
         }
       });
-
-      setHeadings(extracted);
     }
-  }, [article]);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [headings]);
 
-  // Scroll progress + Reading time remaining
+  /* Fetch data */
   useEffect(() => {
-    const totalReadTime = article?.tempsLecture || article?.readTime || 5;
-
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setScrollProgress(Math.min(progress, 100));
-      setShowScrollTop(scrollTop > 500);
-
-      // Calculate remaining reading time
-      const remaining = Math.ceil(totalReadTime * (1 - progress / 100));
-      setReadingTimeLeft(Math.max(0, remaining));
-
-      // Active heading detection
-      headings.forEach(heading => {
-        const element = document.getElementById(heading.id);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150 && rect.bottom >= 0) {
-            setActiveHeading(heading.id);
-          }
-        }
-      });
-    };
-
-    // Initialize reading time
-    setReadingTimeLeft(totalReadTime);
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [headings, article]);
-
-  // Sidebar sticky via JavaScript - comportement "sticky bottom"
-  // La sidebar défile avec la page, puis se fixe quand son bas atteint le bas du viewport
-  useEffect(() => {
-    const handleSidebarScroll = () => {
-      if (!sidebarRef.current || !sidebarContainerRef.current) {
-        return;
-      }
-
-      const container = sidebarContainerRef.current;
-      const sidebar = sidebarRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const sidebarHeight = sidebar.offsetHeight;
-      const viewportHeight = window.innerHeight;
-
-      // Position du bas de la sidebar si elle était en position relative (en haut du conteneur)
-      const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
-
-      if (sidebarBottomIfRelative > viewportHeight) {
-        // État 1: Le bas de la sidebar n'a pas encore atteint le bas du viewport
-        // → Scroll normal avec la page
-        setSidebarStyle({ position: 'relative', top: 0 });
-      } else if (containerRect.bottom > sidebarHeight) {
-        // État 2: Le bas de la sidebar a atteint le bas du viewport
-        // ET le conteneur n'est pas encore fini
-        // → Fixed avec le bas collé au bas du viewport
-        const topPosition = viewportHeight - sidebarHeight;
-        setSidebarStyle({ position: 'fixed', top: topPosition, width: container.offsetWidth });
-      } else {
-        // État 3: Le conteneur est presque fini
-        // → Absolute en bas du conteneur pour finir ensemble
-        setSidebarStyle({ position: 'absolute', bottom: 0, top: 'auto', width: '100%' });
-      }
-    };
-
-    window.addEventListener('scroll', handleSidebarScroll, { passive: true });
-    window.addEventListener('resize', handleSidebarScroll);
-
-    setTimeout(handleSidebarScroll, 100);
-
-    return () => {
-      window.removeEventListener('scroll', handleSidebarScroll);
-      window.removeEventListener('resize', handleSidebarScroll);
-    };
-  }, [article]);
-
-  // Fetch video data
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
+    let live = true;
+    (async () => {
       try {
-        if (isMounted) setLoading(true);
-        const articleData = await sanityFetch(VIDEO_BY_SLUG_QUERY, { slug });
-
-        if (!isMounted) return;
-
-        if (!articleData) {
-          if (isMounted) navigate('/404');
-          return;
-        }
-
-        if (isMounted) setArticle(articleData);
-
-        // Fetch related videos and popular videos in parallel
-        try {
-          const [related, popular] = await Promise.all([
-            sanityFetch(RELATED_VIDEOS_QUERY, { slug }),
-            sanityFetch(POPULAR_VIDEOS_QUERY)
-          ]);
-
-          if (isMounted) {
-            setRelatedArticles(related || []);
-            // Filter out current video from popular
-            setPopularArticles((popular || []).filter((p: any) => p._id !== articleData._id).slice(0, 4));
-          }
-        } catch {
-          if (isMounted) {
-            setRelatedArticles([]);
-            setPopularArticles([]);
-          }
-        }
+        setLoading(true);
+        const data = await sanityFetch(VIDEO_BY_SLUG_QUERY, { slug });
+        if (!live) return;
+        if (!data) { navigate("/404"); return; }
+        setArticle(data);
+        const [rel, pop] = await Promise.all([
+          sanityFetch(RELATED_VIDEOS_QUERY, { slug }),
+          sanityFetch(POPULAR_VIDEOS_QUERY),
+        ]);
+        if (!live) return;
+        setRelatedArticles(rel || []);
+        setPopularArticles((pop || []).filter((p: any) => p._id !== data._id).slice(0, 4));
       } catch {
-        if (isMounted) navigate('/404');
+        if (live) navigate("/404");
       } finally {
-        if (isMounted) setLoading(false);
+        if (live) setLoading(false);
       }
-    };
-
-    if (slug) {
-      fetchData();
-      window.scrollTo(0, 0);
-    }
-
-    return () => {
-      isMounted = false;
-    };
+    })();
+    window.scrollTo(0, 0);
+    return () => { live = false; };
   }, [slug, navigate]);
 
-  // Helpers
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
-  const handleShare = async (platform: string) => {
+  /* Share handler */
+  async function handleShare(platform: string) {
     const url = window.location.href;
-    const title = article?.titre || article?.title || '';
+    const t = article?.titre || article?.title || "";
+    const map: Record<string, () => void> = {
+      twitter: () => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(t)}`, "_blank"),
+      facebook: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank"),
+      linkedin: () => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(t)}`, "_blank"),
+      whatsapp: () => window.open(`https://wa.me/?text=${encodeURIComponent(t + " " + url)}`, "_blank"),
+      telegram: () => window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(t)}`, "_blank"),
+      email: () => { window.location.href = `mailto:?subject=${encodeURIComponent(t)}&body=${encodeURIComponent(url)}`; },
+      copy: async () => { await navigator.clipboard.writeText(url); setCopySuccess(true); setTimeout(() => setCopySuccess(false), 2000); },
+    };
+    map[platform]?.();
+  }
 
-    switch (platform) {
-      case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
-        break;
-      case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-        break;
-      case 'linkedin':
-        window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`, '_blank');
-        break;
-      case 'whatsapp':
-        window.open(`https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`, '_blank');
-        break;
-      case 'telegram':
-        window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
-        break;
-      case 'email':
-        window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('Je voulais partager cet article avec toi : ' + url)}`;
-        break;
-      case 'copy':
-        await navigator.clipboard.writeText(url);
-        setCopySuccess(true);
-        setTimeout(() => setCopySuccess(false), 2000);
-        break;
-    }
-  };
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail.trim()) return;
-    setNewsletterSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    setNewsletterSuccess(true);
-    setNewsletterSubmitting(false);
-  };
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 100;
-      const top = element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
+  function scrollToSection(id: string) {
+    const el = document.getElementById(id);
+    if (el) {
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: "smooth" });
       setShowMobileToc(false);
     }
-  };
+  }
 
-  // Get theme color for styled headings
-  const themeColorForHeadings = article?.verticale?.couleurDominante || '#8B5CF6';
+  async function handleNl(e: React.FormEvent) {
+    e.preventDefault();
+    if (!nlEmail.trim()) return;
+    setNlLoading(true);
+    await new Promise((r) => setTimeout(r, 1200));
+    setNlDone(true);
+    setNlLoading(false);
+  }
 
-  // Use extracted PortableText components factory (memoized to prevent re-renders)
-  const portableTextComponents = useMemo(
-    () => createPortableTextComponents({ themeColor: themeColorForHeadings, article }),
-    [themeColorForHeadings, article]
+  const themeColor = article?.verticale?.couleurDominante || "#7B5CD6";
+  const ptComponents = useMemo(
+    () => createPortableTextComponentsV2({ themeColor, article }),
+    [themeColor, article]
   );
 
-  // Loading state
+  /* Loading */
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
-          <span className="text-gray-600">Chargement...</span>
-        </div>
+      <div className={s.loading}>
+        <div className={s.spinner} />
       </div>
     );
   }
-
   if (!article) return null;
 
-  const title = article.titre || article.title || '';
-  const description = article.description || article.excerpt || '';
-  const imageUrl = article.imageUrl || article.mainImage || '';
+  const title = article.titre || article.title || "";
+  const description = article.description || article.excerpt || "";
+  const imageUrl = article.imageUrl || article.mainImage || "";
   const date = article.datePublication || article.publishedAt;
   const readTime = article.tempsLecture || article.readTime || 5;
-  // Filtrer le premier H1 et le premier YouTube (déjà affichés dans le header/hero)
   const rawContent = article.contenu || article.body || [];
-  const content = rawContent.filter((block: any, index: number) => {
-    // Ignorer le premier H1 (déjà affiché dans le header)
-    if (block._type === 'block' && block.style === 'h1') {
-      const firstH1Index = rawContent.findIndex((b: any) => b._type === 'block' && b.style === 'h1');
-      if (index === firstH1Index) return false;
+  const content = rawContent.filter((block: any, i: number) => {
+    if (block._type === "block" && block.style === "h1") {
+      if (i === rawContent.findIndex((b: any) => b._type === "block" && b.style === "h1")) return false;
     }
-    // Ignorer le premier bloc YouTube (déjà affiché dans le hero vidéo)
-    if (block._type === 'youtube' && article.videoUrl) {
-      const firstYoutubeIndex = rawContent.findIndex((b: any) => b._type === 'youtube');
-      if (index === firstYoutubeIndex) return false;
+    if (block._type === "youtube" && article.videoUrl) {
+      if (i === rawContent.findIndex((b: any) => b._type === "youtube")) return false;
     }
     return true;
   });
-  const authorName = article.auteur?.nom || article.author?.name || 'Origines Media';
+  const authorName = article.auteur?.nom || article.author?.name || "Origines Media";
   const authorImage = article.auteur?.imageUrl || article.author?.imageUrl;
   const verticale = article.verticale;
-  const themeColor = verticale?.couleurDominante || '#8B5CF6';
+  const hasYT = article.videoUrl && extractYouTubeId(article.videoUrl);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className={s.page}>
       <SEO
         title={title}
         description={description}
@@ -379,32 +359,25 @@ export default function VideoPage() {
         author={authorName}
         section={verticale?.nom}
         jsonLd="video"
-        videoUrl={article?.videoUrl}
+        videoUrl={article.videoUrl}
         breadcrumbs={[
-          { name: 'Accueil', url: '/' },
-          { name: 'Vidéos', url: '/videos' },
-          ...(verticale?.nom ? [{ name: verticale.nom, url: `/univers/${verticale.slug?.current || verticale.nom.toLowerCase()}` }] : []),
-          { name: title, url: `/video/${slug}` }
+          { name: "Accueil", url: "/" },
+          { name: "Vidéos", url: "/videos" },
+          { name: title, url: `/video/${slug}` },
         ]}
       />
 
-      {/* Progress Bar */}
-      <div
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 z-[60] transition-all duration-300"
-        style={{ width: `${scrollProgress}%` }}
-      />
+      <div className={s.progressBar} style={{ width: `${scrollProgress}%` }} />
+      <SiteHeader />
 
-      <Navbar />
-
-      {/* Hero YouTube - Vidéo en pleine largeur */}
-      {article?.videoUrl && extractYouTubeId(article.videoUrl) && (
-        <section className="bg-black">
-          <div className="max-w-6xl mx-auto">
-            <div className="aspect-video">
+      {/* YouTube hero */}
+      {hasYT && (
+        <section className={s.videoHero}>
+          <div className={s.videoHeroInner}>
+            <div className={s.videoFrame}>
               <iframe
-                src={`https://www.youtube.com/embed/${extractYouTubeId(article.videoUrl)}?rel=0&modestbranding=1`}
+                src={`https://www.youtube.com/embed/${extractYouTubeId(article.videoUrl!)}?rel=0&modestbranding=1`}
                 title={title}
-                className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
@@ -413,715 +386,405 @@ export default function VideoPage() {
         </section>
       )}
 
-      <main className="pb-24 lg:pb-0">
-        {/* Hero Section - Split Layout (masqué si vidéo YouTube présente) */}
-        <section className={`relative ${article?.videoUrl ? 'hidden' : ''}`}>
-          {/* Header de navigation flottant */}
-          <div className="absolute top-0 left-0 right-0 z-20 p-6 lg:p-10">
-            <button
-              onClick={() => navigate(-1)}
-              className="group flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full shadow-xl hover:bg-gray-800 hover:scale-105 transition-all"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm font-medium">Retour</span>
-            </button>
+      {/* Split hero (no video) */}
+      {!hasYT && (
+        <section className={s.splitHero}>
+          <div className={s.splitImage}>
+            <div className={s.splitImageBg} style={{ backgroundImage: `url(${imageUrl || "/placeholder.svg"})` }} />
+            <div className={s.splitImageOverlay} />
           </div>
-
-          {/* Layout en deux colonnes */}
-          <div className="grid lg:grid-cols-2 min-h-[70vh] lg:min-h-[80vh]">
-            {/* Colonne image */}
-            <div className="relative h-[45vh] lg:h-auto order-1 lg:order-1">
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${imageUrl || '/placeholder.svg'})`,
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-black/20 lg:to-white" />
+          <div className={s.splitContent}>
+            {verticale && (
+              <span className={s.splitKicker} style={{ color: themeColor }}>
+                {verticale.nom}
+              </span>
+            )}
+            <h1 className={s.splitTitle}>{typo(title)}</h1>
+            {description && <p className={s.splitDeck}>{typo(description)}</p>}
+            <div className={s.splitMeta}>
+              {authorImage && <img src={authorImage} alt={authorName} className={s.splitAuthorImg} />}
+              <div className={s.splitAuthorInfo}>
+                <span className={s.splitAuthorName}>{authorName}</span>
+                <span className={s.splitMetaLine}>
+                  <CalendarSvg className={s.splitMetaIcon} />
+                  {formatDate(date)}
+                  <span className={s.splitMetaDot} />
+                  <ClockSvg className={s.splitMetaIcon} />
+                  {readTime} min
+                </span>
               </div>
             </div>
-
-            {/* Colonne contenu */}
-            <div className="flex flex-col justify-center p-6 lg:p-12 xl:p-16 bg-white order-2 lg:order-2">
-              {/* Catégorie */}
-              {verticale && (
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-xs uppercase tracking-[0.2em] font-semibold mb-4"
-                  style={{ color: themeColor }}
-                >
-                  {verticale.nom}
-                </motion.p>
-              )}
-
-              {/* Titre */}
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="font-bold text-3xl md:text-4xl lg:text-5xl text-gray-900 mb-6 leading-[1.1]"
-              >
-                {typo(title)}
-              </motion.h1>
-
-              {/* Description */}
-              {description && (
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                  className="text-lg text-gray-600 leading-relaxed mb-8"
-                >
-                  {typo(description)}
-                </motion.p>
-              )}
-
-              {/* Métadonnées */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex flex-wrap items-center gap-4 text-gray-500 text-sm"
-              >
-                {authorImage && (
-                  <img src={authorImage} alt={authorName} className="w-10 h-10 rounded-full object-cover border-2 border-gray-100" />
-                )}
-                <div className="flex flex-col">
-                  <span className="text-gray-900 font-medium">{authorName}</span>
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(date)}
-                    </span>
-                    <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {readTime} min
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Tags */}
-              {article.tags && article.tags.filter((t: any) => t && t.title).length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 }}
-                  className="flex flex-wrap gap-2 mt-6"
-                >
-                  {article.tags.filter((t: any) => t && t.title).slice(0, 4).map((tag: any) => (
-                    <span
-                      key={tag._id}
-                      className="px-3 py-1 text-xs font-medium rounded-full"
-                      style={{
-                        backgroundColor: tag.color ? `${tag.color}15` : '#F3F4F6',
-                        color: tag.color || '#6B7280',
-                      }}
-                    >
-                      {tag.title}
-                    </span>
-                  ))}
-                </motion.div>
-              )}
-            </div>
+            {article.tags && article.tags.filter((t) => t?.title).length > 0 && (
+              <div className={s.splitTags}>
+                {article.tags.filter((t) => t?.title).slice(0, 4).map((tag) => (
+                  <Link key={tag._id} to={`/bibliotheque?tag=${tag.slug || tag._id}`} className={s.splitTag}>
+                    {tag.title}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </section>
+      )}
 
-        {/* Content Section */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-              {/* Article Content */}
-              <div ref={contentRef} className="lg:col-span-8">
-                {/* Main Content */}
-                <div className="prose prose-lg max-w-none">
-                  <PortableText value={content} components={portableTextComponents} />
+      {/* Video header (below YT embed) */}
+      {hasYT && (
+        <header className={s.videoHeader}>
+          <div className={s.videoHeaderInner}>
+            {verticale && (
+              <span className={s.videoHeaderKicker} style={{ color: themeColor }}>
+                {verticale.nom}
+              </span>
+            )}
+            <span className={s.videoHeaderBar} />
+            <h1 className={s.videoHeaderTitle}>{typo(title)}</h1>
+            {description && <p className={s.videoHeaderDeck}>{typo(description)}</p>}
+            <div className={s.videoHeaderMeta}>
+              <span>{authorName}</span>
+              <span className={s.videoHeaderMetaDot} />
+              <CalendarSvg className={s.videoHeaderMetaIcon} />
+              <span>{formatDate(date)}</span>
+              <span className={s.videoHeaderMetaDot} />
+              <ClockSvg className={s.videoHeaderMetaIcon} />
+              <span>{readTime} min</span>
+            </div>
+          </div>
+        </header>
+      )}
+
+      <main>
+        {/* Body + sidebar */}
+        <div className={s.contentContainer}>
+          <div className={s.contentLayout}>
+            {/* Body */}
+            <div ref={contentRef} className={s.body}>
+              {content.length > 0 && (
+                <div className={s.prose}>
+                  <PortableText value={content} components={ptComponents} />
                 </div>
+              )}
 
-                {/* Author Box */}
-                <div className="mt-12 p-6 bg-gray-50 border border-gray-200 rounded-2xl">
-                  <div className="flex items-start gap-4">
-                    {authorImage && (
-                      <img src={authorImage} alt={authorName} className="w-16 h-16 rounded-full object-cover" />
+              {/* Author box */}
+              <div className={s.authorBox}>
+                <div className={s.authorBoxInner}>
+                  {authorImage && <img src={authorImage} alt={authorName} className={s.authorBoxImg} />}
+                  <div>
+                    <p className={s.authorBoxLabel}>Écrit par</p>
+                    <h4 className={s.authorBoxName}>{authorName}</h4>
+                    {(article.auteur?.bio || article.author?.bio) && (
+                      <p className={s.authorBoxBio}>{article.auteur?.bio || article.author?.bio}</p>
                     )}
-                    <div>
-                      <p className="text-sm text-violet-600 mb-1">Écrit par</p>
-                      <h4 className="text-xl font-bold text-gray-900 mb-2">{authorName}</h4>
-                      {(article.auteur?.bio || article.author?.bio) && (
-                        <p className="text-gray-500 text-sm leading-relaxed">
-                          {article.auteur?.bio || article.author?.bio}
-                        </p>
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Sidebar Premium - sticky via JavaScript */}
-              <aside
-                ref={sidebarContainerRef}
-                className="hidden lg:block lg:col-span-4 relative"
-              >
-                <div
-                  ref={sidebarRef}
-                  className="space-y-4"
-                  style={sidebarStyle}
-                >
-                  {/* 1. Table of Contents - Repliée par défaut */}
-                  {headings.length > 0 && (
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
-                      <button
-                        onClick={() => setTocExpanded(!tocExpanded)}
-                        className="w-full p-4 flex items-center justify-between text-left"
-                      >
-                        <span className="text-gray-900 font-bold flex items-center gap-2 text-sm">
-                          <List className="w-4 h-4 text-violet-500" />
-                          Sommaire
-                        </span>
-                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${tocExpanded ? 'rotate-180' : ''}`} />
-                      </button>
-                      <AnimatePresence>
-                        {tocExpanded && (
-                          <motion.nav
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="px-4 pb-4 overflow-hidden"
-                          >
-                            {(() => {
-                              let h2Index = 0;
-                              return headings.map((heading) => {
-                                const isH2 = heading.level === 2;
-                                const isActive = activeHeading === heading.id;
-                                if (isH2) h2Index++;
-
-                                return (
-                                  <button
-                                    key={heading.id}
-                                    onClick={() => scrollToSection(heading.id)}
-                                    className={`group flex items-start gap-2.5 w-full text-left transition-all duration-300 ${
-                                      isH2 ? 'py-2.5' : 'py-1.5 ml-7'
-                                    }`}
-                                  >
-                                    {isH2 ? (
-                                      <>
-                                        <span
-                                          className={`flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold transition-all ${
-                                            isActive
-                                              ? 'bg-violet-500 text-white'
-                                              : 'bg-violet-100 text-violet-600 group-hover:bg-violet-200'
-                                          }`}
-                                        >
-                                          {h2Index}
-                                        </span>
-                                        <span
-                                          className={`text-xs leading-tight transition-colors ${
-                                            isActive
-                                              ? 'text-violet-600 font-semibold'
-                                              : 'text-gray-700 group-hover:text-gray-900 font-medium'
-                                          }`}
-                                        >
-                                          {heading.text}
-                                        </span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <span
-                                          className={`flex-shrink-0 w-1.5 h-1.5 rounded-full mt-1.5 transition-all ${
-                                            isActive
-                                              ? 'bg-violet-500'
-                                              : 'bg-gray-300 group-hover:bg-gray-400'
-                                          }`}
-                                        />
-                                        <span
-                                          className={`text-[11px] leading-tight transition-colors ${
-                                            isActive
-                                              ? 'text-violet-600 font-medium'
-                                              : 'text-gray-500 group-hover:text-gray-700'
-                                          }`}
-                                        >
-                                          {heading.text}
-                                        </span>
-                                      </>
-                                    )}
-                                  </button>
-                                );
-                              });
-                            })()}
-                          </motion.nav>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )}
-
-                  {/* 2. Share Widget - Logos uniquement, grille 4x2 */}
-                  <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-                    <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
-                      <Share2 className="w-4 h-4 text-violet-500" />
-                      Partager
-                    </h4>
-                    <div className="grid grid-cols-4 gap-2">
-                      {shareButtons.map((btn) => (
-                        <button
-                          key={btn.id}
-                          onClick={() => handleShare(btn.id)}
-                          className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:border-transparent hover:text-white hover:scale-105"
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = btn.color;
-                            e.currentTarget.style.color = 'white';
-                            e.currentTarget.style.borderColor = 'transparent';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'white';
-                            e.currentTarget.style.color = '#6B7280';
-                            e.currentTarget.style.borderColor = '#E5E7EB';
-                          }}
-                          title={btn.label}
+            {/* Sidebar */}
+            <aside className={s.sidebar}>
+              <div className={s.sidebarInner}>
+                {/* TOC */}
+                {headings.length > 0 && (
+                  <div className={s.widget}>
+                    <button onClick={() => setTocExpanded(!tocExpanded)} className={s.tocToggle}>
+                      <span>Sommaire</span>
+                      <ChevronDownSvg className={`${s.tocChevron} ${tocExpanded ? s.tocChevronOpen : ""}`} />
+                    </button>
+                    <AnimatePresence>
+                      {tocExpanded && (
+                        <motion.nav
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className={s.tocNav}
                         >
+                          {(() => {
+                            let h2i = 0;
+                            return headings.map((h) => {
+                              const isH2 = h.level === 2;
+                              const active = activeHeading === h.id;
+                              if (isH2) h2i++;
+                              return (
+                                <button
+                                  key={h.id}
+                                  onClick={() => scrollToSection(h.id)}
+                                  className={`${s.tocItem} ${active ? s.tocItemActive : ""} ${!isH2 ? s.tocItemH3 : ""}`}
+                                >
+                                  {isH2 ? (
+                                    <span className={`${s.tocItemNumber} ${active ? s.tocItemNumberActive : ""}`}>{h2i}</span>
+                                  ) : (
+                                    <span className={`${s.tocItemDot} ${active ? s.tocItemDotActive : ""}`} />
+                                  )}
+                                  <span>{h.text}</span>
+                                </button>
+                              );
+                            });
+                          })()}
+                        </motion.nav>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+
+                {/* Share */}
+                <div className={s.widget}>
+                  <div className={s.widgetHeader}>
+                    <ShareSvg className={s.widgetHeaderIcon} />
+                    Partager
+                  </div>
+                  <div className={s.widgetBody}>
+                    <div className={s.shareGrid}>
+                      {shareButtons.map((btn) => (
+                        <button key={btn.id} onClick={() => handleShare(btn.id)} className={s.shareBtn} title={btn.label}>
                           <btn.icon />
                         </button>
                       ))}
-                      {/* Threads */}
-                      <button
-                        onClick={() => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(article?.titre || article?.title || '')} ${encodeURIComponent(window.location.href)}`, '_blank')}
-                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:bg-black hover:text-white hover:border-transparent hover:scale-105"
-                        title="Threads"
-                      >
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.182.408-2.256 1.33-3.022.942-.783 2.264-1.217 3.727-1.223h.036c1.26.005 2.378.296 3.322.864.376.226.706.493.99.796.03-.317.043-.636.036-.957-.05-2.358-.756-4.022-2.098-4.942-1.135-.778-2.704-1.18-4.663-1.194-.964.008-1.87.1-2.694.28l-.485-1.947c.985-.216 2.07-.326 3.227-.334 2.431.018 4.396.567 5.844 1.632 1.72 1.266 2.614 3.394 2.674 6.33.003.165.003.33-.001.495.404.252.773.546 1.106.88 1.01 1.016 1.674 2.37 1.885 3.878.257 1.838-.168 3.878-1.282 5.28-1.692 2.131-4.381 3.31-7.57 3.322zm-1.25-8.063c-.06 0-.12.001-.18.003-1.347.06-2.28.537-2.547 1.303-.13.372-.12.784.028 1.16.242.615.857 1.108 1.739 1.392.525.168 1.09.244 1.678.224 1.073-.057 1.896-.453 2.449-1.178.476-.625.78-1.487.902-2.565-.724-.383-1.578-.586-2.534-.59h-.036c-.51.001-1.003.083-1.5.25z"/>
-                        </svg>
+                      <button onClick={() => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(title)} ${encodeURIComponent(window.location.href)}`, "_blank")} className={s.shareBtn} title="Threads">
+                        <ThreadsSvg />
                       </button>
-                      {/* Copy Link */}
-                      <button
-                        onClick={() => handleShare('copy')}
-                        className="flex items-center justify-center w-full aspect-square rounded-xl bg-white border border-gray-200 text-gray-500 transition-all duration-300 hover:bg-violet-500 hover:text-white hover:border-transparent hover:scale-105"
-                        title="Copier le lien"
-                      >
-                        {copySuccess ? <Check className="w-4 h-4 text-emerald-500" /> : <Link2 className="w-4 h-4" />}
+                      <button onClick={() => handleShare("copy")} className={s.shareBtn} title="Copier le lien">
+                        {copySuccess ? <CheckSvg /> : <LinkSvg />}
                       </button>
                     </div>
                   </div>
+                </div>
 
-                  {/* 3. Video Widget (if article has video) */}
-                  {article?.videoUrl && (
-                    <div className="bg-gray-900 rounded-2xl overflow-hidden">
-                      <div className="relative aspect-video">
-                        <img
-                          src={imageUrl || '/placeholder.svg'}
-                          alt={`Miniature vidéo : ${article?.titre || 'Vidéo'}`}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                          <a
-                            href={article.videoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-xl hover:scale-110 transition-transform"
-                          >
-                            <Play className="w-5 h-5 text-gray-900 ml-0.5" fill="currentColor" />
-                          </a>
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <p className="text-white/70 text-[10px] font-medium">Voir en vidéo</p>
-                        <p className="text-white text-xs font-bold mt-0.5 line-clamp-1">{title}</p>
-                      </div>
+                {/* Tags */}
+                {article.tags && article.tags.filter((t) => t?.title).length > 0 && (
+                  <div className={s.widget}>
+                    <div className={s.widgetHeader}>
+                      <TagSvg className={s.widgetHeaderIcon} />
+                      Thématiques
                     </div>
-                  )}
-
-                  {/* 4. Tags Widget */}
-                  {article?.tags && article.tags.filter(t => t && t.title).length > 0 && (
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-                      <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
-                        <Tag className="w-4 h-4 text-violet-500" />
-                        Thématiques
-                      </h4>
-                      <div className="flex flex-wrap gap-1.5">
-                        {article.tags.filter(t => t && t.title).map((tag) => (
-                          <Link
-                            key={tag._id}
-                            to={`/bibliotheque?tag=${tag.slug || tag._id}`}
-                            className="px-2.5 py-1 text-[10px] font-medium rounded-full transition-all duration-300 hover:scale-105"
-                            style={{
-                              backgroundColor: tag.color ? `${tag.color}15` : '#F3F4F6',
-                              color: tag.color || '#6B7280',
-                              border: `1px solid ${tag.color ? `${tag.color}30` : '#E5E7EB'}`
-                            }}
-                          >
+                    <div className={s.widgetBody}>
+                      <div className={s.tagsWrap}>
+                        {article.tags.filter((t) => t?.title).map((tag) => (
+                          <Link key={tag._id} to={`/bibliotheque?tag=${tag.slug || tag._id}`} className={s.tagPill}>
                             {tag.title}
                           </Link>
                         ))}
                       </div>
                     </div>
-                  )}
-
-                  {/* 5. Newsletter / Lead Magnet - Design élégant */}
-                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 via-fuchsia-50 to-rose-50 border border-violet-100/50">
-                    {/* Decorative elements */}
-                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-violet-200/40 to-fuchsia-200/40 rounded-full blur-2xl" />
-                    <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-br from-rose-200/40 to-pink-200/40 rounded-full blur-2xl" />
-
-                    <div className="relative p-5">
-                      {!newsletterSuccess ? (
-                        <>
-                          {/* Header avec image */}
-                          <div className="text-center mb-4">
-                            <img
-                              src="/kit-introspection.jpg"
-                              alt="Kit d'Introspection"
-                              className="w-20 h-auto mx-auto rounded-xl shadow-lg shadow-violet-500/20 mb-3 -rotate-3 hover:rotate-0 transition-transform"
-                            />
-                            <h4 className="text-gray-900 font-bold text-base">Kit d'Introspection</h4>
-                            <p className="text-violet-600/70 text-[11px] font-medium mt-1">Guide gratuit • 24 pages</p>
-                          </div>
-
-                          <p className="text-gray-600 text-xs text-center mb-4 leading-relaxed">
-                            Les meilleurs outils de développement personnel de nos intervenants.
-                          </p>
-
-                          <form onSubmit={handleNewsletterSubmit} className="space-y-2.5">
-                            <input
-                              type="email"
-                              value={newsletterEmail}
-                              onChange={(e) => setNewsletterEmail(e.target.value)}
-                              placeholder="votre@email.com"
-                              required
-                              className="w-full px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-violet-200/50 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all"
-                            />
-                            <button
-                              type="submit"
-                              disabled={!newsletterEmail.trim() || newsletterSubmitting}
-                              className="w-full px-4 py-2.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-semibold rounded-xl hover:from-violet-600 hover:to-fuchsia-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 hover:-translate-y-0.5"
-                            >
-                              {newsletterSubmitting ? 'Envoi...' : 'Recevoir mon guide'}
-                              {!newsletterSubmitting && <ArrowRight className="w-3.5 h-3.5" />}
-                            </button>
-                          </form>
-
-                          <p className="text-[10px] text-gray-400 text-center mt-3">
-                            Pas de spam. Désabonnement en 1 clic.
-                          </p>
-                        </>
-                      ) : (
-                        <div className="text-center py-4">
-                          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/25">
-                            <Check className="w-7 h-7 text-white" />
-                          </div>
-                          <p className="text-gray-900 font-bold text-base">Merci !</p>
-                          <p className="text-gray-500 text-xs mt-1">Vérifiez votre boîte mail</p>
-                        </div>
-                      )}
-                    </div>
                   </div>
+                )}
 
-                  {/* 6. Popular Articles - Avec images */}
-                  {popularArticles.filter(p => p && p.title).length > 0 && (
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-                      <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
-                        <TrendingUp className="w-4 h-4 text-rose-500" />
-                        Les plus lus
-                      </h4>
-                      <div className="space-y-3">
-                        {popularArticles.filter(p => p && p.title).slice(0, 4).map((pop, idx) => (
-                          <Link
-                            key={pop._id}
-                            to={`/video/${pop.slug?.current || pop._id}`}
-                            className="group flex items-center gap-3"
-                          >
-                            <div className="relative flex-shrink-0">
-                              <img
-                                src={pop.imageUrl || '/placeholder.svg'}
-                                alt={pop.title || 'Vidéo populaire'}
-                                className="w-12 h-12 rounded-lg object-cover"
-                              />
-                              <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
-                                {idx + 1}
-                              </span>
-                            </div>
-                            <span className="text-gray-700 text-xs font-medium line-clamp-2 group-hover:text-rose-600 transition-colors flex-1">
-                              {pop.title}
-                            </span>
-                          </Link>
-                        ))}
-                      </div>
+                {/* Newsletter */}
+                <div className={s.nlWidget}>
+                  {!nlDone ? (
+                    <>
+                      <p className={s.nlLabel}>Newsletter</p>
+                      <p className={s.nlTitle}>Kit d'Introspection</p>
+                      <p className={s.nlDesc}>
+                        Les meilleurs outils de développement personnel de nos intervenants. Guide gratuit, 24 pages.
+                      </p>
+                      <form onSubmit={handleNl}>
+                        <input
+                          type="email"
+                          value={nlEmail}
+                          onChange={(e) => setNlEmail(e.target.value)}
+                          placeholder="votre@email.com"
+                          required
+                          className={s.nlInput}
+                        />
+                        <button type="submit" disabled={!nlEmail.trim() || nlLoading} className={s.nlBtn}>
+                          {nlLoading ? "Envoi…" : "Recevoir mon guide"}
+                        </button>
+                      </form>
+                      <p className={s.nlFine}>Pas de spam. Désabonnement en 1 clic.</p>
+                    </>
+                  ) : (
+                    <div className={s.nlSuccess}>
+                      <div className={s.nlSuccessIcon}><CheckSvg /></div>
+                      <p className={s.nlSuccessTitle}>Merci !</p>
+                      <p className={s.nlSuccessSub}>Vérifiez votre boîte mail</p>
                     </div>
                   )}
-
-                  {/* 7. Related Articles */}
-                  {relatedArticles.filter(r => r && r.slug?.current).length > 0 && (
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-                      <h4 className="text-gray-900 font-bold mb-3 flex items-center gap-2 text-sm">
-                        <Play className="w-4 h-4 text-violet-500" />
-                        À voir aussi
-                      </h4>
-                      <div className="space-y-3">
-                        {relatedArticles.filter(r => r && r.slug?.current).slice(0, 3).map((related) => (
-                          <Link
-                            key={related._id}
-                            to={`/video/${related.slug.current}`}
-                            className="group flex gap-3"
-                          >
-                            <img
-                              src={related.imageUrl || '/placeholder.svg'}
-                              alt={related.titre || related.title || 'Vidéo connexe'}
-                              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                            />
-                            <div className="flex-1 min-w-0">
-                              <h5 className="text-gray-900 text-xs font-medium line-clamp-2 group-hover:text-violet-600 transition-colors">
-                                {related.titre || related.title}
-                              </h5>
-                              {related.verticale && (
-                                <span className="text-[10px] text-gray-500 mt-0.5 block">{related.verticale.nom}</span>
-                              )}
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 8. CTA Racontez votre histoire - Style épuré */}
-                  <Link
-                    to="/racontez-votre-histoire"
-                    className="group block border border-gray-200 bg-white rounded-2xl p-4 hover:border-violet-300 hover:shadow-lg hover:shadow-violet-500/10 transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center group-hover:bg-violet-500 transition-colors">
-                        <PenLine className="w-5 h-5 text-violet-600 group-hover:text-white transition-colors" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-gray-900 font-bold text-sm group-hover:text-violet-600 transition-colors">
-                          Racontez votre histoire
-                        </p>
-                        <p className="text-gray-500 text-[10px]">
-                          Partagez et inspirez
-                        </p>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-violet-500 group-hover:translate-x-1 transition-all" />
-                    </div>
-                  </Link>
-
-                  {/* 9. Espace publicitaire */}
-                  <div className="bg-gray-100 border border-dashed border-gray-300 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[250px]">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">
-                      Publicité
-                    </p>
-                  </div>
                 </div>
-              </aside>
-            </div>
-          </div>
-        </section>
 
-        {/* Related Videos Section (Full Width) */}
-        {relatedArticles.length > 0 && (
-          <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 border-t border-gray-200">
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
-                Vidéos{' '}
-                <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                  recommandées
-                </span>
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {relatedArticles.slice(0, 3).map((related) => (
-                  <Link
-                    key={related._id}
-                    to={`/video/${related.slug.current}`}
-                    className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
-                  >
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={related.imageUrl || '/placeholder.svg'}
-                        alt={related.titre || related.title || 'Vidéo connexe'}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                {/* Popular */}
+                {popularArticles.filter((p) => p?.title).length > 0 && (
+                  <div className={s.widget}>
+                    <div className={s.widgetHeader}>
+                      <TrendingSvg className={s.widgetHeaderIcon} />
+                      Les plus vues
                     </div>
-                    <div className="p-5">
-                      {related.verticale && (
-                        <span
-                          className="inline-block px-2 py-1 rounded text-xs font-bold mb-3"
-                          style={{
-                            backgroundColor: `${related.verticale.couleurDominante || '#8B5CF6'}15`,
-                            color: related.verticale.couleurDominante || '#8B5CF6'
-                          }}
-                        >
-                          {related.verticale.nom}
+                    <div className={s.widgetBody}>
+                      {popularArticles.filter((p) => p?.title).slice(0, 4).map((pop, idx) => (
+                        <Link key={pop._id} to={`/video/${pop.slug?.current || pop._id}`} className={s.popItem}>
+                          <div className={s.popThumb}>
+                            <img src={pop.imageUrl || "/placeholder.svg"} alt={pop.title || ""} className={s.popThumbImg} />
+                            <span className={s.popRank}>{idx + 1}</span>
+                          </div>
+                          <span className={s.popTitle}>{pop.title}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Related sidebar */}
+                {relatedArticles.filter((r) => r?.slug?.current).length > 0 && (
+                  <div className={s.widget}>
+                    <div className={s.widgetHeader}>
+                      <PlaySvg className={s.widgetHeaderIcon} />
+                      À voir aussi
+                    </div>
+                    <div className={s.widgetBody}>
+                      {relatedArticles.filter((r) => r?.slug?.current).slice(0, 3).map((rel) => (
+                        <Link key={rel._id} to={`/video/${rel.slug.current}`} className={s.relItem}>
+                          <img src={rel.imageUrl || "/placeholder.svg"} alt={rel.titre || rel.title || ""} className={s.relThumb} />
+                          <div className={s.relInfo}>
+                            <span className={s.relTitle}>{rel.titre || rel.title}</span>
+                            {rel.verticale && <span className={s.relCat}>{rel.verticale.nom}</span>}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* CTA */}
+                <Link to="/racontez-votre-histoire" className={s.ctaWidget}>
+                  <div className={s.ctaWidgetIcon}><PenSvg /></div>
+                  <div className={s.ctaWidgetText}>
+                    <p className={s.ctaWidgetTitle}>Racontez votre histoire</p>
+                    <p className={s.ctaWidgetSub}>Partagez et inspirez</p>
+                  </div>
+                  <ArrowRightSvg className={s.ctaArrow} />
+                </Link>
+
+                {/* Ad */}
+                <div className={s.adSlot}>
+                  <p className={s.adLabel}>Publicité</p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        {/* Bottom related section */}
+        {relatedArticles.length > 0 && (
+          <section className={s.relatedSection}>
+            <div className={s.relatedInner}>
+              <h2 className={s.relatedTitle}>Vidéos recommandées</h2>
+              <div className={s.relatedGrid}>
+                {relatedArticles.slice(0, 4).map((rel) => (
+                  <Link key={rel._id} to={`/video/${rel.slug.current}`} className={s.relatedCard}>
+                    <div className={s.relatedCardImg}>
+                      <img src={rel.imageUrl || "/placeholder.svg"} alt={rel.titre || rel.title || ""} />
+                    </div>
+                    <div className={s.relatedCardBody}>
+                      {rel.verticale && (
+                        <span className={s.relatedCardCat} style={{ color: rel.verticale.couleurDominante || themeColor }}>
+                          {rel.verticale.nom}
                         </span>
                       )}
-                      <h3 className="text-gray-900 font-bold line-clamp-2 group-hover:text-violet-600 transition-colors">
-                        {related.titre || related.title}
-                      </h3>
+                      <h3 className={s.relatedCardTitle}>{rel.titre || rel.title}</h3>
                     </div>
                   </Link>
                 ))}
               </div>
+              <Link to="/videos" className={s.relatedCta}>
+                Toutes les vidéos
+                <ArrowRightSvg className={s.relatedCtaArrow} />
+              </Link>
             </div>
           </section>
         )}
       </main>
 
-      {/* Mobile Floating Action Bar */}
-      <div
-        className="fixed bottom-0 left-0 right-0 lg:hidden z-50 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-white via-white to-transparent"
-      >
-        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
-          {/* Like */}
-          <button
-            onClick={() => setIsLiked(!isLiked)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-              isLiked
-                ? 'bg-pink-100 text-pink-500'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-          >
-            <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+      {/* Mobile bar */}
+      <div className={s.mobileBar}>
+        <div className={s.mobileBarInner}>
+          <button onClick={() => setIsLiked(!isLiked)} className={`${s.mobileBarBtn} ${isLiked ? s.mobileBarBtnActive : ""}`}>
+            <HeartSvg filled={isLiked} />
           </button>
-
-          {/* Share */}
-          <button
-            onClick={() => setShowShareModal(true)}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-xl text-white font-medium transition-all"
-          >
-            <Share2 className="w-5 h-5" />
+          <button onClick={() => setShowShareModal(true)} className={s.mobileBarShare}>
+            <ShareSvg />
             <span>Partager</span>
           </button>
-
-          {/* Bookmark */}
-          <button
-            onClick={() => setIsBookmarked(!isBookmarked)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-              isBookmarked
-                ? 'bg-violet-100 text-violet-500'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-          >
-            <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
+          <button onClick={() => setIsBookmarked(!isBookmarked)} className={`${s.mobileBarBtn} ${isBookmarked ? s.mobileBarBtnActive : ""}`}>
+            <BookmarkSvg filled={isBookmarked} />
           </button>
         </div>
       </div>
 
-      {/* Mobile TOC Button */}
+      {/* Mobile TOC button */}
       {headings.length > 0 && (
-        <button
-          onClick={() => setShowMobileToc(true)}
-          className="fixed right-4 lg:hidden z-50 w-12 h-12 bg-violet-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-violet-500/30"
-          style={{ bottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
-        >
-          <List className="w-6 h-6" />
+        <button onClick={() => setShowMobileToc(true)} className={s.mobileTocBtn}>
+          <ListSvg />
         </button>
       )}
 
-      {/* Mobile TOC Modal */}
+      {/* Mobile TOC modal */}
       <AnimatePresence>
         {showMobileToc && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm lg:hidden"
+            className={s.overlay}
             onClick={() => setShowMobileToc(false)}
           >
             <motion.div
-              initial={{ y: '100%' }}
+              initial={{ y: "100%" }}
               animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25 }}
-              className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 rounded-t-3xl max-h-[70vh] overflow-y-auto"
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25 }}
+              className={s.modalSheet}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-gray-900 font-bold text-lg">Sommaire</h3>
-                  <button onClick={() => setShowMobileToc(false)} className="text-gray-400">
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-                <nav className="space-y-3">
-                  {headings.map((heading) => (
-                    <button
-                      key={heading.id}
-                      onClick={() => scrollToSection(heading.id)}
-                      className={`block w-full text-left py-2 px-4 rounded-xl transition-all ${
-                        heading.level === 3 ? 'pl-8' : ''
-                      } ${
-                        activeHeading === heading.id
-                          ? 'bg-violet-100 text-violet-600'
-                          : 'text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      {heading.text}
-                    </button>
-                  ))}
-                </nav>
+              <div className={s.modalHeader}>
+                <h3 className={s.modalTitle}>Sommaire</h3>
+                <button onClick={() => setShowMobileToc(false)} className={s.modalClose}><XSvg /></button>
               </div>
+              <nav>
+                {headings.map((h) => (
+                  <button
+                    key={h.id}
+                    onClick={() => scrollToSection(h.id)}
+                    className={`${s.modalTocItem} ${h.level === 3 ? s.modalTocItemH3 : ""} ${activeHeading === h.id ? s.modalTocItemActive : ""}`}
+                  >
+                    {h.text}
+                  </button>
+                ))}
+              </nav>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Share Modal */}
+      {/* Share modal */}
       <AnimatePresence>
         {showShareModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            className={s.overlay}
             onClick={() => setShowShareModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white border border-gray-200 rounded-2xl p-6 max-w-sm w-full shadow-xl"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className={s.modalBox}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-gray-900 font-bold text-lg">Partager</h3>
-                <button onClick={() => setShowShareModal(false)} className="text-gray-400">
-                  <X className="w-6 h-6" />
-                </button>
+              <div className={s.modalHeader}>
+                <h3 className={s.modalTitle}>Partager</h3>
+                <button onClick={() => setShowShareModal(false)} className={s.modalClose}><XSvg /></button>
               </div>
-              <div className="grid grid-cols-5 gap-3">
+              <div className={s.modalShareGrid}>
                 {shareButtons.map((btn) => (
-                  <button
-                    key={btn.id}
-                    onClick={() => handleShare(btn.id)}
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-300"
-                    style={{ backgroundColor: `${btn.color}10` }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = btn.color;
-                      (e.currentTarget.querySelector('span') as HTMLElement).style.color = 'white';
-                      (e.currentTarget.querySelector('svg') as SVGElement).style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = `${btn.color}10`;
-                      (e.currentTarget.querySelector('span') as HTMLElement).style.color = '#6B7280';
-                      (e.currentTarget.querySelector('svg') as SVGElement).style.color = btn.color;
-                    }}
-                  >
-                    <div style={{ color: btn.color }}>
-                      <btn.icon />
-                    </div>
-                    <span className="text-[10px] text-gray-500 font-medium">{btn.label}</span>
+                  <button key={btn.id} onClick={() => handleShare(btn.id)} className={s.modalShareBtn}>
+                    <btn.icon />
+                    <span className={s.modalShareLabel}>{btn.label}</span>
                   </button>
                 ))}
-                <button
-                  onClick={() => handleShare('copy')}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-violet-50 hover:bg-violet-500 transition-all duration-300 group"
-                >
-                  {copySuccess ? (
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  ) : (
-                    <Link2 className="w-4 h-4 text-violet-500 group-hover:text-white" />
-                  )}
-                  <span className="text-[10px] text-gray-500 group-hover:text-white font-medium">
-                    {copySuccess ? 'Copié' : 'Lien'}
-                  </span>
+                <button onClick={() => handleShare("copy")} className={s.modalShareBtn}>
+                  {copySuccess ? <CheckSvg /> : <LinkSvg />}
+                  <span className={s.modalShareLabel}>{copySuccess ? "Copié" : "Lien"}</span>
                 </button>
               </div>
             </motion.div>
@@ -1129,18 +792,8 @@ export default function VideoPage() {
         )}
       </AnimatePresence>
 
-      {/* Scroll to Top - Bouton en bas de page */}
-      <div className="py-8 flex justify-center bg-gray-50 border-t border-gray-200">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-gray-600 hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all shadow-sm"
-        >
-          <ChevronUp className="w-5 h-5" />
-          <span className="text-sm font-medium">Retour en haut</span>
-        </button>
-      </div>
-
-      <Footer />
+      <Footer2 />
+      <ScrollToTopV2 />
     </div>
   );
 }

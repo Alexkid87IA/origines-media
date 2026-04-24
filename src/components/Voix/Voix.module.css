@@ -1,0 +1,581 @@
+/* ===== Ch.07 — Vos histoires (merged ShareStory + Voix) ===== */
+
+.voix {
+  margin-top: 96px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Chapter mark ── */
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 32px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+.cNum { font-weight: 700; color: var(--ink); }
+.cSep { opacity: 0.35; }
+.cLabel { font-weight: 400; }
+
+/* ── Section intro header ── */
+.sectionHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 40px;
+  margin-bottom: 44px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ink);
+}
+.sectionLabel { max-width: 62ch; }
+.sectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 18px;
+}
+.sectionKickerDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.sectionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.sectionTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.sectionDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone700);
+  margin: 18px 0 0;
+  max-width: 56ch;
+}
+.sectionAll {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+.sectionAll:hover { color: var(--ink); }
+.sectionAllArrow {
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+.sectionAll:hover .sectionAllArrow {
+  transform: translateX(4px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Theme chips
+   ══════════════════════════════════════════════════════════════ */
+.themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 44px;
+}
+.theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  text-decoration: none;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+.theme:hover {
+  border-color: var(--t-color, var(--ink));
+  background: var(--stone50);
+  transform: translateY(-1px);
+}
+.themeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--t-color, var(--ink));
+  flex-shrink: 0;
+}
+.themeName {}
+.themeCount {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--stone500);
+  padding-left: 6px;
+  border-left: 1px solid var(--stone100);
+  margin-left: 2px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.theme:hover .themeCount {
+  color: var(--t-color, var(--ink));
+  border-left-color: var(--t-color, var(--ink));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Featured story
+   ══════════════════════════════════════════════════════════════ */
+.featured {
+  margin-bottom: 40px;
+}
+.featLink {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  text-decoration: none;
+  color: inherit;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  transition: border-color 0.3s ease, box-shadow 0.35s ease;
+}
+.featLink:hover {
+  border-color: var(--stone300);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+/* Image */
+.featImgWrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+.featImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.3, 0, 0.2, 1);
+}
+.featLink:hover .featImg {
+  transform: scale(1.03);
+}
+.featBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pure);
+  background: var(--ink);
+  padding: 6px 14px;
+}
+
+/* Body */
+.featBody {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 44px;
+}
+.featCategory {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 20px;
+}
+.featQuote {
+  margin: 0;
+  flex: 1;
+}
+.featQuoteMark {
+  font-family: var(--serif);
+  font-size: 64px;
+  line-height: 0.6;
+  color: var(--stone200);
+  display: block;
+  margin-bottom: 12px;
+  user-select: none;
+}
+.featQuoteText {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.28;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.featQuoteText em {
+  font-weight: 700;
+  color: var(--ink);
+  font-style: italic;
+}
+
+/* Footer */
+.featFoot {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--stone100);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.featAuthor {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.featAuthorLine {
+  display: inline-block;
+  width: 28px;
+  height: 1.5px;
+  background: var(--ink);
+}
+.featAuthor cite {
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.featMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+.featMetaSep { opacity: 0.5; }
+.featCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition: gap 0.3s ease;
+}
+.featCta svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+.featLink:hover .featCta svg {
+  transform: translateX(4px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   3-card grid
+   ══════════════════════════════════════════════════════════════ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.card { position: relative; }
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  height: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.35s ease;
+}
+.cardLink:hover {
+  border-color: var(--stone300);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+}
+
+/* Card image */
+.cardImgWrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.3, 0, 0.2, 1);
+}
+.cardLink:hover .cardImg {
+  transform: scale(1.03);
+}
+
+/* Card body */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 24px 24px 22px;
+}
+.cardCategory {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 14px;
+}
+.cardQuote { margin: 0; flex: 1; }
+.cardQuoteText {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.cardQuoteText em {
+  font-weight: 700;
+  font-style: italic;
+}
+.cardFoot {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--stone100);
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+.cardAuthorLine {
+  display: inline-block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--ink);
+}
+.cardAuthor {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cardFootSep { opacity: 0.5; }
+
+/* ══════════════════════════════════════════════════════════════
+   Submit pitch bar (dark)
+   ══════════════════════════════════════════════════════════════ */
+.submit {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 40px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 36px 44px;
+  margin-left: calc(-1 * var(--side));
+  margin-right: calc(-1 * var(--side));
+  padding-left: var(--side);
+  padding-right: var(--side);
+}
+.submitLeft { max-width: 36ch; }
+.submitTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+.submitTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+}
+.submitDesc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* Steps */
+.submitSteps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 32px;
+}
+.submitStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.submitStepNum {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.3);
+}
+.submitStepLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+/* CTA */
+.submitCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  padding: 14px 28px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.submitCta:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+.submitCta svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Responsive
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1280px) {
+  .featBody { padding: 32px 36px; }
+  .submit { gap: 32px; }
+}
+
+@media (max-width: 1080px) {
+  .featQuoteText { font-size: clamp(20px, 2.2vw, 26px); }
+  .featBody { padding: 28px 32px; }
+  .grid { gap: 20px; }
+  .cardBody { padding: 20px 20px 18px; }
+  .submit {
+    grid-template-columns: 1fr auto;
+    gap: 28px;
+  }
+  .submitSteps { display: none; }
+}
+
+@media (max-width: 880px) {
+  .sectionHead {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: start;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+  }
+  .featLink {
+    grid-template-columns: 1fr;
+  }
+  .featImgWrap { aspect-ratio: 2 / 1; }
+  .featBody { padding: 28px; }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  .grid .card:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+  .submit {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 32px var(--side);
+    text-align: center;
+  }
+  .submitLeft { max-width: none; }
+  .submitCta { justify-content: center; width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .voix { margin-top: 64px; }
+  .sectionTitle { font-size: clamp(24px, 6vw, 36px); }
+  .sectionDeck { font-size: 14px; }
+  .themes { gap: 6px; }
+  .theme { padding: 8px 12px; font-size: 10px; }
+  .featBody { padding: 22px; }
+  .featQuoteMark { font-size: 48px; }
+  .featQuoteText { font-size: 20px; }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .grid .card:nth-child(3) { grid-column: auto; }
+  .cardQuoteText { font-size: 16px; }
+  .submit { padding: 28px var(--side); }
+  .submitTitle { font-size: 19px; }
+}
+
+@media (max-width: 480px) {
+  .sectionTitle { font-size: clamp(22px, 6vw, 30px); }
+  .theme { padding: 7px 10px; font-size: 10px; }
+  .themeCount { font-size: 9px; }
+  .featBody { padding: 18px; }
+  .featQuoteText { font-size: 18px; }
+  .cardBody { padding: 16px; }
+  .cardQuoteText { font-size: 15px; }
+  .submitCta { padding: 12px 20px; font-size: 11px; }
+}

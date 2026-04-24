@@ -1,0 +1,577 @@
+/* ===== VideosPage V2 — Angular editorial catalog ===== */
+
+/* ── Page wrapper ── */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+
+.header {
+  padding: 48px 24px 32px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.headerInner {
+  max-width: var(--max);
+  margin: 0 auto;
+}
+
+.headerKicker {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 12px;
+}
+
+.headerTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.headerCount {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--stone400);
+}
+
+/* ── Layout ── */
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 240px 1fr;
+    gap: 40px;
+  }
+}
+
+/* ── Sidebar ── */
+
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: block;
+  }
+}
+
+.sidebarSticky {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Search */
+
+.searchBox {
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--stone400);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 16px 10px 36px;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  border-radius: 0;
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink);
+  transition: border-color 0.2s;
+}
+
+.searchInput::placeholder {
+  color: var(--stone400);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--stone300);
+}
+
+/* Filter group */
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filterLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  margin-bottom: 8px;
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--stone600);
+  transition: all 0.15s;
+}
+
+.filterBtn:hover {
+  color: var(--ink);
+  background: var(--stone50);
+}
+
+.filterBtnActive {
+  color: var(--ink);
+  font-weight: 600;
+  background: var(--stone50);
+}
+
+.filterDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.filterIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Mobile toolbar ── */
+
+.mobileToolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 1024px) {
+  .mobileToolbar {
+    display: none;
+  }
+}
+
+.mobileSearch {
+  position: relative;
+  flex: 1;
+}
+
+.mobileSearchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--stone400);
+}
+
+.mobileSearchInput {
+  width: 100%;
+  padding: 9px 14px 9px 34px;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  border-radius: 0;
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.mobileSearchInput:focus {
+  outline: none;
+  border-color: var(--stone300);
+}
+
+.mobileFilterBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  border-radius: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── Mobile filter panel ── */
+
+.mobileFilterPanel {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  overflow: hidden;
+}
+
+.mobileFilterSection {
+  margin-bottom: 16px;
+}
+
+.mobileFilterSection:last-child {
+  margin-bottom: 0;
+}
+
+.mobileFilterLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  margin-bottom: 10px;
+}
+
+.mobilePills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mobilePill {
+  padding: 6px 12px;
+  border: 1px solid var(--stone200);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--stone600);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mobilePillActive {
+  background: var(--ink);
+  color: var(--pure);
+  border-color: var(--ink);
+}
+
+/* ── Video grid ── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Video card ── */
+
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cardThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--stone100);
+  margin-bottom: 12px;
+}
+
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .cardImg {
+  transform: scale(1.05);
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s;
+}
+
+.card:hover .cardOverlay {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.cardPlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover .cardPlay {
+  opacity: 1;
+}
+
+.playCircle {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(4px);
+  transition: transform 0.2s;
+}
+
+.card:hover .playCircle {
+  transform: scale(1.08);
+}
+
+.playIcon {
+  width: 22px;
+  height: 22px;
+  fill: var(--pure);
+  color: var(--pure);
+  margin-left: 2px;
+}
+
+.cardDuration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(10, 10, 10, 0.8);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--pure);
+}
+
+.durationIcon {
+  width: 12px;
+  height: 12px;
+}
+
+.cardTitle {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.2s;
+}
+
+.card:hover .cardTitle {
+  color: var(--stone700);
+}
+
+/* ── Skeleton loading ── */
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 480px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.skeletonCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonThumb {
+  aspect-ratio: 16 / 9;
+  background: var(--stone100);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonTitle {
+  height: 14px;
+  width: 75%;
+  background: var(--stone100);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonMeta {
+  height: 14px;
+  width: 50%;
+  background: var(--stone100);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Empty state ── */
+
+.empty {
+  text-align: center;
+  padding: 80px 0;
+}
+
+.emptyText {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--stone400);
+}
+
+/* ── Pagination ── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 48px;
+}
+
+.pageBtn {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  background: transparent;
+  border: 1px solid var(--stone200);
+  border-radius: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--stone600);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--stone50);
+  border-color: var(--stone300);
+  color: var(--ink);
+}
+
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pageBtnActive {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--pure);
+}
+
+.pageBtnActive:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--pure);
+}
+
+.pageBtnEllipsis {
+  border: none;
+  cursor: default;
+  color: var(--stone400);
+}
+
+.pageBtnEllipsis:hover {
+  background: transparent;
+}
+
+.pageArrow {
+  width: 18px;
+  height: 18px;
+}

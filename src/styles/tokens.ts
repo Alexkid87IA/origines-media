@@ -26,13 +26,17 @@ export const colors = {
     rose: '#F43F5E',
   },
 
-  // Neutral palette
+  // Neutral palette — Brand Bible stone scale
   neutral: {
-    black: '#0A0A0A',
-    darkGray: '#0F0F0F',
-    gray: '#1A1A1A',
-    lightGray: '#2A2A2A',
-    white: '#F5F5F5',
+    black: '#0A0A0A',      // encre
+    darkGray: '#141414',   // stone900
+    gray: '#3A3A3A',       // stone700
+    lightGray: '#6B6B6B',  // stone500
+    stone300: '#B8B6AF',
+    stone100: '#E8E5DE',
+    stone50: '#F0EDE6',
+    paper: '#F7F5F0',      // papier
+    white: '#FFFFFF',      // pur
   },
 
   // Semantic colors
@@ -74,8 +78,10 @@ export const colors = {
 // ===================
 export const typography = {
   fontFamily: {
-    heading: '"Montserrat", sans-serif',
-    body: '"Inter", sans-serif',
+    heading: '"Archivo", "Arial Black", sans-serif',
+    body: '"Inter Tight", "Helvetica Neue", sans-serif',
+    mono: '"JetBrains Mono", "Menlo", monospace',
+    editorial: '"Fraunces", Georgia, serif',
   },
 
   fontSize: {
@@ -114,10 +120,13 @@ export const typography = {
   letterSpacing: {
     tighter: '-0.05em',
     tight: '-0.025em',
+    archivo: '-0.03em',
     normal: '0',
     wide: '0.025em',
     wider: '0.05em',
     widest: '0.1em',
+    mono: '0.14em',
+    eyebrow: '0.12em',
     ultrawide: '0.2em',
     extreme: '0.3em',
   },
@@ -227,11 +236,7 @@ export const shadows = {
   lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
   xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
   '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-  glow: {
-    violet: '0 0 20px rgba(139, 92, 246, 0.3)',
-    pink: '0 0 20px rgba(236, 72, 153, 0.3)',
-    blue: '0 0 20px rgba(59, 130, 246, 0.3)',
-  },
+  // Glow effects removed — Brand Bible uses flat, editorial shadows only
 } as const
 
 // ===================

@@ -1,283 +1,141 @@
 // src/pages/ProductionDetailPage.tsx
-// Nouvelle version avec hero split et sidebar widgets
+// V2 design system — split hero + sidebar widgets
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowLeft, Clock, Calendar, Tag, BookOpen, User,
-  Share2, Heart, Bookmark, Copy, Check, X, ChevronRight,
-  List, Zap, Flame, TrendingUp, Mail, ExternalLink,
-  AlertCircle, Quote, ChevronDown, CheckCircle, Lightbulb, Info, Sparkles, Plus
-} from 'lucide-react';
-import { sanityFetch } from '../lib/sanity';
-import { PRODUCTION_BY_SLUG_QUERY } from '../lib/queries';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import SEO from '../components/SEO';
-import { PortableText } from '@portabletext/react';
-import { typo } from '../lib/typography';
-import { AdPlaceholder } from '../components/AdSense';
-import { createPortableTextComponents } from '../components/article/PortableTextComponents';
-import { Heading } from '../components/article/types';
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { PortableText } from "@portabletext/react";
+import SiteHeader from "@/components/SiteHeader/SiteHeader";
+import Footer2 from "@/components/Footer2/Footer2";
+import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
+import SEO from "@/components/SEO";
+import EmailCapture from "@/components/EmailCapture";
+import { sanityFetch } from "@/lib/sanity";
+import { PRODUCTION_BY_SLUG_QUERY } from "@/lib/queries";
+import { typo } from "@/lib/typography";
+import { AdPlaceholder } from "@/components/AdSense";
+import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
+import { shareButtons } from "@/components/article/SocialIcons";
+import type { Heading } from "@/components/article/types";
+import s from "./ProductionDetailPage.module.css";
 
-// Helper to extract text from Sanity block or return string
-const extractTextFromSanity = (value: any): string => {
-  if (typeof value === 'string') return value;
-  // Sanity block structure: { _type: 'block', children: [{ text: '...' }] }
-  if (value?.children && Array.isArray(value.children)) {
-    return value.children.map((child: any) => child.text || '').join('');
-  }
-  // Array of blocks
-  if (Array.isArray(value)) {
-    return value.map((block: any) => {
-      if (block?.children && Array.isArray(block.children)) {
-        return block.children.map((child: any) => child.text || '').join('');
-      }
-      return '';
-    }).join(' ');
-  }
-  return '';
-};
+/* ------------------------------------------------------------------ */
+/*  Inline SVG icon helpers (no lucide-react)                          */
+/* ------------------------------------------------------------------ */
 
-// Accordion Item Component with animations
-const AccordionItemProduction = ({
-  question,
-  answer,
-  isOpen,
-  onToggle,
-  isLast = false,
-  themeColor = '#8B5CF6'
-}: {
-  question: string;
-  answer: any;
-  isOpen: boolean;
-  onToggle: () => void;
-  isLast?: boolean;
-  themeColor?: string;
-}) => {
-  const isRichText = Array.isArray(answer);
+const ArrowLeftIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M19 12H5M12 19l-7-7 7-7" />
+  </svg>
+);
 
-  return (
-    <motion.div
-      className={`relative ${!isLast ? 'border-b border-gray-100' : ''}`}
-      initial={false}
-    >
-      {/* Colored accent line when open */}
-      <motion.div
-        className="absolute left-0 top-0 bottom-0 w-1 rounded-full"
-        style={{ backgroundColor: themeColor }}
-        initial={{ opacity: 0, scaleY: 0 }}
-        animate={{
-          opacity: isOpen ? 1 : 0,
-          scaleY: isOpen ? 1 : 0
-        }}
-        transition={{ duration: 0.2 }}
-      />
+const HeartIcon = ({ filled = false }: { filled?: boolean }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="1.8"
+  >
+    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+  </svg>
+);
 
-      <button
-        onClick={onToggle}
-        className={`w-full flex items-center justify-between py-5 px-6 text-left gap-4 transition-all duration-300 ${
-          isOpen ? 'bg-gradient-to-r from-gray-50/80 to-transparent' : 'hover:bg-gray-50/50'
-        }`}
-      >
-        <span className={`font-semibold text-[17px] transition-colors duration-300 ${
-          isOpen ? 'text-gray-900' : 'text-gray-700'
-        }`}>
-          {question}
-        </span>
+const BookmarkIcon = ({ filled = false }: { filled?: boolean }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="1.8"
+  >
+    <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
+  </svg>
+);
 
-        {/* Animated icon */}
-        <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
-            isOpen ? 'bg-gray-900' : 'bg-gray-100'
-          }`}
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
-            isOpen ? 'text-white' : 'text-gray-500'
-          }`} />
-        </motion.div>
-      </button>
+const ShareIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <circle cx="18" cy="5" r="3" />
+    <circle cx="6" cy="12" r="3" />
+    <circle cx="18" cy="19" r="3" />
+    <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" />
+  </svg>
+);
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="px-6 pb-6">
-              <div className="pt-1">
-                {isRichText ? (
-                  <div className="text-gray-600 leading-relaxed text-[15px]">
-                    <PortableText value={answer} />
-                  </div>
-                ) : answer ? (
-                  <p className="text-gray-600 leading-relaxed text-[15px] whitespace-pre-line">{answer}</p>
-                ) : null}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
+const BookOpenIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
+    <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
+  </svg>
+);
 
-// Accordion Component for PortableText - handles both single item and items array
-const AccordionBlockProduction = ({ value, themeColor = '#8B5CF6' }: { value: any; themeColor?: string }) => {
-  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
-  const [singleOpen, setSingleOpen] = useState(false);
+const ChevronDownIcon = () => (
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M4 6l4 4 4-4" />
+  </svg>
+);
 
-  // Check if this is a multi-item accordion (has items array)
-  const items = value.items || [];
-  const hasMultipleItems = items.length > 0;
-  const allowMultiple = value.allowMultiple !== false;
-  const sectionTitle = value.title;
+const ChevronRightIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M5 12h14M13 5l7 7-7 7" />
+  </svg>
+);
 
-  const toggleItem = (index: number) => {
-    setOpenItems(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(index)) {
-        newSet.delete(index);
-      } else {
-        if (!allowMultiple) {
-          newSet.clear();
-        }
-        newSet.add(index);
-      }
-      return newSet;
-    });
-  };
+const ListIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+  </svg>
+);
 
-  // Multi-item accordion (FAQ style)
-  if (hasMultipleItems) {
-    return (
-      <div className="my-10">
-        {sectionTitle && (
-          <div className="flex items-center gap-3 mb-6">
-            <div
-              className="w-1 h-8 rounded-full"
-              style={{ backgroundColor: themeColor }}
-            />
-            <h4 className="text-xl font-bold text-gray-900">{sectionTitle}</h4>
-          </div>
-        )}
-        <div className="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
-          {items.map((item: any, index: number) => {
-            const question = item.question || item.title || item.heading || `Question ${index + 1}`;
-            const answer = item.answer || item.content || item.body || item.text || '';
-            const isOpen = openItems.has(index) || item.defaultOpen;
+const ZapIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
 
-            return (
-              <AccordionItemProduction
-                key={item._key || index}
-                question={question}
-                answer={answer}
-                isOpen={isOpen}
-                onToggle={() => toggleItem(index)}
-                isLast={index === items.length - 1}
-                themeColor={themeColor}
-              />
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
+const FlameIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z" />
+  </svg>
+);
 
-  // Single item accordion (legacy format)
-  const rawTitle = value.title || value.heading || value.question || value.label;
-  const rawContent = value.content || value.body || value.answer || value.text || value.description;
-  const title = extractTextFromSanity(rawTitle) || 'Voir plus';
-  const isRichText = Array.isArray(rawContent);
-  const contentText = isRichText ? null : extractTextFromSanity(rawContent);
+const TrendingUpIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+    <polyline points="17 6 23 6 23 12" />
+  </svg>
+);
 
-  return (
-    <motion.div
-      className="my-8 rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100"
-      initial={false}
-      animate={{
-        boxShadow: singleOpen
-          ? '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05)'
-          : '0 1px 3px 0 rgba(0, 0, 0, 0.05)'
-      }}
-      transition={{ duration: 0.3 }}
-    >
-      <button
-        onClick={() => setSingleOpen(!singleOpen)}
-        className={`w-full flex items-center justify-between p-6 text-left gap-4 transition-all duration-300 ${
-          singleOpen ? 'bg-gradient-to-r from-gray-50 to-white' : 'hover:bg-gray-50/50'
-        }`}
-      >
-        <div className="flex items-center gap-4 flex-1">
-          <motion.div
-            className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ backgroundColor: `${themeColor}15` }}
-            animate={{ scale: singleOpen ? 1.05 : 1 }}
-            transition={{ duration: 0.2 }}
-          >
-            <motion.div
-              animate={{ rotate: singleOpen ? 45 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Plus className="w-5 h-5" style={{ color: themeColor }} />
-            </motion.div>
-          </motion.div>
-          <span className={`font-semibold text-lg transition-colors duration-300 ${
-            singleOpen ? 'text-gray-900' : 'text-gray-700'
-          }`}>
-            {title}
-          </span>
-        </div>
+const UserIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
 
-        <motion.div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
-            singleOpen ? 'bg-gray-900' : 'bg-gray-100'
-          }`}
-          animate={{ rotate: singleOpen ? 180 : 0 }}
-          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        >
-          <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
-            singleOpen ? 'text-white' : 'text-gray-500'
-          }`} />
-        </motion.div>
-      </button>
+const CalendarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <path d="M16 2v4M8 2v4M3 10h18" />
+  </svg>
+);
 
-      <AnimatePresence initial={false}>
-        {singleOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="px-6 pb-6 pl-[72px]">
-              <div className="pt-2 border-t border-gray-100">
-                <div className="pt-4">
-                  {isRichText ? (
-                    <div className="text-gray-600 leading-relaxed text-[15px]">
-                      <PortableText value={rawContent} />
-                    </div>
-                  ) : contentText ? (
-                    <p className="text-gray-600 leading-relaxed text-[15px]">{contentText}</p>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
+const ClockIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </svg>
+);
 
-// Types
+const TagIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+    <circle cx="7" cy="7" r="1" />
+  </svg>
+);
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
 interface Production {
   _id: string;
   titre: string;
@@ -320,39 +178,36 @@ interface RelatedArticle {
   datePublication?: string;
 }
 
-// Fonction de shuffle intelligent - jamais 2 articles de même catégorie côte à côte
+/* ------------------------------------------------------------------ */
+/*  Shuffle helper — no two consecutive same-category articles         */
+/* ------------------------------------------------------------------ */
+
 function shuffleWithVariety(articles: RelatedArticle[]): RelatedArticle[] {
   if (articles.length <= 1) return articles;
 
-  // Grouper par catégorie
   const byCategory: { [key: string]: RelatedArticle[] } = {};
-  articles.forEach(article => {
-    const cat = article.verticale?.nom || 'Autre';
+  articles.forEach((article) => {
+    const cat = article.verticale?.nom || "Autre";
     if (!byCategory[cat]) byCategory[cat] = [];
     byCategory[cat].push(article);
   });
 
-  // Mélanger chaque groupe
-  Object.values(byCategory).forEach(group => {
+  Object.values(byCategory).forEach((group) => {
     for (let i = group.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [group[i], group[j]] = [group[j], group[i]];
     }
   });
 
-  // Reconstruire la liste en alternant les catégories
   const result: RelatedArticle[] = [];
   const categories = Object.keys(byCategory);
-  let lastCategory = '';
-  let maxIterations = articles.length * 2; // Sécurité anti-boucle infinie
+  let lastCategory = "";
+  let maxIterations = articles.length * 2;
 
   while (result.length < articles.length && maxIterations > 0) {
     maxIterations--;
-
-    // Trouver une catégorie différente de la précédente qui a encore des articles
     let found = false;
 
-    // D'abord, essayer les catégories différentes de la dernière
     for (const cat of categories) {
       if (cat !== lastCategory && byCategory[cat].length > 0) {
         result.push(byCategory[cat].shift()!);
@@ -362,8 +217,6 @@ function shuffleWithVariety(articles: RelatedArticle[]): RelatedArticle[] {
       }
     }
 
-    // Si pas trouvé (toutes les catégories restantes sont identiques à la dernière),
-    // prendre n'importe quel article restant
     if (!found) {
       for (const cat of categories) {
         if (byCategory[cat].length > 0) {
@@ -378,254 +231,63 @@ function shuffleWithVariety(articles: RelatedArticle[]): RelatedArticle[] {
   return result;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Main component                                                     */
+/* ------------------------------------------------------------------ */
 
-// Composant Widget Newsletter
-const NewsletterWidget: React.FC<{ themeColor: string }> = ({ themeColor }) => {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setTimeout(() => setSubscribed(false), 3000);
-      setEmail('');
-    }
-  };
-
-  return (
-    <div className="rounded-xl bg-gray-50 border border-gray-200 p-5">
-      <div className="flex items-center gap-3 mb-4">
-        <div
-          className="w-10 h-10 rounded-lg flex items-center justify-center"
-          style={{ backgroundColor: `${themeColor}15` }}
-        >
-          <Mail className="w-5 h-5" style={{ color: themeColor }} />
-        </div>
-        <div>
-          <h4 className="font-bold text-gray-900 text-sm">Newsletter</h4>
-          <p className="text-xs text-gray-500">Recevez nos meilleurs articles</p>
-        </div>
-      </div>
-
-      {subscribed ? (
-        <div className="flex items-center gap-2 text-emerald-600 text-sm">
-          <Check className="w-4 h-4" />
-          Merci pour votre inscription !
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-2">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="votre@email.com"
-            className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-sm focus:outline-none focus:border-gray-400 transition-colors"
-          />
-          <button
-            type="submit"
-            className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all hover:opacity-90"
-            style={{ backgroundColor: themeColor }}
-          >
-            S'inscrire
-          </button>
-        </form>
-      )}
-    </div>
-  );
-};
-
-// Composant Table des matières dépliable
-const TableOfContentsWidget: React.FC<{
-  headings: Heading[];
-  activeSection: string;
-  scrollProgress: number;
-  themeColor: string;
-  onSectionClick: (id: string) => void;
-}> = ({ headings, activeSection, scrollProgress, themeColor, onSectionClick }) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-
-  return (
-    <div className="rounded-xl bg-gray-50 border border-gray-200 overflow-hidden">
-      {/* Header cliquable */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="w-full p-4 flex items-center justify-between hover:bg-gray-100 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ backgroundColor: `${themeColor}15` }}
-          >
-            <List className="w-5 h-5" style={{ color: themeColor }} />
-          </div>
-          <div className="text-left">
-            <h4 className="font-bold text-gray-900 text-sm">Sommaire</h4>
-            <p className="text-xs text-gray-500">{headings.length} sections</p>
-          </div>
-        </div>
-        <motion.div
-          animate={{ rotate: isCollapsed ? 0 : 180 }}
-          transition={{ duration: 0.3 }}
-        >
-          <ChevronRight className="w-5 h-5 text-gray-400 rotate-90" />
-        </motion.div>
-      </button>
-
-      {/* Contenu dépliable */}
-      <AnimatePresence>
-        {!isCollapsed && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-            <nav className="p-4 pt-0 space-y-1 max-h-[300px] overflow-y-auto">
-              {headings.map((heading, index) => {
-                const isActive = activeSection === heading.id;
-                return (
-                  <button
-                    key={heading.id}
-                    onClick={() => onSectionClick(heading.id)}
-                    className={`
-                      w-full flex items-center gap-3 py-2.5 px-3 rounded-lg text-left
-                      transition-all duration-300
-                      ${heading.level === 3 ? 'ml-4' : ''}
-                      ${isActive ? 'bg-white shadow-sm' : 'hover:bg-white/50'}
-                    `}
-                    style={{
-                      borderLeft: isActive ? `3px solid ${themeColor}` : '3px solid transparent'
-                    }}
-                  >
-                    <div
-                      className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
-                      style={{
-                        backgroundColor: isActive ? themeColor : `${themeColor}15`,
-                        color: isActive ? 'white' : themeColor
-                      }}
-                    >
-                      {heading.level === 2 ? index + 1 : '•'}
-                    </div>
-                    <span className={`text-sm line-clamp-2 ${isActive ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
-                      {heading.text}
-                    </span>
-                    {isActive && (
-                      <div className="ml-auto flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* Barre de progression */}
-            <div className="p-4 pt-2 border-t border-gray-200">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-500">Progression</span>
-                <span className="text-xs font-medium" style={{ color: themeColor }}>
-                  {Math.round(scrollProgress)}%
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ backgroundColor: themeColor }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${scrollProgress}%` }}
-                  transition={{ duration: 0.2 }}
-                />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
-
-// Composant Widget Réseaux Sociaux
-const SocialWidget: React.FC = () => (
-  <div className="rounded-xl bg-gray-50 border border-gray-200 p-5">
-    <h4 className="font-bold text-gray-900 text-sm mb-4">Suivez-nous</h4>
-    <div className="grid grid-cols-3 gap-2">
-      <a
-        href="https://instagram.com/originesmedia"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-pink-300 hover:bg-pink-50 transition-colors group"
-      >
-        <svg className="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-        <span className="text-xs text-gray-500 group-hover:text-pink-600">Instagram</span>
-      </a>
-      <a
-        href="https://linkedin.com/company/originesmedia"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors group"
-      >
-        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-        </svg>
-        <span className="text-xs text-gray-500 group-hover:text-blue-600">LinkedIn</span>
-      </a>
-      <a
-        href="https://twitter.com/originesmedia"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-colors group"
-      >
-        <svg className="w-5 h-5 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-        <span className="text-xs text-gray-500 group-hover:text-gray-800">X</span>
-      </a>
-    </div>
-  </div>
-);
-
-function ProductionDetailPage() {
+export default function ProductionDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  // États principaux
+  /* ── State ── */
   const [production, setProduction] = useState<Production | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
   const [latestArticles, setLatestArticles] = useState<RelatedArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // États UI
-  const [liked, setLiked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState("");
   const [headings, setHeadings] = useState<Heading[]>([]);
-  const [activeTab, setActiveTab] = useState<'recent' | 'popular' | 'univers'>('recent');
+  const [activeTab, setActiveTab] = useState<"recent" | "popular">("recent");
+  const [tocExpanded, setTocExpanded] = useState(false);
 
-  // Refs pour sidebar sticky
+  /* ── Refs ── */
+  const articleRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const sidebarContainerRef = useRef<HTMLDivElement>(null);
-  const articleRef = useRef<HTMLDivElement>(null);
+  const lastSidebarStateRef = useRef<string>("");
   const [sidebarStyle, setSidebarStyle] = useState<React.CSSProperties>({});
 
-  // Extraction des headings du contenu
+  /* ── Set page background ── */
+  useEffect(() => {
+    document.body.style.background = "var(--paper)";
+    document.body.style.color = "var(--ink)";
+    return () => {
+      document.body.style.background = "";
+      document.body.style.color = "";
+    };
+  }, []);
+
+  /* ── Extract headings from content ── */
   useEffect(() => {
     if (production?.contenu) {
       const extracted: Heading[] = [];
       production.contenu.forEach((block: any, index: number) => {
-        if (block._type === 'block' && (block.style === 'h2' || block.style === 'h3')) {
-          const text = block.children?.map((child: any) => child.text).join('') || '';
+        if (
+          block._type === "block" &&
+          (block.style === "h2" || block.style === "h3")
+        ) {
+          const text =
+            block.children?.map((child: any) => child.text).join("") || "";
           if (text) {
             extracted.push({
               id: `heading-${index}`,
               text,
-              level: block.style === 'h2' ? 2 : 3
+              level: block.style === "h2" ? 2 : 3,
             });
           }
         }
@@ -634,7 +296,7 @@ function ProductionDetailPage() {
     }
   }, [production]);
 
-  // Sync sidebar container height with article height
+  /* ── Sync sidebar container height ── */
   useEffect(() => {
     const syncHeight = () => {
       if (articleRef.current && sidebarContainerRef.current) {
@@ -644,68 +306,77 @@ function ProductionDetailPage() {
     };
 
     syncHeight();
-    window.addEventListener('resize', syncHeight);
-    // Re-sync after images load
+    window.addEventListener("resize", syncHeight);
     const timer = setTimeout(syncHeight, 500);
 
     return () => {
-      window.removeEventListener('resize', syncHeight);
+      window.removeEventListener("resize", syncHeight);
       clearTimeout(timer);
     };
   }, [production]);
 
-  // Sidebar sticky avec JavaScript - comportement "sticky bottom"
-  // La sidebar défile avec la page, puis se fixe quand son bas atteint le bas du viewport
+  /* ── Sidebar sticky behaviour ── */
   useEffect(() => {
     const handleSidebarScroll = () => {
-      if (!sidebarRef.current || !sidebarContainerRef.current) {
-        return;
-      }
+      if (!sidebarRef.current || !sidebarContainerRef.current) return;
 
       const container = sidebarContainerRef.current;
       const sidebar = sidebarRef.current;
       const containerRect = container.getBoundingClientRect();
       const sidebarHeight = sidebar.offsetHeight;
       const viewportHeight = window.innerHeight;
-
-      // Position du bas de la sidebar si elle était en position relative (en haut du conteneur)
       const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
 
+      let newState: string;
+      let newStyle: React.CSSProperties;
+
       if (sidebarBottomIfRelative > viewportHeight) {
-        // État 1: Le bas de la sidebar n'a pas encore atteint le bas du viewport
-        // → Scroll normal avec la page
-        setSidebarStyle({ position: 'relative', top: 0 });
+        newState = "relative";
+        newStyle = { position: "relative", top: 0 };
       } else if (containerRect.bottom > sidebarHeight) {
-        // État 2: Le bas de la sidebar a atteint le bas du viewport
-        // ET le conteneur n'est pas encore fini
-        // → Fixed avec le bas collé au bas du viewport
         const topPosition = viewportHeight - sidebarHeight;
-        setSidebarStyle({ position: 'fixed', top: topPosition, width: container.offsetWidth });
+        newState = `fixed-${Math.round(topPosition)}-${container.offsetWidth}`;
+        newStyle = {
+          position: "fixed",
+          top: topPosition,
+          width: container.offsetWidth,
+        };
       } else {
-        // État 3: Le conteneur est presque fini
-        // → Absolute en bas du conteneur pour finir ensemble
-        setSidebarStyle({ position: 'absolute', bottom: 0, top: 'auto', width: '100%' });
+        newState = "absolute";
+        newStyle = {
+          position: "absolute",
+          bottom: 0,
+          top: "auto",
+          width: "100%",
+        };
+      }
+
+      if (lastSidebarStateRef.current !== newState) {
+        lastSidebarStateRef.current = newState;
+        setSidebarStyle(newStyle);
       }
     };
 
-    window.addEventListener('scroll', handleSidebarScroll, { passive: true });
-    window.addEventListener('resize', handleSidebarScroll);
+    window.addEventListener("scroll", handleSidebarScroll, { passive: true });
+    window.addEventListener("resize", handleSidebarScroll);
     setTimeout(handleSidebarScroll, 200);
 
     return () => {
-      window.removeEventListener('scroll', handleSidebarScroll);
-      window.removeEventListener('resize', handleSidebarScroll);
+      window.removeEventListener("scroll", handleSidebarScroll);
+      window.removeEventListener("resize", handleSidebarScroll);
     };
   }, [production]);
 
-  // Scroll progress et section active
+  /* ── Scroll progress + active section ── */
   useEffect(() => {
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+      const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress =
+        totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
       setScrollProgress(Math.min(progress, 100));
 
-      headings.forEach(heading => {
+      headings.forEach((heading) => {
         const element = document.getElementById(heading.id);
         if (element) {
           const rect = element.getBoundingClientRect();
@@ -716,27 +387,30 @@ function ProductionDetailPage() {
       });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [headings]);
 
-  // Chargement des données
+  /* ── Fetch data ── */
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
-        setLoading(true);
+        if (isMounted) setLoading(true);
         const data = await sanityFetch(PRODUCTION_BY_SLUG_QUERY, { slug });
 
+        if (!isMounted) return;
         if (!data) {
-          navigate('/404');
+          if (isMounted) navigate("/404");
           return;
         }
 
-        setProduction(data);
+        if (isMounted) setProduction(data);
 
-        // Charger les articles liés et récents
         try {
-          const allProductions = await sanityFetch(`
+          const allProductions = await sanityFetch(
+            `
             *[_type == "production" && slug.current != $slug] | order(datePublication desc) [0...30] {
               _id,
               titre,
@@ -746,26 +420,31 @@ function ProductionDetailPage() {
               datePublication,
               verticale->{nom, couleurDominante}
             }
-          `, { slug });
+          `,
+            { slug }
+          );
 
-          if (allProductions) {
-            // Shuffle intelligent : jamais 2 articles de même catégorie côte à côte
+          if (isMounted && allProductions) {
             const shuffledArticles = shuffleWithVariety(allProductions);
             setLatestArticles(shuffledArticles.slice(0, 6));
 
-            // Filtrer par même verticale pour les articles liés
             const related = data.verticale
-              ? allProductions.filter((a: RelatedArticle) => a.verticale?.nom === data.verticale.nom).slice(0, 4)
+              ? allProductions
+                  .filter(
+                    (a: RelatedArticle) =>
+                      a.verticale?.nom === data.verticale.nom
+                  )
+                  .slice(0, 4)
               : allProductions.slice(0, 4);
             setRelatedArticles(related);
           }
         } catch {
           // Silent fail for related articles
         }
-
-        setLoading(false);
       } catch {
-        setLoading(false);
+        if (isMounted) navigate("/404");
+      } finally {
+        if (isMounted) setLoading(false);
       }
     };
 
@@ -773,52 +452,122 @@ function ProductionDetailPage() {
       fetchData();
       window.scrollTo(0, 0);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [slug, navigate]);
 
-  // Helpers
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  /* ── Helpers ── */
+  const handleShare = async (platform: string) => {
+    const url = window.location.href;
+    const title = production?.titre || "";
+
+    switch (platform) {
+      case "twitter":
+        window.open(
+          `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+          "_blank"
+        );
+        break;
+      case "facebook":
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+          "_blank"
+        );
+        break;
+      case "linkedin":
+        window.open(
+          `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+          "_blank"
+        );
+        break;
+      case "whatsapp":
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent(title + " " + url)}`,
+          "_blank"
+        );
+        break;
+      case "telegram":
+        window.open(
+          `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+          "_blank"
+        );
+        break;
+      case "email":
+        window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent("Je voulais partager cet article avec toi : " + url)}`;
+        break;
+      case "copy":
+        await navigator.clipboard.writeText(url);
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+        break;
+    }
   };
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       const offset = 100;
-      const top = element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
+      const top =
+        element.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
     }
   };
 
   const getRelativeTime = (date: string) => {
     const now = new Date();
     const publishedDate = new Date(date);
-    const diffInHours = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60));
+    const diffInHours = Math.floor(
+      (now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60)
+    );
     const diffInDays = Math.floor(diffInHours / 24);
 
-    if (diffInHours < 1) return "À l'instant";
+    if (diffInHours < 1) return "A l'instant";
     if (diffInHours < 24) return `${diffInHours}h`;
     if (diffInDays === 1) return "Hier";
     if (diffInDays < 7) return `${diffInDays}j`;
-    return publishedDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    return publishedDate.toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+    });
   };
 
-  const isLongArticle = headings.length >= 3;
-  const themeColor = production?.verticale?.couleurDominante || '#8B5CF6';
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
-  // Use extracted PortableText components factory (memoized)
-  const portableTextComponents = useMemo(() =>
-    createPortableTextComponents({ themeColor, article: production }),
+  const themeColor =
+    production?.verticale?.couleurDominante || "#0A0A0A";
+  const isLongArticle = headings.length >= 3;
+
+  const portableTextComponents = useMemo(
+    () =>
+      createPortableTextComponentsV2({
+        themeColor,
+        article: production,
+      }),
     [themeColor, production]
   );
 
+  /* ── Loading ── */
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
-          <span className="text-gray-600">Chargement...</span>
+      <div className={s.page}>
+        <SiteHeader />
+        <div className={s.skeleton}>
+          <div className={s.skelTitle} />
+          <div className={s.skelMeta} />
+          <div className={s.skelImg} />
+          <div className={s.skelLine} />
+          <div className={s.skelLineShort} />
+          <div className={s.skelLine} />
+          <div className={s.skelLineTiny} />
         </div>
       </div>
     );
@@ -826,18 +575,11 @@ function ProductionDetailPage() {
 
   if (!production) return null;
 
-  const formattedDate = production.datePublication
-    ? new Date(production.datePublication).toLocaleDateString('fr-FR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    : '';
-
   const readTime = production.tempsLecture || production.duree || 5;
+  const tags = production.tags || [];
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className={s.page}>
       <SEO
         title={production.titre}
         description={production.description}
@@ -847,324 +589,538 @@ function ProductionDetailPage() {
         jsonLd="article"
         section={production.verticale?.nom}
         breadcrumbs={[
-          { name: 'Accueil', url: '/' },
-          { name: 'Bibliothèque', url: '/bibliotheque' },
-          ...(production.verticale?.nom ? [{ name: production.verticale.nom, url: `/univers/${production.verticale.slug?.current || production.verticale.nom.toLowerCase()}` }] : []),
-          { name: production.titre, url: `/article/${production.slug.current}` }
+          { name: "Accueil", url: "/" },
+          { name: "Bibliothèque", url: "/bibliotheque" },
+          ...(production.verticale?.nom
+            ? [
+                {
+                  name: production.verticale.nom,
+                  url: `/univers/${production.verticale.slug?.current || production.verticale.nom.toLowerCase()}`,
+                },
+              ]
+            : []),
+          {
+            name: production.titre,
+            url: `/article/${production.slug.current}`,
+          },
         ]}
       />
 
       {/* Progress Bar */}
       <div
-        className="fixed top-0 left-0 h-1 z-[60] transition-all duration-300"
-        style={{
-          width: `${scrollProgress}%`,
-          background: `linear-gradient(90deg, ${themeColor}, ${themeColor}99)`
-        }}
+        className={s.progressBar}
+        style={{ width: `${scrollProgress}%` }}
       />
 
-      <Navbar />
+      <SiteHeader />
 
-      <main className="pb-24 lg:pb-0">
-        {/* Hero Section - Layout Split */}
-        <div className="relative">
-          {/* Header flottant */}
-          <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-6 lg:p-12">
+      <main>
+        {/* ═══ Hero — Split layout ═══ */}
+        <div className={s.hero}>
+          {/* Floating nav */}
+          <div className={s.heroNav}>
             <button
               onClick={() => navigate(-1)}
-              className="group flex items-center gap-3 text-white/90 hover:text-white transition-colors"
+              className={s.heroBackBtn}
             >
-              <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center group-hover:border-white/50 transition-colors backdrop-blur-sm bg-black/20">
-                <ArrowLeft className="w-5 h-5" />
-              </div>
-              <span className="hidden sm:block text-sm uppercase tracking-wider">Retour</span>
+              <span className={s.heroBackIcon}>
+                <ArrowLeftIcon />
+              </span>
+              <span className={s.heroBackLabel}>Retour</span>
             </button>
 
-            <div className="flex items-center gap-3">
+            <div className={s.heroActions}>
               <button
-                onClick={() => setLiked(!liked)}
-                className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors backdrop-blur-sm ${
-                  liked ? 'bg-red-500/30 border-red-400/50' : 'border-white/30 bg-black/20 hover:border-white/50'
-                }`}
+                onClick={() => setIsLiked(!isLiked)}
+                className={
+                  isLiked ? s.heroActionBtnActive : s.heroActionBtn
+                }
               >
-                <Heart className={`w-5 h-5 ${liked ? 'fill-red-400 text-red-400' : 'text-white'}`} />
+                <HeartIcon filled={isLiked} />
               </button>
               <button
-                onClick={() => setBookmarked(!bookmarked)}
-                className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors backdrop-blur-sm ${
-                  bookmarked ? 'bg-violet-500/30 border-violet-400/50' : 'border-white/30 bg-black/20 hover:border-white/50'
-                }`}
+                onClick={() => setIsBookmarked(!isBookmarked)}
+                className={
+                  isBookmarked ? s.heroActionBtnActive : s.heroActionBtn
+                }
               >
-                <Bookmark className={`w-5 h-5 ${bookmarked ? 'fill-violet-400 text-violet-400' : 'text-white'}`} />
+                <BookmarkIcon filled={isBookmarked} />
               </button>
               <button
                 onClick={() => setShowShareModal(true)}
-                className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center hover:border-white/50 transition-colors backdrop-blur-sm bg-black/20"
+                className={s.heroActionBtn}
               >
-                <Share2 className="w-5 h-5 text-white" />
+                <ShareIcon />
               </button>
             </div>
           </div>
 
-          {/* Layout Split 2 colonnes */}
-          <div className="grid lg:grid-cols-2 min-h-[70vh]">
-            {/* Colonne Image */}
-            <div className="relative h-[50vh] lg:h-auto">
+          {/* Split grid */}
+          <div className={s.heroGrid}>
+            {/* Image column */}
+            <div className={s.heroImageCol}>
               <div
-                className="absolute inset-0 bg-cover bg-center"
+                className={s.heroImage}
                 style={{
-                  backgroundImage: `url(${production.imageUrl || '/placeholder.svg'})`,
+                  backgroundImage: `url(${production.imageUrl || "/placeholder.svg"})`,
                 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-black/20 lg:to-white" />
-              </div>
+              />
+              <div className={s.heroImageOverlay} />
             </div>
 
-            {/* Colonne Contenu */}
-            <div className="flex flex-col justify-center p-8 lg:p-12 xl:p-16 bg-white">
-              {/* Verticale Badge */}
+            {/* Content column */}
+            <div className={s.heroContentCol}>
               {production.verticale && (
                 <Link
                   to={`/univers/${production.verticale.slug.current}`}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 w-fit transition-opacity hover:opacity-80"
-                  style={{
-                    backgroundColor: `${themeColor}15`,
-                    color: themeColor
-                  }}
+                  className={s.heroKicker}
+                  style={{ color: themeColor }}
                 >
                   {production.verticale.nom}
                 </Link>
               )}
 
-              {/* Titre */}
-              <h1 className="font-bold text-3xl md:text-4xl lg:text-5xl text-gray-900 mb-6 leading-tight">
-                {typo(production.titre)}
-              </h1>
+              <h1 className={s.heroTitle}>{typo(production.titre)}</h1>
 
-              {/* Description */}
-              <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8">
-                {typo(production.description)}
-              </p>
+              {production.description && (
+                <p className={s.heroDeck}>
+                  {typo(production.description)}
+                </p>
+              )}
 
-              {/* Métadonnées */}
-              <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  <span>Origines Media</span>
-                </div>
-                {formattedDate && (
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formattedDate}</span>
-                  </div>
+              <div className={s.heroMeta}>
+                <span className={s.heroMetaItem}>
+                  <UserIcon />
+                  Origines Media
+                </span>
+                {production.datePublication && (
+                  <>
+                    <span className={s.heroDot} aria-hidden="true" />
+                    <time
+                      className={s.heroMetaItem}
+                      dateTime={production.datePublication}
+                    >
+                      <CalendarIcon />
+                      {formatDate(production.datePublication)}
+                    </time>
+                  </>
                 )}
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  <span>{readTime} min de lecture</span>
-                </div>
+                <span className={s.heroDot} aria-hidden="true" />
+                <span className={s.heroMetaItem}>
+                  <ClockIcon />
+                  {readTime} min de lecture
+                </span>
               </div>
 
-              {/* Tags */}
-              {production.tags && production.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-6">
-                  {production.tags.map((tag) => tag && (
-                    <span
-                      key={tag.slug?.current || tag.nom}
-                      className="px-3 py-1 bg-gray-100 border border-gray-200 rounded-full text-xs text-gray-600"
-                    >
-                      #{tag.nom}
-                    </span>
-                  ))}
+              {tags.length > 0 && (
+                <div className={s.heroTags}>
+                  {tags.map(
+                    (tag) =>
+                      tag && (
+                        <span
+                          key={tag.slug?.current || tag.nom}
+                          className={s.heroTag}
+                        >
+                          #{tag.nom}
+                        </span>
+                      )
+                  )}
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Contenu Principal + Sidebar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        {/* ═══ Content + Sidebar ═══ */}
+        <section className={s.contentSection}>
+          <div className={s.contentGrid}>
+            {/* Article body */}
+            <div ref={articleRef} className={s.articleBody}>
+              {/* Mobile ad */}
+              <AdPlaceholder format="banner" className={s.mobileAdBanner} />
 
-            {/* Colonne Contenu */}
-            <div ref={articleRef} className="lg:col-span-8">
-              {/* Pub banner en haut du contenu */}
-              <AdPlaceholder format="banner" className="mb-8 lg:hidden" />
-
-              {/* Contenu Article */}
               {production.contenu && production.contenu.length > 0 ? (
-                <div className="prose prose-lg max-w-none">
-                  <PortableText value={production.contenu} components={portableTextComponents} />
+                <div className={s.prose}>
+                  <PortableText
+                    value={production.contenu}
+                    components={portableTextComponents}
+                  />
                 </div>
               ) : (
-                <div className="text-center py-12 text-gray-500">
-                  <BookOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>Contenu en cours de rédaction...</p>
+                <div className={s.emptyContent}>
+                  <BookOpenIcon />
+                  <p>Contenu en cours de r&eacute;daction...</p>
                 </div>
               )}
 
-              {/* Section CTA */}
+              {/* CTA box */}
               {production.verticale && (
-                <div className="mt-16 p-8 rounded-2xl bg-gray-50 border border-gray-200">
-                  <h3 className="font-bold text-xl text-gray-900 mb-3">
-                    Envie d'aller plus loin ?
+                <div className={s.ctaBox}>
+                  <h3 className={s.ctaBoxTitle}>
+                    Envie d&rsquo;aller plus loin&nbsp;?
                   </h3>
-                  <p className="text-gray-600 mb-6">
-                    Découvrez tous nos articles sur {production.verticale.nom}
+                  <p className={s.ctaBoxText}>
+                    D&eacute;couvrez tous nos articles sur{" "}
+                    {production.verticale.nom}
                   </p>
                   <Link
                     to={`/univers/${production.verticale.slug.current}`}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-medium transition-all hover:opacity-90"
-                    style={{ backgroundColor: themeColor }}
+                    className={s.ctaBoxLink}
                   >
                     Explorer {production.verticale.nom}
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRightIcon />
                   </Link>
                 </div>
               )}
+
+              {/* Author box */}
+              <div className={s.authorBox}>
+                <div className={s.authorBoxInner}>
+                  <div
+                    className={s.authorAvatar}
+                    style={{ backgroundColor: themeColor }}
+                  >
+                    O
+                  </div>
+                  <div className={s.authorBoxContent}>
+                    <p className={s.authorBoxLabel}>
+                      &Eacute;crit par
+                    </p>
+                    <h4 className={s.authorBoxName}>Origines Media</h4>
+                    <p className={s.authorBoxRole}>
+                      R&eacute;daction
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Sidebar */}
-            <div
+            <aside
               ref={sidebarContainerRef}
-              className="hidden lg:block lg:col-span-4 relative"
+              className={s.sidebar}
             >
-              <div ref={sidebarRef} style={sidebarStyle} className="space-y-6">
-
-                {/* Widget Auteur */}
-                <div className="rounded-xl bg-gray-50 border border-gray-200 p-5">
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl"
-                      style={{ backgroundColor: themeColor }}
+              <div
+                ref={sidebarRef}
+                className={s.sidebarInner}
+                style={sidebarStyle}
+              >
+                {/* 1. TOC */}
+                {isLongArticle && headings.length > 0 && (
+                  <div className={s.widget}>
+                    <button
+                      className={s.widgetHead}
+                      onClick={() => setTocExpanded(!tocExpanded)}
                     >
-                      O
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">Écrit par</p>
-                      <h4 className="font-bold text-gray-900">Origines Media</h4>
-                      <p className="text-sm text-gray-500">Rédaction</p>
+                      <h4 className={s.widgetTitle}>
+                        <ListIcon />
+                        Sommaire
+                      </h4>
+                      <svg
+                        className={
+                          tocExpanded
+                            ? s.widgetChevronOpen
+                            : s.widgetChevron
+                        }
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                      >
+                        <path d="M4 6l4 4 4-4" />
+                      </svg>
+                    </button>
+                    <AnimatePresence>
+                      {tocExpanded && (
+                        <motion.nav
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <div className={s.widgetBody}>
+                            <div className={s.tocList}>
+                              {(() => {
+                                let h2Index = 0;
+                                return headings.map((heading) => {
+                                  const isH2 = heading.level === 2;
+                                  const isActive =
+                                    activeSection === heading.id;
+                                  if (isH2) h2Index++;
+
+                                  return (
+                                    <button
+                                      key={heading.id}
+                                      onClick={() =>
+                                        scrollToSection(heading.id)
+                                      }
+                                      className={`${
+                                        isActive
+                                          ? s.tocItemActive
+                                          : s.tocItem
+                                      } ${!isH2 ? s.tocItemH3 : ""}`}
+                                    >
+                                      {isH2 ? (
+                                        <>
+                                          <span className={s.tocNum}>
+                                            {h2Index}
+                                          </span>
+                                          <span>{heading.text}</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <span className={s.tocDot} />
+                                          <span>{heading.text}</span>
+                                        </>
+                                      )}
+                                    </button>
+                                  );
+                                });
+                              })()}
+                            </div>
+                          </div>
+                        </motion.nav>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+
+                {/* 2. Share */}
+                <div className={s.widget}>
+                  <div className={s.widgetHeadStatic}>
+                    <h4 className={s.widgetTitle}>
+                      <ShareIcon />
+                      Partager
+                    </h4>
+                  </div>
+                  <div className={s.widgetBody}>
+                    <div className={s.shareGrid}>
+                      {shareButtons.map((btn) => (
+                        <button
+                          key={btn.id}
+                          onClick={() => handleShare(btn.id)}
+                          className={s.shareBtn}
+                          title={btn.label}
+                        >
+                          <btn.icon />
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => handleShare("copy")}
+                        className={s.shareBtn}
+                        title="Copier le lien"
+                      >
+                        {copySuccess ? (
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                        ) : (
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                          >
+                            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+                          </svg>
+                        )}
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Table des matières dépliable (si article long) */}
-                {isLongArticle && headings.length > 0 && (
-                  <TableOfContentsWidget
-                    headings={headings}
-                    activeSection={activeSection}
-                    scrollProgress={scrollProgress}
-                    themeColor={themeColor}
-                    onSectionClick={scrollToSection}
-                  />
-                )}
-
-                {/* PUB 1 */}
+                {/* 3. Ad */}
                 <AdPlaceholder format="rectangle" />
 
-                {/* Widget À explorer */}
-                <div className="rounded-xl bg-gray-50 border border-gray-200 overflow-hidden">
-                  {/* Onglets */}
-                  <div className="p-1 bg-gray-100">
-                    <div className="flex gap-1">
-                      {[
-                        { id: 'recent' as const, label: 'Récents', icon: Zap },
-                        { id: 'popular' as const, label: 'Populaires', icon: Flame },
-                      ].map((tab) => {
-                        const Icon = tab.icon;
-                        const isActive = activeTab === tab.id;
-                        return (
-                          <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`
-                              flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg
-                              text-sm font-medium transition-all
-                              ${isActive ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}
-                            `}
-                          >
-                            <Icon size={14} />
-                            {tab.label}
-                          </button>
-                        );
-                      })}
+                {/* 4. Explore (tabbed) */}
+                {latestArticles.length > 0 && (
+                  <div className={s.widget}>
+                    <div className={s.exploreTabs}>
+                      <button
+                        onClick={() => setActiveTab("recent")}
+                        className={
+                          activeTab === "recent"
+                            ? s.exploreTabActive
+                            : s.exploreTab
+                        }
+                      >
+                        <ZapIcon />
+                        R&eacute;cents
+                      </button>
+                      <button
+                        onClick={() => setActiveTab("popular")}
+                        className={
+                          activeTab === "popular"
+                            ? s.exploreTabActive
+                            : s.exploreTab
+                        }
+                      >
+                        <FlameIcon />
+                        Populaires
+                      </button>
                     </div>
-                  </div>
 
-                  {/* Liste articles */}
-                  <div className="max-h-[280px] overflow-y-auto">
-                    <div className="p-2 space-y-1">
+                    <div className={s.exploreList}>
                       {latestArticles.map((item) => (
                         <Link
                           key={item._id}
                           to={`/article/${item.slug}`}
-                          className="group flex items-start gap-3 p-2 rounded-lg hover:bg-white transition-all"
+                          className={s.exploreItem}
                         >
                           {item.imageUrl && (
-                            <div className="w-14 h-10 rounded-md overflow-hidden flex-shrink-0 bg-gray-200">
-                              <img src={item.imageUrl} alt={item.titre || 'Article connexe'} className="w-full h-full object-cover" loading="lazy" />
-                            </div>
+                            <img
+                              src={item.imageUrl}
+                              alt={item.titre || "Article connexe"}
+                              className={s.exploreItemImg}
+                              loading="lazy"
+                            />
                           )}
-                          <div className="flex-1 min-w-0">
+                          <div className={s.exploreItemBody}>
                             {item.verticale && (
                               <span
-                                className="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded mb-1"
+                                className={s.exploreItemVert}
                                 style={{
-                                  backgroundColor: `${item.verticale.couleurDominante || themeColor}15`,
-                                  color: item.verticale.couleurDominante || themeColor
+                                  color:
+                                    item.verticale.couleurDominante ||
+                                    themeColor,
                                 }}
                               >
                                 {item.verticale.nom}
                               </span>
                             )}
-                            <h4 className="text-xs text-gray-700 group-hover:text-gray-900 transition-colors line-clamp-2 leading-snug">
+                            <h4 className={s.exploreItemTitle}>
                               {typo(item.titre)}
                             </h4>
                             {item.datePublication && (
-                              <span className="text-[10px] text-gray-400">{getRelativeTime(item.datePublication)}</span>
+                              <span className={s.exploreItemDate}>
+                                {getRelativeTime(item.datePublication)}
+                              </span>
                             )}
                           </div>
                         </Link>
                       ))}
                     </div>
-                  </div>
 
-                  <Link
-                    to="/bibliotheque"
-                    className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-700 p-3 border-t border-gray-200"
+                    <Link
+                      to="/bibliotheque"
+                      className={s.exploreFooter}
+                    >
+                      Voir tous les articles
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                      >
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </Link>
+                  </div>
+                )}
+
+                {/* 5. Newsletter */}
+                <div className={s.nlWidget}>
+                  <svg
+                    className={s.nlIcon}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
                   >
-                    Voir tous les articles <ChevronRight size={14} />
-                  </Link>
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="M22 7l-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7" />
+                  </svg>
+                  <h4 className={s.nlTitle}>Ne manquez rien</h4>
+                  <p className={s.nlDeck}>
+                    Nos meilleurs r&eacute;cits, chaque semaine.
+                  </p>
+                  <EmailCapture
+                    source="article"
+                    variant="inline"
+                    placeholder="votre@email.com"
+                    buttonText="S'abonner"
+                    successMessage="Bienvenue !"
+                    successDescription="Rendez-vous vendredi dans votre boite mail."
+                  />
                 </div>
 
-                {/* Newsletter */}
-                <NewsletterWidget themeColor={themeColor} />
-
-                {/* PUB 2 */}
+                {/* 6. Ad */}
                 <AdPlaceholder format="rectangle" />
 
-                {/* Réseaux sociaux */}
-                <SocialWidget />
+                {/* 7. Social follow */}
+                <div className={s.socialWidget}>
+                  <div className={s.socialWidgetHead}>
+                    <h4 className={s.socialWidgetTitle}>Suivez-nous</h4>
+                  </div>
+                  <div className={s.socialGrid}>
+                    <a
+                      href="https://instagram.com/originesmedia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={s.socialLink}
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                      </svg>
+                      <span className={s.socialLinkLabel}>Instagram</span>
+                    </a>
+                    <a
+                      href="https://linkedin.com/company/originesmedia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={s.socialLink}
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                      </svg>
+                      <span className={s.socialLinkLabel}>LinkedIn</span>
+                    </a>
+                    <a
+                      href="https://twitter.com/originesmedia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={s.socialLink}
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                      </svg>
+                      <span className={s.socialLinkLabel}>X</span>
+                    </a>
+                  </div>
+                </div>
 
-                {/* À lire aussi (si article long) */}
+                {/* 8. Related articles */}
                 {isLongArticle && relatedArticles.length > 0 && (
-                  <div className="rounded-xl bg-gray-50 border border-gray-200 overflow-hidden">
-                    <div className="p-4 border-b border-gray-200 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5" style={{ color: themeColor }} />
-                      <span className="font-bold text-gray-900 text-sm">À lire aussi</span>
+                  <div className={s.widget}>
+                    <div className={s.widgetHeadStatic}>
+                      <h4 className={s.widgetTitle}>
+                        <TrendingUpIcon />
+                        &Agrave; lire aussi
+                      </h4>
                     </div>
-                    <div className="p-2 space-y-1">
+                    <div className={s.widgetBody}>
                       {relatedArticles.map((related) => (
                         <Link
                           key={related._id}
                           to={`/article/${related.slug}`}
-                          className="group flex items-center gap-3 p-2 rounded-lg hover:bg-white transition-all"
+                          className={s.relItem}
                         >
-                          <div className="w-14 h-10 rounded-md overflow-hidden flex-shrink-0 bg-gray-200">
-                            {related.imageUrl && (
-                              <img src={related.imageUrl} alt={related.titre || 'Article à lire'} className="w-full h-full object-cover" loading="lazy" />
-                            )}
-                          </div>
-                          <h4 className="flex-1 text-xs text-gray-700 group-hover:text-gray-900 transition-colors line-clamp-2">
+                          {related.imageUrl && (
+                            <img
+                              src={related.imageUrl}
+                              alt={related.titre || "Article"}
+                              className={s.relImg}
+                              loading="lazy"
+                            />
+                          )}
+                          <h4 className={s.relTitle}>
                             {typo(related.titre)}
                           </h4>
                         </Link>
@@ -1173,158 +1129,245 @@ function ProductionDetailPage() {
                   </div>
                 )}
 
-                {/* PUB 3 */}
+                {/* 9. Tags */}
+                {tags.length > 0 && (
+                  <div className={s.widget}>
+                    <div className={s.widgetHeadStatic}>
+                      <h4 className={s.widgetTitle}>
+                        <TagIcon />
+                        Th&eacute;matiques
+                      </h4>
+                    </div>
+                    <div className={s.widgetBody}>
+                      <div className={s.tagsList}>
+                        {tags.map(
+                          (tag) =>
+                            tag && (
+                              <span
+                                key={tag.slug?.current || tag.nom}
+                                className={s.tagLink}
+                              >
+                                {tag.nom}
+                              </span>
+                            )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 10. Ad */}
                 <AdPlaceholder format="rectangle" />
-
               </div>
-            </div>
+            </aside>
           </div>
-        </div>
+        </section>
 
-        {/* Section Articles Recommandés (Full Width) */}
+        {/* ═══ Related content — gradient section ═══ */}
         {relatedArticles.length > 0 && (
-          <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 border-t border-gray-200">
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
-                Articles recommandés
+          <section className={s.relatedSection}>
+            <div className={s.relatedInner}>
+              <span className={s.relatedKicker}>
+                Continuez l&rsquo;exploration
+              </span>
+              <h2 className={s.relatedHeading}>
+                Articles <em>recommand&eacute;s.</em>
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className={s.relatedGrid}>
                 {relatedArticles.slice(0, 6).map((related) => (
                   <Link
                     key={related._id}
                     to={`/article/${related.slug}`}
-                    className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
+                    className={s.relCard}
                   >
-                    <div className="aspect-video overflow-hidden">
+                    <div className={s.relCardImgWrap}>
                       <img
-                        src={related.imageUrl || '/placeholder.svg'}
-                        alt={related.titre || 'Article recommandé'}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src={related.imageUrl || "/placeholder.svg"}
+                        alt={related.titre || "Article recommandé"}
+                        className={s.relCardImg}
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
-                    <div className="p-5">
-                      {related.verticale && (
-                        <span
-                          className="inline-block px-2 py-1 rounded text-xs font-bold mb-3"
-                          style={{
-                            backgroundColor: `${related.verticale.couleurDominante || themeColor}15`,
-                            color: related.verticale.couleurDominante || themeColor
-                          }}
-                        >
-                          {related.verticale.nom}
-                        </span>
-                      )}
-                      <h3 className="text-gray-900 font-bold line-clamp-2 group-hover:text-violet-600 transition-colors">
-                        {typo(related.titre)}
-                      </h3>
-                    </div>
+                    {related.verticale && (
+                      <span className={s.relCardVert}>
+                        {related.verticale.nom}
+                      </span>
+                    )}
+                    <h3 className={s.relCardTitle}>
+                      {typo(related.titre)}
+                    </h3>
                   </Link>
                 ))}
+              </div>
+              <div className={s.relatedCtaWrap}>
+                <Link to="/bibliotheque" className={s.relatedCta}>
+                  Voir tous les articles
+                  <ChevronRightIcon />
+                </Link>
               </div>
             </div>
           </section>
         )}
-
-        {/* Mobile Floating Action Bar */}
-        <div
-          className="fixed bottom-0 left-0 right-0 lg:hidden z-50 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-white via-white to-transparent"
-        >
-          <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
-            <button
-              onClick={() => setLiked(!liked)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-                liked ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              <Heart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
-            </button>
-
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-xl text-white font-medium"
-              style={{ backgroundColor: themeColor }}
-            >
-              <Share2 className="w-5 h-5" />
-              <span>Partager</span>
-            </button>
-
-            <button
-              onClick={() => setBookmarked(!bookmarked)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-                bookmarked ? 'bg-violet-50 text-violet-600' : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              <Bookmark className={`w-5 h-5 ${bookmarked ? 'fill-current' : ''}`} />
-            </button>
-          </div>
-        </div>
       </main>
 
-      <Footer />
+      {/* ═══ End-of-article newsletter ═══ */}
+      <section className={s.endNl}>
+        <div className={s.endNlInner}>
+          <h3 className={s.endNlTitle}>
+            Cet article vous a plu&nbsp;?
+          </h3>
+          <p className={s.endNlDeck}>
+            Recevez nos meilleurs r&eacute;cits chaque semaine,
+            directement dans votre bo&icirc;te mail.
+          </p>
+          <EmailCapture
+            source="article"
+            variant="inline"
+            placeholder="votre@email.com"
+            buttonText="S'abonner"
+            successMessage="Merci !"
+            successDescription="Vous recevrez notre prochaine newsletter vendredi."
+          />
+        </div>
+      </section>
 
-      {/* Share Modal */}
-      {showShareModal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-          onClick={() => setShowShareModal(false)}
+      {/* ═══ Scroll to top ═══ */}
+      <div className={s.scrollTopSection}>
+        <button
+          className={s.scrollTopBtn}
+          onClick={() =>
+            window.scrollTo({ top: 0, behavior: "smooth" })
+          }
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="relative w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-2xl p-6"
-            onClick={e => e.stopPropagation()}
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
           >
-            <button
-              onClick={() => setShowShareModal(false)}
-              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            <path d="M18 15l-6-6-6 6" />
+          </svg>
+          Retour en haut
+        </button>
+      </div>
+
+      <Footer2 />
+
+      {/* ═══ Mobile floating action bar ═══ */}
+      <div className={s.mobileBar}>
+        <div className={s.mobileBarInner}>
+          <button
+            onClick={() => setIsLiked(!isLiked)}
+            className={
+              isLiked ? s.mobileBarBtnActive : s.mobileBarBtn
+            }
+          >
+            <HeartIcon filled={isLiked} />
+          </button>
+
+          <button
+            className={s.mobileBarShare}
+            onClick={() => setShowShareModal(true)}
+          >
+            <ShareIcon />
+            Partager
+          </button>
+
+          <button
+            onClick={() => setIsBookmarked(!isBookmarked)}
+            className={
+              isBookmarked ? s.mobileBarBtnActive : s.mobileBarBtn
+            }
+          >
+            <BookmarkIcon filled={isBookmarked} />
+          </button>
+        </div>
+      </div>
+
+      {/* ═══ Share modal ═══ */}
+      <AnimatePresence>
+        {showShareModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={s.shareOverlay}
+            onClick={() => setShowShareModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className={s.shareModal}
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Partager</h3>
-
-            <div className="space-y-3">
-              <button
-                onClick={copyToClipboard}
-                className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
-              >
-                {copied ? (
-                  <Check className="w-5 h-5 text-emerald-500" />
-                ) : (
-                  <Copy className="w-5 h-5 text-gray-500" />
-                )}
-                <span className="text-gray-900">{copied ? 'Lien copié !' : 'Copier le lien'}</span>
-              </button>
-
-              <a
-                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(production.titre)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
-              >
-                <ExternalLink className="w-5 h-5 text-gray-500" />
-                <span className="text-gray-900">Partager sur X</span>
-              </a>
-
-              <a
-                href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(production.titre)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
-              >
-                <ExternalLink className="w-5 h-5 text-gray-500" />
-                <span className="text-gray-900">Partager sur LinkedIn</span>
-              </a>
-            </div>
+              <div className={s.shareModalHead}>
+                <h3 className={s.shareModalTitle}>Partager</h3>
+                <button
+                  className={s.shareModalClose}
+                  onClick={() => setShowShareModal(false)}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    width="16"
+                    height="16"
+                  >
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className={s.shareModalGrid}>
+                {shareButtons.map((btn) => (
+                  <button
+                    key={btn.id}
+                    onClick={() => handleShare(btn.id)}
+                    className={s.shareModalBtn}
+                  >
+                    <btn.icon />
+                    <span className={s.shareModalLabel}>
+                      {btn.label}
+                    </span>
+                  </button>
+                ))}
+                <button
+                  onClick={() => handleShare("copy")}
+                  className={s.shareModalBtn}
+                >
+                  {copySuccess ? (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  ) : (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    >
+                      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+                      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+                    </svg>
+                  )}
+                  <span className={s.shareModalLabel}>
+                    {copySuccess ? "Copié" : "Lien"}
+                  </span>
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </AnimatePresence>
+
+      <ScrollToTopV2 />
     </div>
   );
 }
-
-export default ProductionDetailPage;

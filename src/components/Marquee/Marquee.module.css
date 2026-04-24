@@ -1,0 +1,53 @@
+/* ===== Marquee ticker bottom ===== */
+
+.marquee {
+  margin-top: 120px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 14px 0;
+  overflow: hidden;
+  background: var(--paper);
+  position: relative;
+}
+
+.marqueeInner {
+  display: flex;
+  gap: 48px;
+  animation: marquee 60s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.marqueeInner span {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.marqueeInner span::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dot-color, var(--ink));
+}
+
+/* Univers dot colors */
+.esprit::before { background: var(--c-esprit) !important; }
+.corps::before { background: var(--c-corps) !important; }
+.liens::before { background: var(--c-liens) !important; }
+.monde::before { background: var(--c-monde) !important; }
+.avenir::before { background: var(--c-avenir) !important; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeInner { animation: none !important; }
+}

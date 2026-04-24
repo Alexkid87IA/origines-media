@@ -1,34 +1,33 @@
 // src/pages/BibliothequePage.tsx
-// Page Explorer - Hub central de tous les contenus
+// Page Explorer V2 — Hub central de tous les contenus
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search, Grid3X3, FileText, Play, Heart, User,
-  Clock, Eye, Star, BookOpen, ChevronDown, SlidersHorizontal,
-  ArrowRight, X, ChevronLeft, ChevronRight
-} from 'lucide-react';
-import { sanityFetch } from '../lib/sanity';
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
+import SiteHeader from "@/components/SiteHeader/SiteHeader";
+import Footer2 from "@/components/Footer2/Footer2";
+import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
+import SEO from "../components/SEO";
+import { sanityFetch } from "../lib/sanity";
 import {
   EXPLORER_ARTICLES_QUERY,
   EXPLORER_VIDEOS_QUERY,
   EXPLORER_RECOS_QUERY,
   EXPLORER_HISTOIRES_QUERY,
-  VERTICALES_QUERY
-} from '../lib/queries';
+  VERTICALES_QUERY,
+} from "../lib/queries";
 import type {
   ExplorerArticle,
   ExplorerVideo,
   ExplorerReco,
   ExplorerHistoire,
-  ExplorerVerticale
-} from '../types/sanity';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import SEO from '../components/SEO';
+  ExplorerVerticale,
+} from "../types/sanity";
+import s from "./BibliothequePage.module.css";
 
-// ============ TYPES ============
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
 interface Verticale {
   _id: string;
   nom: string;
@@ -43,23 +42,18 @@ interface ContentItem {
   imageUrl?: string;
   slug: string;
   datePublication?: string;
-  contentType: 'article' | 'video' | 'reco' | 'histoire';
-  // Article specific
+  contentType: "article" | "video" | "reco" | "histoire";
   typeArticle?: string;
   tempsLecture?: number;
-  // Video specific
   duree?: number;
   vues?: number;
   videoUrl?: string;
-  // Reco specific
   type?: string;
   auteur?: string;
   note?: number;
   coupDeCoeur?: boolean;
   accroche?: string;
-  // Histoire specific
   categorie?: string;
-  // Common
   verticale?: {
     _id: string;
     nom: string;
@@ -68,38 +62,105 @@ interface ContentItem {
   };
 }
 
-// ============ CONSTANTS ============
-const CONTENT_TYPES = [
-  { id: 'all', label: 'Tout', icon: Grid3X3, color: '#6B7280' },
-  { id: 'article', label: 'Articles', icon: FileText, color: '#10B981' },
-  { id: 'video', label: 'Vidéos', icon: Play, color: '#06B6D4' },
-  { id: 'reco', label: 'Recos', icon: Heart, color: '#EC4899' },
-  { id: 'histoire', label: 'Histoires', icon: User, color: '#F59E0B' },
+/* ------------------------------------------------------------------ */
+/*  Constants                                                          */
+/* ------------------------------------------------------------------ */
+
+interface ContentTypeConfig {
+  id: string;
+  label: string;
+  color: string;
+}
+
+const CONTENT_TYPES: ContentTypeConfig[] = [
+  { id: "all", label: "Tout", color: "#6B7280" },
+  { id: "article", label: "Articles", color: "#10B981" },
+  { id: "video", label: "Vidéos", color: "#06B6D4" },
+  { id: "reco", label: "Recos", color: "#EC4899" },
+  { id: "histoire", label: "Histoires", color: "#F59E0B" },
 ];
 
-const RECO_TYPE_ICONS: Record<string, string> = {
-  'livre': '📚',
-  'film': '🎬',
-  'podcast': '🎧',
-  'youtube': '📺',
-  'instagram': '📸',
-  'livre-audio': '🎵',
-  'musee': '🏛️',
-  'theatre': '🎭',
-};
-
 const SORT_OPTIONS = [
-  { id: 'recent', label: 'Plus récents' },
-  { id: 'popular', label: 'Populaires' },
-  { id: 'alpha', label: 'A-Z' },
+  { id: "recent", label: "Plus récents" },
+  { id: "popular", label: "Populaires" },
+  { id: "alpha", label: "A → Z" },
 ];
 
 const ITEMS_PER_PAGE = 9;
 const MAX_HISTOIRES_PER_PAGE = 2;
 
-// ============ HELPER FUNCTIONS ============
+/* ------------------------------------------------------------------ */
+/*  Inline SVG icons                                                   */
+/* ------------------------------------------------------------------ */
 
-// Fisher-Yates shuffle
+function IconGrid({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <rect x="3" y="3" width="7" height="7" />
+      <rect x="14" y="3" width="7" height="7" />
+      <rect x="3" y="14" width="7" height="7" />
+      <rect x="14" y="14" width="7" height="7" />
+    </svg>
+  );
+}
+
+function IconFileText({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
+    </svg>
+  );
+}
+
+function IconPlay({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>
+  );
+}
+
+function IconHeart({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+    </svg>
+  );
+}
+
+function IconUser({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+function IconStar({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+const TYPE_ICONS: Record<string, (props: { className?: string }) => JSX.Element> = {
+  all: IconGrid,
+  article: IconFileText,
+  video: IconPlay,
+  reco: IconHeart,
+  histoire: IconUser,
+};
+
+/* ------------------------------------------------------------------ */
+/*  Helper functions                                                   */
+/* ------------------------------------------------------------------ */
+
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -109,66 +170,50 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// Réorganise pour éviter 2 contenus de même verticale côte à côte
 function distributeByVerticale(items: ContentItem[]): ContentItem[] {
   if (items.length <= 1) return items;
-
   const result: ContentItem[] = [];
   const remaining = [...items];
-
   while (remaining.length > 0) {
-    const lastVerticale = result.length > 0 ? result[result.length - 1].verticale?.slug : null;
-
-    // Cherche un item avec une verticale différente
-    let foundIndex = remaining.findIndex(item => item.verticale?.slug !== lastVerticale);
-
-    // Si pas trouvé, prend le premier disponible
+    const lastSlug =
+      result.length > 0 ? result[result.length - 1].verticale?.slug : null;
+    let foundIndex = remaining.findIndex(
+      (item) => item.verticale?.slug !== lastSlug
+    );
     if (foundIndex === -1) foundIndex = 0;
-
     result.push(remaining[foundIndex]);
     remaining.splice(foundIndex, 1);
   }
-
   return result;
 }
 
-// Limite les histoires par page
-function limitHistoiresPerPage(items: ContentItem[], itemsPerPage: number, maxHistoires: number): ContentItem[] {
+function limitHistoiresPerPage(
+  items: ContentItem[],
+  itemsPerPage: number,
+  maxHistoires: number
+): ContentItem[] {
   const result: ContentItem[] = [];
   let pageHistoireCount = 0;
   let currentPageIndex = 0;
-
   for (const item of items) {
     const pageIndex = Math.floor(result.length / itemsPerPage);
-
-    // Nouvelle page, reset du compteur
     if (pageIndex > currentPageIndex) {
       currentPageIndex = pageIndex;
       pageHistoireCount = 0;
     }
-
-    // Si c'est une histoire et qu'on a déjà atteint la limite pour cette page
-    if (item.contentType === 'histoire') {
-      if (pageHistoireCount >= maxHistoires) {
-        // On la met à la fin pour les pages suivantes
-        continue;
-      }
+    if (item.contentType === "histoire") {
+      if (pageHistoireCount >= maxHistoires) continue;
       pageHistoireCount++;
     }
-
     result.push(item);
   }
-
-  // Ajoute les histoires restantes à la fin
-  const addedIds = new Set(result.map(r => r._id));
+  const addedIds = new Set(result.map((r) => r._id));
   for (const item of items) {
-    if (!addedIds.has(item._id)) {
-      result.push(item);
-    }
+    if (!addedIds.has(item._id)) result.push(item);
   }
-
   return result;
 }
+
 function formatDuration(minutes: number): string {
   if (minutes < 60) return `${minutes} min`;
   const h = Math.floor(minutes / 60);
@@ -176,245 +221,180 @@ function formatDuration(minutes: number): string {
   return m > 0 ? `${h}h${m}` : `${h}h`;
 }
 
-function formatViews(views: number): string {
-  if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
-  if (views >= 1000) return `${(views / 1000).toFixed(1)}k`;
-  return views.toString();
+function formatDate(dateString: string): string {
+  if (!dateString) return "";
+  const d = new Date(dateString);
+  return d.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function getContentLink(item: ContentItem): string {
   switch (item.contentType) {
-    case 'article':
+    case "article":
       return `/article/${item.slug}`;
-    case 'video':
+    case "video":
       return `/video/${item.slug}`;
-    case 'reco':
+    case "reco":
       return `/recommandation/${item.slug}`;
-    case 'histoire':
+    case "histoire":
       return `/histoire/${item.slug}`;
     default:
       return `/article/${item.slug}`;
   }
 }
 
-// ============ CARD COMPONENT - Design unifié avec variante sans image ============
+function getTypeLabel(item: ContentItem): string {
+  switch (item.contentType) {
+    case "article":
+      return "Article";
+    case "video":
+      return "Vidéo";
+    case "reco":
+      return item.type || "Reco";
+    case "histoire":
+      return "Histoire";
+    default:
+      return "Contenu";
+  }
+}
 
-const ContentCard: React.FC<{ item: ContentItem }> = ({ item }) => {
-  const color = item.verticale?.couleurDominante || CONTENT_TYPES.find(t => t.id === item.contentType)?.color || '#6B7280';
-  const typeConfig = CONTENT_TYPES.find(t => t.id === item.contentType);
-  const TypeIcon = typeConfig?.icon || FileText;
+function getSubInfo(item: ContentItem): string {
+  if (item.contentType === "video" && item.duree) return formatDuration(item.duree);
+  if (item.contentType === "article" && item.tempsLecture)
+    return `${item.tempsLecture} min`;
+  if (item.contentType === "histoire") return item.categorie || "";
+  if (item.contentType === "reco" && item.auteur) return item.auteur;
+  return "";
+}
 
-  // Détecte si l'image est valide (pas placeholder, pas vide, pas undefined)
-  const hasValidImage = item.imageUrl &&
-    !item.imageUrl.includes('placeholder') &&
-    item.imageUrl.trim() !== '';
+/* ------------------------------------------------------------------ */
+/*  Content Card                                                       */
+/* ------------------------------------------------------------------ */
 
-  // Label du type de contenu
-  const getTypeLabel = () => {
-    switch (item.contentType) {
-      case 'article': return 'Article';
-      case 'video': return 'Vidéo';
-      case 'reco': return item.type || 'Reco';
-      case 'histoire': return 'Histoire';
-      default: return 'Contenu';
-    }
-  };
+function ContentCard({ item }: { item: ContentItem }) {
+  const color =
+    item.verticale?.couleurDominante ||
+    CONTENT_TYPES.find((t) => t.id === item.contentType)?.color ||
+    "#6B7280";
 
-  // Info supplémentaire
-  const getSubInfo = () => {
-    if (item.contentType === 'video' && item.duree) return formatDuration(item.duree);
-    if (item.contentType === 'article' && item.tempsLecture) return `${item.tempsLecture} min`;
-    if (item.contentType === 'histoire') return item.categorie || '';
-    if (item.contentType === 'reco' && item.auteur) return item.auteur;
-    return '';
-  };
+  const hasValidImage =
+    item.imageUrl &&
+    !item.imageUrl.includes("placeholder") &&
+    item.imageUrl.trim() !== "";
 
-  // ═══════════════════════════════════════════════════════════════
-  // CARD SANS IMAGE - Design texte avec fond coloré
-  // ═══════════════════════════════════════════════════════════════
-  if (!hasValidImage) {
-    return (
-      <Link to={getContentLink(item)} className="group block">
-        <div className="relative rounded-xl overflow-hidden shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
-          {/* Zone principale avec fond coloré */}
-          <div
-            className="relative aspect-video overflow-hidden p-4 flex flex-col justify-between"
-            style={{
-              background: `linear-gradient(135deg, ${color}15 0%, ${color}05 100%)`,
-              borderLeft: `4px solid ${color}`,
-            }}
-          >
-            {/* Motif décoratif subtil */}
-            <div
-              className="absolute top-0 right-0 w-32 h-32 opacity-10 transform translate-x-8 -translate-y-8"
-              style={{ color }}
-            >
-              <TypeIcon className="w-full h-full" strokeWidth={0.5} />
-            </div>
+  const subInfo = getSubInfo(item);
+  const ctaLabel =
+    item.contentType === "video"
+      ? "Regarder"
+      : item.contentType === "reco"
+      ? "Découvrir"
+      : item.contentType === "histoire"
+      ? "Lire"
+      : "Lire";
 
-            {/* Header avec badges */}
-            <div className="flex items-start justify-between gap-2 relative z-10">
-              <span
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-                style={{ backgroundColor: typeConfig?.color || color }}
-              >
-                <TypeIcon className="w-3 h-3" />
-                {getTypeLabel()}
-              </span>
+  return (
+    <article className={s.card} style={{ "--cat-color": color } as React.CSSProperties}>
+      <a href={getContentLink(item)} className={s.cardLink}>
+        {/* Image or no-image zone */}
+        {hasValidImage ? (
+          <div className={s.cardImgWrap}>
+            <img
+              src={item.imageUrl}
+              alt={item.titre}
+              className={s.cardImg}
+              loading="lazy"
+              decoding="async"
+            />
+            {item.contentType === "video" && (
+              <div className={s.playOverlay}>
+                <div className={s.playBtn}>
+                  <IconPlay className={s.playIcon} />
+                </div>
+              </div>
+            )}
+            {item.coupDeCoeur && (
+              <div className={s.heartBadge}>
+                <IconHeart />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className={s.cardNoImgWrap}>
+            {(() => {
+              const Icon = TYPE_ICONS[item.contentType] || IconFileText;
+              return <Icon className={s.cardNoImgIcon} />;
+            })()}
+            <p className={s.cardNoImgTitle}>{item.titre}</p>
+            {item.coupDeCoeur && (
+              <div className={s.heartBadge}>
+                <IconHeart />
+              </div>
+            )}
+          </div>
+        )}
 
-              {item.coupDeCoeur && (
-                <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-rose-500 text-white flex items-center gap-1">
-                  <Heart className="w-3 h-3" fill="currentColor" />
-                </span>
-              )}
-            </div>
+        {/* Body */}
+        <div className={s.cardBody}>
+          {/* Meta line */}
+          <div className={s.cardMeta}>
+            <span className={s.cardDot} aria-hidden="true" />
+            <span className={s.cardType}>{getTypeLabel(item)}</span>
+            {item.verticale?.nom && (
+              <>
+                <span className={s.cardSep}>&middot;</span>
+                <span className={s.cardCategory}>{item.verticale.nom}</span>
+              </>
+            )}
+            {subInfo && (
+              <>
+                <span className={s.cardSep}>&middot;</span>
+                <span className={s.cardTime}>{subInfo}</span>
+              </>
+            )}
+          </div>
 
-            {/* Titre et description */}
-            <div className="relative z-10 mt-auto">
-              <h3
-                className="text-base font-bold line-clamp-2 mb-1 transition-colors leading-snug"
-                style={{ color: color }}
-              >
-                {item.titre}
-              </h3>
-              {(item.description || item.accroche) && (
-                <p className="text-xs text-gray-500 line-clamp-2">
-                  {item.description || item.accroche}
-                </p>
-              )}
-            </div>
+          {/* Title */}
+          <h3 className={s.cardTitle}>{item.titre}</h3>
 
-            {/* Footer avec info et note */}
-            <div className="flex items-center justify-between mt-2 relative z-10">
-              {getSubInfo() && (
-                <span className="text-[10px] font-medium text-gray-500">
-                  {getSubInfo()}
-                </span>
+          {/* Excerpt */}
+          {(item.description || item.accroche) && (
+            <p className={s.cardExcerpt}>{item.description || item.accroche}</p>
+          )}
+
+          {/* Footer */}
+          <div className={s.cardFoot}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {item.datePublication && (
+                <time className={s.cardDate} dateTime={item.datePublication}>
+                  {formatDate(item.datePublication)}
+                </time>
               )}
               {item.note && (
-                <span className="flex items-center gap-0.5 text-[10px] font-semibold text-amber-500">
-                  <Star className="w-3 h-3" fill="currentColor" />
+                <span className={s.cardNote}>
+                  <IconStar className={s.cardNoteStar} />
                   {item.note}/5
                 </span>
               )}
-              {item.verticale?.nom && (
-                <span
-                  className="px-2 py-0.5 rounded-full text-[10px] font-medium"
-                  style={{
-                    backgroundColor: `${color}20`,
-                    color: color
-                  }}
-                >
-                  {item.verticale.nom}
-                </span>
-              )}
             </div>
+            <span className={s.cardCta}>{ctaLabel} &rarr;</span>
           </div>
         </div>
-      </Link>
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // CARD AVEC IMAGE - Design standard 16:9
-  // ═══════════════════════════════════════════════════════════════
-  return (
-    <Link to={getContentLink(item)} className="group block">
-      <div className="relative rounded-xl overflow-hidden bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
-        {/* Image 16:9 */}
-        <div className="relative aspect-video overflow-hidden">
-          <img
-            src={item.imageUrl}
-            alt={item.titre}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-          {/* Badge type en haut à gauche */}
-          <div className="absolute top-2 left-2">
-            <span
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-              style={{ backgroundColor: typeConfig?.color || color }}
-            >
-              <TypeIcon className="w-3 h-3" />
-              {getTypeLabel()}
-            </span>
-          </div>
-
-          {/* Badge catégorie en haut à droite */}
-          {item.verticale?.nom && (
-            <div className="absolute top-2 right-2">
-              <span
-                className="px-2 py-1 rounded-full text-[10px] font-semibold text-white"
-                style={{ backgroundColor: color }}
-              >
-                {item.verticale.nom}
-              </span>
-            </div>
-          )}
-
-          {/* Durée/Info en bas à droite */}
-          {getSubInfo() && (
-            <div className="absolute bottom-2 right-2">
-              <span className="px-2 py-1 rounded-md text-[10px] font-semibold bg-black/70 text-white">
-                {getSubInfo()}
-              </span>
-            </div>
-          )}
-
-          {/* Play button pour vidéos */}
-          {item.contentType === 'video' && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
-                <Play className="w-4 h-4 text-gray-900 ml-0.5" fill="currentColor" />
-              </div>
-            </div>
-          )}
-
-          {/* Coup de coeur pour recos */}
-          {item.coupDeCoeur && (
-            <div className="absolute bottom-2 left-2">
-              <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-rose-500 text-white flex items-center gap-1">
-                <Heart className="w-3 h-3" fill="currentColor" />
-              </span>
-            </div>
-          )}
-
-          {/* Note pour recos */}
-          {item.note && !item.coupDeCoeur && (
-            <div className="absolute bottom-2 left-2">
-              <span className="flex items-center gap-0.5 px-2 py-1 rounded-full text-[10px] font-bold bg-amber-500 text-white">
-                <Star className="w-3 h-3" fill="currentColor" />
-                {item.note}/5
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="p-3">
-          <h3 className="text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors leading-snug">
-            {item.titre}
-          </h3>
-          {item.contentType === 'reco' && item.auteur && (
-            <p className="text-xs text-gray-500 mt-1">{item.auteur}</p>
-          )}
-        </div>
-      </div>
-    </Link>
+      </a>
+    </article>
   );
-};
+}
 
-// ============ MAIN COMPONENT ============
-function BibliothequePage() {
+/* ------------------------------------------------------------------ */
+/*  Main component                                                     */
+/* ------------------------------------------------------------------ */
+
+export default function BibliothequePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
-  const [activeType, setActiveType] = useState<string>(searchParams.get('type') || 'all');
-  const [activeVerticale, setActiveVerticale] = useState<string | null>(searchParams.get('categorie') || null);
-  const [sortBy, setSortBy] = useState(searchParams.get('tri') || 'recent');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
 
   // Data states
   const [articles, setArticles] = useState<ContentItem[]>([]);
@@ -423,24 +403,71 @@ function BibliothequePage() {
   const [histoires, setHistoires] = useState<ContentItem[]>([]);
   const [verticales, setVerticales] = useState<Verticale[]>([]);
 
+  // Params from URL
+  const searchQuery = searchParams.get("q") || "";
+  const activeType = searchParams.get("type") || "all";
+  const activeVerticale = searchParams.get("categorie") || "";
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const [sortBy, setSortBy] = useState(searchParams.get("tri") || "recent");
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  // Set page background
+  useEffect(() => {
+    document.body.style.background = "var(--paper)";
+    document.body.style.color = "var(--ink)";
+    return () => {
+      document.body.style.background = "";
+      document.body.style.color = "";
+    };
+  }, []);
+
+  // Sync search input with URL
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
   // Fetch all data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [articlesData, videosData, recosData, histoiresData, verticalesData] = await Promise.all([
+        const [
+          articlesData,
+          videosData,
+          recosData,
+          histoiresData,
+          verticalesData,
+        ] = await Promise.all([
           sanityFetch<ExplorerArticle[]>(EXPLORER_ARTICLES_QUERY),
           sanityFetch<ExplorerVideo[]>(EXPLORER_VIDEOS_QUERY),
           sanityFetch<ExplorerReco[]>(EXPLORER_RECOS_QUERY),
           sanityFetch<ExplorerHistoire[]>(EXPLORER_HISTOIRES_QUERY),
           sanityFetch<ExplorerVerticale[]>(VERTICALES_QUERY),
         ]);
-
-        // Transform data with content type
-        setArticles((articlesData || []).map((a) => ({ ...a, contentType: 'article' as const })));
-        setVideos((videosData || []).map((v) => ({ ...v, contentType: 'video' as const })));
-        setRecos((recosData || []).map((r) => ({ ...r, contentType: 'reco' as const })));
-        setHistoires((histoiresData || []).map((h) => ({ ...h, contentType: 'histoire' as const })));
+        setArticles(
+          (articlesData || []).map((a) => ({
+            ...a,
+            contentType: "article" as const,
+          }))
+        );
+        setVideos(
+          (videosData || []).map((v) => ({
+            ...v,
+            contentType: "video" as const,
+          }))
+        );
+        setRecos(
+          (recosData || []).map((r) => ({
+            ...r,
+            contentType: "reco" as const,
+          }))
+        );
+        setHistoires(
+          (histoiresData || []).map((h) => ({
+            ...h,
+            contentType: "histoire" as const,
+          }))
+        );
         setVerticales(verticalesData || []);
       } catch {
         // Silent fail
@@ -451,527 +478,763 @@ function BibliothequePage() {
     fetchData();
   }, []);
 
+  // Stats
+  const stats = useMemo(
+    () => ({
+      total:
+        articles.length + videos.length + recos.length + histoires.length,
+      articles: articles.length,
+      videos: videos.length,
+      recos: recos.length,
+      histoires: histoires.length,
+    }),
+    [articles, videos, recos, histoires]
+  );
+
+  // Verticale counts (for sidebar)
+  const verticaleCounts = useMemo(() => {
+    const allItems = [...articles, ...videos, ...histoires];
+    const counts: Record<string, number> = {};
+    verticales.forEach((v) => {
+      counts[v.slug.current] = allItems.filter(
+        (item) => item.verticale?.slug === v.slug.current
+      ).length;
+    });
+    return counts;
+  }, [articles, videos, histoires, verticales]);
+
   // Combine and filter content
   const allContent = useMemo(() => {
     let content: ContentItem[] = [];
-
-    // Filter by type
-    if (activeType === 'all') {
+    if (activeType === "all") {
       content = [...articles, ...videos, ...recos, ...histoires];
-    } else if (activeType === 'article') {
+    } else if (activeType === "article") {
       content = [...articles];
-    } else if (activeType === 'video') {
+    } else if (activeType === "video") {
       content = [...videos];
-    } else if (activeType === 'reco') {
+    } else if (activeType === "reco") {
       content = [...recos];
-    } else if (activeType === 'histoire') {
+    } else if (activeType === "histoire") {
       content = [...histoires];
     }
 
     // Filter by verticale (only for types that have it)
-    if (activeVerticale && activeType !== 'reco') {
-      content = content.filter(item => item.verticale?.slug === activeVerticale);
+    if (activeVerticale && activeType !== "reco") {
+      content = content.filter(
+        (item) => item.verticale?.slug === activeVerticale
+      );
     }
 
     // Filter by search
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      content = content.filter(item =>
-        item.titre?.toLowerCase().includes(term) ||
-        item.description?.toLowerCase().includes(term) ||
-        item.accroche?.toLowerCase().includes(term)
+    if (searchQuery) {
+      const term = searchQuery.toLowerCase();
+      content = content.filter(
+        (item) =>
+          item.titre?.toLowerCase().includes(term) ||
+          item.description?.toLowerCase().includes(term) ||
+          item.accroche?.toLowerCase().includes(term)
       );
     }
 
     // Sort
-    if (sortBy === 'recent') {
-      content.sort((a, b) => new Date(b.datePublication || '').getTime() - new Date(a.datePublication || '').getTime());
-    } else if (sortBy === 'alpha') {
-      content.sort((a, b) => (a.titre || '').localeCompare(b.titre || ''));
-    } else if (sortBy === 'popular') {
+    if (sortBy === "recent") {
+      content.sort(
+        (a, b) =>
+          new Date(b.datePublication || "").getTime() -
+          new Date(a.datePublication || "").getTime()
+      );
+    } else if (sortBy === "alpha") {
+      content.sort((a, b) =>
+        (a.titre || "").localeCompare(b.titre || "", "fr")
+      );
+    } else if (sortBy === "popular") {
       content.sort((a, b) => (b.vues || 0) - (a.vues || 0));
     }
 
-    // Pour le mode "Tout" sans recherche ni filtre verticale, on applique le shuffle intelligent
-    if (activeType === 'all' && !searchTerm && !activeVerticale && sortBy === 'recent') {
-      // 1. Shuffle initial
+    // Smart shuffle for "Tout" with no filters
+    if (
+      activeType === "all" &&
+      !searchQuery &&
+      !activeVerticale &&
+      sortBy === "recent"
+    ) {
       content = shuffleArray(content);
-      // 2. Redistribue pour éviter 2 verticales consécutives
       content = distributeByVerticale(content);
-      // 3. Limite les histoires à MAX par page
-      content = limitHistoiresPerPage(content, ITEMS_PER_PAGE, MAX_HISTOIRES_PER_PAGE);
+      content = limitHistoiresPerPage(
+        content,
+        ITEMS_PER_PAGE,
+        MAX_HISTOIRES_PER_PAGE
+      );
     }
 
     return content;
-  }, [articles, videos, recos, histoires, activeType, activeVerticale, searchTerm, sortBy]);
+  }, [
+    articles,
+    videos,
+    recos,
+    histoires,
+    activeType,
+    activeVerticale,
+    searchQuery,
+    sortBy,
+  ]);
 
-  // Pagination calculation
+  // Pagination
   const totalPages = Math.ceil(allContent.length / ITEMS_PER_PAGE);
   const paginatedContent = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return allContent.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [allContent, currentPage]);
 
+  /* ── Handlers ── */
 
-  // Stats
-  const stats = useMemo(() => ({
-    total: articles.length + videos.length + recos.length + histoires.length,
-    articles: articles.length,
-    videos: videos.length,
-    recos: recos.length,
-    histoires: histoires.length,
-  }), [articles, videos, recos, histoires]);
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const p = new URLSearchParams(searchParams);
+      if (searchInput) p.set("q", searchInput);
+      else p.delete("q");
+      p.set("page", "1");
+      setSearchParams(p);
+    },
+    [searchInput, searchParams, setSearchParams]
+  );
 
-  // Handle type change
-  const handleTypeChange = (type: string) => {
-    setActiveType(type);
-    setActiveVerticale(null);
-    setCurrentPage(1);
-    const params = new URLSearchParams(searchParams);
-    if (type === 'all') {
-      params.delete('type');
-    } else {
-      params.set('type', type);
-    }
-    params.delete('categorie');
-    params.delete('page');
-    setSearchParams(params);
-  };
+  const handleTypeChange = useCallback(
+    (type: string) => {
+      const p = new URLSearchParams(searchParams);
+      if (type === "all") {
+        p.delete("type");
+      } else {
+        p.set("type", type);
+      }
+      p.delete("categorie");
+      p.delete("page");
+      setSearchParams(p);
+    },
+    [searchParams, setSearchParams]
+  );
 
-  // Handle verticale change
-  const handleVerticaleChange = (slug: string | null) => {
-    setActiveVerticale(slug);
-    const params = new URLSearchParams(searchParams);
-    if (slug) {
-      params.set('categorie', slug);
-    } else {
-      params.delete('categorie');
-    }
-    params.delete('page');
-    setSearchParams(params);
-  };
+  const handleVerticaleChange = useCallback(
+    (slug: string) => {
+      const p = new URLSearchParams(searchParams);
+      if (activeVerticale === slug) {
+        p.delete("categorie");
+      } else {
+        p.set("categorie", slug);
+      }
+      p.delete("page");
+      setSearchParams(p);
+    },
+    [activeVerticale, searchParams, setSearchParams]
+  );
 
-  // Handle sort change
-  const handleSortChange = (sort: string) => {
-    setSortBy(sort);
-    const params = new URLSearchParams(searchParams);
-    if (sort === 'recent') {
-      params.delete('tri');
-    } else {
-      params.set('tri', sort);
-    }
-    params.delete('page');
-    setSearchParams(params);
-  };
+  const handleSortChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const val = e.target.value;
+      setSortBy(val);
+      const p = new URLSearchParams(searchParams);
+      if (val === "recent") p.delete("tri");
+      else p.set("tri", val);
+      p.delete("page");
+      setSearchParams(p);
+    },
+    [searchParams, setSearchParams]
+  );
 
-  // Handle search change
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
-    const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set('q', term);
-    } else {
-      params.delete('q');
-    }
-    params.delete('page');
-    setSearchParams(params);
-  };
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const p = new URLSearchParams(searchParams);
+      if (page === 1) p.delete("page");
+      else p.set("page", page.toString());
+      setSearchParams(p);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [searchParams, setSearchParams]
+  );
 
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    const params = new URLSearchParams(searchParams);
-    if (page === 1) {
-      params.delete('page');
-    } else {
-      params.set('page', page.toString());
-    }
-    setSearchParams(params);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const clearFilters = useCallback(() => {
+    setSortBy("recent");
+    setSearchInput("");
+    setSearchParams({});
+  }, [setSearchParams]);
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-        </div>
-        <Footer />
-      </>
-    );
-  }
+  const getVerticaleColor = useCallback(
+    (slug: string) => {
+      const v = verticales.find((v) => v.slug.current === slug);
+      return v?.couleurDominante || "#6B6B6B";
+    },
+    [verticales]
+  );
+
+  const hasActiveFilters =
+    searchQuery || activeType !== "all" || activeVerticale;
+
+  /* ── Render ── */
 
   return (
     <>
       <SEO
         title="Explorer - Origines Media"
-        description="Explorez tous nos contenus : articles, vidéos, séries, recommandations et histoires inspirantes."
+        description="Explorez tous nos contenus : articles, vidéos, recommandations et histoires inspirantes."
       />
-      <Navbar />
+      <SiteHeader />
 
-      <div className="min-h-screen bg-gray-50">
-        {/* ════════════════════════════════════════════════════════════ */}
-        {/* HEADER */}
-        {/* ════════════════════════════════════════════════════════════ */}
-        <div className="bg-white border-b border-gray-100 pt-[104px]">
-          <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
-            {/* Title */}
-            <div className="text-center mb-6">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                Explorer
-              </h1>
-              <p className="text-gray-500">
-                Tous nos contenus au même endroit
-              </p>
+      <main id="main" role="main">
+        <div className="v2-container">
+          <section className={s.page}>
+            {/* Chapter mark */}
+            <div className={`${s.chapterMark} mono`}>
+              <span className={s.cNum}>Biblioth&egrave;que</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>Explorer</span>
             </div>
 
-            {/* Search bar */}
-            <div className="max-w-xl mx-auto mb-6">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            {/* Section header */}
+            <header className={s.sectionHead}>
+              <span className={s.sectionKicker}>
+                <span className={s.sectionKickerDot} aria-hidden="true" />
+                Explorer &middot; {stats.total} contenus
+              </span>
+              <h1 className={s.sectionTitle}>
+                Tous nos <em>contenus.</em>
+              </h1>
+              <p className={s.sectionDeck}>
+                Articles, vid&eacute;os, recommandations et histoires
+                inspirantes. Filtrez par type, cat&eacute;gorie, triez comme
+                vous voulez.
+              </p>
+
+              {/* Stats */}
+              <div className={s.statsBar}>
+                {CONTENT_TYPES.filter((t) => t.id !== "all").map((t) => {
+                  const count =
+                    t.id === "article"
+                      ? stats.articles
+                      : t.id === "video"
+                      ? stats.videos
+                      : t.id === "reco"
+                      ? stats.recos
+                      : stats.histoires;
+                  return (
+                    <span key={t.id} className={s.statItem}>
+                      <span
+                        className={s.statDot}
+                        style={
+                          { "--stat-color": t.color } as React.CSSProperties
+                        }
+                      />
+                      {count} {t.label.toLowerCase()}
+                    </span>
+                  );
+                })}
+              </div>
+            </header>
+
+            {/* Content type tabs */}
+            <div className={s.typeTabs}>
+              {CONTENT_TYPES.map((t) => {
+                const isActive = activeType === t.id;
+                const Icon = TYPE_ICONS[t.id] || IconGrid;
+                const count =
+                  t.id === "all"
+                    ? stats.total
+                    : t.id === "article"
+                    ? stats.articles
+                    : t.id === "video"
+                    ? stats.videos
+                    : t.id === "reco"
+                    ? stats.recos
+                    : stats.histoires;
+
+                return (
+                  <button
+                    key={t.id}
+                    className={isActive ? s.typeTabActive : s.typeTab}
+                    onClick={() => handleTypeChange(t.id)}
+                  >
+                    <Icon className={s.typeTabIcon} />
+                    <span>{t.label}</span>
+                    <span className={s.typeTabCount}>{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Toolbar: search + sort */}
+            <div className={s.toolbar}>
+              <form onSubmit={handleSearch} className={s.searchWrap}>
+                <svg
+                  className={s.searchIcon}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
                 <input
                   type="text"
-                  placeholder="Rechercher un contenu..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 text-base bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-100 transition-all"
+                  placeholder="Rechercher un contenu…"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className={s.searchInput}
                 />
-                {searchTerm && (
+                {searchInput && (
                   <button
-                    onClick={() => handleSearchChange('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                    type="button"
+                    className={s.searchClear}
+                    onClick={() => {
+                      setSearchInput("");
+                      const p = new URLSearchParams(searchParams);
+                      p.delete("q");
+                      p.set("page", "1");
+                      setSearchParams(p);
+                    }}
                   >
-                    <X className="w-4 h-4" />
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      width="12"
+                      height="12"
+                    >
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
                   </button>
+                )}
+              </form>
+
+              {/* Mobile filter toggle */}
+              <button
+                type="button"
+                className={s.mobileFilterBtn}
+                onClick={() => setShowMobileFilters((v) => !v)}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="M4 21V14M4 10V3M12 21V12M12 8V3M20 21V16M20 12V3M1 14h6M9 8h6M17 16h6" />
+                </svg>
+                Filtres
+              </button>
+
+              <div className={s.sortWrap}>
+                <select
+                  className={s.sortSelect}
+                  value={sortBy}
+                  onChange={handleSortChange}
+                  aria-label="Trier par"
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  className={s.sortChevron}
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="M4 6l4 4 4-4" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Active filter chips */}
+            {hasActiveFilters && (
+              <div className={s.activeFilters}>
+                <span className={`${s.activeLabel} mono`}>Filtres :</span>
+                {activeType !== "all" && (
+                  <button
+                    className={s.activeChip}
+                    style={
+                      {
+                        "--chip-color":
+                          CONTENT_TYPES.find((t) => t.id === activeType)
+                            ?.color || "#6B7280",
+                      } as React.CSSProperties
+                    }
+                    onClick={() => handleTypeChange("all")}
+                  >
+                    <span className={s.activeChipDot} />
+                    {CONTENT_TYPES.find((t) => t.id === activeType)?.label}
+                    <span className={s.activeChipX}>&times;</span>
+                  </button>
+                )}
+                {activeVerticale && (
+                  <button
+                    className={s.activeChip}
+                    style={
+                      {
+                        "--chip-color": getVerticaleColor(activeVerticale),
+                      } as React.CSSProperties
+                    }
+                    onClick={() => handleVerticaleChange(activeVerticale)}
+                  >
+                    <span className={s.activeChipDot} />
+                    {verticales.find(
+                      (v) => v.slug.current === activeVerticale
+                    )?.nom || activeVerticale}
+                    <span className={s.activeChipX}>&times;</span>
+                  </button>
+                )}
+                {searchQuery && (
+                  <button className={s.activeChip} onClick={clearFilters}>
+                    &laquo;&nbsp;{searchQuery}&nbsp;&raquo;
+                    <span className={s.activeChipX}>&times;</span>
+                  </button>
+                )}
+                <button className={s.clearAll} onClick={clearFilters}>
+                  Tout effacer
+                </button>
+              </div>
+            )}
+
+            {/* Layout: sidebar + grid */}
+            <div className={s.layout}>
+              {/* Sidebar — desktop only */}
+              {activeType !== "reco" && (
+                <aside className={s.sidebar}>
+                  <div className={s.filterGroup}>
+                    <h3 className={`${s.filterGroupTitle} mono`}>
+                      Cat&eacute;gorie
+                    </h3>
+                    <div className={s.filterList}>
+                      <button
+                        className={
+                          !activeVerticale ? s.filterBtnActive : s.filterBtn
+                        }
+                        onClick={() => {
+                          const p = new URLSearchParams(searchParams);
+                          p.delete("categorie");
+                          p.delete("page");
+                          setSearchParams(p);
+                        }}
+                      >
+                        <span className={s.filterDot} />
+                        Toutes
+                        <span className={s.filterCount}>{allContent.length}</span>
+                      </button>
+                      {verticales
+                        .filter((v) => verticaleCounts[v.slug.current] > 0)
+                        .map((v) => (
+                          <button
+                            key={v._id}
+                            className={
+                              activeVerticale === v.slug.current
+                                ? s.filterBtnActive
+                                : s.filterBtn
+                            }
+                            style={
+                              {
+                                "--chip-color": v.couleurDominante,
+                              } as React.CSSProperties
+                            }
+                            onClick={() =>
+                              handleVerticaleChange(v.slug.current)
+                            }
+                          >
+                            <span className={s.filterDot} />
+                            {v.nom}
+                            <span className={s.filterCount}>
+                              {verticaleCounts[v.slug.current]}
+                            </span>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                </aside>
+              )}
+
+              {/* Content */}
+              <div className={s.content}>
+                <div className={s.resultBar}>
+                  <span className={`${s.resultCount} mono`}>
+                    {allContent.length > ITEMS_PER_PAGE ? (
+                      <>
+                        {(currentPage - 1) * ITEMS_PER_PAGE + 1}&ndash;
+                        {Math.min(
+                          currentPage * ITEMS_PER_PAGE,
+                          allContent.length
+                        )}{" "}
+                        sur {allContent.length} r&eacute;sultat
+                        {allContent.length > 1 ? "s" : ""}
+                      </>
+                    ) : (
+                      <>
+                        {allContent.length} r&eacute;sultat
+                        {allContent.length > 1 ? "s" : ""}
+                      </>
+                    )}
+                    {searchQuery && ` pour « ${searchQuery} »`}
+                    {activeVerticale &&
+                      ` dans ${
+                        verticales.find(
+                          (v) => v.slug.current === activeVerticale
+                        )?.nom
+                      }`}
+                  </span>
+                </div>
+
+                {loading ? (
+                  <div className={s.skeleton}>
+                    {Array.from({ length: 9 }).map((_, i) => (
+                      <div key={i} className={s.skelCard}>
+                        <div className={s.skelImg} />
+                        <div className={s.skelBody}>
+                          <div className={s.skelLineTiny} />
+                          <div className={s.skelLine} />
+                          <div className={s.skelLineShort} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : paginatedContent.length > 0 ? (
+                  <>
+                    <div className={s.grid}>
+                      {paginatedContent.map((item) => (
+                        <ContentCard
+                          key={`${item.contentType}-${item._id}`}
+                          item={item}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <nav className={s.pagination} aria-label="Pagination">
+                        <button
+                          className={s.pageBtn}
+                          disabled={currentPage === 1}
+                          onClick={() =>
+                            handlePageChange(Math.max(1, currentPage - 1))
+                          }
+                        >
+                          &larr; Pr&eacute;c.
+                        </button>
+
+                        <div className={s.pageNums}>
+                          {Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1
+                          ).map((page) => {
+                            if (
+                              page === 1 ||
+                              page === totalPages ||
+                              (page >= currentPage - 1 &&
+                                page <= currentPage + 1)
+                            ) {
+                              return (
+                                <button
+                                  key={page}
+                                  className={`${s.pageNum} ${
+                                    page === currentPage
+                                      ? s.pageNumActive
+                                      : ""
+                                  }`}
+                                  onClick={() => handlePageChange(page)}
+                                >
+                                  {page}
+                                </button>
+                              );
+                            } else if (
+                              page === currentPage - 2 ||
+                              page === currentPage + 2
+                            ) {
+                              return (
+                                <span
+                                  key={page}
+                                  className={s.pageEllipsis}
+                                >
+                                  &hellip;
+                                </span>
+                              );
+                            }
+                            return null;
+                          })}
+                        </div>
+
+                        <button
+                          className={s.pageBtn}
+                          disabled={currentPage === totalPages}
+                          onClick={() =>
+                            handlePageChange(
+                              Math.min(totalPages, currentPage + 1)
+                            )
+                          }
+                        >
+                          Suiv. &rarr;
+                        </button>
+                      </nav>
+                    )}
+
+                    {totalPages > 1 && (
+                      <p className={s.pageInfo}>
+                        Page {currentPage} sur {totalPages}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className={s.empty}>
+                    <svg
+                      className={s.emptyIcon}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      width="48"
+                      height="48"
+                    >
+                      <circle cx="11" cy="11" r="7" />
+                      <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <h3 className={s.emptyTitle}>
+                      Aucun r&eacute;sultat
+                    </h3>
+                    <p className={s.emptyText}>
+                      {searchQuery
+                        ? `Aucun résultat pour « ${searchQuery} »`
+                        : "Essayez de modifier vos filtres ou votre recherche."}
+                    </p>
+                    <button className={s.emptyCta} onClick={clearFilters}>
+                      R&eacute;initialiser &rarr;
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
-
-            {/* Stats */}
-            <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                {stats.total} contenus
-              </span>
-              <span>•</span>
-              <span>{verticales.length} catégories</span>
-            </div>
-          </div>
+          </section>
         </div>
+      </main>
 
-        {/* ════════════════════════════════════════════════════════════ */}
-        {/* FILTERS */}
-        {/* ════════════════════════════════════════════════════════════ */}
-        <div className="bg-white border-b border-gray-100">
-          <div className="max-w-6xl mx-auto px-4">
-            {/* Content Type Filters */}
-            <div className="py-4 overflow-x-auto scrollbar-hide">
-              <div className="flex items-center gap-2 min-w-max">
-                {CONTENT_TYPES.map((type) => {
-                  const Icon = type.icon;
-                  const isActive = activeType === type.id;
-                  const count = type.id === 'all' ? stats.total :
-                    type.id === 'article' ? stats.articles :
-                    type.id === 'video' ? stats.videos :
-                    type.id === 'reco' ? stats.recos :
-                    type.id === 'histoire' ? stats.histoires : 0;
-
-                  return (
-                    <button
-                      key={type.id}
-                      onClick={() => handleTypeChange(type.id)}
-                      className={`
-                        flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300
-                        ${isActive
-                          ? 'text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }
-                      `}
-                      style={{
-                        backgroundColor: isActive ? type.color : undefined,
-                        boxShadow: isActive ? `0 4px 14px -3px ${type.color}50` : undefined,
-                      }}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{type.label}</span>
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/20' : 'bg-gray-200'}`}>
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-
-                {/* Sort dropdown - Desktop */}
-                <div className="hidden md:block ml-auto">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                    className="px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer"
-                  >
-                    {SORT_OPTIONS.map(option => (
-                      <option key={option.id} value={option.id}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Mobile filter button */}
-                <button
-                  onClick={() => setShowMobileFilters(!showMobileFilters)}
-                  className="md:hidden ml-auto p-2 rounded-full bg-gray-100 text-gray-600"
+      {/* Mobile Filters Drawer */}
+      {showMobileFilters && (
+        <div
+          className={`${s.mobileFilterDrawer} ${s.mobileFilterDrawerOpen}`}
+        >
+          <div
+            className={s.mobileFilterOverlay}
+            onClick={() => setShowMobileFilters(false)}
+          />
+          <div className={s.mobileFilterPanel}>
+            <div className={s.mobileFilterHeader}>
+              <h3 className={s.mobileFilterTitle}>Filtres</h3>
+              <button
+                className={s.mobileFilterClose}
+                onClick={() => setShowMobileFilters(false)}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  width="16"
+                  height="16"
                 >
-                  <SlidersHorizontal className="w-4 h-4" />
-                </button>
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Sort */}
+            <div className={s.filterGroup}>
+              <h3 className={`${s.filterGroupTitle} mono`}>Trier par</h3>
+              <div className={s.filterList}>
+                {SORT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    className={
+                      sortBy === opt.id ? s.filterBtnActive : s.filterBtn
+                    }
+                    onClick={() => {
+                      setSortBy(opt.id);
+                      const p = new URLSearchParams(searchParams);
+                      if (opt.id === "recent") p.delete("tri");
+                      else p.set("tri", opt.id);
+                      p.delete("page");
+                      setSearchParams(p);
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Category Filters (only show for content types that have categories) */}
-            {activeType !== 'reco' && (
-              <div className="pb-4 overflow-x-auto scrollbar-hide border-t border-gray-50 pt-3">
-                <div className="flex items-center gap-2 min-w-max">
+            {/* Categories */}
+            {activeType !== "reco" && (
+              <div className={s.filterGroup}>
+                <h3 className={`${s.filterGroupTitle} mono`}>
+                  Cat&eacute;gorie
+                </h3>
+                <div className={s.filterList}>
                   <button
-                    onClick={() => handleVerticaleChange(null)}
-                    className={`
-                      px-3 py-1.5 rounded-full text-xs font-semibold transition-all
-                      ${!activeVerticale
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }
-                    `}
+                    className={
+                      !activeVerticale ? s.filterBtnActive : s.filterBtn
+                    }
+                    onClick={() => {
+                      const p = new URLSearchParams(searchParams);
+                      p.delete("categorie");
+                      p.delete("page");
+                      setSearchParams(p);
+                      setShowMobileFilters(false);
+                    }}
                   >
-                    Toutes catégories
+                    <span className={s.filterDot} />
+                    Toutes
                   </button>
-                  {verticales.map((v) => {
-                    const isActive = activeVerticale === v.slug.current;
-                    return (
+                  {verticales
+                    .filter((v) => verticaleCounts[v.slug.current] > 0)
+                    .map((v) => (
                       <button
                         key={v._id}
-                        onClick={() => handleVerticaleChange(v.slug.current)}
-                        className={`
-                          px-3 py-1.5 rounded-full text-xs font-semibold transition-all
-                          ${isActive ? 'text-white' : 'text-gray-600 hover:opacity-80'}
-                        `}
-                        style={{
-                          backgroundColor: isActive ? v.couleurDominante : `${v.couleurDominante}15`,
-                          color: isActive ? 'white' : v.couleurDominante,
-                          border: `1.5px solid ${v.couleurDominante}${isActive ? '' : '40'}`,
+                        className={
+                          activeVerticale === v.slug.current
+                            ? s.filterBtnActive
+                            : s.filterBtn
+                        }
+                        style={
+                          {
+                            "--chip-color": v.couleurDominante,
+                          } as React.CSSProperties
+                        }
+                        onClick={() => {
+                          handleVerticaleChange(v.slug.current);
+                          setShowMobileFilters(false);
                         }}
                       >
+                        <span className={s.filterDot} />
                         {v.nom}
+                        <span className={s.filterCount}>
+                          {verticaleCounts[v.slug.current]}
+                        </span>
                       </button>
-                    );
-                  })}
+                    ))}
                 </div>
               </div>
             )}
-          </div>
-        </div>
 
-        {/* ════════════════════════════════════════════════════════════ */}
-        {/* CONTENT GRID */}
-        {/* ════════════════════════════════════════════════════════════ */}
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Results count */}
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-gray-500">
-              {allContent.length > ITEMS_PER_PAGE ? (
-                <>
-                  {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, allContent.length)} sur {allContent.length} résultat{allContent.length > 1 ? 's' : ''}
-                </>
-              ) : (
-                <>
-                  {allContent.length} résultat{allContent.length > 1 ? 's' : ''}
-                </>
-              )}
-              {searchTerm && ` pour "${searchTerm}"`}
-              {activeVerticale && ` dans ${verticales.find(v => v.slug.current === activeVerticale)?.nom}`}
-            </p>
-          </div>
-
-          {/* Grid */}
-          {allContent.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <AnimatePresence mode="popLayout">
-                  {paginatedContent.map((item, index) => (
-                    <motion.div
-                      key={`${item.contentType}-${item._id}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
-                      <ContentCard item={item} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-10">
-                  {/* Previous Button */}
-                  <button
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className={`
-                      flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all
-                      ${currentPage === 1
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }
-                    `}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    <span className="hidden sm:inline">Précédent</span>
-                  </button>
-
-                  {/* Page Numbers */}
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                      // Show first, last, current and adjacent pages
-                      const showPage = page === 1 ||
-                        page === totalPages ||
-                        Math.abs(page - currentPage) <= 1;
-
-                      // Show ellipsis
-                      const showEllipsisBefore = page === currentPage - 2 && currentPage > 3;
-                      const showEllipsisAfter = page === currentPage + 2 && currentPage < totalPages - 2;
-
-                      if (showEllipsisBefore || showEllipsisAfter) {
-                        return (
-                          <span key={page} className="px-2 text-gray-400">
-                            ...
-                          </span>
-                        );
-                      }
-
-                      if (!showPage) return null;
-
-                      return (
-                        <button
-                          key={page}
-                          onClick={() => handlePageChange(page)}
-                          className={`
-                            w-10 h-10 rounded-full text-sm font-semibold transition-all
-                            ${currentPage === page
-                              ? 'bg-gray-900 text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }
-                          `}
-                        >
-                          {page}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Next Button */}
-                  <button
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className={`
-                      flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all
-                      ${currentPage === totalPages
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }
-                    `}
-                  >
-                    <span className="hidden sm:inline">Suivant</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
-
-              {/* Page info */}
-              {totalPages > 1 && (
-                <p className="text-center text-sm text-gray-500 mt-4">
-                  Page {currentPage} sur {totalPages}
-                </p>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-16">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                <Search className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Aucun résultat
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Essayez de modifier vos filtres ou votre recherche
-              </p>
-              <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setActiveType('all');
-                  setActiveVerticale(null);
-                  setSortBy('recent');
-                  setCurrentPage(1);
-                  setSearchParams(new URLSearchParams());
-                }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-              >
-                Réinitialiser les filtres
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile Filters Modal */}
-      <AnimatePresence>
-        {showMobileFilters && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 md:hidden"
-          >
-            <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilters(false)} />
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6"
+            <button
+              className={s.mobileFilterApply}
+              onClick={() => setShowMobileFilters(false)}
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">Filtres</h3>
-                <button onClick={() => setShowMobileFilters(false)}>
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              Appliquer
+            </button>
+          </div>
+        </div>
+      )}
 
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Trier par</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                    className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:border-gray-300"
-                  >
-                    {SORT_OPTIONS.map(option => (
-                      <option key={option.id} value={option.id}>{option.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setShowMobileFilters(false)}
-                className="w-full mt-6 px-4 py-3 bg-gray-900 text-white font-semibold rounded-xl"
-              >
-                Appliquer
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <Footer />
+      <Footer2 />
+      <ScrollToTopV2 />
     </>
   );
 }
-
-export default BibliothequePage;

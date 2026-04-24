@@ -8,6 +8,9 @@
     },
     "api/auth/verify.ts": {
       "maxDuration": 5
+    },
+    "api/subscribe.ts": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
@@ -107,6 +110,15 @@
     },
     {
       "source": "/api/auth/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/subscribe",
       "headers": [
         {
           "key": "Cache-Control",

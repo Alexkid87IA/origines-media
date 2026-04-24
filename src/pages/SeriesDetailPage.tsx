@@ -1,13 +1,15 @@
 // src/pages/SeriesDetailPage.tsx
-// Page de détail d'une série avec hero cinématique
+// V2 — Angular cinematic design
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Play, Clock, ArrowLeft, ChevronRight } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import SiteHeader from '@/components/SiteHeader/SiteHeader';
+import Footer2 from '@/components/Footer2/Footer2';
+import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
+import s from './SeriesDetailPage.module.css';
+
+/* ── Types ── */
 
 interface Episode {
   id: string;
@@ -31,7 +33,68 @@ interface Serie {
   episodes: Episode[];
 }
 
-// Données des séries (à remplacer par Sanity)
+/* ── Inline SVG icons ── */
+
+function ArrowLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 12H5" />
+      <path d="m12 19-7-7 7-7" />
+    </svg>
+  );
+}
+
+function PlayIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <polygon points="6,3 20,12 6,21" />
+    </svg>
+  );
+}
+
+function ClockIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+function ChevronRightIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  );
+}
+
+/* ── Static data (to be replaced by Sanity) ── */
+
 const seriesData: Serie[] = [
   {
     slug: 'il-etait-une-fois',
@@ -120,7 +183,9 @@ const seriesData: Serie[] = [
   },
 ];
 
-const SeriesDetailPage: React.FC = () => {
+/* ── Component ── */
+
+export default function SeriesDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [serie, setSerie] = useState<Serie | null>(null);
   const [loading, setLoading] = useState(true);
@@ -132,27 +197,33 @@ const SeriesDetailPage: React.FC = () => {
     setLoading(false);
   }, [slug]);
 
+  /* ── Loading state ── */
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-white/50 text-lg">Chargement...</div>
+      <div className={s.loadingWrap}>
+        <div className={s.loadingText}>Chargement...</div>
       </div>
     );
   }
 
+  /* ── Not found state ── */
+
   if (!serie) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center">
-        <h1 className="text-white text-2xl font-bold mb-4">Série non trouvée</h1>
-        <Link to="/series" className="text-white/60 hover:text-white transition-colors">
+      <div className={s.notFoundWrap}>
+        <h1 className={s.notFoundTitle}>Série non trouvée</h1>
+        <Link to="/series" className={s.notFoundLink}>
           Retour aux séries
         </Link>
       </div>
     );
   }
 
+  /* ── Main render ── */
+
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className={s.page}>
       <SEO
         title={serie.titre}
         description={serie.description}
@@ -161,87 +232,61 @@ const SeriesDetailPage: React.FC = () => {
         breadcrumbs={[
           { name: 'Accueil', url: '/' },
           { name: 'Séries', url: '/series' },
-          { name: serie.titre, url: `/series/${serie.slug}` }
+          { name: serie.titre, url: `/series/${serie.slug}` },
         ]}
       />
 
-      <Navbar />
+      <SiteHeader />
 
       <main>
-        {/* Hero Section - Style cinématique */}
-        <section className="relative min-h-[55vh] overflow-hidden bg-gray-950">
-          {/* Image de fond */}
-          <div className="absolute inset-0">
+        {/* ══ Hero — cinematic ══ */}
+        <section className={s.hero}>
+          {/* Background image */}
+          <div className={s.heroBg}>
             <img
               src={serie.imageUrl}
               alt={`Image de couverture : ${serie.titre || 'Série'}`}
-              className="w-full h-full object-cover"
+              className={s.heroBgImg}
             />
-            {/* Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/80 to-gray-950/40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/50 to-transparent" />
+            <div className={s.heroOverlayH} />
+            <div className={s.heroOverlayV} />
           </div>
 
-          {/* Glow coloré */}
-          <div
-            className="absolute inset-0 pointer-events-none opacity-20"
-            style={{
-              background: `radial-gradient(ellipse at 70% 50%, ${serie.couleur}40 0%, transparent 60%)`
-            }}
-          />
+          {/* Content */}
+          <div className={s.heroContent}>
+            {/* Back link */}
+            <Link to="/series" className={s.backLink}>
+              <ArrowLeftIcon className={s.backLinkIcon} />
+              <span>Toutes les séries</span>
+            </Link>
 
-          {/* Contenu */}
-          <div className="relative max-w-6xl mx-auto px-6 pt-6 pb-16 lg:pt-8 lg:pb-20">
-            {/* Retour */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Link
-                to="/series"
-                className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-6"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm">Toutes les séries</span>
-              </Link>
-            </motion.div>
-
-            <div className="grid lg:grid-cols-[1fr,auto] gap-12 items-center">
-              {/* Gauche - Infos */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                {/* Badge */}
-                <div className="flex items-center gap-3 mb-6">
+            <div className={s.heroGrid}>
+              {/* Left — info */}
+              <div>
+                {/* Kicker */}
+                <div className={s.heroKicker}>
                   <span
-                    className="text-sm font-bold tracking-wider"
+                    className={s.heroKickerMark}
                     style={{ color: serie.couleur }}
                   >
                     O
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
-                    Série Origines
-                  </span>
+                  <span className={s.heroKickerLabel}>Série Origines</span>
                 </div>
 
-                {/* Titre */}
-                <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
-                  {serie.titre}
-                </h1>
+                {/* Title */}
+                <h1 className={s.heroTitle}>{serie.titre}</h1>
 
-                {/* Métadonnées */}
-                <div className="flex items-center gap-4 mb-6 text-sm">
-                  <span className="text-white/70 font-medium">
+                {/* Meta */}
+                <div className={s.heroMeta}>
+                  <span className={s.heroMetaCount}>
                     {serie.nombreEpisodes} épisodes
                   </span>
-                  <span className="w-1 h-1 rounded-full bg-white/30" />
-                  <span className="text-white/50">Série documentaire</span>
-                  <span className="w-1 h-1 rounded-full bg-white/30" />
+                  <span className={s.heroMetaDot} />
+                  <span className={s.heroMetaType}>Série documentaire</span>
+                  <span className={s.heroMetaDot} />
                   <span
-                    className="px-2 py-0.5 text-xs font-bold rounded"
+                    className={s.heroMetaBadge}
                     style={{ backgroundColor: serie.couleur }}
                   >
                     HD
@@ -249,153 +294,94 @@ const SeriesDetailPage: React.FC = () => {
                 </div>
 
                 {/* Description */}
-                <p className="text-lg text-white/70 leading-relaxed mb-8 max-w-xl">
-                  {serie.descriptionLongue}
-                </p>
+                <p className={s.heroDesc}>{serie.descriptionLongue}</p>
 
                 {/* CTA */}
-                <div className="flex items-center gap-4">
-                  <button
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 font-bold rounded-lg hover:bg-white/90 transition-all"
-                  >
-                    <Play className="w-5 h-5 fill-current" />
-                    Regarder
-                  </button>
+                <button className={s.heroCta}>
+                  <PlayIcon className={s.heroCtaIcon} />
+                  Regarder
+                </button>
+              </div>
+
+              {/* Right — poster */}
+              <div className={s.posterWrap}>
+                <div className={s.posterFrame}>
+                  <img
+                    src={serie.posterUrl}
+                    alt={serie.titre}
+                    className={s.posterImg}
+                  />
                 </div>
-              </motion.div>
-
-              {/* Droite - Affiche avec glassmorphism */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative hidden lg:block"
-              >
-                {/* Glow coloré derrière */}
-                <div
-                  className="absolute -inset-8 blur-3xl opacity-40 rounded-3xl"
-                  style={{ backgroundColor: serie.couleur }}
-                />
-
-                {/* Affiche avec glassmorphism */}
-                <div
-                  className="relative w-[280px] rounded-xl p-[2px]"
-                  style={{
-                    background: 'linear-gradient(145deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05))',
-                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2)',
-                  }}
-                >
-                  <div className="relative w-full rounded-[10px] overflow-hidden bg-black">
-                    <img
-                      src={serie.posterUrl}
-                      alt={serie.titre}
-                      className="w-full h-auto"
-                    />
-
-                    {/* Reflet subtil */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
-                  </div>
-                </div>
-
-                {/* Ombre portée */}
-                <div className="absolute -bottom-4 left-8 right-8 h-12 bg-black/40 blur-2xl rounded-full" />
-              </motion.div>
+                <div className={s.posterShadow} />
+              </div>
             </div>
           </div>
-
         </section>
 
-        {/* Liste des épisodes */}
-        <section className="py-16 bg-white">
-          <div className="max-w-5xl mx-auto px-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              Tous les épisodes
-            </h2>
+        {/* ══ Episodes list ══ */}
+        <section className={s.episodes}>
+          <div className={s.inner}>
+            <h2 className={s.episodesTitle}>Tous les épisodes</h2>
 
-            <div className="space-y-4">
-              {serie.episodes.map((episode, index) => (
-                <motion.div
-                  key={episode.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group"
-                >
+            <div className={s.episodesList}>
+              {serie.episodes.map((episode) => (
+                <div key={episode.id} className={s.episodeCard}>
+                  {/* Number */}
                   <div
-                    className="relative rounded-2xl p-[1px] transition-all duration-300 group-hover:-translate-y-1"
+                    className={s.episodeNum}
                     style={{
-                      background: 'linear-gradient(145deg, rgba(0,0,0,0.1), rgba(0,0,0,0.02))',
+                      backgroundColor: `${serie.couleur}15`,
+                      color: serie.couleur,
                     }}
                   >
-                    <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-[15px] group-hover:bg-white transition-colors">
-                      {/* Numéro */}
+                    {episode.numero}
+                  </div>
+
+                  {/* Thumbnail */}
+                  <div className={s.episodeThumb}>
+                    <img
+                      src={episode.imageUrl}
+                      alt={episode.titre}
+                      className={s.episodeThumbImg}
+                    />
+                    <div className={s.episodeThumbOverlay}>
                       <div
-                        className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg"
-                        style={{
-                          backgroundColor: `${serie.couleur}15`,
-                          color: serie.couleur,
-                        }}
+                        className={s.episodePlayBtn}
+                        style={{ backgroundColor: serie.couleur }}
                       >
-                        {episode.numero}
-                      </div>
-
-                      {/* Thumbnail */}
-                      <div className="relative flex-shrink-0 w-40 h-24 rounded-lg overflow-hidden">
-                        <img
-                          src={episode.imageUrl}
-                          alt={episode.titre}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                          <div
-                            className="w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                            style={{ backgroundColor: serie.couleur }}
-                          >
-                            <Play className="w-4 h-4 text-white fill-white ml-0.5" />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Infos */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-gray-900 mb-1 group-hover:text-gray-700 transition-colors">
-                          {episode.titre}
-                        </h3>
-                        <p className="text-sm text-gray-500 line-clamp-1">
-                          {episode.description}
-                        </p>
-                      </div>
-
-                      {/* Durée */}
-                      <div className="flex items-center gap-2 text-gray-400 text-sm">
-                        <Clock className="w-4 h-4" />
-                        <span>{episode.duree}</span>
-                      </div>
-
-                      {/* Flèche */}
-                      <div
-                        className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                        style={{
-                          backgroundColor: `${serie.couleur}10`,
-                        }}
-                      >
-                        <ChevronRight
-                          className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-0.5"
-                          style={{ color: serie.couleur }}
-                        />
+                        <PlayIcon className={s.episodePlayIcon} />
                       </div>
                     </div>
                   </div>
-                </motion.div>
+
+                  {/* Info */}
+                  <div className={s.episodeInfo}>
+                    <h3 className={s.episodeInfoTitle}>{episode.titre}</h3>
+                    <p className={s.episodeInfoDesc}>{episode.description}</p>
+                  </div>
+
+                  {/* Duration */}
+                  <div className={s.episodeDuration}>
+                    <ClockIcon className={s.episodeDurationIcon} />
+                    <span>{episode.duree}</span>
+                  </div>
+
+                  {/* Arrow */}
+                  <div
+                    className={s.episodeArrow}
+                    style={{ color: serie.couleur }}
+                  >
+                    <ChevronRightIcon className={s.episodeArrowIcon} />
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
       </main>
 
-      <Footer />
+      <Footer2 />
+      <ScrollToTopV2 />
     </div>
   );
-};
-
-export default SeriesDetailPage;
+}

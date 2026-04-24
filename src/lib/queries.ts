@@ -3,7 +3,187 @@
 // Seules les queries utilisées sont conservées
 
 // ========================================
-// HOME PAGE
+// HOME PAGE V2
+// ========================================
+
+// Article principal (le plus récent avec image, hors vidéo)
+export const V2_HERO_MAIN_QUERY = `
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0] {
+    _id,
+    titre,
+    extrait,
+    description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+    typeArticle,
+    "imageUrl": image.asset->url,
+    "slug": slug.current,
+    datePublication,
+    tempsLecture,
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
+`
+
+// 3 articles secondaires pour le hero (les suivants, hors vidéo)
+export const V2_HERO_SECONDARY_QUERY = `
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [1...15] {
+    _id,
+    titre,
+    extrait,
+    description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
+    "imageUrl": image.asset->url,
+    "slug": slug.current,
+    tempsLecture,
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
+`
+
+// Choix de la rédaction (article avec le plus de vues, avec image)
+export const V2_SPOTLIGHT_QUERY = `
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(coalesce(stats.views, views, vues, 0) desc) [0] {
+    _id,
+    titre,
+    extrait,
+    description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
+    "imageUrl": image.asset->url,
+    "slug": slug.current,
+    tempsLecture,
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
+`
+
+// Articles pour le Feed (16 derniers, avec verticale)
+export const V2_FEED_QUERY = `
+  *[_type == "production" && defined(image.asset)] | order(datePublication desc) [0...16] {
+    _id,
+    titre,
+    extrait,
+    description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
+    typeArticle,
+    "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
+    "slug": slug.current,
+    datePublication,
+    tempsLecture,
+    videoUrl,
+    duree,
+    "vues": coalesce(stats.views, views, vues, 0),
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
+`
+
+// 2 articles éditoriaux pour Spotlight (après le premier, avec image)
+export const V2_EDITORIAL_QUERY = `
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [4...18] {
+    _id,
+    titre,
+    extrait,
+    description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
+    "imageUrl": image.asset->url,
+    "slug": slug.current,
+    tempsLecture,
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
+`
+
+// Triad — 3 articles par verticale (pour les 5 univers)
+export const V2_TRIAD_QUERY = `
+  *[_type == "verticale"] | order(ordre asc) {
+    _id,
+    nom,
+    "slug": slug.current,
+    "articles": *[_type == "production" && references(^._id) && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0...3] {
+      _id,
+      titre,
+      "imageUrl": image.asset->url,
+      "slug": slug.current,
+      "verticaleSlug": verticale->slug.current,
+      "verticaleNom": verticale->nom
+    }
+  }
+`
+
+// VideoChannel — vidéos récentes avec verticale
+export const V2_VIDEOS_QUERY = `
+  *[_type == "production" && typeArticle == "video" && defined(image.asset)] | order(datePublication desc) [0...12] {
+    _id,
+    titre,
+    description,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    videoUrl,
+    duree,
+    "slug": slug.current,
+    datePublication,
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom
+  }
+`
+
+// Immersions — articles long-format (les plus longs, avec image)
+export const V2_IMMERSIONS_QUERY = `
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && tempsLecture >= 15] | order(datePublication desc) [0...5] {
+    _id,
+    titre,
+    extrait,
+    description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
+    typeArticle,
+    "imageUrl": image.asset->url,
+    "slug": slug.current,
+    datePublication,
+    tempsLecture,
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
+`
+
+// Voix — histoires / portraits
+export const V2_VOIX_QUERY = `
+  *[_type == "portrait"] | order(ordre asc) [0...4] {
+    _id,
+    titre,
+    categorie,
+    accroche,
+    citation,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
+    datePublication,
+    "verticaleNom": verticale->nom,
+    "articleSlug": productions[0]->slug.current
+  }
+`
+
+// Recos — recommandations de la rédaction
+export const V2_RECOS_QUERY = `
+  *[_type == "recommendation"] | order(datePublication desc) [0...4] {
+    _id,
+    titre,
+    type,
+    auteur,
+    note,
+    coupDeCoeur,
+    accroche,
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "slug": slug.current,
+    datePublication
+  }
+`
+
+// ========================================
+// HOME PAGE (legacy)
 // ========================================
 
 // Articles vedettes pour le Hero (1 article par verticale, max 7)
@@ -577,9 +757,10 @@ export const RELATED_ARTICLES_QUERY = `
     univers._ref == $universId ||
     verticale._ref == $verticaleId ||
     count(tags[@._ref in $tagIds]) > 0
-  )] | order(datePublication desc) [0...3] {
+  )] | order(datePublication desc) [0...8] {
     _id,
     "title": titre,
+    "titre": titre,
     slug,
     mainImage {
       asset-> {
@@ -594,7 +775,8 @@ export const RELATED_ARTICLES_QUERY = `
       title
     },
     verticale-> {
-      nom
+      nom,
+      couleurDominante
     }
   }
 `

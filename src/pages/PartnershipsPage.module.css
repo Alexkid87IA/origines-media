@@ -1,0 +1,1051 @@
+/* ===== PartnershipsPage V2 — Angular editorial design ===== */
+
+/* ── Page wrapper ── */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Shared inner container ── */
+
+.inner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Hero / Page header
+   ══════════════════════════════════════════════════════════ */
+
+.header {
+  padding: 48px 0 36px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.headerInner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.headerLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 14px;
+}
+
+.kickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 12px 0 0;
+  max-width: 48ch;
+}
+
+/* — Download CTA badge — */
+
+.downloadBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.downloadBadge:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.downloadBadge:active {
+  transform: translateY(0);
+}
+
+.downloadBadge svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Stats section
+   ══════════════════════════════════════════════════════════ */
+
+.statsSection {
+  padding: 48px 0;
+  background: var(--stone50);
+  border-bottom: 1px solid var(--stone100);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 20px;
+}
+
+/* — Hero stat card (left) — */
+
+.statHeroCard {
+  background: var(--ink);
+  color: var(--pure, #fff);
+  padding: 32px;
+}
+
+.statHeroBig {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0 0 4px;
+}
+
+.statHeroBigSuffix {
+  opacity: 0.4;
+}
+
+.statHeroLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 0 0 24px;
+}
+
+.miniStatGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.miniStat {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  text-align: center;
+}
+
+.miniStatValue {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--pure, #fff);
+  margin: 0;
+}
+
+.miniStatLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 4px 0 0;
+}
+
+/* — Description card (right) — */
+
+.descriptionCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.descriptionText {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--stone600);
+  margin: 0;
+}
+
+.descriptionText strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* — Social badges — */
+
+.socialRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.socialBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  transition: border-color 0.2s ease;
+}
+
+.socialBadge:hover {
+  border-color: var(--stone300);
+}
+
+.socialBadge svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.socialBadgeCount {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Audience section
+   ══════════════════════════════════════════════════════════ */
+
+.audienceSection {
+  padding: 48px 0;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.sectionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 24px;
+}
+
+.sectionLabelDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.audienceGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+/* — Audience card — */
+
+.audienceCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 24px;
+}
+
+.audienceCardTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+/* — Age bars — */
+
+.ageRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ageRow + .ageRow {
+  margin-top: 10px;
+}
+
+.ageLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--stone500);
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.ageBarTrack {
+  flex: 1;
+  height: 6px;
+  background: var(--stone100);
+}
+
+.ageBarFill {
+  height: 100%;
+}
+
+.agePercent {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* — Gender card — */
+
+.genderCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.genderRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.genderBlock {
+  text-align: center;
+}
+
+.genderValue {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.genderLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-top: 4px;
+}
+
+.genderDivider {
+  width: 1px;
+  height: 36px;
+  background: var(--stone200);
+}
+
+/* — Engagement card — */
+
+.engagementCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 24px;
+}
+
+.engagementRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.engagementRow + .engagementRow {
+  margin-top: 12px;
+}
+
+.engagementLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--stone500);
+}
+
+.engagementLabel svg {
+  width: 12px;
+  height: 12px;
+}
+
+.engagementValue {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Formats section
+   ══════════════════════════════════════════════════════════ */
+
+.formatsSection {
+  padding: 48px 0;
+  background: var(--stone50);
+  border-bottom: 1px solid var(--stone100);
+}
+
+.sectionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 24px;
+}
+
+.formatsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.formatCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 20px 16px;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.formatCard:hover {
+  border-color: var(--stone300);
+}
+
+.formatIconWrap {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formatIconWrap svg {
+  width: 20px;
+  height: 20px;
+}
+
+.formatTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.formatDesc {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 0;
+}
+
+/* — Values row — */
+
+.valuesRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.valuePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+}
+
+.valuePill svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.valuePillText {
+  font-family: var(--body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--stone700);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Case studies
+   ══════════════════════════════════════════════════════════ */
+
+.caseStudiesSection {
+  padding: 48px 0;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.caseStudiesHeader {
+  margin-bottom: 24px;
+}
+
+.caseSectionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+.caseSectionDeck {
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--stone600);
+  margin: 0;
+}
+
+.caseGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.caseCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.caseCard:hover {
+  border-color: var(--stone300);
+}
+
+.caseAccent {
+  height: 3px;
+  width: 100%;
+}
+
+.caseBody {
+  padding: 20px;
+}
+
+.caseTag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+}
+
+.caseTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+.caseDesc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 0 0 16px;
+}
+
+.caseStats {
+  display: flex;
+  gap: 24px;
+  padding-top: 14px;
+  border-top: 1px solid var(--stone100);
+}
+
+.caseStat {
+  display: flex;
+  flex-direction: column;
+}
+
+.caseStatValue {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.caseStatLabel {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-top: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Offer / "Ce qu'on apporte"
+   ══════════════════════════════════════════════════════════ */
+
+.offerSection {
+  padding: 48px 0;
+  background: var(--stone50);
+  border-bottom: 1px solid var(--stone100);
+}
+
+.offerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.offerCard {
+  padding: 28px;
+  transition: opacity 0.2s ease;
+}
+
+.offerCard:hover {
+  opacity: 0.92;
+}
+
+.offerTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0 0 8px;
+}
+
+.offerDesc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CTA Final
+   ══════════════════════════════════════════════════════════ */
+
+.ctaSection {
+  padding: 64px 0;
+  background: var(--ink);
+}
+
+.ctaInner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.ctaTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3.5vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--pure, #fff);
+  margin: 0 0 10px;
+}
+
+.ctaDeck {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--stone500);
+  margin: 0 0 32px;
+  max-width: 48ch;
+  display: inline-block;
+}
+
+.ctaButtons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--pure, #fff);
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.ctaPrimary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.ctaPrimary:active {
+  transform: translateY(0);
+}
+
+.ctaPrimary svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pure, #fff);
+  background: transparent;
+  border: 1px solid var(--stone700);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.ctaSecondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--stone500);
+}
+
+.ctaSecondary svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+
+.ctaSecondary:hover svg {
+  transform: translateX(3px);
+}
+
+.ctaMeta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone600);
+}
+
+.ctaMeta svg {
+  width: 12px;
+  height: 12px;
+}
+
+.ctaMetaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ctaMetaDot {
+  width: 4px;
+  height: 4px;
+  background: var(--stone700);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Contact strip
+   ══════════════════════════════════════════════════════════ */
+
+.contactStrip {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.contactInner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.contactText {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--stone500);
+  margin: 0;
+}
+
+.contactRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--body);
+  font-size: 13px;
+}
+
+.contactLabel {
+  color: var(--stone400);
+}
+
+.contactName {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--stone600);
+  text-decoration: none;
+  border-bottom: 1px solid var(--stone200);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.contactLink:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.contactLink svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+
+/* — Tablets (<=1024px) — */
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .audienceGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .audienceGrid > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .formatsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .caseGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+/* — Small tablets / large phones (<=768px) — */
+@media (max-width: 768px) {
+  .header {
+    padding: 36px 0 28px;
+  }
+
+  .headerInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .audienceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .caseGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .offerGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .ctaButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+
+  .contactInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* — Small phones (<=480px) — */
+@media (max-width: 480px) {
+  .header {
+    padding: 24px 0 20px;
+  }
+
+  .headerInner {
+    padding: 0 16px;
+  }
+
+  .inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .statsSection,
+  .audienceSection,
+  .formatsSection,
+  .caseStudiesSection,
+  .offerSection {
+    padding: 32px 0;
+  }
+
+  .ctaSection {
+    padding: 40px 0;
+  }
+
+  .ctaInner {
+    padding: 0 16px;
+  }
+
+  .contactInner {
+    padding: 0 16px;
+  }
+
+  .formatsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .miniStatGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .statHeroCard {
+    padding: 24px;
+  }
+
+  .descriptionCard {
+    padding: 20px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Reduced motion
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .downloadBadge,
+  .socialBadge,
+  .formatCard,
+  .caseCard,
+  .offerCard,
+  .ctaPrimary,
+  .ctaSecondary,
+  .contactLink {
+    transition: none !important;
+  }
+}

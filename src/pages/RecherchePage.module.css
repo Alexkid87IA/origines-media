@@ -1,0 +1,714 @@
+/* ===== RecherchePage V2 — Search page, angular design ===== */
+
+/* ──────────────────────────────────────────────────────────
+   Page wrapper
+   ────────────────────────────────────────────────────────── */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Header section
+   ────────────────────────────────────────────────────────── */
+
+.header {
+  padding: 48px 0 40px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.headerInner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin: 0 0 18px;
+}
+
+.kickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.deck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone700);
+  margin: 0;
+  max-width: 58ch;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Search bar
+   ────────────────────────────────────────────────────────── */
+
+.searchSection {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 32px 24px 0;
+}
+
+.searchForm {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 720px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  width: 20px;
+  height: 20px;
+  color: var(--stone400);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.searchForm:focus-within .searchIcon {
+  color: var(--ink);
+}
+
+.searchInput {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--pure);
+  border: 1px solid var(--ink);
+  padding: 14px 100px 14px 48px;
+  transition: border-color 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--stone400);
+  font-family: var(--body);
+  font-size: 16px;
+}
+
+.searchInput:focus {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.searchClear {
+  position: absolute;
+  right: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  color: var(--stone400);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.searchClear:hover {
+  color: var(--ink);
+}
+
+.searchClear svg {
+  width: 18px;
+  height: 18px;
+}
+
+.searchSubmit {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.searchSubmit:hover {
+  background: var(--stone800);
+}
+
+.searchSubmit svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Main content area
+   ────────────────────────────────────────────────────────── */
+
+.main {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Filter tabs
+   ────────────────────────────────────────────────────────── */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.filterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--stone200);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.filterBtn:hover {
+  border-color: var(--ink);
+}
+
+.filterBtnActive {
+  composes: filterBtn;
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.filterBtnActive:hover {
+  background: var(--stone800);
+  border-color: var(--stone800);
+}
+
+.filterCount {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  background: rgba(10, 10, 10, 0.06);
+  color: var(--stone500);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.filterBtnActive .filterCount {
+  background: rgba(247, 245, 240, 0.15);
+  color: var(--paper);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Result count
+   ────────────────────────────────────────────────────────── */
+
+.resultCount {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 20px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Results grid
+   ────────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Result card
+   ────────────────────────────────────────────────────────── */
+
+.card {
+  display: flex;
+  gap: 0;
+  background: var(--pure);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  transition: background 0.25s ease;
+}
+
+.card:hover {
+  background: var(--stone50);
+}
+
+/* Colored top accent on hover */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--cat-color, var(--stone300));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(.2, .7, .2, 1);
+}
+
+.card:hover::after {
+  transform: scaleX(1);
+}
+
+/* — Card image — */
+
+.cardImgWrap {
+  position: relative;
+  width: 160px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--stone50);
+}
+
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+.card:hover .cardImg {
+  transform: scale(1.04);
+}
+
+.cardImgFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardImgFallback svg {
+  width: 32px;
+  height: 32px;
+  color: var(--stone300);
+}
+
+/* — Type badge on image — */
+
+.cardBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--cat-color, var(--stone500));
+}
+
+.cardBadge svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* — Card body — */
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* — Card category label — */
+
+.cardCategory {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cat-color, var(--stone500));
+}
+
+.cardCategoryDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cat-color, var(--stone400));
+  flex-shrink: 0;
+}
+
+/* — Card title — */
+
+.cardTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card:hover .cardTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* — Card excerpt — */
+
+.cardExcerpt {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--stone600);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* — Card CTA — */
+
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cat-color, var(--stone500));
+  margin-top: 4px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
+}
+
+.cardCta svg {
+  width: 12px;
+  height: 12px;
+}
+
+.card:hover .cardCta {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Loading skeleton
+   ────────────────────────────────────────────────────────── */
+
+.skeleton {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.skelCard {
+  background: var(--pure);
+  display: flex;
+}
+
+.skelImg {
+  width: 160px;
+  flex-shrink: 0;
+  background: var(--stone50);
+  min-height: 120px;
+}
+
+.skelBody {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.skelPulse {
+  background: linear-gradient(
+    90deg,
+    var(--stone50) 25%,
+    var(--stone100) 50%,
+    var(--stone50) 75%
+  );
+  background-size: 200% 100%;
+  animation: skelShimmer 1.5s ease-in-out infinite;
+}
+
+.skelLine {
+  composes: skelPulse;
+  height: 10px;
+  width: 100%;
+}
+
+.skelLineShort {
+  composes: skelPulse;
+  height: 10px;
+  width: 60%;
+}
+
+.skelLineTiny {
+  composes: skelPulse;
+  height: 8px;
+  width: 35%;
+}
+
+@keyframes skelShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ──────────────────────────────────────────────────────────
+   Empty state — no results
+   ────────────────────────────────────────────────────────── */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  border: 1px dashed var(--stone200);
+}
+
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--stone300);
+  margin-bottom: 20px;
+}
+
+.emptyTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.emptyText {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--stone500);
+  margin: 0 0 24px;
+  max-width: 40ch;
+}
+
+.emptyLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--stone200);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.emptyLink:hover {
+  border-color: var(--ink);
+  background: var(--stone50);
+}
+
+.emptyLink svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Initial state — before search
+   ────────────────────────────────────────────────────────── */
+
+.initial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+}
+
+.initialIcon {
+  width: 56px;
+  height: 56px;
+  color: var(--stone300);
+  margin-bottom: 24px;
+}
+
+.initialTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.initialText {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone500);
+  margin: 0;
+  max-width: 46ch;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+
+/* — Tablets (<=880px) — */
+@media (max-width: 880px) {
+  .header { padding: 36px 0 28px; }
+  .searchSection { padding-top: 24px; }
+  .main { padding-top: 24px; }
+}
+
+/* — Small screens (<=640px) — */
+@media (max-width: 640px) {
+  .header { padding: 24px 0 20px; }
+  .title { font-size: clamp(24px, 6vw, 34px); }
+  .deck { font-size: 14px; }
+  .grid { grid-template-columns: 1fr; }
+  .skeleton { grid-template-columns: 1fr; }
+  .cardImgWrap { width: 110px; }
+  .cardBody { padding: 12px 14px; }
+  .cardTitle { font-size: 15px; }
+  .cardExcerpt { display: none; }
+  .main { padding-bottom: 64px; }
+  .filters { gap: 4px; }
+  .filterBtn { padding: 6px 12px; font-size: 9px; }
+  .searchInput { font-size: 15px; padding: 12px 90px 12px 42px; }
+  .searchSubmit { width: 36px; height: 36px; }
+  .searchClear { right: 48px; }
+}
+
+/* — Very small phones (<=480px) — */
+@media (max-width: 480px) {
+  .title { font-size: clamp(22px, 6vw, 28px); }
+  .cardImgWrap { width: 90px; }
+  .cardTitle { font-size: 14px; }
+  .cardBody { padding: 10px 12px; gap: 4px; }
+  .cardBadge { font-size: 7px; padding: 2px 6px; top: 4px; left: 4px; }
+  .emptyLink { font-size: 9px; padding: 8px 14px; }
+}
+
+/* — Tiny screens (<=360px) — */
+@media (max-width: 360px) {
+  .title { font-size: 22px; }
+  .cardImgWrap { width: 80px; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Reduced motion
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card::after,
+  .cardImg,
+  .cardCta,
+  .filterBtn,
+  .searchInput,
+  .searchSubmit,
+  .searchClear,
+  .emptyLink {
+    transition: none !important;
+  }
+
+  .skelPulse {
+    animation: none !important;
+    background: var(--stone100);
+  }
+}

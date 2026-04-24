@@ -1,35 +1,15 @@
 // src/pages/HistoiresPage.tsx
-// Design "Text-First" - Citations et parcours inspirants
-// Sans dépendance aux images de couverture
+// V2 Design — Text-First stories with editorial grid layout
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  ArrowRight,
-  PenLine,
-  ChevronDown,
-  SlidersHorizontal,
-  BookOpen,
-  Quote,
-  Heart,
-  TrendingUp,
-  Route,
-  Users,
-  Brain,
-  Flame,
-  LucideIcon
-} from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import SEO from '../components/SEO';
-import { sanityFetch } from '../lib/sanity';
-import { HISTOIRES_PAGE_QUERY, TAGS_QUERY } from '../lib/queries';
-import { typo } from '../lib/typography';
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import SiteHeader from "@/components/SiteHeader/SiteHeader";
+import Footer2 from "@/components/Footer2/Footer2";
+import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
+import SEO from "../components/SEO";
+import { sanityFetch } from "../lib/sanity";
+import { HISTOIRES_PAGE_QUERY, TAGS_QUERY } from "../lib/queries";
+import { typo } from "../lib/typography";
 import {
   TAG_CATEGORIES,
   getOrderedCategories,
@@ -37,8 +17,13 @@ import {
   filterStoriesByCategory,
   getCategoryColors,
   TagCategory,
-  getTagCategory
-} from '../lib/tagCategories';
+  getTagCategory,
+} from "../lib/tagCategories";
+import s from "./HistoiresPage.module.css";
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
 
 interface Tag {
   _id: string;
@@ -66,47 +51,191 @@ interface Histoire {
   univers?: Univers;
 }
 
-// Icônes par catégorie thématique
-const CATEGORY_ICONS: Record<string, LucideIcon> = {
-  emotions: Heart,
-  developpement: TrendingUp,
-  parcours: Route,
-  relations: Users,
-  sante: Brain,
-  epreuves: Flame
+/* ------------------------------------------------------------------ */
+/*  Inline SVG icon components (no lucide-react)                       */
+/* ------------------------------------------------------------------ */
+
+function IconSearch(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M21 21l-4.35-4.35" />
+    </svg>
+  );
+}
+
+function IconX(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
+function IconArrowRight(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function IconChevronDown(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M4 6l4 4 4-4" />
+    </svg>
+  );
+}
+
+function IconChevronLeft(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+function IconChevronRight(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
+function IconSliders(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M4 21V14M4 10V3M12 21V12M12 8V3M20 21V16M20 12V3M1 14h6M9 8h6M17 16h6" />
+    </svg>
+  );
+}
+
+function IconBookOpen(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
+    </svg>
+  );
+}
+
+function IconQuote(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M10 8c-1.1 0-2 .9-2 2v2H6c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2v-6c0-1.1-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2v2h-2c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2v-6c0-1.1-.9-2-2-2z" />
+    </svg>
+  );
+}
+
+function IconPen(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
+}
+
+function IconRoute(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <circle cx="6" cy="19" r="3" />
+      <path d="M9 19h8.5a3.5 3.5 0 000-7h-11a3.5 3.5 0 010-7H15" />
+      <circle cx="18" cy="5" r="3" />
+    </svg>
+  );
+}
+
+function IconHeart(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 000-7.8z" />
+    </svg>
+  );
+}
+
+function IconTrendingUp(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+      <polyline points="17 6 23 6 23 12" />
+    </svg>
+  );
+}
+
+function IconUsers(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+    </svg>
+  );
+}
+
+function IconBrain(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M9.5 2A5.5 5.5 0 005 7.5c0 .88.21 1.72.58 2.46L4 12.5a2.5 2.5 0 002.5 4h.5V19a3 3 0 003 3h4a3 3 0 003-3v-2.5h.5a2.5 2.5 0 002.5-4l-1.58-2.54c.37-.74.58-1.58.58-2.46A5.5 5.5 0 0014.5 2" />
+    </svg>
+  );
+}
+
+function IconFlame(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.07-2.14 0-5.5 2.5-7 .5 2 1.5 3 2 4.5 1 3 2.5 5 2.5 7.5a5 5 0 01-10 0c0-1.5.5-2.5 1.5-4z" />
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Category → SVG icon mapping                                        */
+/* ------------------------------------------------------------------ */
+
+type IconComponent = (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+
+const CATEGORY_ICONS: Record<string, IconComponent> = {
+  emotions: IconHeart,
+  developpement: IconTrendingUp,
+  parcours: IconRoute,
+  relations: IconUsers,
+  sante: IconBrain,
+  epreuves: IconFlame,
 };
+
+/* ------------------------------------------------------------------ */
+/*  Constants                                                          */
+/* ------------------------------------------------------------------ */
 
 const ITEMS_PER_PAGE = 6;
 
-// Fonction pour mélanger les histoires avec diversité de catégories
-const shuffleWithDiversity = (histoires: Histoire[]): Histoire[] => {
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function shuffleWithDiversity(histoires: Histoire[]): Histoire[] {
   if (histoires.length === 0) return [];
 
-  // Grouper par catégorie thématique
   const byCategory: Record<string, Histoire[]> = {};
   const uncategorized: Histoire[] = [];
 
-  histoires.forEach(h => {
+  histoires.forEach((h) => {
     let foundCategory = false;
     if (h.tags && h.tags.length > 0) {
       for (const tag of h.tags) {
         const category = getTagCategory(tag.slug);
         if (category) {
-          if (!byCategory[category.id]) {
-            byCategory[category.id] = [];
-          }
+          if (!byCategory[category.id]) byCategory[category.id] = [];
           byCategory[category.id].push(h);
           foundCategory = true;
           break;
         }
       }
     }
-    if (!foundCategory) {
-      uncategorized.push(h);
-    }
+    if (!foundCategory) uncategorized.push(h);
   });
 
-  // Mélanger chaque groupe
   const shuffleArray = <T,>(arr: T[]): T[] => {
     const shuffled = [...arr];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -116,18 +245,20 @@ const shuffleWithDiversity = (histoires: Histoire[]): Histoire[] => {
     return shuffled;
   };
 
-  Object.keys(byCategory).forEach(key => {
+  Object.keys(byCategory).forEach((key) => {
     byCategory[key] = shuffleArray(byCategory[key]);
   });
 
-  // Round-robin pour alterner les catégories
   const result: Histoire[] = [];
   const categoryKeys = shuffleArray(Object.keys(byCategory));
   const categoryIndices: Record<string, number> = {};
-  categoryKeys.forEach(key => categoryIndices[key] = 0);
+  categoryKeys.forEach((key) => (categoryIndices[key] = 0));
 
   let currentCategoryIdx = 0;
-  const totalFromCategories = Object.values(byCategory).reduce((sum, arr) => sum + arr.length, 0);
+  const totalFromCategories = Object.values(byCategory).reduce(
+    (sum, arr) => sum + arr.length,
+    0
+  );
 
   while (result.length < totalFromCategories) {
     const catKey = categoryKeys[currentCategoryIdx % categoryKeys.length];
@@ -140,11 +271,10 @@ const shuffleWithDiversity = (histoires: Histoire[]): Histoire[] => {
 
     currentCategoryIdx++;
 
-    // Éviter boucle infinie si une catégorie est vide
     let attempts = 0;
     while (
       categoryIndices[categoryKeys[currentCategoryIdx % categoryKeys.length]] >=
-      byCategory[categoryKeys[currentCategoryIdx % categoryKeys.length]].length &&
+        byCategory[categoryKeys[currentCategoryIdx % categoryKeys.length]].length &&
       attempts < categoryKeys.length
     ) {
       currentCategoryIdx++;
@@ -152,21 +282,19 @@ const shuffleWithDiversity = (histoires: Histoire[]): Histoire[] => {
     }
   }
 
-  // Ajouter les non-catégorisés à la fin (mélangés)
   return [...result, ...shuffleArray(uncategorized)];
-};
+}
 
-// ═══════════════════════════════════════════════════════════════
-// COMPOSANT: Carte Histoire Text-First
-// ═══════════════════════════════════════════════════════════════
+/* ------------------------------------------------------------------ */
+/*  Sub-component: Story Card                                          */
+/* ------------------------------------------------------------------ */
+
 interface HistoireCardProps {
   histoire: Histoire;
-  index: number;
   cmsTags: Tag[];
 }
 
-const HistoireCard: React.FC<HistoireCardProps> = ({ histoire, index, cmsTags }) => {
-  // Trouver la catégorie thématique principale
+function HistoireCard({ histoire, cmsTags }: HistoireCardProps) {
   const mainCategory = useMemo(() => {
     if (!histoire.tags || histoire.tags.length === 0) return null;
     for (const tag of histoire.tags) {
@@ -176,133 +304,83 @@ const HistoireCard: React.FC<HistoireCardProps> = ({ histoire, index, cmsTags })
     return null;
   }, [histoire.tags]);
 
-  // Couleurs basées sur la catégorie ou l'univers
   const colors = useMemo(() => {
-    if (mainCategory) {
-      return getCategoryColors(mainCategory.id);
-    }
+    if (mainCategory) return getCategoryColors(mainCategory.id);
     if (histoire.univers?.couleur) {
       return {
         bg: histoire.univers.couleur,
-        text: '#FFFFFF',
+        text: "#FFFFFF",
         light: `${histoire.univers.couleur}15`,
-        shadow: `${histoire.univers.couleur}40`
+        shadow: `${histoire.univers.couleur}40`,
       };
     }
-    return getCategoryColors('parcours'); // Default violet
+    return getCategoryColors("parcours");
   }, [mainCategory, histoire.univers]);
 
-  const CategoryIcon = mainCategory ? CATEGORY_ICONS[mainCategory.id] : Route;
-  const categoryLabel = mainCategory?.nom || histoire.univers?.nom || 'Parcours';
+  const CategoryIcon = mainCategory ? CATEGORY_ICONS[mainCategory.id] : IconRoute;
+  const categoryLabel = mainCategory?.nom || histoire.univers?.nom || "Parcours";
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.4 }}
-      className="group"
+    <article
+      className={s.card}
+      style={{ "--cat-color": colors.bg } as React.CSSProperties}
     >
-      <Link
-        to={`/histoire/${histoire.slug}`}
-        className="block h-full"
-      >
-        <div
-          className="h-full rounded-2xl p-5 transition-all duration-300 group-hover:-translate-y-1"
-          style={{
-            backgroundColor: colors.light,
-            border: `1px solid ${colors.bg}20`,
-            boxShadow: '0 2px 12px -4px rgba(0,0,0,0.04)'
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLDivElement).style.boxShadow = `0 12px 30px -8px ${colors.shadow}`;
-            (e.currentTarget as HTMLDivElement).style.borderColor = `${colors.bg}40`;
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px -4px rgba(0,0,0,0.04)';
-            (e.currentTarget as HTMLDivElement).style.borderColor = `${colors.bg}20`;
-          }}
-        >
-          {/* Header: Icône + Catégorie */}
-          <div className="flex items-center gap-2 mb-4">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: colors.bg }}
-            >
-              <CategoryIcon className="w-4 h-4 text-white" />
-            </div>
-            <span
-              className="text-[10px] font-bold uppercase tracking-wider"
-              style={{ color: colors.bg }}
-            >
-              {categoryLabel}
-            </span>
+      <Link to={`/histoire/${histoire.slug}`} className={s.cardLink}>
+        <div className={s.cardBody}>
+          {/* Meta: icon + category */}
+          <div className={s.cardMeta}>
+            <CategoryIcon className={s.cardCatIcon} />
+            <span className={s.cardDot} />
+            <span>{categoryLabel}</span>
           </div>
 
-          {/* Citation (si disponible) */}
+          {/* Citation */}
           {histoire.citation && (
-            <div className="mb-4 relative">
-              <Quote
-                className="absolute -top-1 -left-1 w-6 h-6 opacity-20"
-                style={{ color: colors.bg }}
-              />
-              <p
-                className="text-sm italic leading-relaxed pl-5 line-clamp-3"
-                style={{ color: colors.bg }}
-              >
-                {typo(histoire.citation)}
-              </p>
-            </div>
+            <p className={s.cardQuote}>{typo(histoire.citation)}</p>
           )}
 
           {/* Titre */}
-          <h3 className="font-bold text-gray-900 text-base leading-snug line-clamp-2 mb-2 group-hover:text-gray-700 transition-colors">
-            {typo(histoire.titre)}
-          </h3>
+          <h3 className={s.cardTitle}>{typo(histoire.titre)}</h3>
 
           {/* Accroche */}
           {histoire.accroche && (
-            <p className="text-gray-600 text-xs leading-relaxed line-clamp-3 mb-4">
-              {typo(histoire.accroche)}
-            </p>
+            <p className={s.cardExcerpt}>{typo(histoire.accroche)}</p>
           )}
 
           {/* Tags (max 3) */}
           {histoire.tags && histoire.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-4">
+            <div className={s.cardTags}>
               {histoire.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag._id}
-                  className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-white/60 text-gray-600"
-                >
+                <span key={tag._id} className={s.cardTag}>
                   {tag.nom}
                 </span>
               ))}
             </div>
           )}
 
-          {/* CTA */}
-          <span
-            className="inline-flex items-center gap-1.5 text-xs font-semibold group-hover:gap-2 transition-all mt-auto"
-            style={{ color: colors.bg }}
-          >
-            Lire l'histoire
-            <ArrowRight className="w-3 h-3" />
-          </span>
+          {/* Footer */}
+          <div className={s.cardFoot}>
+            <span className={s.cardCta}>
+              Lire l&rsquo;histoire
+              <IconArrowRight width={10} height={10} />
+            </span>
+          </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
-};
+}
 
-// ═══════════════════════════════════════════════════════════════
-// COMPOSANT: Featured Histoire (plus grande)
-// ═══════════════════════════════════════════════════════════════
+/* ------------------------------------------------------------------ */
+/*  Sub-component: Featured Story                                      */
+/* ------------------------------------------------------------------ */
+
 interface FeaturedHistoireProps {
   histoire: Histoire;
   cmsTags: Tag[];
 }
 
-const FeaturedHistoire: React.FC<FeaturedHistoireProps> = ({ histoire, cmsTags }) => {
+function FeaturedHistoire({ histoire, cmsTags }: FeaturedHistoireProps) {
   const mainCategory = useMemo(() => {
     if (!histoire.tags || histoire.tags.length === 0) return null;
     for (const tag of histoire.tags) {
@@ -313,78 +391,62 @@ const FeaturedHistoire: React.FC<FeaturedHistoireProps> = ({ histoire, cmsTags }
   }, [histoire.tags]);
 
   const colors = useMemo(() => {
-    if (mainCategory) {
-      return getCategoryColors(mainCategory.id);
-    }
-    return getCategoryColors('parcours');
+    if (mainCategory) return getCategoryColors(mainCategory.id);
+    return getCategoryColors("parcours");
   }, [mainCategory]);
 
-  const CategoryIcon = mainCategory ? CATEGORY_ICONS[mainCategory.id] : Route;
+  const CategoryIcon = mainCategory ? CATEGORY_ICONS[mainCategory.id] : IconRoute;
 
   return (
     <Link
       to={`/histoire/${histoire.slug}`}
-      className="block group"
+      className={s.featured}
+      style={{ backgroundColor: colors.bg }}
     >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl overflow-hidden p-6 lg:p-8 transition-all duration-300"
-        style={{
-          backgroundColor: colors.bg,
-          boxShadow: `0 8px 32px -8px ${colors.shadow}`
-        }}
-      >
-        {/* Decorative quote marks */}
-        <div className="absolute top-4 right-4 opacity-10">
-          <Quote className="w-24 h-24 text-white" />
-        </div>
+      {/* Decorative quote icon */}
+      <IconQuote className={s.featuredQuoteDecor} />
 
-        <div className="relative z-10">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <CategoryIcon className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white/80 text-xs font-bold uppercase tracking-wider">
-              {mainCategory?.nom || 'À la une'}
-            </span>
-          </div>
-
-          {/* Citation */}
-          {histoire.citation && (
-            <blockquote className="text-white/90 text-lg lg:text-xl italic leading-relaxed mb-6 max-w-2xl">
-              "{typo(histoire.citation)}"
-            </blockquote>
-          )}
-
-          {/* Titre */}
-          <h2 className="text-white font-bold text-xl lg:text-2xl leading-tight mb-3 max-w-xl group-hover:text-white/90 transition-colors">
-            {typo(histoire.titre)}
-          </h2>
-
-          {/* Accroche */}
-          {histoire.accroche && (
-            <p className="text-white/70 text-sm leading-relaxed line-clamp-2 mb-6 max-w-xl">
-              {typo(histoire.accroche)}
-            </p>
-          )}
-
-          {/* CTA */}
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-semibold group-hover:bg-white/30 transition-all">
-            Découvrir cette histoire
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      <div className={s.featuredInner}>
+        {/* Meta */}
+        <div className={s.featuredMeta}>
+          <span className={s.featuredIcon}>
+            <CategoryIcon />
+          </span>
+          <span className={s.featuredLabel}>
+            {mainCategory?.nom || "À la une"}
           </span>
         </div>
-      </motion.div>
+
+        {/* Citation */}
+        {histoire.citation && (
+          <blockquote className={s.featuredQuote}>
+            &laquo;&nbsp;{typo(histoire.citation)}&nbsp;&raquo;
+          </blockquote>
+        )}
+
+        {/* Title */}
+        <h2 className={s.featuredTitle}>{typo(histoire.titre)}</h2>
+
+        {/* Accroche */}
+        {histoire.accroche && (
+          <p className={s.featuredExcerpt}>{typo(histoire.accroche)}</p>
+        )}
+
+        {/* CTA */}
+        <span className={s.featuredCta}>
+          D&eacute;couvrir cette histoire
+          <IconArrowRight />
+        </span>
+      </div>
     </Link>
   );
-};
+}
 
-// ═══════════════════════════════════════════════════════════════
-// PAGE PRINCIPALE
-// ═══════════════════════════════════════════════════════════════
-const HistoiresPage: React.FC = () => {
+/* ------------------------------------------------------------------ */
+/*  Main Component                                                     */
+/* ------------------------------------------------------------------ */
+
+export default function HistoiresPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [histoires, setHistoires] = useState<Histoire[]>([]);
   const [cmsTags, setCmsTags] = useState<Tag[]>([]);
@@ -392,36 +454,35 @@ const HistoiresPage: React.FC = () => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  // État des filtres depuis l'URL
-  const searchQuery = searchParams.get('q') || '';
-  const activeCategory = searchParams.get('categorie') || '';
-  const activeTagSlug = searchParams.get('tag') || '';
-  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  useEffect(() => {
+    document.body.style.background = "var(--paper)";
+    document.body.style.color = "var(--ink)";
+    return () => {
+      document.body.style.background = "";
+      document.body.style.color = "";
+    };
+  }, []);
 
-  // État local pour le champ de recherche
+  /* ── URL state ── */
+  const searchQuery = searchParams.get("q") || "";
+  const activeCategory = searchParams.get("categorie") || "";
+  const activeTagSlug = searchParams.get("tag") || "";
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const [searchInput, setSearchInput] = useState(searchQuery);
 
-  // Charger les données
+  /* ── Data fetching ── */
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        console.log('🔄 Fetching histoires from Sanity...');
-        console.log('📋 Query utilisée:', HISTOIRES_PAGE_QUERY);
-
         const [histoiresData, tagsData] = await Promise.all([
           sanityFetch<Histoire[]>(HISTOIRES_PAGE_QUERY),
-          sanityFetch<Tag[]>(TAGS_QUERY)
+          sanityFetch<Tag[]>(TAGS_QUERY),
         ]);
-
-        console.log('✅ Histoires récupérées:', histoiresData?.length || 0);
-        console.log('📋 Premiers résultats:', histoiresData?.slice(0, 3));
-        console.log('🏷️ Tags récupérés:', tagsData?.length || 0);
-
         setHistoires(histoiresData || []);
         setCmsTags(tagsData || []);
       } catch (err) {
-        console.error('❌ Erreur chargement histoires:', err);
+        console.error("Erreur chargement histoires:", err);
       } finally {
         setLoading(false);
       }
@@ -429,33 +490,33 @@ const HistoiresPage: React.FC = () => {
     fetchData();
   }, []);
 
-  // Synchroniser le champ de recherche avec l'URL
   useEffect(() => {
     setSearchInput(searchQuery);
   }, [searchQuery]);
 
-  // Compter les histoires par catégorie
+  /* ── Category counts ── */
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    getOrderedCategories().forEach(cat => {
+    getOrderedCategories().forEach((cat) => {
       counts[cat.id] = countStoriesByCategory(histoires, cat.id);
     });
     return counts;
   }, [histoires]);
 
-  // Filtrer les histoires avec diversité
+  /* ── Filter ── */
   const filteredHistoires = useMemo(() => {
     let result = [...histoires];
 
     if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(h =>
-        h.titre.toLowerCase().includes(query) ||
-        h.accroche?.toLowerCase().includes(query) ||
-        h.categorie?.toLowerCase().includes(query) ||
-        h.citation?.toLowerCase().includes(query) ||
-        h.univers?.nom?.toLowerCase().includes(query) ||
-        h.tags?.some(tag => tag.nom?.toLowerCase().includes(query))
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (h) =>
+          h.titre.toLowerCase().includes(q) ||
+          h.accroche?.toLowerCase().includes(q) ||
+          h.categorie?.toLowerCase().includes(q) ||
+          h.citation?.toLowerCase().includes(q) ||
+          h.univers?.nom?.toLowerCase().includes(q) ||
+          h.tags?.some((tag) => tag.nom?.toLowerCase().includes(q))
       );
     }
 
@@ -464,12 +525,11 @@ const HistoiresPage: React.FC = () => {
     }
 
     if (activeTagSlug) {
-      result = result.filter(h =>
-        h.tags?.some(tag => tag.slug === activeTagSlug)
+      result = result.filter((h) =>
+        h.tags?.some((tag) => tag.slug === activeTagSlug)
       );
     }
 
-    // Appliquer le shuffle pour diversité visuelle (seulement si pas de filtre actif)
     if (!activeCategory && !activeTagSlug && !searchQuery) {
       result = shuffleWithDiversity(result);
     }
@@ -477,595 +537,603 @@ const HistoiresPage: React.FC = () => {
     return result;
   }, [histoires, searchQuery, activeCategory, activeTagSlug]);
 
-  // Featured histoire (premier résultat avec citation)
+  /* ── Featured ── */
   const featuredHistoire = useMemo(() => {
     if (!activeCategory && !activeTagSlug && !searchQuery) {
-      return filteredHistoires.find(h => h.citation) || filteredHistoires[0];
+      return filteredHistoires.find((h) => h.citation) || filteredHistoires[0];
     }
     return null;
   }, [filteredHistoires, activeCategory, activeTagSlug, searchQuery]);
 
-  // Histoires pour la grille (sans le featured)
+  /* ── Grid histoires (sans featured) ── */
   const gridHistoires = useMemo(() => {
     if (featuredHistoire) {
-      return filteredHistoires.filter(h => h._id !== featuredHistoire._id);
+      return filteredHistoires.filter((h) => h._id !== featuredHistoire._id);
     }
     return filteredHistoires;
   }, [filteredHistoires, featuredHistoire]);
 
-  // Pagination
+  /* ── Pagination ── */
   const totalPages = Math.ceil(gridHistoires.length / ITEMS_PER_PAGE);
   const paginatedHistoires = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return gridHistoires.slice(start, start + ITEMS_PER_PAGE);
   }, [gridHistoires, currentPage]);
 
-  // Handlers
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams(searchParams);
-    if (searchInput) {
-      params.set('q', searchInput);
-    } else {
-      params.delete('q');
-    }
-    params.set('page', '1');
-    setSearchParams(params);
-  };
+  /* ── Handlers ── */
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const p = new URLSearchParams(searchParams);
+      if (searchInput) p.set("q", searchInput);
+      else p.delete("q");
+      p.set("page", "1");
+      setSearchParams(p);
+    },
+    [searchInput, searchParams, setSearchParams]
+  );
 
-  const handleCategoryClick = (categoryId: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (activeCategory === categoryId) {
-      params.delete('categorie');
-    } else {
-      params.set('categorie', categoryId);
-      params.delete('tag');
-    }
-    params.set('page', '1');
-    setSearchParams(params);
-  };
+  const handleCategoryClick = useCallback(
+    (categoryId: string) => {
+      const p = new URLSearchParams(searchParams);
+      if (activeCategory === categoryId) p.delete("categorie");
+      else {
+        p.set("categorie", categoryId);
+        p.delete("tag");
+      }
+      p.set("page", "1");
+      setSearchParams(p);
+    },
+    [activeCategory, searchParams, setSearchParams]
+  );
 
-  const handleTagClick = (tagSlug: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (activeTagSlug === tagSlug) {
-      params.delete('tag');
-    } else {
-      params.set('tag', tagSlug);
-      params.delete('categorie');
-    }
-    params.set('page', '1');
-    setSearchParams(params);
-  };
+  const handleTagClick = useCallback(
+    (tagSlug: string) => {
+      const p = new URLSearchParams(searchParams);
+      if (activeTagSlug === tagSlug) p.delete("tag");
+      else {
+        p.set("tag", tagSlug);
+        p.delete("categorie");
+      }
+      p.set("page", "1");
+      setSearchParams(p);
+    },
+    [activeTagSlug, searchParams, setSearchParams]
+  );
 
-  const toggleCategoryExpansion = (categoryId: string) => {
-    setExpandedCategories(prev =>
+  const toggleCategoryExpansion = useCallback((categoryId: string) => {
+    setExpandedCategories((prev) =>
       prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
+        ? prev.filter((id) => id !== categoryId)
         : [...prev, categoryId]
     );
-  };
+  }, []);
 
-  const handlePageChange = (page: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('page', page.toString());
-    setSearchParams(params);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const p = new URLSearchParams(searchParams);
+      p.set("page", page.toString());
+      setSearchParams(p);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [searchParams, setSearchParams]
+  );
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearchParams({});
-    setSearchInput('');
+    setSearchInput("");
     setExpandedCategories([]);
-  };
+  }, [setSearchParams]);
 
   const hasActiveFilters = searchQuery || activeCategory || activeTagSlug;
 
-  // Couleurs actives
+  /* ── Active colors ── */
   const activeColors = useMemo(() => {
-    if (activeCategory) {
-      return getCategoryColors(activeCategory);
-    }
+    if (activeCategory) return getCategoryColors(activeCategory);
     if (activeTagSlug) {
-      const tag = cmsTags.find(t => t.slug === activeTagSlug);
+      const tag = cmsTags.find((t) => t.slug === activeTagSlug);
       if (tag?.couleur) {
         return {
           bg: tag.couleur,
-          text: '#FFFFFF',
+          text: "#FFFFFF",
           light: `${tag.couleur}20`,
-          shadow: `${tag.couleur}40`
+          shadow: `${tag.couleur}40`,
         };
       }
     }
-    return { bg: '#8B5CF6', text: '#FFFFFF', light: '#8B5CF620', shadow: '#8B5CF640' };
+    return { bg: "#8B5CF6", text: "#FFFFFF", light: "#8B5CF620", shadow: "#8B5CF640" };
   }, [activeCategory, activeTagSlug, cmsTags]);
 
-  // Obtenir les tags d'une catégorie
-  const getTagsForCategory = (category: TagCategory) => {
-    return category.tags
-      .map(slug => cmsTags.find(t => t.slug === slug))
-      .filter((t): t is Tag => t !== undefined);
-  };
+  /* ── Tags for a category ── */
+  const getTagsForCategory = useCallback(
+    (category: TagCategory) => {
+      return category.tags
+        .map((slug) => cmsTags.find((t) => t.slug === slug))
+        .filter((t): t is Tag => t !== undefined);
+    },
+    [cmsTags]
+  );
+
+  /* ══════════════════════════════════════════════════════════════════ */
+  /*  Loading state                                                    */
+  /* ══════════════════════════════════════════════════════════════════ */
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <Navbar />
-        <div className="flex items-center justify-center h-[60vh]">
-          <div className="text-gray-400 text-lg">Chargement...</div>
-        </div>
-        <Footer />
-      </div>
+      <>
+        <SiteHeader />
+        <main id="main" role="main">
+          <div className="v2-container">
+            <section className={s.page}>
+              <div className={s.skeleton}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className={s.skelCard}>
+                    <div className={s.skelBody}>
+                      <div className={s.skelLineTiny} />
+                      <div className={s.skelLine} />
+                      <div className={s.skelLineShort} />
+                      <div className={s.skelLineTiny} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </main>
+        <Footer2 />
+      </>
     );
   }
 
+  /* ══════════════════════════════════════════════════════════════════ */
+  /*  Render                                                           */
+  /* ══════════════════════════════════════════════════════════════════ */
+
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <>
       <SEO
         title="Histoires"
-        description="Des récits singuliers qui inspirent, transforment et éclairent. Découvrez des parcours authentiques et des témoignages qui résonnent."
+        description="Des r&eacute;cits singuliers qui inspirent, transforment et &eacute;clairent. D&eacute;couvrez des parcours authentiques et des t&eacute;moignages qui r&eacute;sonnent."
         url="/histoires"
       />
 
-      <Navbar />
+      <SiteHeader />
 
-      <main className="pt-3 pb-8">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+      <main id="main" role="main">
+        <div className="v2-container">
+          <section className={s.page}>
 
-          {/* ═══════════════════════════════════════════════════════════════ */}
-          {/* HERO SECTION */}
-          {/* ═══════════════════════════════════════════════════════════════ */}
-          <div className="mb-8">
-            {/* Header éditorial */}
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="h-1 w-8 rounded-full"
-                  style={{ backgroundColor: activeColors.bg }}
-                />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  Parcours inspirants
-                </span>
-              </div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                {activeCategory
-                  ? TAG_CATEGORIES[activeCategory]?.nom || 'Histoires'
-                  : 'Des histoires qui transforment'}
-              </h1>
-              <p className="text-gray-600 text-sm lg:text-base max-w-2xl">
-                {typo("Chaque parcours est unique. Découvrez des témoignages authentiques, des récits de résilience et des expériences qui éclairent notre humanité commune.")}
-              </p>
-
-              {/* Stats */}
-              <div className="flex items-center gap-6 mt-4">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">
-                    <span className="font-semibold text-gray-900">{histoires.length}</span> histoires
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Route className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">
-                    <span className="font-semibold text-gray-900">6</span> thématiques
-                  </span>
-                </div>
-              </div>
+            {/* ── Chapter mark ── */}
+            <div className={`${s.chapterMark} mono`}>
+              <span className={s.cNum}>Biblioth&egrave;que</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>Histoires</span>
             </div>
 
-            {/* Featured histoire */}
+            {/* ── Section header ── */}
+            <header className={s.sectionHead}>
+              <span className={s.sectionKicker}>
+                <span className={s.sectionKickerDot} aria-hidden="true" />
+                Histoires &middot; parcours inspirants
+              </span>
+              <h1 className={s.sectionTitle}>
+                {activeCategory
+                  ? TAG_CATEGORIES[activeCategory]?.nom || "Histoires"
+                  : <>Des histoires qui <em>transforment.</em></>}
+              </h1>
+              <p className={s.sectionDeck}>
+                {typo(
+                  "Chaque parcours est unique. Découvrez des témoignages authentiques, des récits de résilience et des expériences qui éclairent notre humanité commune."
+                )}
+              </p>
+              <div className={s.stats}>
+                <span className={s.stat}>
+                  <IconBookOpen className={s.statIcon} />
+                  <span className={s.statNum}>{histoires.length}</span> histoires
+                </span>
+                <span className={s.stat}>
+                  <IconRoute className={s.statIcon} />
+                  <span className={s.statNum}>6</span> th&eacute;matiques
+                </span>
+              </div>
+            </header>
+
+            {/* ── Featured histoire ── */}
             {featuredHistoire && !hasActiveFilters && (
               <FeaturedHistoire histoire={featuredHistoire} cmsTags={cmsTags} />
             )}
-          </div>
 
-          <div className="flex gap-6 lg:gap-8">
+            {/* ── Toolbar ── */}
+            <div className={s.toolbar}>
+              <form onSubmit={handleSearch} className={s.searchWrap}>
+                <IconSearch className={s.searchIcon} width={14} height={14} />
+                <input
+                  type="text"
+                  placeholder="Rechercher une histoire…"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className={s.searchInput}
+                />
+                {searchInput && (
+                  <button
+                    type="button"
+                    className={s.searchClear}
+                    onClick={() => {
+                      setSearchInput("");
+                      const p = new URLSearchParams(searchParams);
+                      p.delete("q");
+                      p.set("page", "1");
+                      setSearchParams(p);
+                    }}
+                  >
+                    <IconX width={12} height={12} />
+                  </button>
+                )}
+              </form>
 
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* SIDEBAR - Desktop */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-24 space-y-5">
+              {/* Mobile filter toggle */}
+              <button
+                type="button"
+                className={s.mobileFilterBtn}
+                onClick={() => setShowMobileFilters((v) => !v)}
+              >
+                <IconSliders width={14} height={14} />
+                Th&egrave;mes
+              </button>
+            </div>
 
-                {/* Recherche */}
-                <form onSubmit={handleSearch} className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Rechercher une histoire..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200 transition-all placeholder:text-gray-400"
-                  />
-                  {searchInput && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchInput('');
-                        const params = new URLSearchParams(searchParams);
-                        params.delete('q');
-                        params.set('page', '1');
-                        setSearchParams(params);
-                      }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </form>
+            {/* ── Active filter chips ── */}
+            {hasActiveFilters && (
+              <div className={s.activeFilters}>
+                <span className={`${s.activeLabel} mono`}>Filtres&nbsp;:</span>
+                {activeCategory && TAG_CATEGORIES[activeCategory] && (
+                  <button
+                    className={s.activeChip}
+                    style={{ "--chip-color": TAG_CATEGORIES[activeCategory].couleur } as React.CSSProperties}
+                    onClick={() => handleCategoryClick(activeCategory)}
+                  >
+                    <span className={s.activeChipDot} />
+                    {TAG_CATEGORIES[activeCategory].nom}
+                    <span className={s.activeChipX}>&times;</span>
+                  </button>
+                )}
+                {activeTagSlug && (
+                  <button
+                    className={s.activeChip}
+                    style={{
+                      "--chip-color":
+                        cmsTags.find((t) => t.slug === activeTagSlug)?.couleur || "#6366F1",
+                    } as React.CSSProperties}
+                    onClick={() => handleTagClick(activeTagSlug)}
+                  >
+                    <span className={s.activeChipDot} />
+                    {cmsTags.find((t) => t.slug === activeTagSlug)?.nom || activeTagSlug}
+                    <span className={s.activeChipX}>&times;</span>
+                  </button>
+                )}
+                {searchQuery && (
+                  <button className={s.activeChip} onClick={clearFilters}>
+                    &laquo;&nbsp;{searchQuery}&nbsp;&raquo;
+                    <span className={s.activeChipX}>&times;</span>
+                  </button>
+                )}
+                <button className={s.clearAll} onClick={clearFilters}>
+                  Tout effacer
+                </button>
+              </div>
+            )}
 
-                {/* Catégories thématiques */}
-                <div className="bg-white rounded-2xl ring-1 ring-gray-200/50 overflow-hidden" style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.06)' }}>
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                      Explorer par thème
+            {/* ── Mobile filter drawer ── */}
+            {showMobileFilters && (
+              <div
+                className={s.mobileFilterDrawer}
+                style={{ display: "block" }}
+              >
+                <div
+                  className={s.mobileFilterOverlay}
+                  onClick={() => setShowMobileFilters(false)}
+                />
+                <div className={s.mobileFilterPanel}>
+                  <div className={s.mobileFilterHeader}>
+                    <h3 className={s.mobileFilterTitle}>
+                      Explorer par th&egrave;me
                     </h3>
-                  </div>
-
-                  <div className="p-2">
-                    {/* Bouton Toutes */}
                     <button
-                      onClick={clearFilters}
-                      className={`
-                        w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-300
-                        ${!activeCategory && !activeTagSlug
-                          ? 'bg-gray-900 text-white shadow-md'
-                          : 'text-gray-600 hover:bg-gray-50'
-                        }
-                      `}
+                      className={s.mobileFilterClose}
+                      onClick={() => setShowMobileFilters(false)}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <BookOpen className="w-4 h-4" />
-                        <span className="font-medium">Toutes les histoires</span>
-                      </div>
-                      <span className={`text-xs ${!activeCategory && !activeTagSlug ? 'text-white/60' : 'text-gray-400'}`}>
-                        {histoires.length}
-                      </span>
+                      <IconX width={14} height={14} />
+                    </button>
+                  </div>
+                  <div className={s.filterGroup}>
+                    <div className={s.filterList}>
+                      <button
+                        className={
+                          !activeCategory && !activeTagSlug
+                            ? s.filterBtnActive
+                            : s.filterBtn
+                        }
+                        onClick={() => {
+                          clearFilters();
+                          setShowMobileFilters(false);
+                        }}
+                      >
+                        <span className={s.filterDot} />
+                        Toutes
+                        <span className={s.filterCount}>
+                          {histoires.length}
+                        </span>
+                      </button>
+                      {getOrderedCategories().map((cat) => (
+                        <button
+                          key={cat.id}
+                          className={
+                            activeCategory === cat.id
+                              ? s.filterBtnActive
+                              : s.filterBtn
+                          }
+                          style={{ "--chip-color": cat.couleur } as React.CSSProperties}
+                          onClick={() => {
+                            handleCategoryClick(cat.id);
+                            setShowMobileFilters(false);
+                          }}
+                        >
+                          <span className={s.filterDot} />
+                          {cat.nom}
+                          <span className={s.filterCount}>
+                            {categoryCounts[cat.id]}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── Layout: sidebar + content ── */}
+            <div className={s.layout}>
+
+              {/* ── Sidebar (desktop) ── */}
+              <aside className={s.sidebar}>
+
+                {/* Category filters */}
+                <div className={s.filterGroup}>
+                  <h3 className={`${s.filterGroupTitle} mono`}>
+                    Explorer par th&egrave;me
+                  </h3>
+                  <div className={s.filterList}>
+                    {/* All button */}
+                    <button
+                      className={
+                        !activeCategory && !activeTagSlug
+                          ? s.filterBtnActive
+                          : s.filterBtn
+                      }
+                      onClick={clearFilters}
+                    >
+                      <span className={s.filterDot} />
+                      Toutes les histoires
+                      <span className={s.filterCount}>{histoires.length}</span>
                     </button>
 
-                    {/* Catégories avec icônes */}
+                    {/* Categories */}
                     {getOrderedCategories().map((category) => {
                       const isActive = activeCategory === category.id;
                       const isExpanded = expandedCategories.includes(category.id);
                       const categoryTags = getTagsForCategory(category);
-                      const CategoryIcon = CATEGORY_ICONS[category.id] || BookOpen;
 
                       return (
-                        <div key={category.id} className="mt-1">
-                          <button
-                            onClick={() => handleCategoryClick(category.id)}
-                            className="relative w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-colors duration-300"
-                          >
-                            {isActive && (
-                              <motion.div
-                                layoutId="histoiresCategoryIndicator"
-                                className="absolute inset-0 rounded-xl shadow-md"
-                                style={{ backgroundColor: category.couleur }}
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                              />
-                            )}
-                            <div className={`relative z-10 flex items-center gap-2.5 ${isActive ? 'text-white' : 'text-gray-600 hover:text-gray-900'}`}>
-                              <CategoryIcon
-                                className="w-4 h-4"
-                                style={{
-                                  color: isActive ? 'rgba(255,255,255,0.9)' : category.couleur
-                                }}
-                              />
-                              <span className="font-medium">{category.nom}</span>
-                            </div>
-                            <div className="relative z-10 flex items-center gap-2">
-                              <span className={`text-xs ${isActive ? 'text-white/60' : 'text-gray-400'}`}>
+                        <div key={category.id}>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <button
+                              className={isActive ? s.filterBtnActive : s.filterBtn}
+                              style={{ "--chip-color": category.couleur } as React.CSSProperties}
+                              onClick={() => handleCategoryClick(category.id)}
+                            >
+                              <span className={s.filterDot} />
+                              {category.nom}
+                              <span className={s.filterCount}>
                                 {categoryCounts[category.id]}
                               </span>
-                              {categoryTags.length > 0 && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleCategoryExpansion(category.id);
-                                  }}
-                                  className={`p-0.5 rounded transition-colors ${isActive ? 'hover:bg-white/20' : 'hover:bg-gray-100'}`}
-                                >
-                                  <ChevronDown
-                                    className={`w-2.5 h-2.5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-                                    style={{ color: isActive ? 'rgba(255,255,255,0.8)' : '#9CA3AF' }}
-                                  />
-                                </button>
-                              )}
-                            </div>
-                          </button>
-
-                          {/* Tags expandables */}
-                          <AnimatePresence>
-                            {isExpanded && categoryTags.length > 0 && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="overflow-hidden"
+                            </button>
+                            {categoryTags.length > 0 && (
+                              <button
+                                className={s.filterExpandBtn}
+                                onClick={() => toggleCategoryExpansion(category.id)}
+                                aria-label={
+                                  isExpanded
+                                    ? `Masquer les tags de ${category.nom}`
+                                    : `Afficher les tags de ${category.nom}`
+                                }
                               >
-                                <div className="pl-7 pr-2 py-1.5 space-y-0.5">
-                                  {categoryTags.map(tag => {
-                                    const isTagActive = activeTagSlug === tag.slug;
-                                    return (
-                                      <button
-                                        key={tag._id}
-                                        onClick={() => handleTagClick(tag.slug)}
-                                        className={`
-                                          w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition-all duration-300
-                                          ${isTagActive
-                                            ? 'font-semibold'
-                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                                          }
-                                        `}
-                                        style={{
-                                          color: isTagActive ? (tag.couleur || category.couleur) : undefined,
-                                          backgroundColor: isTagActive ? `${tag.couleur || category.couleur}12` : undefined
-                                        }}
-                                      >
-                                        {tag.nom}
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </motion.div>
+                                <IconChevronDown
+                                  className={`${s.filterExpandIcon} ${
+                                    isExpanded ? s.filterExpandIconOpen : ""
+                                  }`}
+                                />
+                              </button>
                             )}
-                          </AnimatePresence>
+                          </div>
+
+                          {/* Expandable sub-tags */}
+                          {isExpanded && categoryTags.length > 0 && (
+                            <div className={s.subTagList}>
+                              {categoryTags.map((tag) => {
+                                const isTagActive = activeTagSlug === tag.slug;
+                                return (
+                                  <button
+                                    key={tag._id}
+                                    className={
+                                      isTagActive
+                                        ? s.subTagBtnActive
+                                        : s.subTagBtn
+                                    }
+                                    style={
+                                      isTagActive
+                                        ? ({
+                                            color: tag.couleur || category.couleur,
+                                            background: `${tag.couleur || category.couleur}12`,
+                                          } as React.CSSProperties)
+                                        : undefined
+                                    }
+                                    onClick={() => handleTagClick(tag.slug)}
+                                  >
+                                    {tag.nom}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* CTA Raconter */}
-                <div
-                  className="p-4 rounded-2xl ring-1 ring-gray-200/50"
-                  style={{
-                    background: 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)'
-                  }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <PenLine className="w-4 h-4 text-violet-500" />
-                    <h4 className="font-semibold text-gray-900 text-sm">
-                      Vous avez une histoire ?
+                {/* Sidebar CTA */}
+                <div className={s.sidebarCta}>
+                  <div className={s.sidebarCtaHead}>
+                    <IconPen className={s.sidebarCtaIcon} />
+                    <h4 className={s.sidebarCtaTitle}>
+                      Vous avez une histoire&nbsp;?
                     </h4>
                   </div>
-                  <p className="text-xs text-gray-500 mb-3">
-                    {typo("Partagez votre parcours et inspirez des milliers de lecteurs.")}
+                  <p className={s.sidebarCtaText}>
+                    {typo(
+                      "Partagez votre parcours et inspirez des milliers de lecteurs."
+                    )}
                   </p>
-                  <Link
-                    to="/racontez-votre-histoire"
-                    className="group inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-violet-500 rounded-full transition-all hover:bg-violet-600"
-                  >
-                    Racontez la vôtre
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  <Link to="/racontez-votre-histoire" className={s.sidebarCtaLink}>
+                    Racontez la v&ocirc;tre
+                    <IconArrowRight />
+                  </Link>
+                </div>
+              </aside>
+
+              {/* ── Content ── */}
+              <div className={s.content}>
+
+                {/* Result count */}
+                <div className={s.resultCount}>
+                  {gridHistoires.length} histoire{gridHistoires.length > 1 ? "s" : ""}
+                  {hasActiveFilters &&
+                    " trouvée" + (gridHistoires.length > 1 ? "s" : "")}
+                </div>
+
+                {/* Grid */}
+                {paginatedHistoires.length > 0 ? (
+                  <>
+                    <div className={s.grid}>
+                      {paginatedHistoires.map((histoire) => (
+                        <HistoireCard
+                          key={histoire._id}
+                          histoire={histoire}
+                          cmsTags={cmsTags}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <nav className={s.pagination} aria-label="Pagination">
+                        <button
+                          className={s.pageBtn}
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                        >
+                          <IconChevronLeft width={14} height={14} />
+                        </button>
+
+                        <div className={s.pageNums}>
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                            (page) => {
+                              if (
+                                page === 1 ||
+                                page === totalPages ||
+                                (page >= currentPage - 1 && page <= currentPage + 1)
+                              ) {
+                                return (
+                                  <button
+                                    key={page}
+                                    className={
+                                      page === currentPage
+                                        ? s.pageBtnActive
+                                        : s.pageBtn
+                                    }
+                                    onClick={() => handlePageChange(page)}
+                                  >
+                                    {page}
+                                  </button>
+                                );
+                              } else if (
+                                page === currentPage - 2 ||
+                                page === currentPage + 2
+                              ) {
+                                return (
+                                  <span key={page} className={s.pageEllipsis}>
+                                    &hellip;
+                                  </span>
+                                );
+                              }
+                              return null;
+                            }
+                          )}
+                        </div>
+
+                        <button
+                          className={s.pageBtn}
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                        >
+                          <IconChevronRight width={14} height={14} />
+                        </button>
+                      </nav>
+                    )}
+                  </>
+                ) : (
+                  /* ── Empty state ── */
+                  <div className={s.empty}>
+                    <IconSearch className={s.emptyIcon} />
+                    <h3 className={s.emptyTitle}>Aucune histoire trouv&eacute;e</h3>
+                    <p className={s.emptyText}>
+                      {searchQuery
+                        ? `Aucun résultat pour « ${searchQuery} »`
+                        : "Essayez de modifier vos filtres"}
+                    </p>
+                    <button className={s.emptyCta} onClick={clearFilters}>
+                      Voir toutes les histoires
+                      <IconArrowRight width={14} height={14} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Mobile CTA */}
+                <div className={s.mobileCta}>
+                  <div className={s.sidebarCtaHead}>
+                    <IconPen className={s.sidebarCtaIcon} />
+                    <h4 className={s.sidebarCtaTitle}>
+                      Vous avez une histoire&nbsp;?
+                    </h4>
+                  </div>
+                  <p className={s.sidebarCtaText}>
+                    {typo(
+                      "Partagez votre parcours et inspirez des milliers de lecteurs."
+                    )}
+                  </p>
+                  <Link to="/racontez-votre-histoire" className={s.sidebarCtaLink}>
+                    Racontez la v&ocirc;tre
+                    <IconArrowRight />
                   </Link>
                 </div>
               </div>
-            </aside>
-
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CONTENU PRINCIPAL */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            <div className="flex-1 min-w-0">
-
-              {/* Barre mobile */}
-              <div className="lg:hidden flex items-center gap-2 mb-4">
-                <form onSubmit={handleSearch} className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Rechercher..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-gray-300"
-                  />
-                </form>
-                <button
-                  onClick={() => setShowMobileFilters(!showMobileFilters)}
-                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700"
-                >
-                  <SlidersHorizontal className="w-4 h-4" />
-                  Thèmes
-                </button>
-              </div>
-
-              {/* Filtres mobile */}
-              <AnimatePresence>
-                {showMobileFilters && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="lg:hidden overflow-hidden mb-4"
-                  >
-                    <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => { clearFilters(); setShowMobileFilters(false); }}
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                            !activeCategory && !activeTagSlug ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          Toutes
-                        </button>
-                        {getOrderedCategories().map((cat) => {
-                          const CatIcon = CATEGORY_ICONS[cat.id] || BookOpen;
-                          return (
-                            <button
-                              key={cat.id}
-                              onClick={() => { handleCategoryClick(cat.id); setShowMobileFilters(false); }}
-                              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5"
-                              style={{
-                                backgroundColor: activeCategory === cat.id ? cat.couleur : `${cat.couleur}15`,
-                                color: activeCategory === cat.id ? '#FFFFFF' : cat.couleur
-                              }}
-                            >
-                              <CatIcon className="w-3 h-3" />
-                              {cat.nom}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Filtres actifs */}
-              {hasActiveFilters && (
-                <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className="text-xs text-gray-500">Filtres :</span>
-                  {activeCategory && (
-                    <span
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: TAG_CATEGORIES[activeCategory]?.couleur || '#6366F1' }}
-                    >
-                      {React.createElement(CATEGORY_ICONS[activeCategory] || BookOpen, { className: 'w-3 h-3' })}
-                      {TAG_CATEGORIES[activeCategory]?.nom}
-                      <button onClick={() => handleCategoryClick(activeCategory)} className="ml-1 hover:bg-white/20 rounded-full p-0.5">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
-                  {activeTagSlug && (
-                    <span
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: cmsTags.find(t => t.slug === activeTagSlug)?.couleur || '#6366F1' }}
-                    >
-                      {cmsTags.find(t => t.slug === activeTagSlug)?.nom}
-                      <button onClick={() => handleTagClick(activeTagSlug)} className="ml-1 hover:bg-white/20 rounded-full p-0.5">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
-                  {searchQuery && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-700">
-                      "{searchQuery}"
-                      <button onClick={clearFilters} className="ml-1 hover:bg-gray-200 rounded-full p-0.5">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Compteur résultats */}
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-gray-500">
-                  {gridHistoires.length} histoire{gridHistoires.length > 1 ? 's' : ''}
-                  {hasActiveFilters && ' trouvée' + (gridHistoires.length > 1 ? 's' : '')}
-                </span>
-              </div>
-
-              {/* Grille d'histoires */}
-              {paginatedHistoires.length > 0 ? (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {paginatedHistoires.map((histoire, index) => (
-                      <HistoireCard
-                        key={histoire._id}
-                        histoire={histoire}
-                        index={index}
-                        cmsTags={cmsTags}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-8">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                        Précédent
-                      </button>
-
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                          if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                            return (
-                              <button
-                                key={page}
-                                onClick={() => handlePageChange(page)}
-                                className="w-8 h-8 rounded-full text-sm font-medium transition-all"
-                                style={{
-                                  backgroundColor: page === currentPage ? activeColors.bg : 'transparent',
-                                  color: page === currentPage ? 'white' : '#6B7280',
-                                }}
-                              >
-                                {page}
-                              </button>
-                            );
-                          } else if (page === currentPage - 2 || page === currentPage + 2) {
-                            return <span key={page} className="text-gray-400 text-sm px-1">...</span>;
-                          }
-                          return null;
-                        })}
-                      </div>
-
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                      >
-                        Suivant
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center py-16 bg-white rounded-2xl ring-1 ring-gray-200/50">
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                    style={{ backgroundColor: activeColors.light }}
-                  >
-                    <Search className="w-8 h-8" style={{ color: activeColors.bg }} />
-                  </div>
-                  <h3 className="font-bold text-gray-900 text-lg mb-2">Aucune histoire trouvée</h3>
-                  <p className="text-gray-500 text-sm mb-4">
-                    {searchQuery ? `Aucun résultat pour "${searchQuery}"` : 'Essayez de modifier vos filtres'}
-                  </p>
-                  <button
-                    onClick={clearFilters}
-                    className="group inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-sm hover:bg-gray-800 transition-colors"
-                  >
-                    Voir toutes les histoires
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              )}
-
-              {/* CTA mobile */}
-              <div className="lg:hidden mt-8 p-4 rounded-2xl bg-white ring-1 ring-gray-200/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <PenLine className="w-4 h-4 text-violet-500" />
-                  <h3 className="font-bold text-gray-900 text-base">
-                    Vous avez une histoire ?
-                  </h3>
-                </div>
-                <p className="text-gray-500 text-sm mb-3">
-                  {typo("Partagez votre parcours et inspirez des milliers de lecteurs.")}
-                </p>
-                <Link
-                  to="/racontez-votre-histoire"
-                  className="group inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-violet-500 rounded-full transition-all hover:bg-violet-600"
-                >
-                  Racontez la vôtre
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </div>
             </div>
-          </div>
+          </section>
         </div>
       </main>
 
-      <Footer />
-    </div>
+      <Footer2 />
+      <ScrollToTopV2 />
+    </>
   );
-};
-
-export default HistoiresPage;
+}

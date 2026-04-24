@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import SplashScreen from './components/SplashScreen';
 import CookieConsent from './components/CookieConsent';
+import ExitIntentPopup from './components/ExitIntentPopup';
 // import SkinWrapper from './components/SkinWrapper';
 
 // Composant pour scroller en haut à chaque changement de page
@@ -16,19 +17,19 @@ function ScrollToTop() {
 }
 
 // Lazy loading des pages
-const HomePage = lazy(() => import('./pages/HomePage'));
+const HomePage = lazy(() => import('./pages/HomePageV2'));
 const UniversPage = lazy(() => import('./pages/UniversPage'));
 const SeriesPage = lazy(() => import('./pages/SeriesPage'));
 const SeriesDetailPage = lazy(() => import('./pages/SeriesDetailPage'));
 const FormatPage = lazy(() => import('./pages/FormatPage'));
 const BibliothequePage = lazy(() => import('./pages/BibliothequePage'));
-const ArticlePage = lazy(() => import('./pages/ArticlePage'));
+const ArticlePage = lazy(() => import('./pages/ArticlePageV2'));
 const VideoPage = lazy(() => import('./pages/VideoPage'));
 const VideosPage = lazy(() => import('./pages/VideosPage'));
 const ProductionDetailPage = lazy(() => import('./pages/ProductionDetailPage'));
 const PortraitDetailPage = lazy(() => import('./pages/PortraitDetailPage'));
 const HistoiresPage = lazy(() => import('./pages/HistoiresPage'));
-const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
+const ArticlesPage = lazy(() => import('./pages/ArticlesPageV2'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const LegalPage = lazy(() => import('./pages/LegalPage'));
@@ -98,6 +99,7 @@ function App() {
         </Routes>
       </Suspense>
       <CookieConsent />
+      <ExitIntentPopup />
     </>
   );
 }

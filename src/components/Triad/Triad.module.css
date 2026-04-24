@@ -1,0 +1,321 @@
+/* ===== Ch.04 — Nos univers — Magazine compact ===== */
+
+.categories {
+  margin-top: 72px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ----- Chapter mark (unified) ----- */
+
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 48px;
+}
+
+.cNum { letter-spacing: 0.2em; font-weight: 500; }
+.cSep { opacity: 0.3; }
+.cLabel { opacity: 0.75; }
+
+/* ----- Section intro ----- */
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 40px;
+  margin-bottom: 44px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.sectionLabel { max-width: 62ch; }
+
+.sectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 18px;
+}
+
+.sectionKickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.sectionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.sectionTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.sectionDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone700);
+  margin: 18px 0 0;
+  max-width: 58ch;
+}
+
+.sectionAll {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.sectionAll:hover { color: var(--ink); }
+
+.sectionAllArrow {
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.sectionAll:hover .sectionAllArrow { transform: translateX(4px); }
+
+/* ══════ GRID — 5 columns, shared borders ══════ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid rgba(10, 10, 10, 0.1);
+  border-left: 1px solid rgba(10, 10, 10, 0.1);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(10, 10, 10, 0.1);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+  background: var(--paper);
+}
+
+/* ── Image ── */
+
+.cardImgLink {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: var(--stone50);
+}
+
+.cardImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.cardImgLink:hover .cardImg {
+  opacity: 0.85;
+}
+
+/* ── Body ── */
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px;
+}
+
+/* ── Header — dot + icon + name ── */
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--u-color, var(--stone400));
+  flex-shrink: 0;
+}
+
+.cardSvg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--ink);
+  opacity: 0.45;
+}
+
+.cardName {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.cardTagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--stone500);
+  margin: 6px 0 0;
+}
+
+/* ── Article list ── */
+
+.cardArticles {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(10, 10, 10, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardLink {
+  display: block;
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.06);
+}
+
+.cardLink:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.cardLink:first-child {
+  padding-top: 0;
+}
+
+.cardTitle {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.2s ease;
+}
+
+.cardTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.cardLink:hover .cardTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ── Footer — meta + explore ── */
+
+.cardFoot {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardExplore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transition: gap 0.3s ease;
+  padding-top: 12px;
+  border-top: 1px solid rgba(10, 10, 10, 0.06);
+}
+
+.cardExplore:hover { gap: 12px; }
+.cardExplore svg { width: 14px; height: 14px; }
+
+/* ══════════════════════════════════════════════════════════════════════ */
+/*  RESPONSIVE                                                          */
+/* ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1280px) {
+  .cardBody { padding: 18px; }
+  .cardTitle { font-size: 14px; }
+}
+
+@media (max-width: 1080px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+  .cardImgLink { aspect-ratio: 3/2; }
+}
+
+@media (max-width: 880px) {
+  .sectionHead { grid-template-columns: 1fr; gap: 20px; }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .chapterMark { margin-bottom: 36px; }
+}
+
+@media (max-width: 640px) {
+  .sectionHead { margin-bottom: 28px; }
+  .sectionTitle { font-size: clamp(26px, 6vw, 36px); }
+  .sectionDeck { font-size: 14px; }
+  .categories { margin-top: 56px; }
+  .grid { grid-template-columns: 1fr; }
+  .cardImgLink { aspect-ratio: 16/9; }
+  .chapterMark { margin-bottom: 28px; }
+  .cardTitle { font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+  .cardBody { padding: 16px; }
+  .cardTitle { font-size: 14px; }
+  .cardTagline { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardImg,
+  .cardExplore {
+    transition: none !important;
+  }
+}

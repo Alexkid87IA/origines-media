@@ -1,40 +1,18 @@
 // src/pages/ShareStoryPage.tsx
-// Page "Racontez votre histoire" - Structure complète optimisée
+// Page "Racontez votre histoire" — V2 angular editorial design
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import SiteHeader from '@/components/SiteHeader/SiteHeader';
+import Footer2 from '@/components/Footer2/Footer2';
+import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
 import { sanityFetch } from '../lib/sanity';
 import { VIDEOS_SECTION_QUERY } from '../lib/queries';
-import {
-  ArrowRight,
-  PenLine,
-  Video,
-  Mic,
-  BookOpen,
-  Film,
-  Send,
-  Heart,
-  Quote,
-  Check,
-  Play,
-  Users,
-  Sparkles,
-  Clock,
-  Shield,
-  Eye,
-  MessageCircle,
-  Globe,
-  Lightbulb,
-  Phone,
-  Calendar,
-  FileText
-} from 'lucide-react';
+import s from './ShareStoryPage.module.css';
 
-// Types
+// ============ TYPES ============
+
 interface SanityVideo {
   _id: string;
   titre: string;
@@ -53,10 +31,8 @@ interface SanityVideo {
 
 // ============ DATA ============
 
-// Vidéo featured pour le hero (slug fixe)
 const FEATURED_VIDEO_SLUG = 'lettre-a-la-jeune-louane-hyperactivite-deuil-et-succes';
 
-// Fonction pour mélanger un tableau (Fisher-Yates shuffle)
 const shuffleArray = <T,>(array: T[]): T[] => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -66,72 +42,57 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
-// Étapes du processus - redesign
 const processSteps = [
   {
     number: '01',
     title: 'Premier contact',
     desc: 'Remplissez le formulaire en 2 minutes. Parlez-nous de vous et de votre histoire.',
-    icon: Send,
-    color: '#6366F1',
-    detail: 'Réponse sous 48h',
+    detail: 'Reponse sous 48h',
   },
   {
     number: '02',
-    title: 'Appel découverte',
+    title: 'Appel decouverte',
     desc: 'On vous rappelle pour faire connaissance. 20 minutes pour comprendre votre parcours.',
-    icon: Phone,
-    color: '#EC4899',
     detail: 'Sans engagement',
   },
   {
     number: '03',
-    title: 'Préparation',
-    desc: 'On structure ensemble votre récit. Coaching personnalisé si besoin.',
-    icon: Calendar,
-    color: '#F59E0B',
-    detail: 'À votre rythme',
+    title: 'Preparation',
+    desc: 'On structure ensemble votre recit. Coaching personnalise si besoin.',
+    detail: 'A votre rythme',
   },
   {
     number: '04',
-    title: 'Création',
-    desc: 'Tournage, rédaction ou enregistrement avec notre équipe professionnelle.',
-    icon: Sparkles,
-    color: '#10B981',
-    detail: 'Qualité pro',
+    title: 'Creation',
+    desc: 'Tournage, redaction ou enregistrement avec notre equipe professionnelle.',
+    detail: 'Qualite pro',
   },
 ];
 
-
-// Raisons de partager - Version premium
 const reasons = [
   {
-    icon: Heart,
     title: 'Aider quelqu\'un',
-    desc: 'Votre histoire pourrait être exactement ce dont quelqu\'un a besoin aujourd\'hui',
+    desc: 'Votre histoire pourrait etre exactement ce dont quelqu\'un a besoin aujourd\'hui',
     stat: '2M+',
-    statLabel: 'messages reçus',
+    statLabel: 'messages recus',
     color: '#EC4899',
   },
   {
-    icon: Lightbulb,
     title: 'Donner du sens',
-    desc: 'Transformez votre vécu en quelque chose de plus grand que vous',
+    desc: 'Transformez votre vecu en quelque chose de plus grand que vous',
     stat: '89%',
-    statLabel: 'se sentent libérés',
+    statLabel: 'se sentent liberes',
     color: '#F59E0B',
   },
   {
-    icon: Users,
-    title: 'Rejoindre une communauté',
+    title: 'Rejoindre une communaute',
     desc: 'Faites partie d\'un mouvement de 1 000+ personnes qui osent raconter',
     stat: '1K+',
-    statLabel: 'témoins actifs',
+    statLabel: 'temoins actifs',
     color: '#8B5CF6',
   },
   {
-    icon: Sparkles,
-    title: 'Créer un héritage',
+    title: 'Creer un heritage',
     desc: 'Laissez une trace qui inspirera encore dans 10, 20, 50 ans',
     stat: '10B+',
     statLabel: 'vues totales',
@@ -139,20 +100,17 @@ const reasons = [
   },
 ];
 
-// Stats d'impact
 const impactStats = [
-  { value: '10B+', label: 'vues cumulées', icon: Eye },
-  { value: '1 000+', label: 'histoires partagées', icon: FileText },
-  { value: '2M+', label: 'messages de soutien', icon: MessageCircle },
-  { value: '45+', label: 'pays touchés', icon: Globe },
+  { value: '10B+', label: 'vues cumulees' },
+  { value: '1 000+', label: 'histoires partagees' },
+  { value: '2M+', label: 'messages de soutien' },
+  { value: '45+', label: 'pays touches' },
 ];
 
-// Tous les formats disponibles (5 formats)
 const formats = [
   {
     id: 'video',
-    icon: Video,
-    title: 'Vidéo',
+    title: 'Video',
     subtitle: 'Le plus impactant',
     desc: 'Tournage pro chez vous ou en studio.',
     duration: '4-6 semaines',
@@ -161,29 +119,26 @@ const formats = [
   },
   {
     id: 'article',
-    icon: PenLine,
     title: 'Article',
     subtitle: 'Pour les plumes',
-    desc: 'Vous écrivez, on édite ensemble.',
+    desc: 'Vous ecrivez, on edite ensemble.',
     duration: '2-4 semaines',
     color: '#6366F1',
     popular: false,
   },
   {
     id: 'podcast',
-    icon: Mic,
     title: 'Podcast',
-    subtitle: 'En toute intimité',
-    desc: 'Juste votre voix, idéal pour l\'anonymat.',
+    subtitle: 'En toute intimite',
+    desc: 'Juste votre voix, ideal pour l\'anonymat.',
     duration: '2-3 semaines',
     color: '#10B981',
     popular: false,
   },
   {
     id: 'livre',
-    icon: BookOpen,
     title: 'Livre',
-    subtitle: 'Pour les épopées',
+    subtitle: 'Pour les epopees',
     desc: 'Votre histoire en version longue.',
     duration: '3-6 mois',
     color: '#F59E0B',
@@ -191,59 +146,175 @@ const formats = [
   },
   {
     id: 'documentaire',
-    icon: Film,
     title: 'Documentaire',
     subtitle: 'L\'immersion totale',
-    desc: 'Format long, plusieurs témoins.',
+    desc: 'Format long, plusieurs temoins.',
     duration: '6-12 mois',
     color: '#EF4444',
     popular: false,
   },
 ];
 
-// Témoignages de participants
 const participantTestimonials = [
   {
-    quote: "J'avais peur de me livrer. L'équipe m'a mise tellement à l'aise que j'ai oublié la caméra.",
+    quote: "J'avais peur de me livrer. L'equipe m'a mise tellement a l'aise que j'ai oublie la camera.",
     author: 'Nadia K.',
-    role: 'A partagé en vidéo',
+    role: 'A partage en video',
     image: '/placeholder.svg',
     color: '#8B5CF6',
   },
   {
-    quote: "Je reçois encore des messages de personnes que mon témoignage a aidées. C'est incroyable.",
+    quote: "Je recois encore des messages de personnes que mon temoignage a aidees. C'est incroyable.",
     author: 'Thomas R.',
-    role: 'A partagé en vidéo',
+    role: 'A partage en video',
     image: '/placeholder.svg',
     color: '#F59E0B',
   },
   {
-    quote: "Le podcast m'a permis de raconter sans montrer mon visage. C'était parfait pour moi.",
+    quote: "Le podcast m'a permis de raconter sans montrer mon visage. C'etait parfait pour moi.",
     author: 'Anonyme',
-    role: 'A partagé en podcast',
+    role: 'A partage en podcast',
     image: '/placeholder.svg',
     color: '#10B981',
   },
 ];
 
-// FAQ
 const faqs = [
   { q: "C'est vraiment gratuit ?", a: "Oui, 100% gratuit. Notre mission est de donner la parole." },
-  { q: 'Qui peut participer ?', a: "Tout le monde. Chaque histoire compte, même les plus simples." },
-  { q: 'Je peux rester anonyme ?', a: 'Absolument. Pseudonyme, voix modifiée, visage flouté.' },
-  { q: "J'ai le droit de relecture ?", a: "Bien sûr. Vous validez tout avant publication." },
-  { q: 'Ça prend combien de temps ?', a: 'De 2 semaines à 6 mois selon le format choisi.' },
-  { q: 'Et si je change d\'avis ?', a: "Vous pouvez vous retirer à tout moment." },
+  { q: 'Qui peut participer ?', a: "Tout le monde. Chaque histoire compte, meme les plus simples." },
+  { q: 'Je peux rester anonyme ?', a: 'Absolument. Pseudonyme, voix modifiee, visage floute.' },
+  { q: "J'ai le droit de relecture ?", a: "Bien sur. Vous validez tout avant publication." },
+  { q: 'Ca prend combien de temps ?', a: 'De 2 semaines a 6 mois selon le format choisi.' },
+  { q: 'Et si je change d\'avis ?', a: "Vous pouvez vous retirer a tout moment." },
 ];
 
+// ============ INLINE SVG ICONS ============
+
+const ArrowRightIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </svg>
+);
+
+const CheckIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+    <path d="M20 6L9 17l-5-5" />
+  </svg>
+);
+
+const PlayIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28A1 1 0 008 5.14z" />
+  </svg>
+);
+
+const SendIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+  </svg>
+);
+
+const HeartIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+  </svg>
+);
+
+const ShieldIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+);
+
+const ClockIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </svg>
+);
+
+const EyeIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const FileTextIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+  </svg>
+);
+
+const MessageIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+  </svg>
+);
+
+const GlobeIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+  </svg>
+);
+
+const VideoIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <rect x="2" y="4" width="15" height="16" rx="0" />
+    <path d="M17 8l5-3v14l-5-3" />
+  </svg>
+);
+
+const PenIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+  </svg>
+);
+
+const MicIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+    <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
+  </svg>
+);
+
+const BookIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+  </svg>
+);
+
+const FilmIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="0" />
+    <path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5" />
+  </svg>
+);
+
+// Map format id to icon component
+const formatIconMap: Record<string, React.FC<{ className?: string; style?: React.CSSProperties }>> = {
+  video: VideoIcon,
+  article: PenIcon,
+  podcast: MicIcon,
+  livre: BookIcon,
+  documentaire: FilmIcon,
+};
+
+// Map impact stat index to icon
+const impactIcons = [EyeIcon, FileTextIcon, MessageIcon, GlobeIcon];
+
 // ============ COMPONENT ============
+
 const ShareStoryPage: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // State pour les vidéos Sanity
+  // State pour les videos Sanity
   const [featuredVideo, setFeaturedVideo] = useState<SanityVideo | null>(null);
   const [randomVideos, setRandomVideos] = useState<SanityVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(true);
@@ -255,19 +326,17 @@ const ShareStoryPage: React.FC = () => {
         const videos = await sanityFetch(VIDEOS_SECTION_QUERY) as SanityVideo[];
 
         if (videos && videos.length > 0) {
-          // Trouver la vidéo featured
           const featured = videos.find(v => v.slug === FEATURED_VIDEO_SLUG);
           if (featured) {
             setFeaturedVideo(featured);
           }
 
-          // Mélanger les vidéos et prendre 6 (exclure la featured)
           const otherVideos = videos.filter(v => v.slug !== FEATURED_VIDEO_SLUG);
           const shuffled = shuffleArray(otherVideos).slice(0, 6);
           setRandomVideos(shuffled);
         }
       } catch (error) {
-        console.error('Erreur fetch vidéos:', error);
+        console.error('Erreur fetch videos:', error);
       } finally {
         setIsLoadingVideos(false);
       }
@@ -290,571 +359,397 @@ const ShareStoryPage: React.FC = () => {
     <>
       <SEO
         title="Racontez votre histoire | Origines Media"
-        description="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalisé."
+        description="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalise."
         url="/racontez-votre-histoire"
       />
 
-      <Navbar />
+      <SiteHeader />
 
-      <main className="bg-white">
+      <main className={s.page}>
 
         {/* ============ 1. HERO ============ */}
-        <section className="py-6 lg:py-8 bg-gray-50/50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-4 lg:gap-6 items-center">
+        <section className={s.hero}>
+          <div className={s.inner}>
+            <div className={s.heroGrid}>
 
               {/* Left - Content */}
-              <div>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-violet-600 mb-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-violet-600" />
-                  1 000+ histoires partagées
+              <div className={s.heroContent}>
+                <span className={s.heroKicker}>
+                  <span className={s.heroKickerDot} />
+                  RACONTEZ VOTRE HISTOIRE
                 </span>
 
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight mb-2">
-                  Votre histoire mérite d'être entendue
+                <h1 className={s.heroTitle}>
+                  Votre histoire{' '}
+                  <em>merite d'etre entendue</em>
                 </h1>
 
-                <p className="text-[11px] lg:text-xs text-gray-600 leading-relaxed mb-4">
-                  Vous avez traversé quelque chose d'important ? Partagez votre parcours et inspirez des milliers de personnes qui vivent la même chose.
+                <p className={s.heroDeck}>
+                  Vous avez traverse quelque chose d'important ? Partagez votre parcours
+                  et inspirez des milliers de personnes qui vivent la meme chose.
                 </p>
 
-                <a
-                  href="#formulaire"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white rounded-full font-medium text-xs hover:bg-gray-800 transition-colors"
-                >
+                <a href="#formulaire" className={s.heroCta}>
                   Je veux raconter mon histoire
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRightIcon className={s.heroCtaArrow} />
                 </a>
 
-                <div className="flex items-center gap-4 mt-3">
-                  <span className="flex items-center gap-1.5 text-[10px] text-gray-500">
-                    <Check className="w-3 h-3 text-emerald-500" />
+                <div className={s.heroChecks}>
+                  <span className={s.heroCheck}>
+                    <CheckIcon className={s.heroCheckIcon} />
                     100% gratuit
                   </span>
-                  <span className="flex items-center gap-1.5 text-[10px] text-gray-500">
-                    <Check className="w-3 h-3 text-emerald-500" />
+                  <span className={s.heroCheck}>
+                    <CheckIcon className={s.heroCheckIcon} />
                     Accompagnement pro
+                  </span>
+                  <span className={s.heroCheck}>
+                    <CheckIcon className={s.heroCheckIcon} />
+                    1 000+ histoires
                   </span>
                 </div>
               </div>
 
               {/* Right - Featured video card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
+              <div>
                 {featuredVideo ? (
                   <Link
                     to={`/video/${featuredVideo.slug}`}
-                    className="group block rounded-2xl overflow-hidden bg-white"
-                    style={{ boxShadow: '0 2px 12px -4px rgba(0,0,0,0.08)' }}
+                    className={s.featuredCard}
                   >
-                    <div className="relative aspect-video">
+                    <div className={s.featuredThumb}>
                       <img
                         src={featuredVideo.imageUrl || '/placeholder.svg'}
                         alt={featuredVideo.titre}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className={s.featuredOverlay} />
 
                       {/* Play button */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                          <Play className="w-5 h-5 text-gray-900 ml-0.5" fill="currentColor" />
+                      <div className={s.featuredPlay}>
+                        <div className={s.featuredPlayBtn}>
+                          <PlayIcon />
                         </div>
                       </div>
 
                       {/* Duration */}
                       {featuredVideo.duree && (
-                        <div className="absolute top-2 right-2">
-                          <span className="px-1.5 py-0.5 bg-black/60 rounded text-[9px] font-medium text-white">
-                            {featuredVideo.duree}
-                          </span>
+                        <div className={s.featuredDuration}>
+                          {featuredVideo.duree}
                         </div>
                       )}
 
-                      {/* Content */}
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                      {/* Meta */}
+                      <div className={s.featuredMeta}>
                         {featuredVideo.verticale && (
-                          <span
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider text-white mb-1.5"
+                          <div
+                            className={s.featuredBadge}
                             style={{ backgroundColor: featuredVideo.verticale.couleurDominante || '#8B5CF6' }}
                           >
-                            <span className="w-1 h-1 rounded-full bg-white/60" />
+                            <span className={s.featuredBadgeDot} />
                             {featuredVideo.verticale.nom}
-                          </span>
+                          </div>
                         )}
-                        <h2 className="text-xs lg:text-sm font-bold text-white leading-snug">
+                        <h2 className={s.featuredTitle}>
                           {featuredVideo.titre}
                         </h2>
                       </div>
                     </div>
                   </Link>
                 ) : (
-                  <div className="aspect-video rounded-2xl bg-gray-100 animate-pulse" />
+                  <div className={s.featuredSkeleton} />
                 )}
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ============ 2. COMMENT ÇA MARCHE - Timeline Premium ============ */}
-        <section className="py-8 lg:py-12 bg-gradient-to-b from-gray-900 to-gray-800 overflow-hidden">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-violet-400 mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
-                Processus simple
-              </span>
-              <h2 className="text-xl lg:text-2xl font-bold text-white">
-                Comment ça marche ?
-              </h2>
+        {/* ============ 2. COMMENT CA MARCHE ============ */}
+        <section className={s.process}>
+          <div className={s.inner}>
+            <p className={s.processLabel}>Processus simple</p>
+            <h2 className={s.processTitle}>Comment ca marche ?</h2>
+
+            <div className={s.processGrid}>
+              {processSteps.map((step, index) => (
+                <div key={index} className={s.processCard}>
+                  <div className={s.processNumber}>{step.number}</div>
+                  <h3 className={s.processCardTitle}>{step.title}</h3>
+                  <p className={s.processCardDesc}>{step.desc}</p>
+                  <span className={s.processDetail}>
+                    <CheckIcon className={s.processDetailIcon} />
+                    {step.detail}
+                  </span>
+                </div>
+              ))}
             </div>
 
-            {/* Timeline */}
-            <div className="relative">
-              {/* Ligne de connexion horizontale - desktop */}
-              <div className="hidden lg:block absolute top-16 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-indigo-500 via-pink-500 via-amber-500 to-emerald-500 opacity-30" />
-
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-                {processSteps.map((step, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.15, duration: 0.5 }}
-                    className="relative"
-                  >
-                    {/* Card */}
-                    <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 lg:p-5 h-full hover:border-gray-600/50 transition-colors group">
-                      {/* Number badge */}
-                      <div
-                        className="absolute -top-3 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold text-white shadow-lg"
-                        style={{ backgroundColor: step.color }}
-                      >
-                        {step.number}
-                      </div>
-
-                      {/* Icon */}
-                      <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 mt-2 transition-transform group-hover:scale-110"
-                        style={{ backgroundColor: `${step.color}20` }}
-                      >
-                        <step.icon className="w-6 h-6" style={{ color: step.color }} />
-                      </div>
-
-                      {/* Content */}
-                      <h3 className="text-sm font-bold text-white mb-1.5">{step.title}</h3>
-                      <p className="text-[11px] text-gray-400 leading-relaxed mb-3">
-                        {step.desc}
-                      </p>
-
-                      {/* Detail badge */}
-                      <span
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium"
-                        style={{ backgroundColor: `${step.color}15`, color: step.color }}
-                      >
-                        <Check className="w-2.5 h-2.5" />
-                        {step.detail}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mt-8"
-            >
-              <a
-                href="#formulaire"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-900 rounded-full font-semibold text-xs hover:bg-gray-100 transition-colors"
-              >
+            <div className={s.processCta}>
+              <a href="#formulaire" className={s.processCtaBtn}>
                 Commencer maintenant
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRightIcon />
               </a>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* ============ 3. NOS HISTOIRES ============ */}
-        <section className="py-6 lg:py-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="flex items-end justify-between mb-4">
-              <div>
-                <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
-                <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-                  Des histoires qui inspirent
-                </h2>
-                <p className="text-gray-500 text-xs">
-                  Découvrez les témoignages de notre communauté
-                </p>
+        <section className={s.stories}>
+          <div className={s.inner}>
+            <div className={s.storiesHeader}>
+              <div className={s.storiesLabel}>
+                <span className={s.storiesKicker}>
+                  <span className={s.storiesKickerDot} />
+                  Communaute
+                </span>
+                <h2 className={s.storiesTitle}>Des histoires qui inspirent</h2>
               </div>
-              <Link
-                to="/videos"
-                className="group inline-flex items-center gap-1 text-xs font-medium text-gray-900 hover:text-gray-600 transition-colors"
-              >
+              <Link to="/videos" className={s.storiesLink}>
                 Voir tout
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                <ArrowRightIcon />
               </Link>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className={s.storiesGrid}>
               {isLoadingVideos ? (
-                // Skeleton loading
                 Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="aspect-[4/3] rounded-xl bg-gray-100 animate-pulse" />
+                  <div key={index} className={s.storySkeleton} />
                 ))
               ) : (
-                randomVideos.map((video, index) => (
-                  <motion.div
+                randomVideos.map((video) => (
+                  <Link
                     key={video._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.05 }}
+                    to={`/video/${video.slug}`}
+                    className={s.storyCard}
                   >
-                    <Link
-                      to={`/video/${video.slug}`}
-                      className="group block rounded-xl overflow-hidden bg-white"
-                      style={{ boxShadow: '0 2px 8px -2px rgba(0,0,0,0.06)' }}
-                    >
-                      <div className="relative aspect-[4/3]">
-                        <img
-                          src={video.imageUrl || '/placeholder.svg'}
-                          alt={video.titre}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                    <div className={s.storyThumb}>
+                      <img
+                        src={video.imageUrl || '/placeholder.svg'}
+                        alt={video.titre}
+                      />
+                      <div className={s.storyOverlay} />
 
-                        {/* Play icon */}
-                        <div className="absolute top-2 left-2">
-                          <div className="w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
-                            <Play className="w-3 h-3 text-gray-900 ml-0.5" fill="currentColor" />
-                          </div>
+                      {/* Play icon */}
+                      <div className={s.storyPlayIcon}>
+                        <PlayIcon />
+                      </div>
+
+                      {/* Duration */}
+                      {video.duree && (
+                        <div className={s.storyDuration}>
+                          {video.duree}
                         </div>
+                      )}
 
-                        {/* Duration */}
-                        {video.duree && (
-                          <div className="absolute top-2 right-2">
-                            <span className="px-1.5 py-0.5 bg-black/60 rounded text-[8px] font-medium text-white">
-                              {video.duree}
-                            </span>
+                      {/* Content */}
+                      <div className={s.storyMeta}>
+                        {video.verticale && (
+                          <div className={s.storyCategory}>
+                            <span
+                              className={s.storyCatDot}
+                              style={{ backgroundColor: video.verticale.couleurDominante || '#8B5CF6' }}
+                            />
+                            {video.verticale.nom}
                           </div>
                         )}
-
-                        {/* Content */}
-                        <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                          {video.verticale && (
-                            <span className="inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-wider text-white/90 mb-1">
-                              <span
-                                className="w-1 h-1 rounded-full"
-                                style={{ backgroundColor: video.verticale.couleurDominante || '#8B5CF6' }}
-                              />
-                              {video.verticale.nom}
-                            </span>
-                          )}
-                          <h3 className="text-[10px] lg:text-[11px] font-semibold text-white leading-snug line-clamp-2">
-                            {video.titre}
-                          </h3>
-                        </div>
+                        <h3 className={s.storyTitle}>
+                          {video.titre}
+                        </h3>
                       </div>
-                    </Link>
-                  </motion.div>
+                    </div>
+                  </Link>
                 ))
               )}
             </div>
           </div>
         </section>
 
-        {/* ============ 4. POURQUOI PARTAGER - Premium ============ */}
-        <section className="py-10 lg:py-14 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-          {/* Background effects */}
-          <div className="absolute inset-0">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
-          </div>
+        {/* ============ 4. POURQUOI PARTAGER ============ */}
+        <section className={s.reasons}>
+          <div className={s.inner}>
+            <p className={s.reasonsLabel}>L'impact de votre voix</p>
+            <h2 className={s.reasonsTitle}>Pourquoi partager votre histoire ?</h2>
+            <p className={s.reasonsDeck}>
+              Chaque temoignage a le pouvoir de transformer des vies.
+              Voici ce qui se passe quand vous osez raconter.
+            </p>
 
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-violet-400 mb-3">
-                <Heart className="w-3 h-3" />
-                L'impact de votre voix
-              </span>
-              <h2 className="text-xl lg:text-3xl font-bold text-white mb-2">
-                Pourquoi partager votre histoire ?
-              </h2>
-              <p className="text-gray-400 text-xs max-w-md mx-auto">
-                Chaque témoignage a le pouvoir de transformer des vies. Voici ce qui se passe quand vous osez raconter.
-              </p>
-            </div>
-
-            {/* Reasons grid - Premium cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className={s.reasonsGrid}>
               {reasons.map((reason, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="group relative"
-                >
-                  <div
-                    className="h-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 lg:p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
-                  >
-                    {/* Stat badge */}
-                    <div
-                      className="absolute -top-3 right-4 px-2.5 py-1 rounded-full text-[10px] font-bold text-white shadow-lg"
-                      style={{ backgroundColor: reason.color }}
-                    >
-                      {reason.stat}
-                    </div>
-
-                    {/* Icon */}
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-110"
-                      style={{ backgroundColor: `${reason.color}20` }}
-                    >
-                      <reason.icon className="w-6 h-6" style={{ color: reason.color }} />
-                    </div>
-
-                    {/* Content */}
-                    <h3 className="text-sm font-bold text-white mb-1.5">{reason.title}</h3>
-                    <p className="text-[11px] text-gray-400 leading-relaxed mb-3">
-                      {reason.desc}
-                    </p>
-
-                    {/* Stat label */}
-                    <span
-                      className="inline-flex items-center gap-1 text-[9px] font-medium"
-                      style={{ color: reason.color }}
-                    >
-                      <span className="w-1 h-1 rounded-full" style={{ backgroundColor: reason.color }} />
-                      {reason.statLabel}
-                    </span>
+                <div key={index} className={s.reasonCard}>
+                  <div className={s.reasonStat} style={{ color: reason.color }}>
+                    {reason.stat}
                   </div>
-                </motion.div>
+                  <div className={s.reasonIcon} style={{ background: `${reason.color}18` }}>
+                    <HeartIcon style={{ color: reason.color }} />
+                  </div>
+                  <h3 className={s.reasonCardTitle}>{reason.title}</h3>
+                  <p className={s.reasonCardDesc}>{reason.desc}</p>
+                  <span className={s.reasonStatLabel} style={{ color: reason.color }}>
+                    <span className={s.reasonStatDot} style={{ backgroundColor: reason.color }} />
+                    {reason.statLabel}
+                  </span>
+                </div>
               ))}
             </div>
 
-            {/* Bottom CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mt-8"
-            >
-              <a
-                href="#formulaire"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-900 rounded-full font-semibold text-xs hover:bg-gray-100 transition-colors"
-              >
+            <div className={s.reasonsCta}>
+              <a href="#formulaire" className={s.reasonsCtaBtn}>
                 Je veux faire partie de l'aventure
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRightIcon />
               </a>
-            </motion.div>
+            </div>
           </div>
         </section>
 
-        {/* ============ 5. L'IMPACT ============ */}
-        <section className="py-5 lg:py-6 bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-4 gap-4">
-              {impactStats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <stat.icon className="w-4 h-4 text-gray-500 mx-auto mb-1" />
-                  <p className="text-lg lg:text-xl font-bold text-white">{stat.value}</p>
-                  <p className="text-[9px] lg:text-[10px] text-gray-400">{stat.label}</p>
-                </motion.div>
-              ))}
+        {/* ============ 5. IMPACT STATS ============ */}
+        <section className={s.impact}>
+          <div className={s.inner}>
+            <div className={s.impactGrid}>
+              {impactStats.map((stat, index) => {
+                const Icon = impactIcons[index];
+                return (
+                  <div key={index} className={s.impactCard}>
+                    <Icon className={s.impactIcon} />
+                    <p className={s.impactValue}>{stat.value}</p>
+                    <p className={s.impactLabel}>{stat.label}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
 
         {/* ============ 6. NOS FORMATS ============ */}
-        <section className="py-6 lg:py-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-4">
-              <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
-              <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-                Choisissez votre format
-              </h2>
-              <p className="text-gray-500 text-xs">
-                Cinq façons de raconter, selon vos envies
+        <section className={s.formats}>
+          <div className={s.inner}>
+            <div className={s.formatsHeader}>
+              <span className={s.formatsKicker}>
+                <span className={s.formatsKickerDot} />
+                Formats
+              </span>
+              <h2 className={s.formatsTitle}>Choisissez votre format</h2>
+              <p className={s.formatsDeck}>
+                Cinq facons de raconter, selon vos envies
               </p>
             </div>
 
-            {/* Formats grid - 5 formats */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-              {formats.map((format, index) => (
-                <motion.div
-                  key={format.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`relative rounded-xl overflow-hidden bg-white border-2 transition-all hover:shadow-lg cursor-pointer group ${
-                    format.popular ? 'border-pink-300' : 'border-gray-100 hover:border-gray-200'
-                  }`}
-                >
-                  {format.popular && (
-                    <div className="absolute top-0 left-0 right-0 bg-pink-500 text-white text-[8px] font-bold uppercase tracking-wider text-center py-0.5">
-                      Populaire
-                    </div>
-                  )}
+            <div className={s.formatsGrid}>
+              {formats.map((format) => {
+                const FormatIcon = formatIconMap[format.id];
+                return (
+                  <div
+                    key={format.id}
+                    className={`${s.formatCard} ${format.popular ? s.formatPopular : ''}`}
+                  >
+                    {format.popular && (
+                      <div className={s.formatPopularTag}>Populaire</div>
+                    )}
 
-                  <div className={`p-4 ${format.popular ? 'pt-6' : ''}`}>
-                    {/* Icon */}
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-110"
-                      style={{ backgroundColor: `${format.color}15` }}
-                    >
-                      <format.icon className="w-5 h-5" style={{ color: format.color }} />
+                    <div className={s.formatIcon}>
+                      {FormatIcon && <FormatIcon style={{ color: format.color }} />}
                     </div>
 
-                    {/* Content */}
-                    <h3 className="text-sm font-bold text-gray-900 mb-0.5">{format.title}</h3>
-                    <p className="text-[9px] text-gray-400 mb-2">{format.subtitle}</p>
-                    <p className="text-[10px] text-gray-600 leading-relaxed mb-3">
-                      {format.desc}
-                    </p>
+                    <h3 className={s.formatCardTitle}>{format.title}</h3>
+                    <p className={s.formatSubtitle}>{format.subtitle}</p>
+                    <p className={s.formatDesc}>{format.desc}</p>
 
-                    {/* Duration */}
-                    <div className="flex items-center gap-1 text-[9px] text-gray-400">
-                      <Clock className="w-3 h-3" />
+                    <div className={s.formatDuration}>
+                      <ClockIcon />
                       {format.duration}
                     </div>
                   </div>
-                </motion.div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* ============ 7. TÉMOIGNAGES PARTICIPANTS ============ */}
-        <section className="py-6 lg:py-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-4">
-              <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
-              <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">
-                Ils ont partagé leur histoire
-              </h2>
-              <p className="text-gray-500 text-xs">
-                Ce qu'ils disent de l'expérience
-              </p>
+        {/* ============ 7. TEMOIGNAGES PARTICIPANTS ============ */}
+        <section className={s.testimonials}>
+          <div className={s.inner}>
+            <div className={s.testimonialsHeader}>
+              <span className={s.testimonialsKicker}>
+                <span className={s.testimonialsKickerDot} />
+                Temoignages
+              </span>
+              <h2 className={s.testimonialsTitle}>Ils ont partage leur histoire</h2>
+              <p className={s.testimonialsDeck}>Ce qu'ils disent de l'experience</p>
             </div>
 
-            {/* Testimonials */}
-            <div className="grid lg:grid-cols-3 gap-3">
+            <div className={s.testimonialsGrid}>
               {participantTestimonials.map((testimonial, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-xl p-4"
-                  style={{ boxShadow: '0 2px 8px -2px rgba(0,0,0,0.04)' }}
-                >
-                  <Quote className="w-5 h-5 text-gray-200 mb-2" />
-                  <p className="text-[11px] text-gray-700 leading-relaxed italic mb-3">
-                    "{testimonial.quote}"
+                <div key={index} className={s.testimonialCard}>
+                  <div
+                    className={s.testimonialAccent}
+                    style={{ backgroundColor: testimonial.color }}
+                  />
+                  <div className={s.testimonialQuoteMark}>"</div>
+                  <p className={s.testimonialText}>
+                    {testimonial.quote}
                   </p>
-                  <div className="flex items-center gap-2">
+                  <div className={s.testimonialAuthor}>
                     <img
                       src={testimonial.image}
                       alt={testimonial.author}
-                      className="w-8 h-8 rounded-full object-cover"
-                      style={{ border: `2px solid ${testimonial.color}` }}
+                      className={s.testimonialAvatar}
+                      style={{ borderColor: testimonial.color }}
                     />
                     <div>
-                      <p className="text-[10px] font-bold text-gray-900">{testimonial.author}</p>
-                      <p className="text-[9px] text-gray-500">{testimonial.role}</p>
+                      <p className={s.testimonialName}>{testimonial.author}</p>
+                      <p className={s.testimonialRole}>{testimonial.role}</p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ============ 8. FORMULAIRE - Redesign Premium ============ */}
-        <section id="formulaire" className="py-8 lg:py-12 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 relative overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-300 rounded-full blur-3xl" />
-          </div>
-
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            {/* Header */}
-            <div className="text-center mb-6">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider text-white/90 mb-3">
-                <Heart className="w-3 h-3" />
-                Rejoignez 1 000+ témoins
-              </span>
-              <h2 className="text-xl lg:text-2xl font-bold text-white mb-2">
-                Prêt(e) à partager votre histoire ?
+        {/* ============ 8. FORMULAIRE ============ */}
+        <section id="formulaire" className={s.formSection}>
+          <div className={s.inner}>
+            <div className={s.formSectionHeader}>
+              <div className={s.formKicker}>
+                <HeartIcon />
+                Rejoignez 1 000+ temoins
+              </div>
+              <h2 className={s.formSectionTitle}>
+                Pret(e) a partager votre histoire ?
               </h2>
-              <p className="text-violet-200 text-xs max-w-md mx-auto">
-                Remplissez ce formulaire en 2 minutes. On vous recontacte sous 48h pour faire connaissance.
+              <p className={s.formSectionDeck}>
+                Remplissez ce formulaire en 2 minutes.
+                On vous recontacte sous 48h pour faire connaissance.
               </p>
             </div>
 
-            {/* Form Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl p-5 lg:p-6 max-w-lg mx-auto"
-              style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}
-            >
-              {!isSubmitted ? (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Format selection - 5 formats */}
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                      Format souhaité
-                    </label>
-                    <div className="grid grid-cols-5 gap-1.5">
+            {!isSubmitted ? (
+              <div className={s.formCard}>
+                <form onSubmit={handleSubmit} className={s.form}>
+
+                  {/* Format selection */}
+                  <div className={s.formatSelector}>
+                    <span className={s.formatSelectorLabel}>Format souhaite</span>
+                    <div className={s.formatSelectorGrid}>
                       {formats.map((f) => {
                         const isSelected = selectedFormat === f.id;
+                        const FmtIcon = formatIconMap[f.id];
                         return (
                           <button
                             key={f.id}
                             type="button"
                             onClick={() => setSelectedFormat(f.id)}
-                            className={`relative p-2 rounded-lg text-center transition-all ${
-                              isSelected
-                                ? 'bg-gray-900 text-white ring-2 ring-gray-900 ring-offset-1'
-                                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                            }`}
+                            className={`${s.formatSelectorBtn} ${isSelected ? s.formatSelectorBtnActive : ''}`}
                           >
-                            <f.icon className={`w-4 h-4 mx-auto mb-0.5 ${isSelected ? 'text-white' : ''}`} style={{ color: isSelected ? undefined : f.color }} />
-                            <p className="text-[9px] font-bold">{f.title}</p>
+                            {FmtIcon && (
+                              <FmtIcon
+                                style={{ color: isSelected ? '#fff' : f.color }}
+                              />
+                            )}
+                            <span className={s.formatSelectorBtnLabel}>{f.title}</span>
                             {isSelected && (
-                              <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full flex items-center justify-center">
-                                <Check className="w-2 h-2 text-white" />
-                              </div>
+                              <span className={s.formatSelectorCheck}>
+                                <CheckIcon />
+                              </span>
                             )}
                           </button>
                         );
@@ -863,59 +758,53 @@ const ShareStoryPage: React.FC = () => {
                   </div>
 
                   {/* Name & Email */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                        Prénom
-                      </label>
+                  <div className={s.fieldRow}>
+                    <div className={s.fieldGroup}>
+                      <label className={s.label}>Prenom</label>
                       <input
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3 py-2.5 bg-gray-50 border-0 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-violet-500 outline-none transition-all"
+                        className={s.input}
                         placeholder="Marie"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                        Email
-                      </label>
+                    <div className={s.fieldGroup}>
+                      <label className={s.label}>Email</label>
                       <input
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-3 py-2.5 bg-gray-50 border-0 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-violet-500 outline-none transition-all"
+                        className={s.input}
                         placeholder="marie@exemple.com"
                         required
                       />
                     </div>
                   </div>
 
-                  {/* Phone (optional) */}
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                      Téléphone <span className="text-gray-400 font-normal">(optionnel)</span>
+                  {/* Phone */}
+                  <div className={s.fieldGroup}>
+                    <label className={s.label}>
+                      Telephone <span className={s.labelOptional}>(optionnel)</span>
                     </label>
                     <input
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2.5 bg-gray-50 border-0 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-violet-500 outline-none transition-all"
+                      className={s.input}
                       placeholder="06 12 34 56 78"
                     />
                   </div>
 
                   {/* Message */}
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                      Votre histoire en quelques mots
-                    </label>
+                  <div className={s.fieldGroup}>
+                    <label className={s.label}>Votre histoire en quelques mots</label>
                     <textarea
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      rows={3}
-                      className="w-full px-3 py-2.5 bg-gray-50 border-0 rounded-lg text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-violet-500 outline-none transition-all resize-none"
+                      rows={4}
+                      className={s.textarea}
                       placeholder="J'aimerais partager mon parcours sur..."
                       required
                     />
@@ -925,87 +814,76 @@ const ShareStoryPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full px-4 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-xs font-bold rounded-xl hover:from-violet-700 hover:to-purple-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-violet-500/25"
+                    className={s.submitBtn}
                   >
                     {isSubmitting ? (
-                      'Envoi en cours...'
+                      <>
+                        <span className={s.spinner} />
+                        Envoi en cours...
+                      </>
                     ) : (
                       <>
                         Envoyer ma demande
-                        <Send className="w-3.5 h-3.5" />
+                        <SendIcon />
                       </>
                     )}
                   </button>
 
                   {/* Guarantees */}
-                  <div className="flex items-center justify-center gap-4 pt-2">
-                    <span className="flex items-center gap-1 text-[9px] text-gray-400">
-                      <Shield className="w-3 h-3" />
-                      Données protégées
+                  <div className={s.guarantees}>
+                    <span className={s.guarantee}>
+                      <ShieldIcon />
+                      Donnees protegees
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] text-gray-400">
-                      <Clock className="w-3 h-3" />
-                      Réponse sous 48h
+                    <span className={s.guarantee}>
+                      <ClockIcon />
+                      Reponse sous 48h
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] text-gray-400">
-                      <Check className="w-3 h-3" />
+                    <span className={s.guarantee}>
+                      <CheckIcon />
                       100% gratuit
                     </span>
                   </div>
                 </form>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-8"
-                >
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
-                    <Check className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    Merci {formData.name} !
-                  </h3>
-                  <p className="text-gray-600 text-xs mb-4">
-                    Votre demande a bien été envoyée.<br />
-                    On vous recontacte très vite pour faire connaissance.
-                  </p>
-                  <Link
-                    to="/histoires"
-                    className="inline-flex items-center gap-1.5 text-violet-600 font-medium text-xs hover:text-violet-700 transition-colors"
-                  >
-                    Découvrir les histoires
-                    <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </motion.div>
-              )}
-            </motion.div>
+              </div>
+            ) : (
+              <div className={s.successCard}>
+                <div className={s.successIcon}>
+                  <CheckIcon />
+                </div>
+                <h3 className={s.successTitle}>
+                  Merci {formData.name} !
+                </h3>
+                <p className={s.successText}>
+                  Votre demande a bien ete envoyee.
+                  On vous recontacte tres vite pour faire connaissance.
+                </p>
+                <Link to="/histoires" className={s.successLink}>
+                  Decouvrir les histoires
+                  <ArrowRightIcon />
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 
         {/* ============ 9. FAQ ============ */}
-        <section className="py-6 lg:py-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-4">
-              <div className="h-0.5 w-10 bg-gray-900 rounded-full mb-2" />
-              <h2 className="text-lg lg:text-xl font-bold text-gray-900">
-                Questions fréquentes
-              </h2>
+        <section className={s.faq}>
+          <div className={s.inner}>
+            <div className={s.faqHeader}>
+              <span className={s.faqKicker}>
+                <span className={s.faqKickerDot} />
+                FAQ
+              </span>
+              <h2 className={s.faqTitle}>Questions frequentes</h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className={s.faqGrid}>
               {faqs.map((faq, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="bg-gray-50 rounded-lg p-3"
-                >
-                  <h3 className="text-xs font-bold text-gray-900 mb-1">{faq.q}</h3>
-                  <p className="text-[10px] text-gray-600 leading-relaxed">{faq.a}</p>
-                </motion.div>
+                <div key={idx} className={s.faqCard}>
+                  <h3 className={s.faqQuestion}>{faq.q}</h3>
+                  <p className={s.faqAnswer}>{faq.a}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -1013,7 +891,8 @@ const ShareStoryPage: React.FC = () => {
 
       </main>
 
-      <Footer />
+      <Footer2 />
+      <ScrollToTopV2 />
     </>
   );
 };

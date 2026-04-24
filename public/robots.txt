@@ -37,10 +37,9 @@ Disallow: /*.css.map$
 Disallow: /rejoindre-partenaire
 Disallow: /join
 
-# Bloquer les paramètres de recherche inutiles
-Disallow: /*?*sort=
-Disallow: /*?*filter=
+# Bloquer les paramètres de pagination et tri (évite le contenu dupliqué)
 Disallow: /*?*page=
+Disallow: /*?*tri=
 
 # Règles spécifiques pour Googlebot (crawl plus agressif autorisé)
 User-agent: Googlebot

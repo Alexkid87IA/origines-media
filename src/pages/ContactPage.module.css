@@ -1,0 +1,675 @@
+/* ===== ContactPage V2 — Contact form + info sidebar ===== */
+
+/* ──────────────────────────────────────────────────────────
+   Page wrapper
+   ────────────────────────────────────────────────────────── */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Page header
+   ────────────────────────────────────────────────────────── */
+
+.header {
+  padding: 48px 0 36px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.headerInner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.headerLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 14px;
+}
+
+.kickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 12px 0 0;
+  max-width: 48ch;
+}
+
+/* — Response badge — */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  flex-shrink: 0;
+}
+
+.badgeIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--stone500);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Main content area
+   ────────────────────────────────────────────────────────── */
+
+.main {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Form card
+   ────────────────────────────────────────────────────────── */
+
+.formCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 32px;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.formIcon {
+  width: 36px;
+  height: 36px;
+  background: var(--stone50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.formIcon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--ink);
+}
+
+.formTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* — Form layout — */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* — Labels — */
+
+.label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.required {
+  color: #D64C90;
+}
+
+/* — Inputs — */
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: var(--stone400);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.inputWrap:focus-within .inputIcon {
+  color: var(--ink);
+}
+
+.input {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  padding: 12px 14px 12px 38px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.input::placeholder {
+  color: var(--stone400);
+  font-family: var(--body);
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--pure);
+}
+
+/* — Select — */
+
+.selectWrap {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  padding: 12px 36px 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--pure);
+}
+
+.selectChevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--stone400);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.selectWrap:hover .selectChevron {
+  color: var(--ink);
+}
+
+/* — Textarea — */
+
+.textarea {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 140px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.textarea::placeholder {
+  color: var(--stone400);
+  font-family: var(--body);
+  font-size: 14px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: var(--pure);
+}
+
+/* — Submit button — */
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.submitBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ──────────────────────────────────────────────────────────
+   Success state
+   ────────────────────────────────────────────────────────── */
+
+.successCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 48px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.successIcon {
+  width: 48px;
+  height: 48px;
+  background: var(--stone50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.successIcon svg {
+  width: 24px;
+  height: 24px;
+  color: #34A853;
+}
+
+.successTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.successText {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 0 0 28px;
+  max-width: 40ch;
+}
+
+.resetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--stone100);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.resetBtn:hover {
+  border-color: var(--ink);
+  background: var(--stone50);
+}
+
+/* ──────────────────────────────────────────────────────────
+   Info sidebar
+   ────────────────────────────────────────────────────────── */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* — Info card — */
+
+.infoCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 20px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.infoIcon {
+  width: 40px;
+  height: 40px;
+  background: var(--stone50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.infoIcon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--ink);
+}
+
+.infoLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 0 0 4px;
+}
+
+.infoValue {
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.infoLink {
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--stone200);
+  transition: border-color 0.2s ease;
+}
+
+.infoLink:hover {
+  border-color: var(--ink);
+}
+
+/* — Social card — */
+
+.socialCard {
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  padding: 20px;
+}
+
+.socialTitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 0 0 14px;
+}
+
+.socialGrid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.socialBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+  color: var(--stone600);
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.socialBtn:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.socialBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+
+/* — Tablets (<=1024px) — */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 280px;
+    gap: 28px;
+  }
+
+  .formCard {
+    padding: 24px;
+  }
+}
+
+/* — Small tablets / large phones (<=768px) — */
+@media (max-width: 768px) {
+  .header {
+    padding: 36px 0 28px;
+  }
+
+  .headerInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .infoCard,
+  .socialCard {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .main {
+    padding: 36px 24px 64px;
+  }
+
+  .fieldRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* — Small phones (<=480px) — */
+@media (max-width: 480px) {
+  .header {
+    padding: 24px 0 20px;
+  }
+
+  .headerInner {
+    padding: 0 16px;
+  }
+
+  .main {
+    padding: 24px 16px 48px;
+  }
+
+  .formCard {
+    padding: 20px;
+  }
+
+  .formTitle {
+    font-size: 16px;
+  }
+
+  .title {
+    font-size: clamp(24px, 6vw, 34px);
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .sidebar {
+    flex-direction: column;
+  }
+
+  .infoCard,
+  .socialCard {
+    min-width: 0;
+  }
+
+  .successCard {
+    padding: 32px 20px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Reduced motion
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .submitBtn,
+  .input,
+  .select,
+  .textarea,
+  .socialBtn,
+  .resetBtn,
+  .infoLink {
+    transition: none !important;
+  }
+
+  .spinner {
+    animation: none !important;
+  }
+}

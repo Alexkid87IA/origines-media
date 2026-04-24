@@ -17,6 +17,7 @@ import { ARTICLE_BY_SLUG_QUERY, RELATED_ARTICLES_QUERY, POPULAR_ARTICLES_QUERY }
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import EmailCapture from '../components/EmailCapture';
 import { PortableText } from '@portabletext/react';
 import { typo } from '../lib/typography';
 import { AdPlaceholder } from '../components/AdSense';
@@ -46,9 +47,6 @@ export default function ArticlePage() {
   const [activeHeading, setActiveHeading] = useState('');
   const [showMobileToc, setShowMobileToc] = useState(false);
   const [readingTimeLeft, setReadingTimeLeft] = useState(0);
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
-  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
   const [tocExpanded, setTocExpanded] = useState(false);
 
   // Refs
@@ -271,16 +269,6 @@ export default function ArticlePage() {
         setTimeout(() => setCopySuccess(false), 2000);
         break;
     }
-  };
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail.trim()) return;
-    setNewsletterSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    setNewsletterSuccess(true);
-    setNewsletterSubmitting(false);
   };
 
   const scrollToSection = (id: string) => {
@@ -811,45 +799,25 @@ export default function ArticlePage() {
                     </div>
                   )}
 
-                  {/* 5. Kit d'Introspection - Bientôt disponible */}
-                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 via-fuchsia-50 to-rose-50 border border-violet-100/50">
-                    {/* Decorative elements */}
-                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-violet-200/40 to-fuchsia-200/40 rounded-full blur-2xl" />
-                    <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-br from-rose-200/40 to-pink-200/40 rounded-full blur-2xl" />
-
-                    <div className="relative p-5">
-                      {/* Header avec image */}
-                      <div className="text-center mb-4">
-                        <div className="relative inline-block">
-                          <img
-                            src="/kit-introspection.jpg"
-                            alt="Kit d'Introspection"
-                            className="w-20 h-auto mx-auto rounded-xl shadow-lg shadow-violet-500/20 mb-3 -rotate-3 grayscale-[30%]"
-                          />
-                          {/* Badge Bientôt disponible */}
-                          <span className="absolute -top-2 -right-2 px-2 py-1 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-[8px] font-bold uppercase tracking-wider rounded-full shadow-lg animate-pulse">
-                            Bientôt
-                          </span>
-                        </div>
-                        <h4 className="text-gray-900 font-bold text-base">Kit d'Introspection</h4>
-                        <p className="text-violet-600/70 text-[11px] font-medium mt-1">Guide gratuit • 24 pages</p>
+                  {/* 5. Newsletter Sidebar */}
+                  <div className="bg-gradient-to-br from-violet-50 via-fuchsia-50 to-rose-50 border border-violet-100/50 rounded-2xl p-5">
+                    <div className="text-center mb-3">
+                      <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-2">
+                        <Mail className="w-5 h-5 text-violet-600" />
                       </div>
-
-                      <p className="text-gray-600 text-xs text-center mb-4 leading-relaxed">
-                        Les meilleurs outils de développement personnel de nos intervenants.
+                      <h4 className="text-gray-900 font-bold text-sm">Ne manquez rien</h4>
+                      <p className="text-gray-500 text-[11px] mt-1">
+                        Nos meilleurs récits, chaque semaine.
                       </p>
-
-                      {/* Coming Soon Badge */}
-                      <div className="bg-white/60 backdrop-blur-sm border border-amber-200/50 rounded-xl p-4 text-center">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-100 to-orange-100 rounded-full mb-2">
-                          <Clock className="w-3 h-3 text-amber-500" />
-                          <span className="text-amber-700 text-[10px] font-bold uppercase tracking-wider">Bientôt disponible</span>
-                        </div>
-                        <p className="text-gray-500 text-[11px]">
-                          Nous préparons quelque chose de spécial pour vous.
-                        </p>
-                      </div>
                     </div>
+                    <EmailCapture
+                      source="article"
+                      variant="inline"
+                      placeholder="votre@email.com"
+                      buttonText="S'abonner"
+                      successMessage="Bienvenue !"
+                      successDescription="Rendez-vous vendredi dans votre boîte mail."
+                    />
                   </div>
 
                   {/* 6. Popular Articles - Avec images */}
@@ -1162,8 +1130,28 @@ export default function ArticlePage() {
         )}
       </AnimatePresence>
 
-      {/* Scroll to Top - Bouton en bas de page */}
-      <div className="py-8 flex justify-center bg-gray-50 border-t border-gray-200">
+      {/* Email Capture - Fin d'article */}
+      <section className="py-8 bg-gray-50 border-t border-gray-200">
+        <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
+          <h3 className="text-sm font-bold text-gray-900 mb-1">
+            Cet article vous a plu ?
+          </h3>
+          <p className="text-xs text-gray-500 mb-4">
+            Recevez nos meilleurs récits chaque semaine, directement dans votre boîte mail.
+          </p>
+          <EmailCapture
+            source="article"
+            variant="inline"
+            placeholder="votre@email.com"
+            buttonText="S'abonner"
+            successMessage="Merci !"
+            successDescription="Vous recevrez notre prochaine newsletter vendredi."
+          />
+        </div>
+      </section>
+
+      {/* Scroll to Top */}
+      <div className="py-6 flex justify-center bg-white border-t border-gray-200">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-gray-600 hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all shadow-sm"

@@ -1,0 +1,657 @@
+/* ====== HERO — 4 zones : article · dossier+vidéo+guide · articles ====== */
+
+.hero {
+  position: relative;
+  padding: 24px 0 0;
+}
+
+/* ----- Chapter mark ----- */
+
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.cNum { letter-spacing: 0.2em; font-weight: 500; }
+.cSep { opacity: 0.3; }
+.cLabel { opacity: 0.75; }
+
+/* ====== 3-COLUMN GRID ====== */
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 340px;
+  border: 1px solid rgba(10, 10, 10, 0.1);
+  min-height: 680px;
+}
+
+/* ======================================================================
+   COL 1 — Article principal (immersive cover)
+   ====================================================================== */
+
+.mainCol {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-size: cover;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.mainGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.92) 0%,
+    rgba(10, 10, 10, 0.55) 40%,
+    rgba(10, 10, 10, 0.1) 70%,
+    transparent 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mainContent {
+  position: relative;
+  z-index: 2;
+  padding: 44px 36px;
+  color: var(--paper);
+}
+
+.mainKicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mainTag {
+  display: inline-flex;
+  padding: 4px 10px;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.mainMeta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.55);
+}
+
+.mainTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(30px, 3.5vw, 50px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  margin: 0;
+  color: var(--paper);
+  text-wrap: balance;
+}
+
+.mainTitle::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: var(--paper);
+  opacity: 0.3;
+  margin-bottom: 14px;
+}
+
+.mainDeck {
+  margin: 16px 0 0;
+  max-width: 500px;
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(247, 245, 240, 0.8);
+}
+
+.mainByline {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(247, 245, 240, 0.15);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mainByline strong {
+  color: rgba(247, 245, 240, 0.9);
+  font-weight: 500;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  display: inline-block;
+}
+
+.mainCol:hover .mainTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* ======================================================================
+   COL 2 — Center : Dossier + Vidéo + Guide
+   ====================================================================== */
+
+.centerCol {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(10, 10, 10, 0.1);
+  border-right: 1px solid rgba(10, 10, 10, 0.1);
+}
+
+/* — Dossier de la semaine — */
+
+.dossierBlock {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 26px;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.dossierBlock:hover {
+  background: #141414;
+}
+
+.dossierHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.dossierLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.55);
+}
+
+.dossierWeek {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: rgba(247, 245, 240, 0.35);
+}
+
+.dossierQuestion {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(22px, 2.4vw, 32px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: var(--paper);
+  text-wrap: balance;
+}
+
+.dossierFoot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.dossierUnivers {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  color: #fff;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.dossierProgress {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(247, 245, 240, 0.5);
+  flex-shrink: 0;
+}
+
+.progressBar {
+  flex: 1;
+  min-width: 60px;
+  height: 3px;
+  background: rgba(247, 245, 240, 0.12);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dossierCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper);
+  transition: gap 0.3s ease;
+}
+
+.dossierBlock:hover .dossierCta { gap: 12px; }
+
+.dossierCta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* — Vidéo à la une — */
+
+.videoBlock {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  background: #111;
+  color: var(--paper);
+  border-top: 1px solid rgba(247, 245, 240, 0.08);
+  transition: background 0.3s ease;
+}
+
+.videoBlock:hover {
+  background: #181818;
+}
+
+.videoThumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.videoPlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  color: var(--paper);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.videoBlock:hover .videoPlay {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.videoPlay svg {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
+
+.videoDuration {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(6px);
+  color: var(--paper);
+}
+
+.videoInfo {
+  padding: 16px 26px 20px;
+}
+
+.videoChannel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.45);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.videoTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  margin: 0;
+}
+
+.videoBlock:hover .videoTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* — Guide gratuit — */
+
+.guideBlock {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 26px;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  border-top: none;
+  text-decoration: none;
+  color: #fff;
+  flex: 1;
+  transition: filter 0.3s ease;
+}
+
+.guideBlock:hover {
+  filter: brightness(1.08);
+}
+
+.guideLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 10px;
+}
+
+.guideTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0;
+}
+
+.guideDesc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 8px 0 0;
+}
+
+.guideCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  transition: gap 0.3s ease;
+}
+
+.guideBlock:hover .guideCta { gap: 12px; }
+
+.guideCta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ======================================================================
+   COL 3 — Articles secondaires
+   ====================================================================== */
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+
+.rightLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  padding: 20px 22px 0;
+  display: block;
+}
+
+.secCard {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 16px;
+  padding: 20px 22px;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.06);
+  text-decoration: none;
+  flex: 1;
+  align-items: start;
+  transition: background 0.25s ease;
+}
+
+.secCard:hover {
+  background: rgba(10, 10, 10, 0.025);
+}
+
+.secThumb {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.3s ease;
+}
+
+.secCard:hover .secThumb {
+  opacity: 0.85;
+}
+
+.secContent {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.secTag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.secTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.secExcerpt {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--stone500);
+  margin: 2px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.secCard:hover .secTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.secMeta {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-top: auto;
+}
+
+.rightCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 22px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  text-decoration: none;
+  border-top: 1px solid rgba(10, 10, 10, 0.06);
+  margin-top: auto;
+  transition: color 0.25s ease, gap 0.25s ease, background 0.25s ease;
+}
+.rightCta:hover {
+  color: var(--ink);
+  gap: 12px;
+  background: var(--stone50);
+}
+.rightCta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ======================================================================
+   RESPONSIVE
+   ====================================================================== */
+
+@media (max-width: 1280px) {
+  .heroGrid {
+    grid-template-columns: 1.3fr 1fr 300px;
+    min-height: 620px;
+  }
+  .mainContent { padding: 36px 28px; }
+  .mainTitle { font-size: clamp(26px, 3vw, 42px); }
+  .mainDeck { font-size: 15px; }
+  .dossierBlock { padding: 24px 22px; }
+  .dossierQuestion { font-size: clamp(20px, 2.2vw, 28px); }
+  .videoInfo { padding: 14px 22px 18px; }
+  .guideBlock { padding: 20px 22px; }
+  .secCard { grid-template-columns: 90px 1fr; gap: 12px; padding: 16px 18px; }
+  .secTitle { font-size: 15px; }
+}
+
+@media (max-width: 1080px) {
+  .heroGrid {
+    grid-template-columns: 1fr 1fr;
+    min-height: 580px;
+  }
+  .rightCol { display: none; }
+  .mainContent { padding: 32px 24px; }
+  .mainTitle { font-size: clamp(24px, 2.8vw, 38px); }
+  .mainDeck { font-size: 14px; }
+  .dossierQuestion { font-size: clamp(20px, 2.4vw, 28px); }
+  .guideTitle { font-size: 16px; }
+}
+
+@media (max-width: 880px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .mainCol { min-height: 400px; }
+  .centerCol {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid rgba(10, 10, 10, 0.08);
+  }
+  .rightCol {
+    display: flex;
+    border-top: 1px solid rgba(10, 10, 10, 0.08);
+  }
+  .dossierBlock { padding: 24px; }
+  .videoInfo { padding: 14px 24px 18px; }
+  .guideBlock { padding: 20px 24px; }
+  .secCard { grid-template-columns: 100px 1fr; padding: 18px 22px; }
+}
+
+@media (max-width: 640px) {
+  .hero { padding-top: 40px; }
+  .chapterMark { margin-bottom: 16px; }
+  .mainCol { min-height: 360px; }
+  .mainContent { padding: 24px 20px; }
+  .mainTitle { font-size: 24px !important; }
+  .mainDeck { font-size: 14px; }
+  .dossierBlock { padding: 20px; }
+  .dossierQuestion { font-size: 20px; }
+  .videoPlay { width: 44px; height: 44px; }
+  .videoPlay svg { width: 16px; height: 16px; }
+  .videoInfo { padding: 12px 20px 16px; }
+  .videoTitle { font-size: 15px; }
+  .guideBlock { padding: 18px 20px; }
+  .guideTitle { font-size: 16px; }
+  .secCard { grid-template-columns: 80px 1fr; gap: 12px; padding: 14px 16px; }
+  .secTitle { font-size: 14px; }
+  .secExcerpt { -webkit-line-clamp: 1; }
+}
+
+@media (max-width: 480px) {
+  .hero { padding-top: 28px; }
+  .chapterMark { font-size: 10px; gap: 8px; }
+  .mainCol { min-height: 320px; }
+  .mainContent { padding: 20px 16px; }
+  .mainTitle { font-size: 22px !important; }
+  .dossierBlock { padding: 18px 16px; }
+  .dossierQuestion { font-size: 18px; }
+  .videoTitle { font-size: 14px; }
+  .guideTitle { font-size: 15px; }
+  .secCard { grid-template-columns: 64px 1fr; gap: 10px; padding: 12px 14px; }
+  .secTitle { font-size: 13px; }
+  .secExcerpt { display: none; }
+}

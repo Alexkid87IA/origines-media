@@ -1,0 +1,149 @@
+/* ===== Legal pages V2 — shared module for Legal, CGU, CGV ===== */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+
+.header {
+  padding: 48px 24px 32px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.headerInner {
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.headerKicker {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 16px;
+}
+
+.headerBar {
+  display: block;
+  width: 48px;
+  height: 4px;
+  margin: 0 auto 20px;
+  background: var(--ink);
+}
+
+.headerTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.headerSub {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--stone400);
+}
+
+/* ── Content ── */
+
+.content {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.section {
+  margin-bottom: 48px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 16px;
+  letter-spacing: -0.015em;
+}
+
+.sectionSubtitle {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.3;
+  color: var(--ink);
+  margin: 28px 0 12px;
+}
+
+.text {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--stone600);
+  margin-bottom: 16px;
+}
+
+.text:last-child {
+  margin-bottom: 0;
+}
+
+.infoBox {
+  padding: 20px 24px;
+  background: var(--pure);
+  border: 1px solid var(--stone100);
+  margin: 16px 0;
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--stone700);
+}
+
+.infoBox p {
+  margin: 0 0 4px;
+}
+
+.infoBox strong, .infoBox .bold {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 16px;
+}
+
+.list li {
+  position: relative;
+  padding-left: 16px;
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--stone600);
+  margin-bottom: 8px;
+}
+
+.list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 4px;
+  height: 4px;
+  background: var(--stone400);
+}
