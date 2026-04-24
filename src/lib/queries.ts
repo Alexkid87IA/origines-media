@@ -6,6 +6,19 @@
 // HOME PAGE V2
 // ========================================
 
+// Question de la semaine active
+export const V2_QUESTION_QUERY = `
+  *[_type == "questionDeLaSemaine" && isActive == true][0] {
+    question, semaine, annee, univpilar, image,
+    "slug": slug.current,
+    "imageUrl": image.asset->url,
+    "articles": articles[]-> {
+      titre, "slug": slug.current, univpilar, deck, readTime, image,
+      "imageUrl": image.asset->url
+    }
+  }
+`;
+
 // Article principal (le plus récent avec image, hors vidéo)
 export const V2_HERO_MAIN_QUERY = `
   *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0] {

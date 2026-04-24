@@ -20,6 +20,7 @@ import { useSanityQuery } from "@/hooks/useSanityQuery";
 import {
   V2_HERO_MAIN_QUERY,
   V2_HERO_SECONDARY_QUERY,
+  V2_QUESTION_QUERY,
   V2_SPOTLIGHT_QUERY,
   V2_FEED_QUERY,
   V2_EDITORIAL_QUERY,
@@ -30,7 +31,7 @@ import {
   V2_RECOS_QUERY,
 } from "@/lib/queries";
 import { verticaleToUnivers, UNIVERS_MAP, type UniversId } from "@/data/univers";
-import type { CMSArticle } from "@/components/HeroCarousel/HeroCarousel";
+import type { CMSArticle, CMSQuestion } from "@/components/HeroCarousel/HeroCarousel";
 import type { CMSSpotlight, CMSEditorial } from "@/components/Spotlight/Spotlight";
 import type { CMSFeedItem } from "@/components/Feed/Feed";
 import type { CMSTriadUnivers } from "@/components/Triad/Triad";
@@ -89,6 +90,23 @@ interface SanityReco {
   imageUrl?: string;
   slug?: string;
   datePublication?: string;
+}
+
+interface SanityQuestion {
+  question: string;
+  semaine: number;
+  annee: number;
+  univpilar?: string;
+  slug?: string;
+  imageUrl?: string;
+  articles?: Array<{
+    titre: string;
+    slug?: string;
+    univpilar?: string;
+    deck?: string;
+    readTime?: number;
+    imageUrl?: string;
+  }>;
 }
 
 const RECO_TYPE_COLORS: Record<string, string> = {
@@ -319,6 +337,7 @@ export default function HomePageV2() {
 
   const { data: mainRaw } = useSanityQuery<SanityArticle>("v2-hero-main", V2_HERO_MAIN_QUERY);
   const { data: secRaw } = useSanityQuery<SanityArticle[]>("v2-hero-secondary", V2_HERO_SECONDARY_QUERY);
+  const { data: questionRaw } = useSanityQuery<SanityQuestion>("v2-question", V2_QUESTION_QUERY);
   const { data: spotRaw } = useSanityQuery<SanityArticle>("v2-spotlight", V2_SPOTLIGHT_QUERY);
   const { data: editRaw } = useSanityQuery<SanityArticle[]>("v2-editorial", V2_EDITORIAL_QUERY);
   const { data: feedRaw } = useSanityQuery<SanityArticle[]>("v2-feed", V2_FEED_QUERY);
@@ -330,6 +349,17 @@ export default function HomePageV2() {
 
   const mainArticle = mainRaw ? toCMSArticle(mainRaw) : undefined;
   const secondaryArticles = secRaw ? diversifyByVerticale(secRaw, 3).map(toCMSArticle) : undefined;
+  const cmsQuestion: CMSQuestion | undefined = questionRaw?.question
+    ? {
+        question: questionRaw.question,
+        week: questionRaw.semaine,
+        slug: questionRaw.slug || "",
+        univers: (questionRaw.univpilar || "esprit") as UniversId,
+        publishedCount: questionRaw.articles?.length || 0,
+        totalCount: questionRaw.articles?.length || 7,
+        href: `/dossiers/${questionRaw.slug || ""}`,
+      }
+    : undefined;
   const spotlightPick = spotRaw ? toCMSSpotlight(spotRaw) : undefined;
   const editorialArticles = editRaw ? diversifyByVerticale(editRaw, 3).map(toCMSEditorial) : undefined;
   const feedItems = feedRaw?.map(toCMSFeedItem);
@@ -394,6 +424,7 @@ export default function HomePageV2() {
           <HeroCarousel
             cmsMain={mainArticle}
             cmsSecondary={secondaryArticles}
+            cmsQuestion={cmsQuestion}
           />
           <Interlude1 />
           <Spotlight

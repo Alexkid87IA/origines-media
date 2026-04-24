@@ -12,9 +12,20 @@ export interface CMSArticle {
   image: string;
 }
 
+export interface CMSQuestion {
+  question: string;
+  week: number;
+  slug: string;
+  univers: UniversId;
+  publishedCount: number;
+  totalCount: number;
+  href: string;
+}
+
 interface HeroCarouselProps {
   cmsMain?: CMSArticle;
   cmsSecondary?: CMSArticle[];
+  cmsQuestion?: CMSQuestion;
 }
 
 const MAIN_ARTICLE = {
@@ -90,16 +101,17 @@ const SECONDARY = [
   },
 ];
 
-export default function HeroCarousel({ cmsMain, cmsSecondary }: HeroCarouselProps) {
+export default function HeroCarousel({ cmsMain, cmsSecondary, cmsQuestion }: HeroCarouselProps) {
   const main = cmsMain
     ? { ...MAIN_ARTICLE, univers: cmsMain.univers, category: cmsMain.category, title: cmsMain.title, deck: cmsMain.excerpt, author: cmsMain.author, readTime: cmsMain.readTime, href: cmsMain.href, image: cmsMain.image }
     : MAIN_ARTICLE;
   const secondary = cmsSecondary
     ? cmsSecondary.map((a, i) => ({ ...(SECONDARY[i] || SECONDARY[0]), univers: a.univers, category: a.category, title: a.title, excerpt: a.excerpt, author: a.author, readTime: a.readTime, href: a.href, image: a.image }))
     : SECONDARY;
+  const dossier = cmsQuestion || DOSSIER;
   const mainU = UNIVERS_MAP[main.univers];
-  const dossierU = UNIVERS_MAP[DOSSIER.univers];
-  const progress = (DOSSIER.publishedCount / DOSSIER.totalCount) * 100;
+  const dossierU = UNIVERS_MAP[dossier.univers];
+  const progress = (dossier.publishedCount / dossier.totalCount) * 100;
 
   return (
     <section className={s.hero}>
@@ -139,18 +151,18 @@ export default function HeroCarousel({ cmsMain, cmsSecondary }: HeroCarouselProp
 
           {/* COL 2 — Dossier + Vidéo + Guide */}
           <div className={s.centerCol}>
-            <a href={DOSSIER.href} className={s.dossierBlock}>
+            <a href={dossier.href} className={s.dossierBlock}>
               <div className={s.dossierHead}>
                 <span className={s.dossierLabel}>La question de la semaine</span>
-                <span className={s.dossierWeek}>S.{DOSSIER.week}</span>
+                <span className={s.dossierWeek}>S.{dossier.week}</span>
               </div>
-              <h2 className={s.dossierQuestion}>{DOSSIER.question}</h2>
+              <h2 className={s.dossierQuestion}>{dossier.question}</h2>
               <div className={s.dossierFoot}>
                 <span className={s.dossierUnivers} style={{ background: dossierU.color }}>
                   {dossierU.name}
                 </span>
                 <span className={s.dossierProgress}>
-                  {DOSSIER.publishedCount}/{DOSSIER.totalCount}
+                  {dossier.publishedCount}/{dossier.totalCount}
                 </span>
                 <div className={s.progressBar}>
                   <div
