@@ -423,7 +423,10 @@ export default function SiteHeader() {
       {comingSoon && (
         <div className={styles.comingSoon} role="status">
           <span className={styles.comingSoonDot} aria-hidden="true" />
-          Bient&ocirc;t disponible
+          <div>
+            <span className={styles.comingSoonLabel}>Bient&ocirc;t disponible</span>
+            <p className={styles.comingSoonSub}>Cette section arrive prochainement.</p>
+          </div>
         </div>
       )}
     </header>

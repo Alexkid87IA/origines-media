@@ -1,131 +1,133 @@
-// Popup exit-intent pour capture email
-// S'affiche quand le curseur quitte la fenêtre (desktop)
-// Cookie de 7 jours pour ne pas réafficher
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Sparkles } from 'lucide-react'
-import EmailCapture from './EmailCapture'
+import { useState, useEffect, useCallback } from 'react';
+import { useSubscribe } from '../hooks/useSubscribe';
+import styles from './ExitIntentPopup.module.css';
 
-const COOKIE_NAME = 'origines_exit_popup'
-const COOKIE_DAYS = 7
-const MIN_TIME_ON_PAGE_MS = 15000 // 15 secondes minimum avant affichage
+const COOKIE_NAME = 'origines_exit_popup';
+const COOKIE_DAYS = 7;
+const MIN_TIME_ON_PAGE_MS = 15000;
 
 function setCookie(name: string, value: string, days: number) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString()
-  document.cookie = `${name}=${value};expires=${expires};path=/;SameSite=Lax`
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${value};expires=${expires};path=/;SameSite=Lax`;
 }
 
 function getCookie(name: string): string | null {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
-  return match ? match[1] : null
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? match[1] : null;
 }
 
-const ExitIntentPopup: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false)
-  const [hasTriggered, setHasTriggered] = useState(false)
+export default function ExitIntentPopup() {
+  const [visible, setVisible] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [triggered, setTriggered] = useState(false);
+  const [email, setEmail] = useState('');
+  const { status, error, subscribe } = useSubscribe({ source: 'exit-intent' });
 
-  const showPopup = useCallback(() => {
-    if (hasTriggered) return
-    if (getCookie(COOKIE_NAME)) return
+  const show = useCallback(() => {
+    if (triggered || getCookie(COOKIE_NAME)) return;
+    setTriggered(true);
+    setVisible(true);
+  }, [triggered]);
 
-    setHasTriggered(true)
-    setIsVisible(true)
-  }, [hasTriggered])
-
-  const closePopup = useCallback(() => {
-    setIsVisible(false)
-    setCookie(COOKIE_NAME, 'dismissed', COOKIE_DAYS)
-  }, [])
+  const close = useCallback(() => {
+    setClosing(true);
+    setTimeout(() => {
+      setVisible(false);
+      setCookie(COOKIE_NAME, 'dismissed', COOKIE_DAYS);
+    }, 300);
+  }, []);
 
   useEffect(() => {
-    // Ne pas afficher si déjà dismissé
-    if (getCookie(COOKIE_NAME)) return
-
-    // Attendre un temps minimum sur la page
+    if (getCookie(COOKIE_NAME)) return;
     const timer = setTimeout(() => {
-      const handleMouseLeave = (e: MouseEvent) => {
-        // Seulement quand le curseur sort par le haut (intention de quitter)
-        if (e.clientY <= 0) {
-          showPopup()
-        }
-      }
+      const handleLeave = (e: MouseEvent) => {
+        if (e.clientY <= 0) show();
+      };
+      document.addEventListener('mouseleave', handleLeave);
+      return () => document.removeEventListener('mouseleave', handleLeave);
+    }, MIN_TIME_ON_PAGE_MS);
+    return () => clearTimeout(timer);
+  }, [show]);
 
-      document.addEventListener('mouseleave', handleMouseLeave)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || status === 'loading') return;
+    await subscribe(email);
+  };
 
-      return () => {
-        document.removeEventListener('mouseleave', handleMouseLeave)
-      }
-    }, MIN_TIME_ON_PAGE_MS)
-
-    return () => clearTimeout(timer)
-  }, [showPopup])
+  if (!visible) return null;
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <>
-          {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
-            onClick={closePopup}
-          />
-
-          {/* Popup */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', duration: 0.5 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-4"
-          >
-            <div
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header gradient */}
-              <div className="bg-gradient-to-br from-violet-500 to-pink-500 p-5 text-white text-center relative">
-                <button
-                  onClick={closePopup}
-                  className="absolute top-3 right-3 w-7 h-7 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-                  aria-label="Fermer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Sparkles className="w-5 h-5" />
+    <>
+      <div
+        className={`${styles.overlay}${closing ? ` ${styles.overlayOut}` : ''}`}
+        onClick={close}
+      />
+      <div className={styles.modal}>
+        <div className={`${styles.card}${closing ? ` ${styles.cardOut}` : ''}`}>
+          <div className={styles.header}>
+            <button className={styles.close} onClick={close} type="button" aria-label="Fermer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+            <div className={styles.eyebrow}>La lettre du dimanche</div>
+            <h2 className={styles.title}>Avant de partir&hellip;</h2>
+            <p className={styles.desc}>
+              Chaque dimanche, le meilleur d&rsquo;Origines dans votre bo&icirc;te mail. Gratuit, sans spam.
+            </p>
+          </div>
+          <div className={styles.body}>
+            {status === 'success' ? (
+              <div className={styles.success}>
+                <div className={styles.successIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
-                <h2 className="text-base font-bold mb-1">
-                  Avant de partir...
-                </h2>
-                <p className="text-white/80 text-xs">
-                  Rejoignez notre communauté et recevez le meilleur d'Origines chaque semaine.
-                </p>
+                <p className={styles.successTitle}>Bienvenue.</p>
+                <p className={styles.successDesc}>Rendez-vous dimanche dans votre bo&icirc;te mail.</p>
               </div>
-
-              {/* Formulaire */}
-              <div className="p-5">
-                <EmailCapture
-                  source="exit-intent"
-                  variant="default"
-                  placeholder="votre@email.com"
-                  buttonText="S'abonner"
-                  successMessage="Bienvenue !"
-                  successDescription="Vous recevrez notre newsletter vendredi."
-                />
-                <p className="text-center text-gray-400 text-[10px] mt-3">
-                  Gratuit, sans spam. Désabonnement en 1 clic.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  )
+            ) : (
+              <>
+                <form className={styles.form} onSubmit={handleSubmit}>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="votre@email.com"
+                    required
+                    autoComplete="email"
+                    spellCheck={false}
+                    disabled={status === 'loading'}
+                    className={styles.input}
+                  />
+                  <button
+                    type="submit"
+                    disabled={status === 'loading' || !email}
+                    className={styles.submit}
+                  >
+                    {status === 'loading' ? (
+                      'Envoi…'
+                    ) : (
+                      <>
+                        S&rsquo;abonner
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <path d="M5 12h14M13 5l7 7-7 7" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </form>
+                {status === 'error' && error && (
+                  <p className={styles.error}>{error}</p>
+                )}
+                <p className={styles.legal}>D&eacute;sabonnement en 1 clic &middot; Pas de spam</p>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
-
-export default ExitIntentPopup
