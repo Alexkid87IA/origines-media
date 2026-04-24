@@ -1,7 +1,9 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useScrolled } from "@/hooks/useScrollDirection";
 import { UNIVERS } from "@/data/univers";
 import styles from "./SiteHeader.module.css";
+
+const COMING_SOON_SECTIONS = new Set(["04", "05", "06"]);
 
 interface DropdownItem {
   href: string;
@@ -124,8 +126,15 @@ export default function SiteHeader() {
   const scrolled = useScrolled();
   const [megaOpen, setMegaOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [comingSoon, setComingSoon] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!comingSoon) return;
+    const t = setTimeout(() => setComingSoon(false), 2400);
+    return () => clearTimeout(t);
+  }, [comingSoon]);
 
   const openMega = useCallback(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -212,39 +221,48 @@ export default function SiteHeader() {
               </button>
             </div>
 
-            {SECONDARY.map((section) => (
-              <div key={section.num} className={styles.navItem}>
-                <a
-                  href={section.href}
-                  className={styles.navLink}
-                  style={{ "--hover": section.hoverColor } as React.CSSProperties}
-                >
-                  <span className={styles.num}>{section.num}</span>
-                  {section.label}
-                </a>
-                <div
-                  className={styles.navDropdown}
-                  role="menu"
-                  aria-label={`${section.label} — ${section.dropdownLabel.toLowerCase()}`}
-                >
-                  <span className={styles.navDropdownLabel}>
-                    {section.dropdownLabel}
-                  </span>
-                  {section.items.map((item) => (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      style={{ "--item-color": item.color } as React.CSSProperties}
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                  <a href={section.href} className={styles.navDropdownAll}>
-                    {section.allLabel}
+            {SECONDARY.map((section) => {
+              const isSoon = COMING_SOON_SECTIONS.has(section.num);
+              const handleSoon = isSoon
+                ? (e: React.MouseEvent) => { e.preventDefault(); setComingSoon(true); }
+                : undefined;
+              return (
+                <div key={section.num} className={styles.navItem}>
+                  <a
+                    href={section.href}
+                    className={styles.navLink}
+                    style={{ "--hover": section.hoverColor } as React.CSSProperties}
+                    onClick={handleSoon}
+                  >
+                    <span className={styles.num}>{section.num}</span>
+                    {section.label}
                   </a>
+                  {!isSoon && (
+                    <div
+                      className={styles.navDropdown}
+                      role="menu"
+                      aria-label={`${section.label} — ${section.dropdownLabel.toLowerCase()}`}
+                    >
+                      <span className={styles.navDropdownLabel}>
+                        {section.dropdownLabel}
+                      </span>
+                      {section.items.map((item) => (
+                        <a
+                          key={item.href}
+                          href={item.href}
+                          style={{ "--item-color": item.color } as React.CSSProperties}
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                      <a href={section.href} className={styles.navDropdownAll}>
+                        {section.allLabel}
+                      </a>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </nav>
 
           <div className={styles.headerActions}>
@@ -415,6 +433,13 @@ export default function SiteHeader() {
           </div>
         </div>
       </div>
+
+      {comingSoon && (
+        <div className={styles.comingSoon} role="status">
+          <span className={styles.comingSoonDot} aria-hidden="true" />
+          Bient&ocirc;t disponible
+        </div>
+      )}
     </header>
   );
 }
