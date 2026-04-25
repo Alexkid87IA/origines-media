@@ -40,11 +40,11 @@ const SECONDARY: SecondaryNav[] = [
     ],
     secondaryLabel: "Par type",
     secondaryItems: [
-      { href: "/articles?category=comprendre", label: "Comprendre", color: "#7B5CD6" },
-      { href: "/articles?category=reflexions", label: "Réflexions", color: "#D64C90" },
-      { href: "/articles?category=temoignages", label: "Témoignages", color: "#E67839" },
+      { href: "/comprendre", label: "Comprendre", color: "#7B5CD6" },
+      { href: "/reflexions", label: "Réflexions", color: "#D64C90" },
+      { href: "/temoignages", label: "Témoignages", color: "#E67839" },
       { href: "/dossiers", label: "Dossiers", color: "#2E9B74" },
-      { href: "/articles?category=portraits", label: "Portraits", color: "#2E94B5" },
+      { href: "/portraits", label: "Portraits", color: "#2E94B5" },
     ],
   },
   {

@@ -45,6 +45,14 @@ const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
 const JoinPartnerPage = lazy(() => import('./pages/JoinPartnerPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
+const ComprendrePage = lazy(() => import('./pages/ComprendrePage'));
+const ComprendreArticlePage = lazy(() => import('./pages/ComprendreArticlePage'));
+const ReflexionsPage = lazy(() => import('./pages/ReflexionsPage'));
+const ReflexionsArticlePage = lazy(() => import('./pages/ReflexionsArticlePage'));
+const TemoignagesPage = lazy(() => import('./pages/TemoignagesPage'));
+const TemoignagesArticlePage = lazy(() => import('./pages/TemoignagesArticlePage'));
+const PortraitsPage = lazy(() => import('./pages/PortraitsPage'));
+const PortraitsArticlePage = lazy(() => import('./pages/PortraitsArticlePage'));
 const DossiersPage = lazy(() => import('./pages/DossiersPage'));
 const DossierDetailPage = lazy(() => import('./pages/DossierDetailPage'));
 const RecherchePage = lazy(() => import('./pages/RecherchePage'));
@@ -96,6 +104,14 @@ function App() {
         <Route path="/academy" element={<BoutiquePage />} />
         <Route path="/communaute" element={<EnsemblePage />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
+        <Route path="/comprendre" element={<ComprendrePage />} />
+        <Route path="/comprendre/:slug" element={<ComprendreArticlePage />} />
+        <Route path="/reflexions" element={<ReflexionsPage />} />
+        <Route path="/reflexions/:slug" element={<ReflexionsArticlePage />} />
+        <Route path="/temoignages" element={<TemoignagesPage />} />
+        <Route path="/temoignages/:slug" element={<TemoignagesArticlePage />} />
+        <Route path="/portraits" element={<PortraitsPage />} />
+        <Route path="/portraits/:slug" element={<PortraitsArticlePage />} />
         <Route path="/dossiers" element={<DossiersPage />} />
         <Route path="/dossiers/:slug" element={<DossierDetailPage />} />
         <Route path="/mentions-legales" element={<LegalPage />} />

@@ -1,0 +1,154 @@
+/* ===== Réflexions — rubrique page ===== */
+
+.page {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 72px;
+}
+
+/* ── Header ── */
+.header {
+  padding: 56px 0 0;
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 32px;
+}
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.title em {
+  font-family: var(--serif);
+  font-style: italic;
+}
+
+.deck {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--stone600);
+  margin: 20px 0 0;
+  max-width: 48ch;
+}
+
+/* ── Card list ── */
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  border-bottom: 1px solid var(--stone100);
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 0.2s ease;
+}
+
+.cardLink:hover {
+  background: var(--stone50);
+  margin: 0 -24px;
+  padding: 40px 24px;
+}
+
+.cardQuote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--stone700);
+  margin: 0 0 20px;
+  padding: 0;
+  border: none;
+}
+
+.cardTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+.cardLink:hover .cardTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cardAuthorBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cardAuthorName {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cardAuthorNote {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--stone500);
+  font-style: italic;
+}
+
+.cardMeta {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  white-space: nowrap;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .header { padding: 32px 0 0; }
+  .title { font-size: clamp(32px, 8vw, 48px); }
+  .cardQuote { font-size: 17px; }
+  .cardTitle { font-size: 22px; }
+  .cardFooter { flex-direction: column; align-items: flex-start; }
+}

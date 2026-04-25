@@ -1,17 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./IntroOverlay.module.css";
 
-const LETTERS = ["O", "R", "I", "G", "I", "N", "E", "S"] as const;
-
-type Phase = "stagger" | "morph" | "outro" | "hidden";
+type Phase = "loading" | "outro" | "hidden";
 
 export default function IntroOverlay() {
-  const [phase, setPhase] = useState<Phase>("stagger");
-  const [letterStates, setLetterStates] = useState<boolean[]>(
-    new Array(8).fill(false)
-  );
+  const [phase, setPhase] = useState<Phase>("loading");
   const [skipUsed, setSkipUsed] = useState(false);
-
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const introRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +36,6 @@ export default function IntroOverlay() {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-
     const alreadySeen = sessionStorage.getItem("intro-seen") === "1";
 
     if (alreadySeen || reducedMotion) {
@@ -53,25 +46,7 @@ export default function IntroOverlay() {
     document.body.classList.add("intro-playing");
     sessionStorage.setItem("intro-seen", "1");
 
-    LETTERS.forEach((_, i) => {
-      const t = setTimeout(() => {
-        setLetterStates((prev) => {
-          const next = [...prev];
-          next[i] = true;
-          return next;
-        });
-      }, 120 + i * 90);
-      timersRef.current.push(t);
-    });
-
-    const morphTimer = setTimeout(() => {
-      setPhase("morph");
-    }, 1900);
-    timersRef.current.push(morphTimer);
-
-    const outroTimer = setTimeout(() => {
-      setPhase("outro");
-    }, 3400);
+    const outroTimer = setTimeout(() => setPhase("outro"), 3400);
     timersRef.current.push(outroTimer);
 
     const endTimer = setTimeout(() => {
@@ -88,7 +63,6 @@ export default function IntroOverlay() {
 
   useEffect(() => {
     if (phase === "hidden") return;
-
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === "Escape") doSkip();
     };
@@ -97,14 +71,6 @@ export default function IntroOverlay() {
   }, [phase, doSkip]);
 
   if (phase === "hidden") return null;
-
-  const wordClasses = [
-    styles.introWord,
-    phase === "morph" || phase === "outro" ? styles.morphing : "",
-    phase === "outro" ? styles.outro : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
 
   const introClasses = [
     styles.intro,
@@ -121,29 +87,15 @@ export default function IntroOverlay() {
       onClick={doSkip}
       role="presentation"
     >
+      <img
+        src="/visages-origines.png"
+        alt=""
+        className={styles.bgImage}
+      />
+
       <div className={styles.introMono}>
         <span>Origines — Media Editorial</span>
         <span>Paris &middot; Avril 2026</span>
-      </div>
-
-      <div className={wordClasses}>
-        {LETTERS.map((letter, i) => (
-          <span
-            key={i}
-            className={`${styles.introLetter}${letterStates[i] ? ` ${styles.letterIn}` : ""}`}
-            data-i={i}
-          >
-            {letter}
-          </span>
-        ))}
-        <span className={styles.introLogoFinal} aria-hidden="true">
-          <img
-            src="/logos/logo-black.png"
-            alt=""
-            width={200}
-            height={200}
-          />
-        </span>
       </div>
 
       <div className={styles.introMonoBottom}>

@@ -22,7 +22,7 @@ export const V2_QUESTION_QUERY = `
 // Dossiers — listing de toutes les questions de la semaine
 export const V2_DOSSIERS_QUERY = `
   *[_type == "questionDeLaSemaine"] | order(annee desc, semaine desc) {
-    question, semaine, annee, univpilar,
+    question, semaine, annee, univpilar, chapeau,
     "slug": slug.current,
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "articleCount": count(articles),
@@ -38,11 +38,14 @@ export const V2_DOSSIER_DETAIL_QUERY = `
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     isActive,
     "articles": articles[]-> {
-      _id, titre, extrait, description,
+      _id, titre,
+      "extrait": coalesce(extrait, chapeau, description),
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
-      datePublication, tempsLecture, univpilar,
+      datePublication,
+      "tempsLecture": coalesce(tempsLecture, readTime),
+      univpilar,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name

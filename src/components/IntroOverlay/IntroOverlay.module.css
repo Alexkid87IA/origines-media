@@ -16,16 +16,34 @@
   opacity: 0;
 }
 
-.intro::before {
-  content: '';
+/* ── Full-bleed faces image ── */
+.bgImage {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 30% 40%, rgba(247,245,240,0.04) 0%, transparent 60%),
-    radial-gradient(circle at 70% 70%, rgba(247,245,240,0.03) 0%, transparent 55%);
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  opacity: 0;
+  transform: scale(1.06);
+  animation: bgReveal 3.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+@keyframes bgReveal {
+  0% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Top mono line ── */
 .introMono {
   position: absolute;
   top: 32px;
@@ -39,13 +57,11 @@
   text-transform: uppercase;
   color: var(--paper);
   opacity: 0;
-  animation: introMonoIn 0.8s ease 0.1s forwards;
+  animation: monoIn 0.8s ease 0.3s forwards;
+  z-index: 2;
 }
 
-@keyframes introMonoIn {
-  to { opacity: 0.5; }
-}
-
+/* ── Bottom mono line + bar ── */
 .introMonoBottom {
   position: absolute;
   bottom: 32px;
@@ -59,9 +75,15 @@
   text-transform: uppercase;
   color: var(--paper);
   opacity: 0;
-  animation: introMonoIn 0.8s ease 0.3s forwards;
+  animation: monoIn 0.8s ease 0.5s forwards;
+  z-index: 2;
 }
 
+@keyframes monoIn {
+  to { opacity: 0.5; }
+}
+
+/* ── Loading bar ── */
 .progress {
   display: inline-flex;
   align-items: center;
@@ -71,13 +93,13 @@
 .bar {
   width: 120px;
   height: 1px;
-  background: rgba(247,245,240,0.3);
+  background: rgba(247, 245, 240, 0.3);
   position: relative;
   overflow: hidden;
 }
 
 .bar::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -85,107 +107,14 @@
   width: 100%;
   background: var(--paper);
   transform: translateX(-100%);
-  animation: introBar 3.4s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+  animation: barFill 3.4s cubic-bezier(0.7, 0, 0.3, 1) forwards;
 }
 
-@keyframes introBar {
+@keyframes barFill {
   to { transform: translateX(0); }
 }
 
-.introWord {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  transform-origin: center center;
-  will-change: transform, opacity;
-  transition: transform 0.9s cubic-bezier(0.6, 0, 0.2, 1), opacity 0.5s ease 0.2s;
-}
-
-.morphing {
-  transform: none;
-}
-
-.outro {
-  transform: scale(0.18);
-  opacity: 0;
-}
-
-.introLetter {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(48px, 10vw, 140px);
-  line-height: 1;
-  letter-spacing: -0.045em;
-  color: var(--paper);
-  display: inline-block;
-  position: relative;
-  opacity: 0;
-  transform: translateY(20px);
-  filter: blur(10px);
-  transition:
-    transform 0.8s cubic-bezier(0.4, 0, 0.1, 1),
-    opacity 0.6s ease,
-    filter 0.7s ease,
-    letter-spacing 0.9s cubic-bezier(0.6, 0, 0.2, 1);
-  will-change: transform, opacity, filter;
-}
-
-.letterIn {
-  opacity: 1;
-  transform: translateY(0);
-  filter: blur(0);
-}
-
-.morphing .introLetter:not([data-i="0"]) {
-  opacity: 0;
-  transform: translateX(-40px) scale(0.7);
-  filter: blur(6px);
-  letter-spacing: -0.3em;
-}
-
-.morphing .introLetter[data-i="7"] { transition-delay: 0ms; }
-.morphing .introLetter[data-i="6"] { transition-delay: 40ms; }
-.morphing .introLetter[data-i="5"] { transition-delay: 80ms; }
-.morphing .introLetter[data-i="4"] { transition-delay: 120ms; }
-.morphing .introLetter[data-i="3"] { transition-delay: 160ms; }
-.morphing .introLetter[data-i="2"] { transition-delay: 200ms; }
-.morphing .introLetter[data-i="1"] { transition-delay: 240ms; }
-
-.introLogoFinal {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: clamp(110px, 14vw, 200px);
-  height: clamp(110px, 14vw, 200px);
-  transform: translate(-50%, -50%) scale(0.85);
-  opacity: 0;
-  transition:
-    opacity 0.5s ease,
-    transform 0.7s cubic-bezier(0.34, 1.35, 0.64, 1);
-  pointer-events: none;
-  filter: invert(1);
-}
-
-.introLogoFinal img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-}
-
-.morphing .introLogoFinal {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-  transition-delay: 550ms;
-}
-
-.morphing .introLetter[data-i="0"] {
-  opacity: 0;
-  transition-delay: 550ms;
-}
-
+/* ── Skip button ── */
 .introSkip {
   position: absolute;
   bottom: 80px;
@@ -197,45 +126,48 @@
   text-transform: uppercase;
   color: var(--paper);
   opacity: 0;
-  animation: introSkipIn 0.8s ease 1.2s forwards;
+  animation: skipIn 0.8s ease 1.2s forwards;
   cursor: pointer;
   padding: 8px 16px;
-  border: 1px solid rgba(247,245,240,0.4);
+  border: 1px solid rgba(247, 245, 240, 0.4);
   background: transparent;
   z-index: 10;
 }
 
-@keyframes introSkipIn {
+@keyframes skipIn {
   to { opacity: 0.7; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .intro {
-    animation: introOutroFast 0.3s ease 0.3s forwards;
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .introMono,
+  .introMonoBottom {
+    left: 20px;
+    right: 20px;
+    font-size: 9px;
   }
-  .introLetter {
+  .introMono { top: 20px; }
+  .introMonoBottom { bottom: 20px; }
+  .bar { width: 80px; }
+  .introSkip { bottom: 56px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bgImage {
     opacity: 1 !important;
     transform: none !important;
-    filter: none !important;
-    transition: none !important;
-  }
-  .introWord {
     animation: none !important;
   }
   .introMono,
   .introMonoBottom,
   .introSkip {
-    animation: introMonoFast 0.2s ease forwards !important;
+    animation: monoFast 0.2s ease forwards !important;
   }
   .bar::after {
     animation: none !important;
   }
 }
 
-@keyframes introOutroFast {
-  to { opacity: 0; visibility: hidden; }
-}
-
-@keyframes introMonoFast {
+@keyframes monoFast {
   to { opacity: 0.5; }
 }

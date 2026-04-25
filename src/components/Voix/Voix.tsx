@@ -271,39 +271,31 @@ export default function Voix({ cmsStories }: VoixProps) {
         ))}
       </div>
 
-      {/* ═══ Submit pitch ═══ */}
-      <div className={s.submit}>
-        <div className={s.submitLeft}>
-          <h3 className={s.submitTitle}>
-            Racontez <em>la v&ocirc;tre.</em>
+      {/* ═══ Submit — visual banner ═══ */}
+      <div className={s.banner}>
+        <img
+          src="/visages-origines.png"
+          alt="Visages de ceux qui ont raconté leur histoire sur Origines"
+          className={s.bannerImg}
+          loading="lazy"
+        />
+        <div className={s.bannerOverlay}>
+          <span className={s.bannerCount}>1 247</span>
+          <h3 className={s.bannerTitle}>
+            Ils ont racont&eacute; leur histoire<br />sur <em>Origines.</em>
           </h3>
-          <p className={s.submitDesc}>
-            10 minutes suffisent. Aucune forme impos&eacute;e. Anonyme ou sign&eacute;
-            &mdash; vous d&eacute;cidez.
+          <p className={s.bannerDesc}>
+            Et si c&rsquo;&eacute;tait votre tour&nbsp;? Anonymat garanti.
+            Votre r&eacute;cit peut aider quelqu&rsquo;un que vous ne
+            conna&icirc;trez jamais.
           </p>
+          <a href="/racontez-votre-histoire" className={s.bannerCta}>
+            Raconter mon histoire
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
-
-        <ol className={s.submitSteps}>
-          <li className={s.submitStep}>
-            <span className={s.submitStepNum}>01</span>
-            <span className={s.submitStepLabel}>Vous &eacute;crivez</span>
-          </li>
-          <li className={s.submitStep}>
-            <span className={s.submitStepNum}>02</span>
-            <span className={s.submitStepLabel}>On vous lit</span>
-          </li>
-          <li className={s.submitStep}>
-            <span className={s.submitStepNum}>03</span>
-            <span className={s.submitStepLabel}>On publie ensemble</span>
-          </li>
-        </ol>
-
-        <a href="/share-story" className={s.submitCta}>
-          Raconter mon histoire
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-            <path d="M5 12h14M13 5l7 7-7 7" />
-          </svg>
-        </a>
       </div>
     </section>
   );

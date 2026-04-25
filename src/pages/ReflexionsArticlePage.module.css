@@ -1,0 +1,146 @@
+/* ===== Réflexions — article template ===== */
+
+.page { min-height: 100vh; background: var(--paper); color: var(--ink); }
+
+.article {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px 72px;
+}
+
+/* ── Header ── */
+.header { padding-top: 32px; margin-bottom: 40px; }
+
+.breadcrumb {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--stone400); text-decoration: none; margin-bottom: 28px;
+  transition: color 0.2s ease;
+}
+.breadcrumb:hover { color: var(--ink); }
+
+.meta {
+  display: block;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--stone400); margin-bottom: 16px;
+}
+
+.title {
+  font-family: var(--serif); font-style: italic;
+  font-weight: 400; font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.1; letter-spacing: -0.015em;
+  color: var(--ink); margin: 0 0 16px;
+}
+
+.chapeau {
+  font-family: var(--body); font-size: 18px; line-height: 1.6;
+  color: var(--stone600); margin: 0 0 24px;
+}
+
+.authorBlock {
+  display: flex; flex-direction: column; gap: 2px;
+  padding-top: 16px; border-top: 1px solid var(--stone100);
+}
+
+.authorName {
+  font-family: var(--body); font-size: 14px; font-weight: 600;
+  color: var(--ink);
+}
+
+.authorBio {
+  font-family: var(--body); font-size: 13px; font-style: italic;
+  color: var(--stone500);
+}
+
+/* ── Author note ── */
+.authorNote {
+  padding: 24px 28px; margin-bottom: 40px;
+  border-left: 2px solid var(--stone200);
+  background: var(--stone50);
+}
+
+.authorNoteLabel {
+  display: block;
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--stone400); margin-bottom: 10px;
+}
+
+.authorNote p {
+  font-family: var(--serif); font-style: italic;
+  font-size: 15px; line-height: 1.6;
+  color: var(--stone600); margin: 0;
+}
+
+/* ── Body ── */
+.body { margin-bottom: 56px; }
+
+.bodyP {
+  font-family: var(--body); font-size: 18px; line-height: 1.8;
+  color: var(--stone800); margin: 0 0 24px;
+}
+
+.shortP {
+  font-family: var(--serif); font-style: italic;
+  font-size: 22px; line-height: 1.5;
+  color: var(--ink); margin: 32px 0;
+  text-align: center;
+}
+
+/* Pull quote */
+.pullQuote {
+  font-family: var(--serif); font-style: italic;
+  font-size: 24px; line-height: 1.4;
+  color: var(--ink); margin: 48px 0;
+  padding: 32px 0; border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  text-align: center;
+}
+
+/* ── Newsletter CTA ── */
+.nlBlock {
+  padding: 48px 40px; background: var(--ink);
+  color: var(--paper); text-align: center;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 12px;
+}
+
+.nlKicker {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(247,245,240,0.45);
+}
+
+.nlTitle {
+  font-family: var(--display); font-weight: 800;
+  font-size: 24px; line-height: 1.15; letter-spacing: -0.02em;
+  margin: 0; max-width: 400px;
+}
+
+.nlTitle em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+}
+
+.nlDeck {
+  font-family: var(--body); font-size: 14px; line-height: 1.5;
+  color: rgba(247,245,240,0.55); margin: 0; max-width: 380px;
+}
+
+.nlTrust {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(247,245,240,0.3);
+  margin-top: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .title { font-size: 28px; }
+  .chapeau { font-size: 16px; }
+  .bodyP { font-size: 16px; line-height: 1.7; }
+  .shortP { font-size: 18px; }
+  .pullQuote { font-size: 20px; margin: 32px 0; padding: 24px 0; }
+  .nlBlock { padding: 32px 20px; }
+  .nlTitle { font-size: 20px; }
+}

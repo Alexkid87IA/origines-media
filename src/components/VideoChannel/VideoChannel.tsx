@@ -221,29 +221,14 @@ export default function VideoChannel({ cmsVideos }: VideoChannelProps) {
         </div>
 
         <div className={s.sectionRight}>
-          <div className={s.posters}>
-            {programmes.map((p) => (
-              <a
-                key={p.id}
-                href={`/programmes/${p.id}`}
-                className={s.poster}
-                aria-label={p.name}
-              >
-                <img
-                  src={p.poster}
-                  alt={p.name}
-                  className={s.posterImg}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span className={s.posterName}>{p.name}</span>
-              </a>
-            ))}
+          <div className={s.faceBanner}>
+            <img
+              src="/visages-origines.png"
+              alt="Visages des programmes Origines"
+              className={s.faceBannerImg}
+              loading="lazy"
+            />
           </div>
-          <a className={s.sectionAll} href="/programmes" aria-label="Tous les programmes">
-            Tous les programmes
-            <span className={s.sectionAllArrow} aria-hidden="true">&rarr;</span>
-          </a>
         </div>
       </header>
 

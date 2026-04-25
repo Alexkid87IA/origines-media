@@ -81,75 +81,25 @@
   max-width: 56ch;
 }
 
-/* Right — posters */
+/* Right — faces banner */
 .sectionRight {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 20px;
 }
-.posters {
-  display: flex;
-  gap: 12px;
-}
-.poster {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  width: 96px;
-  flex-shrink: 0;
-  position: relative;
-}
-.poster img {
-  display: block;
+
+.faceBanner {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border: 1px solid rgba(247, 245, 240, 0.06);
-  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-.poster:hover img {
-  border-color: rgba(247, 245, 240, 0.25);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-}
-.posterName {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.3);
-  text-align: center;
-  line-height: 1.2;
-  transition: color 0.25s ease;
-}
-.poster:hover .posterName {
-  color: var(--paper);
+  max-width: 640px;
+  overflow: hidden;
 }
 
-.sectionAll {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.4);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  transition: color 0.2s ease;
-  white-space: nowrap;
-}
-.sectionAll:hover { color: var(--paper); }
-.sectionAllArrow {
-  transition: transform 0.3s ease;
-  display: inline-block;
-}
-.sectionAll:hover .sectionAllArrow {
-  transform: translateX(4px);
+.faceBannerImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: grayscale(100%);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -395,8 +345,6 @@
    ══════════════════════════════════════════════════════════════ */
 
 @media (max-width: 1280px) {
-  .poster { width: 80px; }
-  .posters { gap: 10px; }
   .rowGrid { gap: 16px; }
   .vidTitle { font-size: 14px; }
   .rowFeatured .rowGrid { gap: 2px; }
@@ -414,7 +362,6 @@
     justify-content: space-between;
     width: 100%;
   }
-  .poster { width: 72px; }
   .rowGrid { gap: 14px; }
   .rowFeatured .rowGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -424,8 +371,6 @@
 }
 
 @media (max-width: 880px) {
-  .poster { width: 64px; }
-  .posterName { font-size: 8px; }
   .rowGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     overflow-x: auto;
@@ -454,15 +399,6 @@
   .sectionTitle { font-size: clamp(24px, 6vw, 36px); }
   .sectionDeck { font-size: 14px; }
   .sectionRight { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .posters {
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    width: 100%;
-  }
-  .posters::-webkit-scrollbar { display: none; }
-  .poster { width: 60px; }
-  .posterName { display: none; }
   .rowName { font-size: 17px; }
   .rowCount { display: none; }
   .rowTagline { font-size: 13px; }
@@ -474,7 +410,6 @@
 
 @media (max-width: 480px) {
   .sectionTitle { font-size: clamp(22px, 6vw, 30px); }
-  .poster { width: 52px; }
   .rowGrid > .vid { min-width: 200px; }
   .vidTitle { font-size: 12px; }
   .rowTagline { display: none; }
@@ -483,9 +418,7 @@
 @media (prefers-reduced-motion: reduce) {
   .vidImg,
   .vidPlay,
-  .rowAll,
-  .sectionAll,
-  .sectionAllArrow {
+  .rowAll {
     transition: none !important;
   }
 }
