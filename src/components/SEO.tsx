@@ -194,7 +194,7 @@ const SEO: React.FC<SEOProps> = ({
 }) => {
   const fullTitle = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE;
   const canonicalUrl = url ? `${SITE_URL}${url}` : SITE_URL;
-  const safeImage = image || DEFAULT_IMAGE;
+  const safeImage = (typeof image === 'string' ? image : '') || DEFAULT_IMAGE;
   const imageUrl = safeImage.startsWith('http') ? safeImage : `${SITE_URL}${safeImage}`;
 
   // Generate JSON-LD based on type

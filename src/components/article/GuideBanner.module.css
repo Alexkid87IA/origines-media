@@ -1,0 +1,130 @@
+/* ──────────────────────────────────────────────────────────
+   Guide Banner — editorial note for guides
+   ────────────────────────────────────────────────────────── */
+
+.banner {
+  max-width: 720px;
+  margin: 0 auto 8px;
+  padding: 0 24px;
+}
+
+.bannerInner {
+  position: relative;
+  border: 1px solid var(--stone150, #e8e4df);
+  border-left: 3px solid var(--theme, var(--ink));
+  border-radius: 2px;
+  background: var(--stone50, #f9f7f4);
+  padding: 28px 32px 24px;
+}
+
+.bannerHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.bannerIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--theme, var(--ink));
+  opacity: 0.85;
+}
+
+.bannerTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.bannerClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: var(--stone400, #a8a29e);
+  transition: color 0.15s;
+  line-height: 0;
+}
+
+.bannerClose:hover {
+  color: var(--ink);
+}
+
+.bannerClose svg {
+  width: 14px;
+  height: 14px;
+}
+
+.bannerIntro {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--stone600, #57534e);
+  margin: 0 0 16px;
+}
+
+.bannerList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bannerItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--stone600, #57534e);
+}
+
+.bannerItemIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: var(--theme, var(--ink));
+  opacity: 0.7;
+}
+
+.bannerKbd {
+  display: inline-block;
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  background: var(--stone100, #f0ece7);
+  border: 1px solid var(--stone200, #ddd8d1);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--stone500, #78716c);
+  vertical-align: 1px;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    padding: 0 16px;
+  }
+
+  .bannerInner {
+    padding: 20px 20px 18px;
+  }
+
+  .bannerIntro {
+    font-size: 14px;
+  }
+
+  .bannerItem {
+    font-size: 13px;
+  }
+}

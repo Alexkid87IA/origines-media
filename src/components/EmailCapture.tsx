@@ -16,6 +16,7 @@ interface EmailCaptureProps {
   successMessage?: string
   successDescription?: string
   className?: string
+  accentColor?: string
 }
 
 const EmailCapture: React.FC<EmailCaptureProps> = ({
@@ -26,6 +27,7 @@ const EmailCapture: React.FC<EmailCaptureProps> = ({
   successMessage = 'Inscription réussie !',
   successDescription = 'Vous recevrez nos prochaines communications.',
   className = '',
+  accentColor,
 }) => {
   const [email, setEmail] = useState('')
   const { status, error, subscribe } = useSubscribe({ source })
@@ -107,6 +109,7 @@ const EmailCapture: React.FC<EmailCaptureProps> = ({
             type="submit"
             disabled={status === 'loading' || !email}
             className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors disabled:opacity-50 ${buttonStyles[variant]}`}
+            style={accentColor ? { background: accentColor } : undefined}
           >
             {status === 'loading' ? (
               <Loader className="w-4 h-4 animate-spin" />

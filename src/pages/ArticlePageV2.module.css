@@ -19,7 +19,7 @@
   top: 0;
   left: 0;
   height: 2px;
-  background: var(--ink);
+  background: var(--theme, var(--ink));
   z-index: 60;
   transition: width 0.15s linear;
 }
@@ -43,18 +43,39 @@
   width: 48px;
   height: 4px;
   margin: 0 auto 24px;
-  background: var(--ink);
+  background: var(--theme, var(--ink));
+}
+
+.headerKickerRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .headerKicker {
-  display: block;
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--stone500);
-  margin-bottom: 20px;
+}
+
+.headerKickerSep {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.4;
+}
+
+.headerSubtopic {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .headerTitle {
@@ -120,6 +141,35 @@
 }
 
 /* ──────────────────────────────────────────────────────────
+   Intro block — editorial lede above hero
+   ────────────────────────────────────────────────────────── */
+
+.introBlock {
+  max-width: 680px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+}
+
+.introParagraph {
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--stone600);
+  margin: 0;
+}
+
+.dropCap {
+  float: left;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 0.85;
+  margin: 4px 10px 0 0;
+  color: var(--theme, var(--ink));
+  letter-spacing: -0.03em;
+}
+
+/* ──────────────────────────────────────────────────────────
    Hero figure — contained image
    ────────────────────────────────────────────────────────── */
 
@@ -163,6 +213,13 @@
   padding: 0 24px;
 }
 
+.contentGridGuide {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
 /* ──────────────────────────────────────────────────────────
    Article body  (Prose)
    ────────────────────────────────────────────────────────── */
@@ -172,11 +229,33 @@
   max-width: 720px;
 }
 
+.articleBodyGuide {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 .prose {
   font-family: var(--body);
   font-size: 18px;
   line-height: 1.7;
   color: var(--stone700);
+}
+
+.proseGuide {
+  font-family: var(--body);
+  font-size: 19px;
+  line-height: 1.85;
+  color: var(--stone700);
+}
+
+.proseGuide > div > figure {
+  margin-left: -60px;
+  margin-right: -60px;
+}
+
+.proseGuide > div > figure img {
+  max-width: none;
+  width: 100%;
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -186,7 +265,7 @@
 .authorBox {
   margin-top: 56px;
   padding: 28px;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--theme, var(--ink));
 }
 
 .authorBoxInner {
@@ -322,7 +401,7 @@
 .widgetTitle svg {
   width: 14px;
   height: 14px;
-  color: var(--stone400);
+  color: var(--theme, var(--stone400));
 }
 
 .widgetChevron {
@@ -400,9 +479,9 @@
 }
 
 .tocItemActive .tocNum {
-  background: var(--ink);
+  background: var(--theme, var(--ink));
   color: var(--paper);
-  border-color: var(--ink);
+  border-color: var(--theme, var(--ink));
 }
 
 .tocDot {
@@ -415,7 +494,7 @@
 }
 
 .tocItemActive .tocDot {
-  background: var(--ink);
+  background: var(--theme, var(--ink));
 }
 
 /* — Share grid — */
@@ -439,8 +518,8 @@
 }
 
 .shareBtn:hover {
-  border-color: var(--ink);
-  color: var(--ink);
+  border-color: var(--theme, var(--ink));
+  color: var(--theme, var(--ink));
 }
 
 .shareBtn svg {
@@ -478,7 +557,7 @@
 
 .nextRead {
   display: block;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--theme, var(--ink));
   text-decoration: none;
   color: inherit;
   overflow: hidden;
@@ -492,8 +571,8 @@
 .nextReadLabel {
   display: block;
   padding: 10px 16px;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--theme, var(--ink));
+  color: #fff;
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
@@ -549,7 +628,7 @@
 /* — Newsletter widget — */
 
 .nlWidget {
-  border: 2px solid var(--ink);
+  border: 2px solid var(--theme, var(--ink));
   background: var(--ink);
   padding: 24px 16px;
   text-align: center;
@@ -624,8 +703,8 @@
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
-  color: var(--paper);
-  background: var(--ink);
+  color: #fff;
+  background: var(--theme, var(--ink));
 }
 
 .popTitle {
@@ -853,7 +932,7 @@
 
 .relatedSection {
   padding: 72px 0 80px;
-  background: linear-gradient(135deg, #7B5CD6 0%, #D64C90 100%);
+  background: var(--theme, #7B5CD6);
   color: #fff;
 }
 
@@ -1002,32 +1081,96 @@
    ────────────────────────────────────────────────────────── */
 
 .endNl {
-  padding: 40px 0;
-  border-top: 1px solid var(--stone100);
+  padding: 64px 24px;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .endNlInner {
-  max-width: 520px;
+  max-width: 560px;
   margin: 0 auto;
-  padding: 0 24px;
   text-align: center;
+}
+
+.endNlKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.5);
+  margin-bottom: 20px;
 }
 
 .endNlTitle {
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  margin: 0 0 6px;
+  font-weight: 900;
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+  margin: 0 0 18px;
+}
+
+.endNlTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .endNlDeck {
   font-family: var(--body);
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--stone500);
-  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(247, 245, 240, 0.65);
+  margin: 0 0 24px;
+  max-width: 48ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.endNlPoints {
+  list-style: none;
+  margin: 0 0 32px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.endNlPoints li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--body);
+  font-size: 14px;
+  color: rgba(247, 245, 240, 0.8);
+}
+
+.endNlPointDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--theme, #D64C90);
+  flex-shrink: 0;
+}
+
+.endNlTrust {
+  display: block;
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.35);
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -1541,6 +1684,20 @@
     font-size: 17px;
   }
 
+  .introBlock {
+    padding: 0 16px;
+    margin-bottom: 28px;
+  }
+
+  .introParagraph {
+    font-size: 16px;
+  }
+
+  .dropCap {
+    font-size: 42px;
+    margin: 2px 8px 0 0;
+  }
+
   .heroFigure {
     padding: 0 16px;
     margin-bottom: 28px;
@@ -1552,6 +1709,15 @@
 
   .contentGrid {
     padding: 0 16px;
+  }
+
+  .contentGridGuide {
+    padding: 0 16px;
+  }
+
+  .proseGuide > div > figure {
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .relatedSection {

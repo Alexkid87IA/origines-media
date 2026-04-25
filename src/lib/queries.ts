@@ -11,7 +11,7 @@ export const V2_QUESTION_QUERY = `
   *[_type == "questionDeLaSemaine" && isActive == true][0] {
     question, semaine, annee, univpilar, image,
     "slug": slug.current,
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "articles": articles[]-> {
       titre, "slug": slug.current, univpilar, deck, readTime, image,
       "imageUrl": image.asset->url
@@ -19,62 +19,112 @@ export const V2_QUESTION_QUERY = `
   }
 `;
 
-// Article principal (le plus récent avec image, hors vidéo)
-export const V2_HERO_MAIN_QUERY = `
-  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0] {
-    _id,
-    titre,
-    extrait,
-    description,
-    "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
-    typeArticle,
-    "imageUrl": image.asset->url,
+// Dossiers — listing de toutes les questions de la semaine
+export const V2_DOSSIERS_QUERY = `
+  *[_type == "questionDeLaSemaine"] | order(annee desc, semaine desc) {
+    question, semaine, annee, univpilar,
     "slug": slug.current,
-    datePublication,
-    tempsLecture,
-    "verticaleSlug": verticale->slug.current,
-    "verticaleNom": verticale->nom,
-    "authorName": author->name
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+    "articleCount": count(articles),
+    isActive
   }
+`;
+
+// Dossier détail — une question + ses articles
+export const V2_DOSSIER_DETAIL_QUERY = `
+  *[_type == "questionDeLaSemaine" && slug.current == $slug][0] {
+    question, semaine, annee, univpilar,
+    "slug": slug.current,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+    isActive,
+    "articles": articles[]-> {
+      _id, titre, extrait, description,
+      "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+      "slug": slug.current,
+      datePublication, tempsLecture, univpilar,
+      "verticaleSlug": verticale->slug.current,
+      "verticaleNom": verticale->nom,
+      "authorName": author->name
+    }
+  }
+`;
+
+// Article principal — curé depuis siteSettings, fallback sur le plus récent
+export const V2_HERO_MAIN_QUERY = `
+  coalesce(
+    *[_type == "siteSettings"][0].articleALaUne-> {
+      _id, titre, extrait, description,
+      "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+      typeArticle,
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+      "slug": slug.current,
+      datePublication, tempsLecture, univpilar,
+      "verticaleSlug": verticale->slug.current,
+      "verticaleNom": verticale->nom,
+      "authorName": author->name
+    },
+    *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [0] {
+      _id, titre, extrait, description,
+      "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+      typeArticle,
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+      "slug": slug.current,
+      datePublication, tempsLecture, univpilar,
+      "verticaleSlug": verticale->slug.current,
+      "verticaleNom": verticale->nom,
+      "authorName": author->name
+    }
+  )
 `
 
 // 3 articles secondaires pour le hero (les suivants, hors vidéo)
 export const V2_HERO_SECONDARY_QUERY = `
-  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [1...15] {
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [1...15] {
     _id,
     titre,
     extrait,
     description,
     "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
     tempsLecture,
+    univpilar,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
     "authorName": author->name
   }
 `
 
-// Choix de la rédaction (article avec le plus de vues, avec image)
+// Choix de la rédaction — curé depuis siteSettings, fallback sur le plus vu
 export const V2_SPOTLIGHT_QUERY = `
-  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(coalesce(stats.views, views, vues, 0) desc) [0] {
-    _id,
-    titre,
-    extrait,
-    description,
-    "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
-    "imageUrl": image.asset->url,
-    "slug": slug.current,
-    tempsLecture,
-    "verticaleSlug": verticale->slug.current,
-    "verticaleNom": verticale->nom,
-    "authorName": author->name
-  }
+  coalesce(
+    *[_type == "siteSettings"][0].choixDeLaRedaction-> {
+      _id, titre, extrait, description,
+      "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+      "slug": slug.current,
+      tempsLecture, univpilar,
+      "verticaleSlug": verticale->slug.current,
+      "verticaleNom": verticale->nom,
+      "authorName": author->name
+    },
+    *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(coalesce(stats.views, views, vues, 0) desc) [0] {
+      _id, titre, extrait, description,
+      "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+      "slug": slug.current,
+      tempsLecture, univpilar,
+      "verticaleSlug": verticale->slug.current,
+      "verticaleNom": verticale->nom,
+      "authorName": author->name
+    }
+  )
 `
 
-// Articles pour le Feed (16 derniers, avec verticale)
+// Articles pour le Feed (16 derniers, avec image)
 export const V2_FEED_QUERY = `
-  *[_type == "production" && defined(image.asset)] | order(datePublication desc) [0...16] {
+  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides"] | order(datePublication desc) [0...50] {
     _id,
     titre,
     extrait,
@@ -87,6 +137,9 @@ export const V2_FEED_QUERY = `
     tempsLecture,
     videoUrl,
     duree,
+    univpilar,
+    category,
+    soustopic,
     "vues": coalesce(stats.views, views, vues, 0),
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
@@ -96,15 +149,16 @@ export const V2_FEED_QUERY = `
 
 // 2 articles éditoriaux pour Spotlight (après le premier, avec image)
 export const V2_EDITORIAL_QUERY = `
-  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [4...18] {
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [4...18] {
     _id,
     titre,
     extrait,
     description,
     "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
     tempsLecture,
+    univpilar,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
     "authorName": author->name
@@ -120,7 +174,7 @@ export const V2_TRIAD_QUERY = `
     "articles": *[_type == "production" && references(^._id) && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0...3] {
       _id,
       titre,
-      "imageUrl": image.asset->url,
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom
@@ -139,6 +193,7 @@ export const V2_VIDEOS_QUERY = `
     duree,
     "slug": slug.current,
     datePublication,
+    univpilar,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom
   }
@@ -146,17 +201,18 @@ export const V2_VIDEOS_QUERY = `
 
 // Immersions — articles long-format (les plus longs, avec image)
 export const V2_IMMERSIONS_QUERY = `
-  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && tempsLecture >= 15] | order(datePublication desc) [0...5] {
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides" && tempsLecture >= 15] | order(datePublication desc) [0...5] {
     _id,
     titre,
     extrait,
     description,
     "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
     typeArticle,
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
     datePublication,
     tempsLecture,
+    univpilar,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
     "authorName": author->name
@@ -213,7 +269,7 @@ export const FEATURED_ARTICLES_QUERY = `
       description,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       typeArticle,
-      "imageUrl": image.asset->url,
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
       datePublication,
       tempsLecture
@@ -399,7 +455,7 @@ export const VERTICALE_DETAIL_QUERY = `
 
 // Articles pour Explorer (exclut les vidéos et histoires qui ont leurs propres catégories)
 export const EXPLORER_ARTICLES_QUERY = `
-  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"])] | order(datePublication desc, _createdAt desc) {
+  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"]) && rubrique != "guides"] | order(datePublication desc, _createdAt desc) {
     _id,
     titre,
     description,
@@ -601,7 +657,7 @@ export const PRODUCTION_BY_SLUG_QUERY = `
 
 // Articles pour la page Articles (actualités, guides - pas les histoires)
 export const ARTICLES_PAGE_QUERY = `
-  *[_type == "production" && coalesce(typeArticle, "article") in ["article", "actu", "guide", "interview"]] | order(datePublication desc) {
+  *[_type == "production" && coalesce(typeArticle, "article") in ["article", "actu", "guide", "interview"] && rubrique != "guides"] | order(datePublication desc) {
     _id,
     titre,
     typeArticle,
@@ -641,7 +697,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
     slug,
     "excerpt": description,
     "publishedAt": datePublication,
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     mainImage {
       asset-> {
         url
@@ -727,6 +783,12 @@ export const ARTICLE_BY_SLUG_QUERY = `
       slug
     },
 
+    // Rubrique & sous-topic
+    rubrique,
+    category,
+    soustopic,
+    univpilar,
+
     // Type de section
     sectionType-> {
       _id,
@@ -748,7 +810,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
       _id,
       "title": titre,
       slug,
-      "imageUrl": image.asset->url,
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       mainImage {
         asset-> {
           url
@@ -765,7 +827,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
 
 // Articles liés (fallback si pas définis manuellement) - exclut vidéos et histoires
 export const RELATED_ARTICLES_QUERY = `
-  *[_type == "production" && _id != $currentId && !(coalesce(typeArticle, "article") in ["video", "histoire"]) && (
+  *[_type == "production" && _id != $currentId && !(coalesce(typeArticle, "article") in ["video", "histoire"]) && rubrique != "guides" && (
     count(categories[@._ref in $categoryIds]) > 0 ||
     univers._ref == $universId ||
     verticale._ref == $verticaleId ||
@@ -780,7 +842,7 @@ export const RELATED_ARTICLES_QUERY = `
         url
       }
     },
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "excerpt": description,
     readingTime,
     "publishedAt": datePublication,
@@ -796,7 +858,7 @@ export const RELATED_ARTICLES_QUERY = `
 
 // Articles populaires (par vues) - exclut vidéos et histoires
 export const POPULAR_ARTICLES_QUERY = `
-  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"])] | order(coalesce(stats.views, views, 0) desc) [0...10] {
+  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"]) && rubrique != "guides"] | order(coalesce(stats.views, views, 0) desc) [0...10] {
     _id,
     "title": titre,
     slug,
@@ -805,7 +867,7 @@ export const POPULAR_ARTICLES_QUERY = `
         url
       }
     },
-    "imageUrl": image.asset->url,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "excerpt": description,
     "views": coalesce(stats.views, views, 0),
     categories[]-> {

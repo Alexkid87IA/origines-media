@@ -9,6 +9,8 @@ import s from "./Feed.module.css";
 export interface CMSFeedItem {
   id: number;
   univers: UniversId;
+  category?: string;
+  soustopic?: string;
   date: string;
   popularity: number;
   title: string;
@@ -52,15 +54,68 @@ interface PillDef {
 /*  Derived from univers.ts                                            */
 /* ------------------------------------------------------------------ */
 
-const FILTERS: FilterDef[] = [
-  { key: "all", label: "Tous", count: TOTAL_ARTICLES },
-  ...UNIVERS.map((u) => ({
-    key: u.id,
-    label: u.name,
-    count: ARTICLES.filter((a) => a.univers === u.id).length,
-    chipColor: u.color,
-  })),
-];
+const SOUSTOPIC_LABELS: Record<string, string> = {
+  emotions: "Émotions",
+  conscience: "Conscience",
+  meditation: "Méditation",
+  "developpement-personnel": "Développement personnel",
+  neurosciences: "Neurosciences",
+  philosophie: "Philosophie",
+  "quete-de-sens": "Quête de sens",
+  therapies: "Thérapies",
+  nutrition: "Nutrition",
+  sommeil: "Sommeil",
+  mouvement: "Mouvement",
+  prevention: "Prévention",
+  "medecine-douce": "Médecine douce",
+  "bien-etre-physique": "Bien-être physique",
+  sport: "Sport",
+  respiration: "Respiration",
+  parentalite: "Parentalité",
+  couples: "Couples",
+  amitie: "Amitié",
+  education: "Éducation",
+  generations: "Générations",
+  communaute: "Communauté",
+  ruptures: "Ruptures",
+  "enquetes-sociales": "Enquêtes sociales",
+  "recits-de-voyage": "Récits de voyage",
+  destinations: "Destinations",
+  art: "Art",
+  musique: "Musique",
+  litterature: "Littérature",
+  cinema: "Cinéma",
+  creativite: "Créativité",
+  photographie: "Photographie",
+  carriere: "Carrière",
+  entrepreneuriat: "Entrepreneuriat",
+  innovation: "Innovation",
+  "intelligence-artificielle": "Intelligence artificielle",
+  economie: "Économie",
+  leadership: "Leadership",
+  numerique: "Numérique",
+  nomadisme: "Nomadisme",
+};
+
+const SOUSTOPIC_UNIVERS: Record<string, UniversId> = {
+  emotions: "esprit", conscience: "esprit", meditation: "esprit",
+  "developpement-personnel": "esprit", neurosciences: "esprit",
+  philosophie: "esprit", "quete-de-sens": "esprit", therapies: "esprit",
+  nutrition: "corps", sommeil: "corps", mouvement: "corps",
+  prevention: "corps", "medecine-douce": "corps",
+  "bien-etre-physique": "corps", sport: "corps", respiration: "corps",
+  parentalite: "liens", couples: "liens", amitie: "liens",
+  education: "liens", generations: "liens", communaute: "liens",
+  ruptures: "liens", "enquetes-sociales": "liens",
+  "recits-de-voyage": "monde", destinations: "monde", art: "monde",
+  musique: "monde", litterature: "monde", cinema: "monde",
+  creativite: "monde", photographie: "monde",
+  carriere: "avenir", entrepreneuriat: "avenir", innovation: "avenir",
+  "intelligence-artificielle": "avenir", economie: "avenir",
+  leadership: "avenir", numerique: "avenir", nomadisme: "avenir",
+};
+
+const MAX_VISIBLE_FILTERS = 10;
 
 const PILLS: PillDef[] = UNIVERS.map((u) => ({
   label: u.name,
@@ -106,22 +161,37 @@ export default function Feed({ cmsItems }: FeedProps) {
 
   const [activeFilter, setActiveFilter] = useState("all");
   const [sortMode, setSortMode] = useState<SortMode>("recent");
+  const [showAllFilters, setShowAllFilters] = useState(false);
   const [enteringIds, setEnteringIds] = useState<Set<number>>(new Set());
   const prevFilterRef = useRef("all");
 
-  /* ── Filters rebuilt from actual items ── */
+  /* ── Filters rebuilt from actual items by sous-topic ── */
+  const allCategoryFilters = useMemo<FilterDef[]>(() => {
+    const catMap: Record<string, number> = {};
+    allItems.forEach((item) => {
+      const cat = item.soustopic || "autres";
+      catMap[cat] = (catMap[cat] || 0) + 1;
+    });
+    return Object.entries(catMap)
+      .sort((a, b) => b[1] - a[1])
+      .map(([key, count]) => {
+        const uid = SOUSTOPIC_UNIVERS[key];
+        return {
+          key,
+          label: SOUSTOPIC_LABELS[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/-/g, " "),
+          count,
+          chipColor: uid ? UNIVERS_MAP[uid].color : undefined,
+        };
+      });
+  }, [allItems]);
+
   const dynamicFilters = useMemo<FilterDef[]>(() => {
     const total = allItems.length;
-    return [
-      { key: "all", label: "Tous", count: total },
-      ...UNIVERS.map((u) => ({
-        key: u.id,
-        label: u.name,
-        count: allItems.filter((a) => a.univers === u.id).length,
-        chipColor: u.color,
-      })).filter((f) => f.count > 0),
-    ];
-  }, [allItems]);
+    const visible = showAllFilters
+      ? allCategoryFilters
+      : allCategoryFilters.slice(0, MAX_VISIBLE_FILTERS);
+    return [{ key: "all", label: "Tous", count: total }, ...visible];
+  }, [allItems, allCategoryFilters, showAllFilters]);
 
   /* ── Sort logic ── */
   const sortedItems = useMemo(() => {
@@ -153,8 +223,8 @@ export default function Feed({ cmsItems }: FeedProps) {
     const filtered =
       activeFilter === "all"
         ? sortedItems
-        : sortedItems.filter((item) => item.univers === activeFilter);
-    return filtered.slice(0, 8);
+        : sortedItems.filter((item) => (item.soustopic || "autres") === activeFilter);
+    return filtered.slice(0, 5);
   }, [sortedItems, activeFilter]);
 
   const visibleCount = visibleItems.length;
@@ -178,13 +248,13 @@ export default function Feed({ cmsItems }: FeedProps) {
       const prevVisible = new Set(
         (prev === "all"
           ? allItems
-          : allItems.filter((item) => item.univers === prev)
+          : allItems.filter((item) => (item.soustopic || "autres") === prev)
         ).map((item) => item.id)
       );
       const nextVisible =
         filterKey === "all"
           ? allItems
-          : allItems.filter((item) => item.univers === filterKey);
+          : allItems.filter((item) => (item.soustopic || "autres") === filterKey);
 
       const newlyVisible = new Set(
         nextVisible.filter((item) => !prevVisible.has(item.id)).map((item) => item.id)
@@ -249,7 +319,7 @@ export default function Feed({ cmsItems }: FeedProps) {
       </header>
 
       {/* Filtres + tri sur une ligne */}
-      <nav className={s.feedFilters} aria-label="Filtrer par univers">
+      <nav className={s.feedFilters} aria-label="Filtrer par catégorie">
         {dynamicFilters.map((filter) => (
           <button
             key={filter.key}
@@ -274,6 +344,15 @@ export default function Feed({ cmsItems }: FeedProps) {
             <span className={s.feedFilterCount}>{filter.count}</span>
           </button>
         ))}
+        {allCategoryFilters.length > MAX_VISIBLE_FILTERS && (
+          <button
+            type="button"
+            className={s.feedFilter}
+            onClick={() => setShowAllFilters((v) => !v)}
+          >
+            {showAllFilters ? "Voir moins" : `+ ${allCategoryFilters.length - MAX_VISIBLE_FILTERS} catégories`}
+          </button>
+        )}
       </nav>
 
       {/* Toolbar : filtre actif + tri */}
@@ -325,12 +404,15 @@ export default function Feed({ cmsItems }: FeedProps) {
 
           const visibleIndex = visibleItems.indexOf(item);
           const isCinematic = visibleIndex >= 0;
+          const isFlipped = visibleIndex % 2 === 1;
 
           return (
             <li
               key={item.id}
               className={`${s.feedItem}${
                 isCinematic ? ` ${s.feedItemCinematic}` : ""
+              }${
+                isFlipped ? ` ${s.feedCineFlipped}` : ""
               }${
                 item.isPaywall ? ` ${s.feedItemPaywall}` : ""
               }${!visible ? ` ${s.isFilteredOut}` : ""}${
@@ -354,14 +436,16 @@ export default function Feed({ cmsItems }: FeedProps) {
             >
               {isCinematic ? (
                 <a href={item.href} className={s.feedCineLink} itemProp="url">
-                  <img
-                    src={item.imgSrc}
-                    alt={item.imgAlt}
-                    className={s.feedCineImg}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <span className={s.feedCineGrad} aria-hidden="true" />
+                  <div className={s.feedCineImgWrap}>
+                    <img
+                      src={item.imgSrc}
+                      alt={item.imgAlt}
+                      className={s.feedCineImg}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span className={s.feedCineGrad} aria-hidden="true" />
+                  </div>
                   <span className={s.feedCineBody}>
                     <span className={s.feedMeta}>
                       <span className={s.feedDot} aria-hidden="true" />

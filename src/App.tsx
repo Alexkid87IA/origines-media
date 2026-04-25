@@ -44,6 +44,9 @@ const BoutiquePage = lazy(() => import('./pages/BoutiquePage'));
 const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
 const JoinPartnerPage = lazy(() => import('./pages/JoinPartnerPage'));
+const GuidesPage = lazy(() => import('./pages/GuidesPage'));
+const DossiersPage = lazy(() => import('./pages/DossiersPage'));
+const DossierDetailPage = lazy(() => import('./pages/DossierDetailPage'));
 const RecherchePage = lazy(() => import('./pages/RecherchePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
@@ -72,6 +75,7 @@ function App() {
         <Route path="/histoires" element={<HistoiresPage />} />
         <Route path="/portraits" element={<HistoiresPage />} />
         <Route path="/articles" element={<ArticlesPage />} />
+        <Route path="/guides" element={<GuidesPage />} />
         <Route path="/histoire/:slug" element={<PortraitDetailPage />} />
         <Route path="/article/:slug" element={<ArticlePage />} />
         <Route path="/video/:slug" element={<VideoPage />} />
@@ -85,12 +89,15 @@ function App() {
         <Route path="/racontez-votre-histoire" element={<ShareStoryPage />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
         <Route path="/recommandation/:slug" element={<RecommandationPage />} />
+        <Route path="/recommandations/:slug" element={<RecommandationPage />} />
         <Route path="/boutique" element={<BoutiquePage />} />
         <Route path="/boutique/:guideSlug" element={<BoutiquePage />} />
         <Route path="/academie" element={<BoutiquePage />} />
         <Route path="/academy" element={<BoutiquePage />} />
         <Route path="/communaute" element={<EnsemblePage />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
+        <Route path="/dossiers" element={<DossiersPage />} />
+        <Route path="/dossiers/:slug" element={<DossierDetailPage />} />
         <Route path="/mentions-legales" element={<LegalPage />} />
         <Route path="/cgu" element={<CGUPage />} />
         <Route path="/cgv" element={<CGVPage />} />

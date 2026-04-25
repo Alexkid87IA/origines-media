@@ -1,0 +1,547 @@
+/* ===== Dossiers — listing page ===== */
+
+.page {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 72px;
+}
+
+/* ── Header ── */
+.header {
+  padding: 48px 0 0;
+}
+
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 20px;
+}
+
+.cNum { letter-spacing: 0.2em; font-weight: 500; }
+.cSep { opacity: 0.3; }
+.cLabel { opacity: 0.75; }
+
+.headerInner {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: 32px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+  margin-bottom: 18px;
+}
+
+.kickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.deck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone700);
+  margin: 18px 0 0;
+  max-width: 58ch;
+}
+
+/* ── How it works — 3 steps ── */
+.howIt {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.howItStep {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.howItNum {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--stone200);
+}
+
+.howItText {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.howItSep {
+  width: 32px;
+  height: 1px;
+  background: var(--stone200);
+  flex-shrink: 0;
+}
+
+/* ── Toolbar: search + filters + sort ── */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.searchWrap {
+  position: relative;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  max-width: 16px;
+  max-height: 16px;
+  flex-shrink: 0;
+  color: var(--stone400);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--stone200);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--stone400);
+}
+
+.searchInput:focus {
+  border-color: var(--ink);
+}
+
+.filtersRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filters::-webkit-scrollbar { display: none; }
+
+.filterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  background: transparent;
+  border: 1px solid var(--stone200);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover {
+  border-color: var(--stone400);
+  color: var(--ink);
+}
+
+.filterActive {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.filterActive:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.filterDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--f-color, var(--stone400));
+}
+
+.filterActive .filterDot {
+  background: var(--paper);
+}
+
+.sortWrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--stone200);
+  flex-shrink: 0;
+}
+
+.sortBtn {
+  padding: 7px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--stone200);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.sortBtn:last-child { border-right: none; }
+
+.sortBtn:hover {
+  color: var(--ink);
+}
+
+.sortActive {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.sortActive:hover {
+  color: var(--paper);
+}
+
+/* ── Counter ── */
+.counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--stone100);
+  margin-bottom: 16px;
+}
+
+/* ── Card list ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardWrap {}
+
+/* ── Card — CTA dossier ── */
+.card {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 7;
+  background: var(--ink);
+  text-decoration: none;
+  color: var(--paper);
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.card:hover {
+  background: #151515;
+}
+
+.cardAccent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--accent, var(--ink));
+}
+
+.cardBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 36px 48px 36px 52px;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.5);
+  margin-bottom: 14px;
+}
+
+.cardUniv {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.cardActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #2E9B74;
+  margin-left: 4px;
+}
+
+.cardActiveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2E9B74;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.cardQuestion {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+  margin: 0;
+  max-width: 65%;
+  text-wrap: balance;
+}
+
+.card:hover .cardQuestion {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.cardChapeau {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(247, 245, 240, 0.45);
+  margin: 10px 0 0;
+  max-width: 55%;
+}
+
+.cardFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  max-width: 65%;
+}
+
+.cardInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--body);
+  font-size: 13px;
+  color: rgba(247, 245, 240, 0.4);
+}
+
+.cardDate {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.cardSep { opacity: 0.4; }
+
+.cardCount {}
+
+.cardProgress {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+.cardDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(247, 245, 240, 0.12);
+  transition: background 0.2s ease;
+}
+
+.cardDotFilled {}
+
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.5);
+  transition: color 0.2s ease, gap 0.2s ease;
+}
+
+.card:hover .cardCta {
+  color: rgba(247, 245, 240, 0.85);
+  gap: 10px;
+}
+
+.cardCta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Numéro de semaine décoratif */
+.card::after {
+  content: "S." attr(data-week);
+  position: absolute;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(72px, 8vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(247, 245, 240, 0.04);
+  pointer-events: none;
+}
+
+/* ── Empty state ── */
+.empty {
+  padding: 64px 0;
+  text-align: center;
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--stone400);
+}
+
+/* ── Load more ── */
+.loadMore {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0 0;
+}
+
+.loadMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.loadMoreBtn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.loadMoreBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 880px) {
+  .card { aspect-ratio: 16 / 9; }
+  .cardBody { padding: 28px 32px 28px 36px; }
+  .cardQuestion { font-size: clamp(22px, 3vw, 30px); max-width: 80%; }
+  .cardChapeau { max-width: 75%; }
+  .cardFoot { max-width: 80%; }
+  .card::after { font-size: 72px; right: 28px; }
+  .filtersRow { flex-direction: column; align-items: stretch; }
+  .sortWrap { align-self: flex-start; }
+}
+
+@media (max-width: 640px) {
+  .header { padding: 32px 0 0; }
+  .headerInner { margin-bottom: 24px; }
+  .title { font-size: clamp(26px, 6vw, 36px); }
+  .howIt { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .howItSep { display: none; }
+  .searchWrap { max-width: 100%; }
+  .card { aspect-ratio: auto; min-height: 220px; }
+  .cardBody { padding: 24px 24px 24px 28px; }
+  .cardQuestion { font-size: 22px; max-width: 100%; }
+  .cardChapeau { max-width: 100%; font-size: 13px; }
+  .cardFoot { max-width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; }
+  .card::after { display: none; }
+}

@@ -288,22 +288,13 @@ function ListItemCard({
   index: number;
   typeConfig: { color: string; label: string; ctaLabel: string };
 }) {
-  const rank = index + 1;
-  const TypeIcon = typeIcons[Object.keys(recommendationTypes).find(
-    k => recommendationTypes[k] === typeConfig
-  ) || "livre"] || BookOpenSvg;
-
   return (
     <article className={s.listItem}>
       <div className={s.listItemInner}>
-        {/* Rank + Image */}
         <div className={s.listItemVisual}>
-          <div
-            className={s.listItemRank}
-            style={{ backgroundColor: typeConfig.color }}
-          >
-            {rank <= 3 ? <CrownSvg /> : <span>{rank}</span>}
-          </div>
+          <span className={s.listItemRank}>
+            {String(index + 1).padStart(2, "0")}
+          </span>
           {item.imageUrl ? (
             <img
               src={item.imageUrl}
@@ -311,16 +302,10 @@ function ListItemCard({
               className={s.listItemImg}
             />
           ) : (
-            <div
-              className={s.listItemPlaceholder}
-              style={{ backgroundColor: `${typeConfig.color}12` }}
-            >
-              <TypeIcon />
-            </div>
+            <div className={s.listItemPlaceholder} />
           )}
         </div>
 
-        {/* Content */}
         <div className={s.listItemContent}>
           <h3 className={s.listItemTitle}>{item.titre}</h3>
 
@@ -349,7 +334,6 @@ function ListItemCard({
               target="_blank"
               rel="noopener noreferrer"
               className={s.listItemCta}
-              style={{ backgroundColor: typeConfig.color }}
             >
               {typeConfig.ctaLabel}
               <ExternalLinkSvg />
@@ -652,19 +636,11 @@ export default function RecommandationPage() {
               {reco.items && reco.items.length > 0 && (
                 <div className={s.listSection}>
                   <div className={s.listHeader}>
-                    <div
-                      className={s.listHeaderIcon}
-                      style={{ backgroundColor: `${typeConfig.color}12` }}
-                    >
-                      <TrophySvg />
-                    </div>
-                    <div>
-                      <h2 className={s.listHeaderTitle}>Notre selection</h2>
-                      <p className={s.listHeaderSub}>
-                        {reco.items.length} {typeConfig.label.toLowerCase()}{" "}
-                        recommandes
-                      </p>
-                    </div>
+                    <p className={s.listHeaderSub}>Notre s&eacute;lection</p>
+                    <h2 className={s.listHeaderTitle}>
+                      {reco.items.length} {typeConfig.label.toLowerCase()}{" "}
+                      recommand&eacute;s
+                    </h2>
                   </div>
 
                   <div className={s.listItems}>
@@ -694,14 +670,11 @@ export default function RecommandationPage() {
 
               {/* Call to action section */}
               <div className={s.endCta}>
-                <div className={s.endCtaIcon} style={{ color: typeConfig.color }}>
-                  <TypeIcon />
-                </div>
                 <h3 className={s.endCtaTitle}>
-                  Vous avez aime cette selection ?
+                  Vous avez aim&eacute; cette s&eacute;lection ?
                 </h3>
                 <p className={s.endCtaDeck}>
-                  Decouvrez toutes nos recommandations{" "}
+                  D&eacute;couvrez toutes nos recommandations{" "}
                   {typeConfig.label.toLowerCase()} et bien plus encore.
                 </p>
                 <Link
@@ -791,15 +764,7 @@ export default function RecommandationPage() {
                               className={s.relImg}
                             />
                           ) : (
-                            <div
-                              className={s.relImgPlaceholder}
-                              style={{
-                                backgroundColor: `${typeConfig.color}15`,
-                                color: typeConfig.color,
-                              }}
-                            >
-                              <TypeIcon />
-                            </div>
+                            <div className={s.relImgPlaceholder} />
                           )}
                           <div className={s.relBody}>
                             <h5 className={s.relTitle}>{related.titre}</h5>

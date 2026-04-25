@@ -17,6 +17,7 @@ import {
   InstagramIcon,
   shareButtons,
 } from "@/components/article/SocialIcons";
+import GuideBanner from "@/components/article/GuideBanner";
 import type {
   Heading,
   Article,
@@ -29,6 +30,42 @@ import {
   POPULAR_ARTICLES_QUERY,
 } from "@/lib/queries";
 import s from "./ArticlePageV2.module.css";
+
+const SOUSTOPIC_LABELS: Record<string, string> = {
+  emotions: "Émotions", conscience: "Conscience", meditation: "Méditation",
+  "developpement-personnel": "Développement personnel", neurosciences: "Neurosciences",
+  philosophie: "Philosophie", "quete-de-sens": "Quête de sens", therapies: "Thérapies",
+  nutrition: "Nutrition", sommeil: "Sommeil", mouvement: "Mouvement",
+  prevention: "Prévention", "bien-etre-physique": "Bien-être physique",
+  sport: "Sport", respiration: "Respiration",
+  parentalite: "Parentalité", couples: "Couples", amitie: "Amitié",
+  education: "Éducation", generations: "Générations", communaute: "Communauté",
+  ruptures: "Ruptures", "enquetes-sociales": "Enquêtes sociales",
+  "recits-de-voyage": "Récits de voyage", destinations: "Destinations",
+  art: "Art", musique: "Musique", litterature: "Littérature",
+  cinema: "Cinéma", creativite: "Créativité", photographie: "Photographie",
+  carriere: "Carrière", entrepreneuriat: "Entrepreneuriat", innovation: "Innovation",
+  "intelligence-artificielle": "Intelligence artificielle", economie: "Économie",
+  leadership: "Leadership", numerique: "Numérique", nomadisme: "Nomadisme",
+};
+
+const SOUSTOPIC_UNIVERS_COLOR: Record<string, string> = {
+  emotions: "#7B5CD6", conscience: "#7B5CD6", meditation: "#7B5CD6",
+  "developpement-personnel": "#7B5CD6", neurosciences: "#7B5CD6",
+  philosophie: "#7B5CD6", "quete-de-sens": "#7B5CD6", therapies: "#7B5CD6",
+  nutrition: "#5AA352", sommeil: "#5AA352", mouvement: "#5AA352",
+  prevention: "#5AA352", "bien-etre-physique": "#5AA352",
+  sport: "#5AA352", respiration: "#5AA352",
+  parentalite: "#E67839", couples: "#E67839", amitie: "#E67839",
+  education: "#E67839", generations: "#E67839", communaute: "#E67839",
+  ruptures: "#E67839", "enquetes-sociales": "#E67839",
+  "recits-de-voyage": "#2E9B74", destinations: "#2E9B74",
+  art: "#2E9B74", musique: "#2E9B74", litterature: "#2E9B74",
+  cinema: "#2E9B74", creativite: "#2E9B74", photographie: "#2E9B74",
+  carriere: "#2E94B5", entrepreneuriat: "#2E94B5", innovation: "#2E94B5",
+  "intelligence-artificielle": "#2E94B5", economie: "#2E94B5",
+  leadership: "#2E94B5", numerique: "#2E94B5", nomadisme: "#2E94B5",
+};
 
 export default function ArticlePageV2() {
   const { slug } = useParams();
@@ -346,12 +383,26 @@ export default function ArticlePageV2() {
   /* ── Extract data ── */
   const title = article.titre || article.title || "Article";
   const description = article.description || article.excerpt || "";
-  const imageUrl = article.imageUrl || article.mainImage || "";
+  const imageUrl = article.imageUrl || article.mainImage?.asset?.url || (typeof article.mainImage === "string" ? article.mainImage : "") || "";
   const date = article.datePublication || article.publishedAt;
   const readTime = article.tempsLecture || article.readTime || 5;
-  const content = article.contenu || article.body || [];
+  const fullContent = article.contenu || article.body || [];
+  const firstParaIndex = fullContent.findIndex(
+    (b: any) => b._type === "block" && (b.style === "normal" || !b.style)
+  );
+  const firstPara = firstParaIndex >= 0 ? fullContent[firstParaIndex] : null;
+  const firstParaText = firstPara?.children
+    ?.map((c: any) => c.text || "")
+    .join("") || "";
+  const content = firstParaIndex >= 0
+    ? [...fullContent.slice(0, firstParaIndex), ...fullContent.slice(firstParaIndex + 1)]
+    : fullContent;
+  const isGuide = article.rubrique === "guides";
+  const soustopic = article.soustopic as string | undefined;
+  const soustopicLabel = soustopic ? SOUSTOPIC_LABELS[soustopic] || soustopic : "";
+  const soustopicColor = soustopic ? SOUSTOPIC_UNIVERS_COLOR[soustopic] || "" : "";
   const verticale = article.verticale;
-  const themeColor = verticale?.couleurDominante || "#0A0A0A";
+  const themeColor = soustopicColor || verticale?.couleurDominante || "#0A0A0A";
   const tags = article.tags || [];
   const author = article.auteur || article.author;
   const authorName = author?.nom || author?.name || "Rédaction";
@@ -365,7 +416,7 @@ export default function ArticlePageV2() {
   };
 
   return (
-    <div className={s.page}>
+    <div className={s.page} style={{ "--theme": themeColor } as React.CSSProperties}>
       <SEO
         title={title}
         description={description}
@@ -409,8 +460,18 @@ export default function ArticlePageV2() {
               aria-hidden="true"
             />
 
-            {verticale && (
-              <span className={s.headerKicker}>{verticale.nom}</span>
+            {(verticale || soustopicLabel) && (
+              <div className={s.headerKickerRow}>
+                {verticale && (
+                  <span className={s.headerKicker} style={{ color: themeColor }}>{verticale.nom}</span>
+                )}
+                {soustopicLabel && (
+                  <>
+                    {verticale && <span className={s.headerKickerSep} style={{ color: themeColor }}>/</span>}
+                    <span className={s.headerSubtopic} style={{ color: themeColor }}>{soustopicLabel}</span>
+                  </>
+                )}
+              </div>
             )}
 
             <h1 className={s.headerTitle}>{typo(title)}</h1>
@@ -435,6 +496,25 @@ export default function ArticlePageV2() {
           </div>
         </header>
 
+        {/* ═══ Intro — editorial lede ═══ */}
+        {firstParaText && (() => {
+          const letterMatch = firstParaText.match(/^([^a-zA-ZÀ-ÿ]*)([a-zA-ZÀ-ÿ])/);
+          const prefix = letterMatch?.[1] || "";
+          const dropChar = letterMatch?.[2] || firstParaText.charAt(0);
+          const rest = firstParaText.slice(prefix.length + 1);
+          return (
+            <div className={s.introBlock}>
+              <p className={s.introParagraph}>
+                {prefix && <span>{prefix}</span>}
+                <span className={s.dropCap} style={{ color: themeColor }}>
+                  {dropChar}
+                </span>
+                {rest}
+              </p>
+            </div>
+          );
+        })()}
+
         {/* ═══ Hero image — contained ═══ */}
         {imageUrl && (
           <figure className={s.heroFigure}>
@@ -452,12 +532,15 @@ export default function ArticlePageV2() {
           </figure>
         )}
 
+        {/* ═══ Guide Banner — pedagogical note ═══ */}
+        {isGuide && <GuideBanner themeColor={themeColor} />}
+
         {/* ═══ Content + Sidebar ═══ */}
         <section className={s.contentSection}>
-          <div className={s.contentGrid}>
+          <div className={isGuide ? s.contentGridGuide : s.contentGrid}>
             {/* Article body */}
-            <div ref={contentRef} className={s.articleBody}>
-              <div className={s.prose}>
+            <div ref={contentRef} className={isGuide ? s.articleBodyGuide : s.articleBody}>
+              <div className={isGuide ? s.proseGuide : s.prose}>
                 <PortableText
                   value={content}
                   components={portableTextComponents}
@@ -530,7 +613,7 @@ export default function ArticlePageV2() {
             </div>
 
             {/* Sidebar */}
-            <aside ref={sidebarContainerRef} className={s.sidebar}>
+            {!isGuide && <aside ref={sidebarContainerRef} className={s.sidebar}>
               <div
                 ref={sidebarRef}
                 className={s.sidebarInner}
@@ -832,6 +915,7 @@ export default function ArticlePageV2() {
                     buttonText="S'abonner"
                     successMessage="Bienvenue !"
                     successDescription="Rendez-vous vendredi dans votre boîte mail."
+                    accentColor={themeColor !== "#0A0A0A" ? themeColor : undefined}
                   />
                 </div>
 
@@ -978,7 +1062,7 @@ export default function ArticlePageV2() {
                 {/* 9. Ad */}
                 <AdPlaceholder format="rectangle" />
               </div>
-            </aside>
+            </aside>}
           </div>
         </section>
 
@@ -1040,21 +1124,40 @@ export default function ArticlePageV2() {
       {/* ═══ End-of-article newsletter ═══ */}
       <section className={s.endNl}>
         <div className={s.endNlInner}>
+          <span className={s.endNlKicker}>La lettre du dimanche</span>
           <h3 className={s.endNlTitle}>
-            Cet article vous a plu&nbsp;?
+            Chaque dimanche, <em>une lettre.</em>
           </h3>
           <p className={s.endNlDeck}>
-            Recevez nos meilleurs r&eacute;cits chaque semaine,
-            directement dans votre bo&icirc;te mail.
+            Un &eacute;dito personnel, les meilleurs articles de la semaine,
+            et des recommandations que vous ne trouverez nulle part ailleurs
+            &mdash;&nbsp;en 5&nbsp;minutes de lecture.
           </p>
+          <ul className={s.endNlPoints}>
+            <li>
+              <span className={s.endNlPointDot} aria-hidden="true" />
+              Les articles les plus lus de la semaine
+            </li>
+            <li>
+              <span className={s.endNlPointDot} aria-hidden="true" />
+              Une recommandation culture (livre, film, podcast)
+            </li>
+            <li>
+              <span className={s.endNlPointDot} aria-hidden="true" />
+              Un &eacute;dito exclusif du fondateur
+            </li>
+          </ul>
           <EmailCapture
             source="article"
-            variant="inline"
+            variant="dark"
             placeholder="votre@email.com"
-            buttonText="S'abonner"
-            successMessage="Merci !"
-            successDescription="Vous recevrez notre prochaine newsletter vendredi."
+            buttonText="S'abonner gratuitement"
+            successMessage="Bienvenue !"
+            successDescription="Vous recevrez votre première lettre dimanche."
           />
+          <span className={s.endNlTrust}>
+            4&nbsp;827 lecteurs &middot; Gratuit &middot; D&eacute;sinscription en 1&nbsp;clic
+          </span>
         </div>
       </section>
 

@@ -1,4 +1,6 @@
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
+import DailyPoll from "../Interludes/DailyPoll";
+import il from "../Interludes/Interludes.module.css";
 import s from "./Spotlight.module.css";
 
 export interface CMSSpotlight {
@@ -12,20 +14,8 @@ export interface CMSSpotlight {
   image: string;
 }
 
-export interface CMSEditorial {
-  univers: UniversId;
-  category: string;
-  title: string;
-  excerpt: string;
-  author: string;
-  readTime: string;
-  href: string;
-  image: string;
-}
-
 interface SpotlightProps {
   cmsPick?: CMSSpotlight;
-  cmsEditorial?: CMSEditorial[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -83,43 +73,30 @@ const CHANNELS = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  3. Articles éditoriaux (layout inversé : texte en haut, image bas) */
+/*  3. Parutions de la semaine (calendrier compact)                     */
 /* ------------------------------------------------------------------ */
 
-const EDITORIAL = [
-  {
-    univers: "esprit" as UniversId,
-    category: "Psychologie",
-    title: "Le jour où j'ai arrêté de me mentir.",
-    excerpt: "On croit se connaître. Puis un matin, une phrase anodine fait tout basculer. Récit d'un effondrement nécessaire.",
-    author: "Émilie Roux",
-    readTime: "14 min",
-    href: "/article/arreter-de-mentir",
-    image: "/covers/cover-01.jpg",
-    imageAlt: "Une femme qui regarde par la fenêtre, pensive.",
-  },
-  {
-    univers: "monde" as UniversId,
-    category: "Voyage",
-    title: "Là où les routes s'arrêtent, tout commence.",
-    excerpt: "Au bout de l'asphalte, il y a un village sans nom sur aucune carte. Et des gens qui n'ont jamais eu besoin qu'on les trouve.",
-    author: "Camille Dufresne",
-    readTime: "22 min",
-    href: "/article/routes-bout-du-monde",
-    image: "/covers/cover-04.jpg",
-    imageAlt: "Un chemin de terre qui disparaît dans la brume.",
-  },
-  {
-    univers: "liens" as UniversId,
-    category: "Famille",
-    title: "Aimer quelqu'un qu'on ne comprend pas.",
-    excerpt: "Ce n'est pas un échec de communication. C'est peut-être la forme la plus honnête de l'amour : accepter de ne pas tout saisir.",
-    author: "Mathilde Aubry",
-    readTime: "17 min",
-    href: "/article/aimer-sans-comprendre",
-    image: "/covers/cover-05.jpg",
-    imageAlt: "Deux silhouettes assises dos à dos sur un banc.",
-  },
+interface Day {
+  label: string;
+  num: number;
+  format: string;
+  title: string;
+  status: string;
+  color: string;
+  href?: string;
+  past?: boolean;
+  today?: boolean;
+  upcoming?: boolean;
+}
+
+const DAYS: Day[] = [
+  { label: "Lun.", num: 21, format: "Immersion", title: "Six mois chez les Cissé.", status: "Publié", color: "#7B5CD6", past: true, href: "/immersion/six-mois-chez-les-cisse" },
+  { label: "Mar.", num: 22, format: "Vidéo", title: "Le grand sommeil français.", status: "Publié", color: "#E67839", past: true, href: "/video/sommeil-enquete" },
+  { label: "Mer.", num: 23, format: "Récit", title: "2 200 km à pied, seul.", status: "Publié", color: "#2E9B74", past: true, href: "/recit/2200-km-a-pied" },
+  { label: "Jeu.", num: 24, format: "Collection", title: "Secrets professionnels.", status: "Aujourd'hui", color: "#3E7DD6", today: true, href: "/collection/secrets-professionnels" },
+  { label: "Ven.", num: 25, format: "Essai", title: "Le silence est un luxe.", status: "Demain", color: "#5A66D6", upcoming: true },
+  { label: "Sam.", num: 26, format: "Histoire", title: "La lettre jamais envoyée.", status: "À paraître", color: "#C99B1E", upcoming: true },
+  { label: "Dim.", num: 27, format: "Newsletter", title: "L'édition du dimanche.", status: "7h", color: "#D64C90", upcoming: true },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -148,13 +125,10 @@ function ChannelIcon({ icon }: { icon: string }) {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
-export default function Spotlight({ cmsPick, cmsEditorial }: SpotlightProps) {
+export default function Spotlight({ cmsPick }: SpotlightProps) {
   const pick = cmsPick
     ? { ...PICK, univers: cmsPick.univers, category: cmsPick.category, title: cmsPick.title, deck: cmsPick.deck, author: cmsPick.author, readTime: cmsPick.readTime, href: cmsPick.href, image: cmsPick.image }
     : PICK;
-  const editorial = cmsEditorial
-    ? cmsEditorial.map((a, i) => ({ ...(EDITORIAL[i] || EDITORIAL[0]), univers: a.univers, category: a.category, title: a.title, excerpt: a.excerpt, author: a.author, readTime: a.readTime, href: a.href, image: a.image }))
-    : EDITORIAL;
   const pickU = UNIVERS_MAP[pick.univers];
 
   return (
@@ -229,35 +203,92 @@ export default function Spotlight({ cmsPick, cmsEditorial }: SpotlightProps) {
           </div>
         </aside>
 
-        {/* 3 articles éditoriaux */}
-        {editorial.map((article) => {
-          const u = UNIVERS_MAP[article.univers];
-          return (
-            <a key={article.href} href={article.href} className={s.edCard}>
-              <div className={s.edContent}>
-                <span className={s.edTag} style={{ color: u.color }}>
-                  {article.category || u.name}
-                </span>
-                <h3 className={s.edTitle}>{article.title}</h3>
-                <p className={s.edExcerpt}>{article.excerpt}</p>
-                <span className={s.edMeta}>
-                  Par <strong>{article.author}</strong> &middot; {article.readTime}
-                </span>
+        {/* Parutions de la semaine */}
+        <div className={s.gridHalf}>
+          <div className={il.halfHead}>
+            <span className={il.halfDot} aria-hidden="true" />
+            <span className={il.halfLabel}>Les parutions de la semaine</span>
+          </div>
+          <h3 className={il.halfTitle}>
+            Semaine du <em>21 au 27 avril</em>.
+          </h3>
+          <ol className={il.days}>
+            {DAYS.map((d) => {
+              const cls = `${il.day} ${d.today ? il.dayToday : ""} ${d.upcoming ? il.dayUpcoming : ""}`;
+              const inner = (
+                <>
+                  <span className={il.dayDate}>
+                    <span className={il.dayLabel}>{d.label}</span>
+                    <span className={il.dayNum}>{d.num}</span>
+                  </span>
+                  <span className={il.dayContent}>
+                    <span className={il.dayFormat} style={{ color: d.upcoming ? undefined : d.color }}>{d.format}</span>
+                    <span className={il.dayTitle}>{d.title}</span>
+                  </span>
+                  <span className={il.dayStatus}>{d.status}</span>
+                </>
+              );
+              return (
+                <li key={d.num} className={cls}>
+                  {d.href ? (
+                    <a href={d.href} className={il.dayLink}>{inner}</a>
+                  ) : (
+                    <div className={il.dayInner}>{inner}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+          <a href="/calendrier" className={il.halfCta}>
+            Calendrier complet
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+
+        {/* Question de la semaine + Question du jour */}
+        <div className={s.gridHalf}>
+          <div className={il.halfHead}>
+            <span className={il.halfDot} aria-hidden="true" />
+            <span className={il.halfLabel}>La question de la semaine</span>
+          </div>
+          <h3 className={il.halfTitle}>
+            Peut-on vraiment <em>changer apr&egrave;s 40 ans</em>&nbsp;?
+          </h3>
+          <p className={il.halfDesc}>
+            3&nbsp;412 lecteurs ont r&eacute;pondu cette semaine. La r&eacute;ponse
+            la plus partag&eacute;e commence par &laquo;&nbsp;oui, mais&nbsp;&raquo;.
+          </p>
+          <div className={il.poll}>
+            <div className={il.pollOption}>
+              <span className={il.pollLabel}>Oui, profond&eacute;ment</span>
+              <div className={il.pollBar}>
+                <div className={il.pollFill} style={{ width: "38%", background: "#7B5CD6" }} />
               </div>
-              <img src={article.image} alt={article.imageAlt} className={s.edImg} />
-            </a>
-          );
-        })}
+              <span className={il.pollPct} style={{ color: "#7B5CD6" }}>38%</span>
+            </div>
+            <div className={il.pollOption}>
+              <span className={il.pollLabel}>Oui, mais autrement</span>
+              <div className={il.pollBar}>
+                <div className={il.pollFill} style={{ width: "44%", background: "#D64C90" }} />
+              </div>
+              <span className={il.pollPct} style={{ color: "#D64C90" }}>44%</span>
+            </div>
+            <div className={il.pollOption}>
+              <span className={il.pollLabel}>Non, pas vraiment</span>
+              <div className={il.pollBar}>
+                <div className={il.pollFill} style={{ width: "18%", background: "#2E94B5" }} />
+              </div>
+              <span className={il.pollPct} style={{ color: "#2E94B5" }}>18%</span>
+            </div>
+          </div>
+          <a href="/question/semaine-17" className={il.halfCta}>
+            Lire les r&eacute;ponses
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+          <DailyPoll />
+        </div>
       </div>
 
-      <div className={s.sectionBottom}>
-        <a className={s.sectionBottomCta} href="/selection">
-          Toute la s&eacute;lection
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-            <path d="M5 12h14M13 5l7 7-7 7" />
-          </svg>
-        </a>
-      </div>
     </section>
   );
 }

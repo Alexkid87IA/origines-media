@@ -30,7 +30,7 @@
   display: block;
   width: 40px;
   height: 3px;
-  background: var(--ink);
+  background: var(--theme, var(--ink));
   margin-top: 12px;
 }
 
@@ -260,10 +260,10 @@
    ────────────────────────────────────────────────────────── */
 
 .callout {
-  margin: 36px 0;
+  margin: 40px 0;
   padding: 0;
-  border: none;
-  background: var(--stone50, #F7F5F0);
+  border: 1px solid var(--stone100, #E8E5DE);
+  background: var(--paper, #F7F5F0);
   display: flex;
   align-items: stretch;
   gap: 0;
@@ -271,7 +271,7 @@
 }
 
 .calloutAccent {
-  width: 4px;
+  width: 3px;
   flex-shrink: 0;
   background: var(--ink);
 }
@@ -279,68 +279,70 @@
 .calloutInner {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 24px 24px 24px 20px;
+  gap: 20px;
+  padding: 28px 32px 28px 28px;
   flex: 1;
   min-width: 0;
 }
 
 /* — Type variants — */
 .calloutInfo .calloutAccent { background: var(--ink); }
-.calloutInfo { background: var(--stone50, #F7F5F0); }
+.calloutInfo { border-color: var(--stone200, #D6D3CC); }
 
-.calloutWarning .calloutAccent { background: #D97706; }
-.calloutWarning { background: #FFFBEB; }
+.calloutWarning .calloutAccent { background: #B45309; }
+.calloutWarning { border-color: #F59E0B33; }
 
-.calloutSuccess .calloutAccent { background: #059669; }
-.calloutSuccess { background: #ECFDF5; }
+.calloutSuccess .calloutAccent { background: #047857; }
+.calloutSuccess { border-color: #05966933; }
 
-.calloutTip .calloutAccent { background: #7C3AED; }
-.calloutTip { background: #F5F3FF; }
+.calloutTip .calloutAccent { background: #6D28D9; }
+.calloutTip { border-color: #7C3AED33; }
 
-.calloutRemember .calloutAccent { background: #2563EB; }
-.calloutRemember { background: #EFF6FF; }
+.calloutRemember .calloutAccent { background: #1D4ED8; }
+.calloutRemember { border-color: #2563EB33; }
 
 .calloutIcon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--ink);
+  color: #fff;
+  background: var(--ink);
 }
 
 .calloutIcon svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
-.calloutInfo .calloutIcon { color: var(--ink); }
-.calloutWarning .calloutIcon { color: #D97706; }
-.calloutSuccess .calloutIcon { color: #059669; }
-.calloutTip .calloutIcon { color: #7C3AED; }
-.calloutRemember .calloutIcon { color: #2563EB; }
+.calloutInfo .calloutIcon { background: var(--ink); }
+.calloutWarning .calloutIcon { background: #B45309; }
+.calloutSuccess .calloutIcon { background: #047857; }
+.calloutTip .calloutIcon { background: #6D28D9; }
+.calloutRemember .calloutIcon { background: #1D4ED8; }
 
 .calloutBody {
   flex: 1;
   min-width: 0;
+  padding-top: 2px;
 }
 
 .calloutTitle {
   font-family: var(--display);
   font-weight: 800;
-  font-size: 16px;
-  letter-spacing: -0.01em;
+  font-size: 17px;
+  letter-spacing: -0.02em;
   color: var(--ink);
-  margin: 0 0 8px;
+  margin: 0 0 10px;
 }
 
 .calloutText {
   font-family: var(--body);
   font-size: 15px;
-  line-height: 1.65;
-  color: var(--stone700);
+  line-height: 1.7;
+  color: var(--stone600);
 }
 
 .calloutText p {
@@ -357,7 +359,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--stone400);
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .calloutSource a {
@@ -818,6 +820,119 @@
   line-height: 1.55;
   color: var(--stone600);
   margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Checklist interactive
+   ────────────────────────────────────────────────────────── */
+
+.checklist {
+  margin: 44px 0;
+  border: 2px solid var(--ink);
+  background: var(--pure, #fff);
+  overflow: hidden;
+}
+
+.checklistHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.checklistIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--paper);
+}
+
+.checklistIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.checklistTitle {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper);
+  margin: 0;
+  flex: 1;
+}
+
+.checklistCount {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--paper);
+  opacity: 0.7;
+}
+
+.checklistList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--stone100);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.checklistItem:hover {
+  background: var(--stone50, rgba(0,0,0,0.02));
+}
+
+.checklistItem:last-child {
+  border-bottom: none;
+}
+
+.checklistBox {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border: 2px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.checklistBox svg {
+  width: 14px;
+  height: 14px;
+}
+
+.checklistItemDone .checklistBox {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.checklistItemDone .checklistText {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.checklistText {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  transition: opacity 0.15s ease;
 }
 
 /* ──────────────────────────────────────────────────────────

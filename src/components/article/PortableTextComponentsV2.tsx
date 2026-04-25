@@ -7,6 +7,15 @@ import { extractText } from "./Accordion";
 import SafeHTML from "../ui/SafeHTML";
 import s from "./PortableTextV2.module.css";
 
+function parseInlineMarkdown(text: string): React.ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    const bold = part.match(/^\*\*(.+)\*\*$/);
+    if (bold) return <strong key={i}>{bold[1]}</strong>;
+    return part;
+  });
+}
+
 interface PortableTextConfig {
   themeColor: string;
   article?: any;
@@ -156,64 +165,85 @@ const linkifySource = (source: string, sourceUrl?: string): React.ReactNode => {
 /* ------------------------------------------------------------------ */
 
 const getIconSvg = (iconName?: string) => {
+  const base = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   switch (iconName) {
     case "bulb":
     case "lightbulb":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z" />
+        <svg {...base}>
+          <path d="M9.66 17h4.68M11 20h2" />
+          <path d="M12 2a7 7 0 0 0-3.5 13.06V17a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-1.94A7 7 0 0 0 12 2z" />
         </svg>
       );
     case "check":
     case "checkmark":
+    case "success":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M20 6L9 17l-5-5" />
+        <svg {...base}>
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <path d="M22 4L12 14.01l-3-3" />
         </svg>
       );
     case "target":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
+        <svg {...base}>
+          <circle cx="12" cy="12" r="10" />
+          <circle cx="12" cy="12" r="6" />
+          <circle cx="12" cy="12" r="2" />
         </svg>
       );
     case "star":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg {...base}>
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
       );
     case "key":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+        <svg {...base}>
+          <path d="M15.5 7.5l3 3L22 7l-3-3" />
+          <path d="M21 2l-9.6 9.6" />
+          <circle cx="7.5" cy="16.5" r="4.5" />
         </svg>
       );
     case "info":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" />
+        <svg {...base}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4" />
+          <path d="M12 8h.01" />
         </svg>
       );
     case "alert":
     case "warning":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-          <path d="M12 9v4M12 17h.01" />
+        <svg {...base}>
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <path d="M12 9v4" />
+          <path d="M12 17h.01" />
         </svg>
       );
     case "sparkle":
     case "sparkles":
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3zM5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1z" />
+        <svg {...base}>
+          <path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z" />
+          <path d="M5 19l1 3 1-3 3-1-3-1-1-3-1 3-3 1z" />
+        </svg>
+      );
+    case "remember":
+      return (
+        <svg {...base}>
+          <path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z" />
+          <circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none" />
+          <path d="M12 12v1.5" />
         </svg>
       );
     default:
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M20 6L9 17l-5-5" />
+        <svg {...base}>
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <path d="M22 4L12 14.01l-3-3" />
         </svg>
       );
   }
@@ -606,9 +636,9 @@ export const createPortableTextComponentsV2 = ({
                 <div className={s.calloutText}>
                   {isRichText ? (
                     <PortableText value={contentValue} />
-                  ) : (
-                    <p>{contentValue}</p>
-                  )}
+                  ) : contentValue ? (
+                    <p>{parseInlineMarkdown(contentValue)}</p>
+                  ) : null}
                 </div>
                 {value.source && (
                   <p className={s.calloutSource}>
@@ -648,7 +678,7 @@ export const createPortableTextComponentsV2 = ({
                   {isRichText ? (
                     <PortableText value={contentValue} />
                   ) : contentValue ? (
-                    <p>{contentValue}</p>
+                    <p>{parseInlineMarkdown(contentValue)}</p>
                   ) : null}
                 </div>
                 {value.source && (
@@ -1029,6 +1059,70 @@ export const createPortableTextComponentsV2 = ({
           </div>
         </div>
       ),
+
+      checklist: ({ value }: any) => {
+        const slug = article?.slug?.current || article?.slug || "default";
+        const storageKey = `checklist-${slug}-${value._key || "0"}`;
+
+        const [checked, setChecked] = React.useState<Set<string>>(() => {
+          try {
+            const saved = localStorage.getItem(storageKey);
+            return saved ? new Set(JSON.parse(saved)) : new Set();
+          } catch { return new Set(); }
+        });
+
+        const toggle = (id: string) => {
+          setChecked(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            try { localStorage.setItem(storageKey, JSON.stringify([...next])); } catch {}
+            return next;
+          });
+        };
+
+        const items = value.items || [];
+        const total = items.length;
+        const done = items.filter((_: any, i: number) => checked.has(String(i))).length;
+
+        return (
+          <div className={s.checklist}>
+            <div className={s.checklistHead}>
+              <span className={s.checklistIcon}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 11l3 3L22 4" />
+                  <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+                </svg>
+              </span>
+              <h4 className={s.checklistTitle}>
+                {value.title || "Checklist"}
+              </h4>
+              <span className={s.checklistCount}>{done}/{total}</span>
+            </div>
+            <ul className={s.checklistList}>
+              {items.map((item: any, index: number) => {
+                const id = String(index);
+                const isChecked = checked.has(id);
+                return (
+                  <li
+                    key={item._key || index}
+                    className={`${s.checklistItem} ${isChecked ? s.checklistItemDone : ""}`}
+                    onClick={() => toggle(id)}
+                  >
+                    <span className={s.checklistBox}>
+                      {isChecked ? (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      ) : null}
+                    </span>
+                    <span className={s.checklistText}>{item.text}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      },
 
       newsletterCta: ({ value }: any) => (
         <div className={s.nlCta}>

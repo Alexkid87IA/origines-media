@@ -3,7 +3,7 @@ import { useScrolled } from "@/hooks/useScrollDirection";
 import { UNIVERS } from "@/data/univers";
 import styles from "./SiteHeader.module.css";
 
-const COMING_SOON_SECTIONS = new Set(["03", "04", "05"]);
+const COMING_SOON_SECTIONS = new Set<string>();
 
 interface DropdownItem {
   href: string;
@@ -19,6 +19,8 @@ interface SecondaryNav {
   dropdownLabel: string;
   allLabel: string;
   items: DropdownItem[];
+  secondaryLabel?: string;
+  secondaryItems?: DropdownItem[];
 }
 
 const SECONDARY: SecondaryNav[] = [
@@ -36,6 +38,14 @@ const SECONDARY: SecondaryNav[] = [
       { href: "/articles?univers=monde", label: "Le Monde", color: "#2E9B74" },
       { href: "/articles?univers=avenir", label: "L'Avenir", color: "#2E94B5" },
     ],
+    secondaryLabel: "Par type",
+    secondaryItems: [
+      { href: "/articles?category=comprendre", label: "Comprendre", color: "#7B5CD6" },
+      { href: "/articles?category=reflexions", label: "Réflexions", color: "#D64C90" },
+      { href: "/articles?category=temoignages", label: "Témoignages", color: "#E67839" },
+      { href: "/dossiers", label: "Dossiers", color: "#2E9B74" },
+      { href: "/articles?category=portraits", label: "Portraits", color: "#2E94B5" },
+    ],
   },
   {
     href: "/videos",
@@ -50,6 +60,9 @@ const SECONDARY: SecondaryNav[] = [
       { href: "/videos?format=interviews", label: "Interviews", color: "#E67839" },
       { href: "/videos?format=shorts", label: "Shorts", color: "#D64C90" },
       { href: "/videos?format=live", label: "Live", color: "#5AA352" },
+    ],
+    secondaryLabel: "Par catégorie",
+    secondaryItems: [
       { href: "/videos/formats", label: "Nos formats", color: "#C99B1E" },
     ],
   },
@@ -78,9 +91,9 @@ const SECONDARY: SecondaryNav[] = [
       { href: "/histoires", label: "Histoires", color: "#D64C90" },
       { href: "/recommandations", label: "Recommandations", color: "#7B5CD6" },
       { href: "/newsletter", label: "La Lettre du dimanche", color: "#C99B1E" },
-      { href: "/ensemble", label: "Question de la semaine", color: "#2E94B5" },
-      { href: "/ensemble", label: "Sondages", color: "#E67839" },
-      { href: "/ensemble", label: "Calendrier des parutions", color: "#5AA352" },
+      { href: "/ensemble#question", label: "Question de la semaine", color: "#2E94B5" },
+      { href: "/ensemble#sondages", label: "Sondages", color: "#E67839" },
+      { href: "/ensemble#calendrier", label: "Calendrier des parutions", color: "#5AA352" },
     ],
   },
   {
@@ -112,6 +125,7 @@ export default function SiteHeader() {
   const [megaOpen, setMegaOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [comingSoon, setComingSoon] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -240,6 +254,22 @@ export default function SiteHeader() {
                           {item.label}
                         </a>
                       ))}
+                      {section.secondaryLabel && section.secondaryItems && (
+                        <>
+                          <span className={styles.navDropdownLabel}>
+                            {section.secondaryLabel}
+                          </span>
+                          {section.secondaryItems.map((item) => (
+                            <a
+                              key={item.href}
+                              href={item.href}
+                              style={{ "--item-color": item.color } as React.CSSProperties}
+                            >
+                              {item.label}
+                            </a>
+                          ))}
+                        </>
+                      )}
                       <a href={section.href} className={styles.navDropdownAll}>
                         {section.allLabel}
                       </a>
@@ -308,19 +338,45 @@ export default function SiteHeader() {
             </button>
           </div>
         </div>
-        <button
-          type="button"
-          className={styles.searchBar}
-          onClick={toggleSearch}
-          aria-label="Rechercher"
-        >
-          <svg className={styles.searchBarIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M16 16l5 5" />
-          </svg>
-          <span className={styles.searchBarText}>Rechercher un article, un sujet&hellip;</span>
-          <kbd className={styles.searchBarKbd}>/</kbd>
-        </button>
+        <div className={`${styles.tagRow}${tagsOpen ? ` ${styles.tagRowOpen}` : ""}`}>
+          {UNIVERS.flatMap((u, ui) => {
+            const tags = u.subtopics.map((st) => (
+              <a
+                key={`${u.id}-${st.slug}`}
+                href={`/${u.id}/${st.slug}`}
+                className={styles.tag}
+                style={{ "--tag-color": u.color } as React.CSSProperties}
+              >
+                {st.label}
+              </a>
+            ));
+            if (ui < UNIVERS.length - 1) {
+              tags.push(<span key={`sep-${u.id}`} className={styles.tagSep} aria-hidden="true">&middot;</span>);
+            }
+            return tags;
+          })}
+          <div className={styles.tagActions}>
+            <button
+              type="button"
+              className={styles.tagToggle}
+              onClick={() => setTagsOpen((o) => !o)}
+            >
+              {tagsOpen ? "Voir moins" : "Voir plus"}
+            </button>
+            <button
+              type="button"
+              className={styles.tagSearch}
+              onClick={toggleSearch}
+              aria-label="Rechercher"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M16 16l5 5" />
+              </svg>
+              <kbd className={styles.tagSearchKbd}>/</kbd>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div

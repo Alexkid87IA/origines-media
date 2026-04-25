@@ -8,16 +8,12 @@ import { sanityFetch } from "@/lib/sanity";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import s from "./ArticlesPageV2.module.css";
 
-/* ------------------------------------------------------------------ */
-/*  Types                                                              */
-/* ------------------------------------------------------------------ */
-
-interface Article {
+interface Guide {
   _id: string;
   titre: string;
-  typeArticle: string;
-  extrait?: string;
+  deck?: string;
   description?: string;
+  extrait?: string;
   contenuTexte?: string;
   imageUrl: string;
   slug: string;
@@ -27,20 +23,17 @@ interface Article {
   tags?: unknown[];
   univpilar?: string;
   category?: string;
+  soustopic?: string;
+  isPremium?: boolean;
   verticaleNom?: string;
   authorName?: string;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Query                                                              */
-/* ------------------------------------------------------------------ */
-
-const ARTICLES_V2_QUERY = `
-  *[_type == "production" && coalesce(typeArticle, "article") in ["article", "actu", "guide", "interview"]] | order(datePublication desc) {
+const GUIDES_QUERY = `
+  *[_type == "production" && rubrique == "guides"] | order(datePublication desc) {
     _id,
     titre,
-    typeArticle,
-    extrait,
+    deck,
     description,
     "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
@@ -51,14 +44,50 @@ const ARTICLES_V2_QUERY = `
     tags,
     univpilar,
     category,
-    "verticaleNom": verticale->nom,
+    soustopic,
+    isPremium,
     "authorName": author->name
   }
 `;
 
-/* ------------------------------------------------------------------ */
-/*  Constants                                                          */
-/* ------------------------------------------------------------------ */
+const GUIDE_CATEGORY_LABELS: Record<string, string> = {
+  "kits-gratuits": "Kit gratuit",
+  masterclass: "Masterclass",
+  ateliers: "Atelier",
+  programmes: "Programme",
+};
+
+const GUIDE_CATEGORY_COLORS: Record<string, string> = {
+  "kits-gratuits": "#2E9B74",
+  masterclass: "#7B5CD6",
+  ateliers: "#5A66D6",
+  programmes: "#D64C90",
+};
+
+const GUIDE_CATEGORIES = [
+  { id: "kits-gratuits", label: "Kits gratuits" },
+  { id: "masterclass", label: "Masterclass" },
+  { id: "ateliers", label: "Ateliers" },
+  { id: "programmes", label: "Programmes" },
+];
+
+const SOUSTOPIC_LABELS: Record<string, string> = {
+  emotions: "Émotions", conscience: "Conscience", meditation: "Méditation",
+  "developpement-personnel": "Développement personnel", neurosciences: "Neurosciences",
+  philosophie: "Philosophie", "quete-de-sens": "Quête de sens", therapies: "Thérapies",
+  nutrition: "Nutrition", sommeil: "Sommeil", mouvement: "Mouvement",
+  prevention: "Prévention", "bien-etre-physique": "Bien-être physique",
+  sport: "Sport", respiration: "Respiration",
+  parentalite: "Parentalité", couples: "Couples", amitie: "Amitié",
+  education: "Éducation", generations: "Générations", communaute: "Communauté",
+  ruptures: "Ruptures", "enquetes-sociales": "Enquêtes sociales",
+  "recits-de-voyage": "Récits de voyage", destinations: "Destinations",
+  art: "Art", musique: "Musique", litterature: "Littérature",
+  cinema: "Cinéma", creativite: "Créativité", photographie: "Photographie",
+  carriere: "Carrière", entrepreneuriat: "Entrepreneuriat", innovation: "Innovation",
+  "intelligence-artificielle": "Intelligence artificielle", economie: "Économie",
+  leadership: "Leadership", numerique: "Numérique", nomadisme: "Nomadisme",
+};
 
 const ITEMS_PER_PAGE = 12;
 
@@ -69,10 +98,6 @@ const UNIVERS_COLORS: Record<string, string> = {
   monde: "#2E9B74",
   avenir: "#2E94B5",
 };
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
 
 function tagToString(tag: unknown): string | null {
   if (typeof tag === "string") return tag;
@@ -85,7 +110,7 @@ function tagToString(tag: unknown): string | null {
   return null;
 }
 
-function getExtrait(a: Article): string {
+function getExtrait(a: Guide): string {
   if (a.extrait) return a.extrait;
   if (a.description) return a.description;
   if (a.contenuTexte) {
@@ -105,13 +130,9 @@ function formatDate(dateString: string): string {
   });
 }
 
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
-
-export default function ArticlesPageV2() {
+export default function GuidesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [guides, setGuides] = useState<Guide[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
@@ -127,7 +148,7 @@ export default function ArticlesPageV2() {
 
   const searchQuery = searchParams.get("q") || "";
   const activeUnivers = searchParams.get("univers") || "";
-  const activeCategory = searchParams.get("category") || "";
+  const activeCategory = searchParams.get("type") || "";
   const activeTag = searchParams.get("tag") || "";
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const [sortBy, setSortBy] = useState(searchParams.get("tri") || "recent");
@@ -137,8 +158,8 @@ export default function ArticlesPageV2() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await sanityFetch<Article[]>(ARTICLES_V2_QUERY);
-        setArticles(data || []);
+        const data = await sanityFetch<Guide[]>(GUIDES_QUERY);
+        setGuides(data || []);
       } catch {
         // fallback
       } finally {
@@ -152,19 +173,25 @@ export default function ArticlesPageV2() {
     setSearchInput(searchQuery);
   }, [searchQuery]);
 
-  /* ── Univers counts ── */
   const universCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     UNIVERS.forEach((u) => {
-      counts[u.id] = articles.filter((a) => a.univpilar === u.id).length;
+      counts[u.id] = guides.filter((a) => a.univpilar === u.id).length;
     });
     return counts;
-  }, [articles]);
+  }, [guides]);
 
-  /* ── Tag cloud ── */
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    GUIDE_CATEGORIES.forEach((c) => {
+      counts[c.id] = guides.filter((a) => a.category === c.id).length;
+    });
+    return counts;
+  }, [guides]);
+
   const tagCloud = useMemo(() => {
     const tagMap: Record<string, number> = {};
-    articles.forEach((a) => {
+    guides.forEach((a) => {
       a.tags?.forEach((tag: unknown) => {
         const str = tagToString(tag);
         if (str) {
@@ -176,13 +203,12 @@ export default function ArticlesPageV2() {
     return Object.entries(tagMap)
       .map(([tag, count]) => ({ tag, count }))
       .sort((a, b) => b.count - a.count);
-  }, [articles]);
+  }, [guides]);
 
   const visibleTags = showAllTags ? tagCloud : tagCloud.slice(0, 20);
 
-  /* ── Filter + Sort ── */
-  const filteredArticles = useMemo(() => {
-    let result = [...articles];
+  const filteredGuides = useMemo(() => {
+    let result = [...guides];
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -223,16 +249,14 @@ export default function ArticlesPageV2() {
     }
 
     return result;
-  }, [articles, searchQuery, activeUnivers, activeCategory, activeTag, sortBy]);
+  }, [guides, searchQuery, activeUnivers, activeCategory, activeTag, sortBy]);
 
-  /* ── Pagination ── */
-  const totalPages = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE);
-  const paginatedArticles = useMemo(() => {
+  const totalPages = Math.ceil(filteredGuides.length / ITEMS_PER_PAGE);
+  const paginatedGuides = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredArticles.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredArticles, currentPage]);
+    return filteredGuides.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredGuides, currentPage]);
 
-  /* ── Handlers ── */
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -256,6 +280,17 @@ export default function ArticlesPageV2() {
     [activeUnivers, searchParams, setSearchParams]
   );
 
+  const handleCategoryClick = useCallback(
+    (id: string) => {
+      const p = new URLSearchParams(searchParams);
+      if (activeCategory === id) p.delete("type");
+      else p.set("type", id);
+      p.set("page", "1");
+      setSearchParams(p);
+    },
+    [activeCategory, searchParams, setSearchParams]
+  );
+
   const handleTagClick = useCallback(
     (tag: string) => {
       const p = new URLSearchParams(searchParams);
@@ -269,12 +304,10 @@ export default function ArticlesPageV2() {
 
   const handleSortChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const val = e.target.value;
-      setSortBy(val);
+      setSortBy(e.target.value);
       const p = new URLSearchParams(searchParams);
-      if (val === "recent") p.delete("tri");
-      else p.set("tri", val);
-      p.delete("page");
+      p.set("tri", e.target.value);
+      p.set("page", "1");
       setSearchParams(p);
     },
     [searchParams, setSearchParams]
@@ -296,15 +329,14 @@ export default function ArticlesPageV2() {
     setSearchInput("");
   }, [setSearchParams]);
 
-  const hasActiveFilters = searchQuery || activeUnivers || activeTag;
+  const hasActiveFilters = searchQuery || activeUnivers || activeCategory || activeTag;
 
-  /* ── Render ── */
   return (
     <>
       <Helmet>
-        <title>Articles — Psychologie, santé, relations, culture, avenir | Origines Media</title>
-        <meta name="description" content="Explorez tous les articles Origines Media par univers et thématique. Psychologie, bien-être, relations, culture et avenir — filtrez, triez, trouvez ce qui vous parle." />
-        <link rel="canonical" href="https://www.origines.media/articles" />
+        <title>Guides — Guides pratiques bien-être, psychologie, relations | Origines Media</title>
+        <meta name="description" content="Nos guides approfondis pour comprendre, agir et avancer. Parentalité, neurosciences, carrière, relations — des ressources complètes pour chaque étape de vie." />
+        <link rel="canonical" href="https://www.origines.media/guides" />
       </Helmet>
       <SiteHeader />
       <main id="main" role="main">
@@ -313,21 +345,21 @@ export default function ArticlesPageV2() {
             <div className={`${s.chapterMark} mono`}>
               <span className={s.cNum}>Biblioth&egrave;que</span>
               <span className={s.cSep}>/</span>
-              <span className={s.cLabel}>Articles</span>
+              <span className={s.cLabel}>Guides</span>
             </div>
 
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
                   <span className={s.sectionKickerDot} aria-hidden="true" />
-                  Articles &middot; {articles.length} publications
+                  Guides &middot; {guides.length} publications
                 </span>
                 <h1 className={s.sectionTitle}>
-                  Tous nos <em>articles.</em>
+                  Tous nos <em>guides.</em>
                 </h1>
                 <p className={s.sectionDeck}>
-                  Explorez par univers ou par th&eacute;matique. Filtrez, triez,
-                  trouvez ce qui vous parle.
+                  Des ressources approfondies pour comprendre, agir et avancer.
+                  Chaque guide est un chemin complet.
                 </p>
               </div>
             </header>
@@ -341,7 +373,7 @@ export default function ArticlesPageV2() {
                 </svg>
                 <input
                   type="text"
-                  placeholder="Rechercher un article…"
+                  placeholder="Rechercher un guide…"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   className={s.searchInput}
@@ -408,6 +440,17 @@ export default function ArticlesPageV2() {
                     <span className={s.activeChipX}>&times;</span>
                   </button>
                 )}
+                {activeCategory && (
+                  <button
+                    className={s.activeChip}
+                    style={{ "--chip-color": GUIDE_CATEGORY_COLORS[activeCategory] || "#7B5CD6" } as React.CSSProperties}
+                    onClick={() => handleCategoryClick(activeCategory)}
+                  >
+                    <span className={s.activeChipDot} />
+                    {GUIDE_CATEGORIES.find((c) => c.id === activeCategory)?.label || activeCategory}
+                    <span className={s.activeChipX}>&times;</span>
+                  </button>
+                )}
                 {activeTag && (
                   <button
                     className={s.activeChip}
@@ -437,12 +480,12 @@ export default function ArticlesPageV2() {
                   <h3 className={`${s.filterGroupTitle} mono`}>Univers</h3>
                   <div className={s.filterList}>
                     <button
-                      className={`${s.filterBtn} ${!activeUnivers ? s.filterBtnActive : ""}`}
+                      className={`${s.filterBtn} ${!activeUnivers && !activeTag ? s.filterBtnActive : ""}`}
                       onClick={() => { clearFilters(); setShowMobileFilters(false); }}
                     >
                       <span className={s.filterDot} />
-                      Tous les articles
-                      <span className={s.filterCount}>{articles.length}</span>
+                      Tous les guides
+                      <span className={s.filterCount}>{guides.length}</span>
                     </button>
                     {UNIVERS.map((u) => {
                       const count = universCounts[u.id] || 0;
@@ -481,19 +524,49 @@ export default function ArticlesPageV2() {
 
             {/* Layout: sidebar + grid */}
             <div className={s.layout}>
-              {/* Sidebar — desktop */}
               <aside className={s.sidebar}>
+                {/* Type filter */}
+                <div className={s.filterGroup}>
+                  <h3 className={`${s.filterGroupTitle} mono`}>Type</h3>
+                  <div className={s.filterList}>
+                    <button
+                      className={`${s.filterBtn} ${!activeCategory ? s.filterBtnActive : ""}`}
+                      onClick={() => { const p = new URLSearchParams(searchParams); p.delete("type"); p.set("page", "1"); setSearchParams(p); }}
+                    >
+                      <span className={s.filterDot} />
+                      Tous
+                      <span className={s.filterCount}>{guides.length}</span>
+                    </button>
+                    {GUIDE_CATEGORIES.map((c) => {
+                      const count = categoryCounts[c.id] || 0;
+                      if (count === 0) return null;
+                      return (
+                        <button
+                          key={c.id}
+                          className={`${s.filterBtn} ${activeCategory === c.id ? s.filterBtnActive : ""}`}
+                          style={{ "--chip-color": GUIDE_CATEGORY_COLORS[c.id] || "#7B5CD6" } as React.CSSProperties}
+                          onClick={() => handleCategoryClick(c.id)}
+                        >
+                          <span className={s.filterDot} />
+                          {c.label}
+                          <span className={s.filterCount}>{count}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Univers filter */}
                 <div className={s.filterGroup}>
                   <h3 className={`${s.filterGroupTitle} mono`}>Univers</h3>
                   <div className={s.filterList}>
                     <button
-                      className={`${s.filterBtn} ${!activeUnivers && !activeTag ? s.filterBtnActive : ""}`}
-                      onClick={clearFilters}
+                      className={`${s.filterBtn} ${!activeUnivers ? s.filterBtnActive : ""}`}
+                      onClick={() => { const p = new URLSearchParams(searchParams); p.delete("univers"); p.set("page", "1"); setSearchParams(p); }}
                     >
                       <span className={s.filterDot} />
-                      Tous les articles
-                      <span className={s.filterCount}>{articles.length}</span>
+                      Tous les univers
+                      <span className={s.filterCount}>{guides.length}</span>
                     </button>
                     {UNIVERS.map((u) => {
                       const count = universCounts[u.id] || 0;
@@ -514,7 +587,6 @@ export default function ArticlesPageV2() {
                   </div>
                 </div>
 
-                {/* Tag cloud */}
                 <div className={s.filterGroup}>
                   <h3 className={`${s.filterGroupTitle} mono`}>Th&eacute;matiques</h3>
                   <div className={s.tagCloud}>
@@ -539,12 +611,11 @@ export default function ArticlesPageV2() {
                 </div>
               </aside>
 
-              {/* Content */}
               <div className={s.content}>
                 <div className={s.resultBar}>
                   <span className={`${s.resultCount} mono`}>
-                    {filteredArticles.length} article
-                    {filteredArticles.length > 1 ? "s" : ""}
+                    {filteredGuides.length} guide
+                    {filteredGuides.length > 1 ? "s" : ""}
                   </span>
                 </div>
 
@@ -561,54 +632,64 @@ export default function ArticlesPageV2() {
                       </div>
                     ))}
                   </div>
-                ) : paginatedArticles.length > 0 ? (
+                ) : paginatedGuides.length > 0 ? (
                   <>
                     <div className={s.grid}>
-                      {paginatedArticles.map((article) => {
-                        const uid = (article.univpilar || "esprit") as UniversId;
+                      {paginatedGuides.map((guide) => {
+                        const uid = (guide.univpilar || "esprit") as UniversId;
                         const uData = UNIVERS_MAP[uid] || UNIVERS_MAP.esprit;
-                        const categoryLabel = uData.name;
+                        const catLabel = GUIDE_CATEGORY_LABELS[guide.category || ""] || "Guide";
+                        const catColor = GUIDE_CATEGORY_COLORS[guide.category || ""] || uData.color;
+                        const isFree = guide.category === "kits-gratuits";
+                        const stLabel = guide.soustopic ? SOUSTOPIC_LABELS[guide.soustopic] || guide.soustopic : "";
 
                         return (
                           <article
-                            key={article._id}
+                            key={guide._id}
                             className={s.card}
                             style={{ "--cat-color": uData.color } as React.CSSProperties}
                           >
-                            <a href={`/article/${article.slug}`} className={s.cardLink}>
+                            <a href={`/article/${guide.slug}`} className={s.cardLink}>
                               <div className={s.cardImgWrap}>
                                 <img
-                                  src={article.imageUrl || "/placeholder.svg"}
-                                  alt={article.titre}
+                                  src={guide.imageUrl || "/placeholder.svg"}
+                                  alt={guide.titre}
                                   className={s.cardImg}
                                   loading="lazy"
                                   decoding="async"
                                 />
+                                <span
+                                  className={isFree ? s.cardBadgeFree : s.cardBadge}
+                                  style={isFree ? { borderColor: catColor, color: catColor } : { background: catColor }}
+                                >
+                                  {catLabel}
+                                </span>
                               </div>
                               <div className={s.cardBody}>
                                 <div className={s.cardMeta}>
                                   <span className={s.cardDot} aria-hidden="true" />
                                   <span className={s.cardCategory} style={{ color: uData.color }}>
-                                    {categoryLabel}
+                                    {uData.name}
+                                    {stLabel && <>&nbsp;&middot; {stLabel}</>}
                                   </span>
-                                  {article.tempsLecture && (
+                                  {guide.tempsLecture && (
                                     <>
                                       <span className={s.cardSep}>&middot;</span>
-                                      <span className={s.cardTime}>{article.tempsLecture} min</span>
+                                      <span className={s.cardTime}>{guide.tempsLecture} min</span>
                                     </>
                                   )}
                                 </div>
-                                <h3 className={s.cardTitle}>{article.titre}</h3>
-                                <p className={s.cardExcerpt}>{getExtrait(article)}</p>
+                                <h3 className={s.cardTitle}>{guide.titre}</h3>
+                                <p className={s.cardExcerpt}>{getExtrait(guide)}</p>
                                 <div className={s.cardFoot}>
                                   <span className={s.cardAuthor}>
-                                    {article.authorName || "Rédaction Origines"}
+                                    {guide.authorName || "Rédaction Origines"}
                                   </span>
-                                  {article.datePublication && (
+                                  {guide.datePublication && (
                                     <>
                                       <span className={s.cardSep}>&middot;</span>
-                                      <time className={s.cardDate} dateTime={article.datePublication}>
-                                        {formatDate(article.datePublication)}
+                                      <time className={s.cardDate} dateTime={guide.datePublication}>
+                                        {formatDate(guide.datePublication)}
                                       </time>
                                     </>
                                   )}
@@ -668,14 +749,14 @@ export default function ArticlesPageV2() {
                       <circle cx="11" cy="11" r="7" />
                       <path d="M21 21l-4.35-4.35" />
                     </svg>
-                    <h3 className={s.emptyTitle}>Aucun article trouv&eacute;</h3>
+                    <h3 className={s.emptyTitle}>Aucun guide trouv&eacute;</h3>
                     <p className={s.emptyText}>
                       {searchQuery
                         ? `Aucun résultat pour « ${searchQuery} »`
                         : "Essayez de modifier vos filtres."}
                     </p>
                     <button className={s.emptyCta} onClick={clearFilters}>
-                      Voir tous les articles &rarr;
+                      Voir tous les guides &rarr;
                     </button>
                   </div>
                 )}

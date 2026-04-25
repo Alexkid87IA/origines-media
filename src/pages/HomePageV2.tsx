@@ -4,7 +4,7 @@ import IntroOverlay from "@/components/IntroOverlay/IntroOverlay";
 import Ticker from "@/components/Ticker/Ticker";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import HeroCarousel from "@/components/HeroCarousel/HeroCarousel";
-import { Interlude1, Interlude2, Interlude3, Interlude4 } from "@/components/Interludes/Interludes";
+import { Interlude2, Interlude3, Interlude4 } from "@/components/Interludes/Interludes";
 import Spotlight from "@/components/Spotlight/Spotlight";
 import Feed from "@/components/Feed/Feed";
 import Triad from "@/components/Triad/Triad";
@@ -23,7 +23,7 @@ import {
   V2_QUESTION_QUERY,
   V2_SPOTLIGHT_QUERY,
   V2_FEED_QUERY,
-  V2_EDITORIAL_QUERY,
+
   V2_TRIAD_QUERY,
   V2_VIDEOS_QUERY,
   V2_IMMERSIONS_QUERY,
@@ -32,7 +32,7 @@ import {
 } from "@/lib/queries";
 import { verticaleToUnivers, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import type { CMSArticle, CMSQuestion } from "@/components/HeroCarousel/HeroCarousel";
-import type { CMSSpotlight, CMSEditorial } from "@/components/Spotlight/Spotlight";
+import type { CMSSpotlight } from "@/components/Spotlight/Spotlight";
 import type { CMSFeedItem } from "@/components/Feed/Feed";
 import type { CMSTriadUnivers } from "@/components/Triad/Triad";
 import type { CMSVideo } from "@/components/VideoChannel/VideoChannel";
@@ -57,6 +57,9 @@ interface SanityArticle {
   videoUrl?: string;
   duree?: string;
   vues?: number;
+  univpilar?: string;
+  category?: string;
+  soustopic?: string;
 }
 
 interface SanityTriadVerticale {
@@ -134,6 +137,7 @@ function getExcerpt(a: SanityArticle): string {
 }
 
 function mapToUnivers(a: SanityArticle): UniversId {
+  if (a.univpilar && a.univpilar in UNIVERS_MAP) return a.univpilar as UniversId;
   return verticaleToUnivers(a.verticaleSlug || a.verticaleNom || "");
 }
 
@@ -147,7 +151,7 @@ function toCMSArticle(a: SanityArticle): CMSArticle {
   const univers = mapToUnivers(a);
   return {
     univers,
-    category: a.verticaleNom || UNIVERS_MAP[univers].name,
+    category: UNIVERS_MAP[univers].name,
     title: a.titre,
     excerpt: getExcerpt(a),
     author: a.authorName || "Rédaction Origines",
@@ -161,7 +165,7 @@ function diversifyByVerticale(articles: SanityArticle[], count: number): SanityA
   const picked: SanityArticle[] = [];
   const seen = new Set<string>();
   for (const a of articles) {
-    const key = a.verticaleSlug || a.verticaleNom || "";
+    const key = a.univpilar || a.verticaleSlug || a.verticaleNom || "";
     if (!seen.has(key)) {
       picked.push(a);
       seen.add(key);
@@ -181,7 +185,7 @@ function toCMSSpotlight(a: SanityArticle): CMSSpotlight {
   const univers = mapToUnivers(a);
   return {
     univers,
-    category: a.verticaleNom || UNIVERS_MAP[univers].name,
+    category: UNIVERS_MAP[univers].name,
     title: a.titre,
     deck: getExcerpt(a),
     author: a.authorName || "Rédaction Origines",
@@ -191,19 +195,6 @@ function toCMSSpotlight(a: SanityArticle): CMSSpotlight {
   };
 }
 
-function toCMSEditorial(a: SanityArticle): CMSEditorial {
-  const univers = mapToUnivers(a);
-  return {
-    univers,
-    category: a.verticaleNom || UNIVERS_MAP[univers].name,
-    title: a.titre,
-    excerpt: getExcerpt(a),
-    author: a.authorName || "Rédaction Origines",
-    readTime: formatReadTime(a),
-    href: `/article/${a.slug || ""}`,
-    image: a.imageUrl || "/placeholder.svg",
-  };
-}
 
 function timeAgo(date: string): string {
   const now = Date.now();
@@ -220,7 +211,7 @@ function toCMSFeedItem(a: SanityArticle, idx: number): CMSFeedItem {
   const univers = mapToUnivers(a);
   const u = UNIVERS_MAP[univers];
   const isVideo = a.typeArticle === "video";
-  const categoryLabel = a.verticaleNom || u.name;
+  const categoryLabel = u.name;
   const format = isVideo
     ? `Vidéo · ${categoryLabel}`
     : `Article · ${categoryLabel}`;
@@ -228,6 +219,8 @@ function toCMSFeedItem(a: SanityArticle, idx: number): CMSFeedItem {
   return {
     id: idx + 1,
     univers,
+    category: a.category,
+    soustopic: a.soustopic,
     date: a.datePublication || new Date().toISOString(),
     popularity: a.vues || 0,
     title: a.titre,
@@ -283,7 +276,7 @@ function toCMSImmersion(a: SanityArticle): CMSImmersion {
   return {
     href: `/article/${a.slug || ""}`,
     cover: a.imageUrl || "/placeholder.svg",
-    category: a.verticaleNom || UNIVERS_MAP[univers].name,
+    category: UNIVERS_MAP[univers].name,
     readTime: formatReadTime(a),
     headline: "",
     headlineEm: a.titre,
@@ -339,7 +332,7 @@ export default function HomePageV2() {
   const { data: secRaw } = useSanityQuery<SanityArticle[]>("v2-hero-secondary", V2_HERO_SECONDARY_QUERY);
   const { data: questionRaw } = useSanityQuery<SanityQuestion>("v2-question", V2_QUESTION_QUERY);
   const { data: spotRaw } = useSanityQuery<SanityArticle>("v2-spotlight", V2_SPOTLIGHT_QUERY);
-  const { data: editRaw } = useSanityQuery<SanityArticle[]>("v2-editorial", V2_EDITORIAL_QUERY);
+
   const { data: feedRaw } = useSanityQuery<SanityArticle[]>("v2-feed", V2_FEED_QUERY);
   const { data: triadRaw } = useSanityQuery<SanityTriadVerticale[]>("v2-triad", V2_TRIAD_QUERY);
   const { data: videosRaw } = useSanityQuery<SanityArticle[]>("v2-videos", V2_VIDEOS_QUERY);
@@ -361,7 +354,7 @@ export default function HomePageV2() {
       }
     : undefined;
   const spotlightPick = spotRaw ? toCMSSpotlight(spotRaw) : undefined;
-  const editorialArticles = editRaw ? diversifyByVerticale(editRaw, 3).map(toCMSEditorial) : undefined;
+
   const feedItems = feedRaw?.map(toCMSFeedItem);
   const triadUnivers = triadRaw ? toTriadUnivers(triadRaw) : undefined;
   const cmsVideos = videosRaw?.map(toCMSVideo);
@@ -426,10 +419,8 @@ export default function HomePageV2() {
             cmsSecondary={secondaryArticles}
             cmsQuestion={cmsQuestion}
           />
-          <Interlude1 />
           <Spotlight
             cmsPick={spotlightPick}
-            cmsEditorial={editorialArticles}
           />
           <Feed cmsItems={feedItems} />
           <Triad cmsUnivers={triadUnivers} />

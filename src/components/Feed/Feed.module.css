@@ -287,8 +287,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1px;
   background: rgba(10, 10, 10, 0.08);
   border: 1px solid rgba(10, 10, 10, 0.1);
@@ -303,14 +303,20 @@
 .feedItemCinematic::before {
   display: none;
 }
+.feedItemCinematic {
+  grid-column: 1 / -1;
+}
+
 .feedCineLink {
-  display: block;
+  display: grid;
+  grid-template-columns: 55% 45%;
   position: relative;
   text-decoration: none;
   color: inherit;
   height: 100%;
-  min-height: 240px;
+  min-height: 340px;
   overflow: hidden;
+  background: var(--ink);
 }
 .feedCineImg {
   position: absolute;
@@ -320,32 +326,48 @@
   object-fit: cover;
   transition: transform 0.7s cubic-bezier(0.3, 0, 0.2, 1);
 }
-.feedItemCinematic:hover .feedCineImg {
+.feedCineImgWrap {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1;
+  overflow: hidden;
+}
+.feedItemCinematic:hover .feedCineImgWrap .feedCineImg {
   transform: scale(1.04);
 }
 .feedCineGrad {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(10, 10, 10, 0.1) 0%,
-    rgba(10, 10, 10, 0.55) 40%,
-    rgba(10, 10, 10, 0.85) 100%
-  );
   z-index: 1;
   pointer-events: none;
+  background: linear-gradient(to right, transparent 35%, var(--ink));
 }
 .feedCineBody {
+  grid-column: 2;
+  grid-row: 1;
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 8px;
-  padding: 28px 32px;
+  padding: 40px 44px;
   height: 100%;
-  margin-left: 45%;
 }
+/* ── Alternance : image à droite, texte à gauche ── */
+.feedCineFlipped .feedCineLink {
+  grid-template-columns: 45% 55%;
+}
+.feedCineFlipped .feedCineImgWrap {
+  grid-column: 2;
+}
+.feedCineFlipped .feedCineGrad {
+  background: linear-gradient(to left, transparent 35%, var(--ink));
+}
+.feedCineFlipped .feedCineBody {
+  grid-column: 1;
+}
+
 .feedCineBody .feedMeta {
   color: rgba(247, 245, 240, 0.6);
 }
@@ -364,7 +386,7 @@
 .feedCineH {
   font-family: var(--display);
   font-weight: 900;
-  font-size: 22px;
+  font-size: 28px;
   line-height: 1.1;
   letter-spacing: -0.025em;
   color: var(--paper);
@@ -379,11 +401,11 @@
 }
 .feedCineExcerpt {
   font-family: var(--body);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   color: rgba(247, 245, 240, 0.6);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -826,15 +848,18 @@
   .feedLink { grid-template-columns: 76px 1fr; padding: 14px 14px 14px 12px; gap: 12px; }
   .feedThumb { width: 76px; height: 76px; }
   .feedH { font-size: 14px; }
-  .feedCineH { font-size: 18px; }
+  .feedCineLink { min-height: 280px; }
+  .feedCineH { font-size: 22px; }
+  .feedCineBody { padding: 28px 32px; }
   .feedGridCtaNum { font-size: 64px; }
 }
 
 /* ── Responsive — tablets (<=880px) ── */
 @media (max-width: 880px) {
   .sectionHead { grid-template-columns: 1fr; gap: 20px; }
-  .feedCineBody { padding: 20px; }
-  .feedCineH { font-size: 17px; }
+  .feedCineLink { min-height: 240px; }
+  .feedCineBody { padding: 24px; }
+  .feedCineH { font-size: 20px; }
   .feedChapter { margin-bottom: 16px; }
 
   .feedFilter { min-height: 40px; }
@@ -850,9 +875,32 @@
   .sectionDeck { font-size: 14px; }
   .feedGrid { grid-template-columns: 1fr; }
   .feedItemCinematic { grid-column: span 1; }
-  .feedCineLink { min-height: 200px; }
-  .feedCineH { font-size: 16px; }
-  .feedCineExcerpt { display: none; }
+  .feedCineLink {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .feedCineFlipped .feedCineLink {
+    grid-template-columns: 1fr;
+  }
+  .feedCineFlipped .feedCineImgWrap {
+    grid-column: 1;
+  }
+  .feedCineFlipped .feedCineGrad {
+    background: linear-gradient(to bottom, transparent 40%, var(--ink));
+  }
+  .feedCineFlipped .feedCineBody {
+    grid-column: 1;
+  }
+  .feedCineImgWrap {
+    aspect-ratio: 16/9;
+    max-height: 220px;
+  }
+  .feedCineGrad {
+    background: linear-gradient(to bottom, transparent 40%, var(--ink));
+  }
+  .feedCineBody { padding: 20px; }
+  .feedCineH { font-size: 18px; }
+  .feedCineExcerpt { display: block; -webkit-line-clamp: 2; }
   .feedCinePlay { left: 16px; bottom: auto; top: 16px; width: 36px; height: 36px; }
   .feedGridCta { grid-column: span 1; }
   .feedGridCtaLink { padding: 14px 16px; gap: 12px; }
