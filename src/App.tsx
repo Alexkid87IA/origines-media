@@ -54,6 +54,7 @@ const TemoignagesArticlePage = lazy(() => import('./pages/TemoignagesArticlePage
 const PortraitsArticlePage = lazy(() => import('./pages/PortraitsArticlePage'));
 const DossiersPage = lazy(() => import('./pages/DossiersPage'));
 const DossierDetailPage = lazy(() => import('./pages/DossierDetailPage'));
+const ComptePage = lazy(() => import('./pages/ComptePage'));
 const RecherchePage = lazy(() => import('./pages/RecherchePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
@@ -118,6 +119,9 @@ function App() {
         <Route path="/mentions-legales" element={<LegalPage />} />
         <Route path="/cgu" element={<CGUPage />} />
         <Route path="/cgv" element={<CGVPage />} />
+        <Route path="/compte" element={<ComptePage />} />
+        <Route path="/compte/*" element={<ComptePage />} />
+        <Route path="/deconnexion" element={<ComptePage />} />
         <Route path="/recherche" element={<RecherchePage />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>

@@ -383,7 +383,7 @@ export default function SiteHeader() {
           </nav>
 
           <div className={styles.headerActions}>
-            <button className={styles.cta} type="button">
+            <a className={styles.cta} href="/racontez-votre-histoire">
               <span>Racontez votre histoire</span>
               <svg
                 className={styles.arrow}
@@ -395,20 +395,19 @@ export default function SiteHeader() {
               >
                 <path d="M5 12h14M13 5l7 7-7 7" />
               </svg>
-            </button>
+            </a>
 
-            <button
+            <a
               className={styles.ctaIcon}
-              type="button"
+              href="/racontez-votre-histoire"
               aria-label="Racontez votre histoire"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
                 <path d="M16.5 3.5 20 7l-9.5 9.5L5 17l0.5-5.5 11-8Z" />
                 <path d="M14 6l3 3" />
               </svg>
-            </button>
+            </a>
 
-            {/* Mon compte — masqué tant que les routes /compte/* n'existent pas
             <div className={styles.accountWrap}>
               <a href="/compte" className={styles.accountBtn}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -429,7 +428,6 @@ export default function SiteHeader() {
                 <a href="/deconnexion" className={styles.accountLogout}>Se d&eacute;connecter</a>
               </div>
             </div>
-            */}
 
             <button
               className={styles.menuBtn}

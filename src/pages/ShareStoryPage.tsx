@@ -3,10 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import Ticker from '@/components/Ticker/Ticker';
 import SiteHeader from '@/components/SiteHeader/SiteHeader';
+import Marquee from '@/components/Marquee/Marquee';
 import Footer2 from '@/components/Footer2/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
-import SEO from '../components/SEO';
 import { sanityFetch } from '../lib/sanity';
 import { VIDEOS_SECTION_QUERY } from '../lib/queries';
 import s from './ShareStoryPage.module.css';
@@ -47,52 +49,52 @@ const processSteps = [
     number: '01',
     title: 'Premier contact',
     desc: 'Remplissez le formulaire en 2 minutes. Parlez-nous de vous et de votre histoire.',
-    detail: 'Reponse sous 48h',
+    detail: 'Réponse sous 48h',
   },
   {
     number: '02',
-    title: 'Appel decouverte',
+    title: 'Appel découverte',
     desc: 'On vous rappelle pour faire connaissance. 20 minutes pour comprendre votre parcours.',
     detail: 'Sans engagement',
   },
   {
     number: '03',
-    title: 'Preparation',
-    desc: 'On structure ensemble votre recit. Coaching personnalise si besoin.',
-    detail: 'A votre rythme',
+    title: 'Préparation',
+    desc: 'On structure ensemble votre récit. Coaching personnalisé si besoin.',
+    detail: 'À votre rythme',
   },
   {
     number: '04',
-    title: 'Creation',
-    desc: 'Tournage, redaction ou enregistrement avec notre equipe professionnelle.',
-    detail: 'Qualite pro',
+    title: 'Création',
+    desc: 'Tournage, rédaction ou enregistrement avec notre équipe professionnelle.',
+    detail: 'Qualité pro',
   },
 ];
 
 const reasons = [
   {
     title: 'Aider quelqu\'un',
-    desc: 'Votre histoire pourrait etre exactement ce dont quelqu\'un a besoin aujourd\'hui',
+    desc: 'Votre histoire pourrait être exactement ce dont quelqu\'un a besoin aujourd\'hui',
     stat: '2M+',
-    statLabel: 'messages recus',
+    statLabel: 'messages reçus',
     color: '#EC4899',
   },
   {
     title: 'Donner du sens',
-    desc: 'Transformez votre vecu en quelque chose de plus grand que vous',
+    desc: 'Transformez votre vécu en quelque chose de plus grand que vous',
     stat: '89%',
-    statLabel: 'se sentent liberes',
+    statLabel: 'se sentent libérés',
     color: '#F59E0B',
   },
   {
-    title: 'Rejoindre une communaute',
+    title: 'Rejoindre une communauté',
     desc: 'Faites partie d\'un mouvement de 1 000+ personnes qui osent raconter',
     stat: '1K+',
-    statLabel: 'temoins actifs',
+    statLabel: 'témoins actifs',
     color: '#8B5CF6',
   },
   {
-    title: 'Creer un heritage',
+    title: 'Créer un héritage',
     desc: 'Laissez une trace qui inspirera encore dans 10, 20, 50 ans',
     stat: '10B+',
     statLabel: 'vues totales',
@@ -101,16 +103,16 @@ const reasons = [
 ];
 
 const impactStats = [
-  { value: '10B+', label: 'vues cumulees' },
-  { value: '1 000+', label: 'histoires partagees' },
+  { value: '10B+', label: 'vues cumulées' },
+  { value: '1 000+', label: 'histoires partagées' },
   { value: '2M+', label: 'messages de soutien' },
-  { value: '45+', label: 'pays touches' },
+  { value: '45+', label: 'pays touchés' },
 ];
 
 const formats = [
   {
     id: 'video',
-    title: 'Video',
+    title: 'Vidéo',
     subtitle: 'Le plus impactant',
     desc: 'Tournage pro chez vous ou en studio.',
     duration: '4-6 semaines',
@@ -121,7 +123,7 @@ const formats = [
     id: 'article',
     title: 'Article',
     subtitle: 'Pour les plumes',
-    desc: 'Vous ecrivez, on edite ensemble.',
+    desc: 'Vous écrivez, on édite ensemble.',
     duration: '2-4 semaines',
     color: '#6366F1',
     popular: false,
@@ -129,8 +131,8 @@ const formats = [
   {
     id: 'podcast',
     title: 'Podcast',
-    subtitle: 'En toute intimite',
-    desc: 'Juste votre voix, ideal pour l\'anonymat.',
+    subtitle: 'En toute intimité',
+    desc: 'Juste votre voix, idéal pour l\'anonymat.',
     duration: '2-3 semaines',
     color: '#10B981',
     popular: false,
@@ -138,7 +140,7 @@ const formats = [
   {
     id: 'livre',
     title: 'Livre',
-    subtitle: 'Pour les epopees',
+    subtitle: 'Pour les épopées',
     desc: 'Votre histoire en version longue.',
     duration: '3-6 mois',
     color: '#F59E0B',
@@ -148,7 +150,7 @@ const formats = [
     id: 'documentaire',
     title: 'Documentaire',
     subtitle: 'L\'immersion totale',
-    desc: 'Format long, plusieurs temoins.',
+    desc: 'Format long, plusieurs témoins.',
     duration: '6-12 mois',
     color: '#EF4444',
     popular: false,
@@ -157,23 +159,23 @@ const formats = [
 
 const participantTestimonials = [
   {
-    quote: "J'avais peur de me livrer. L'equipe m'a mise tellement a l'aise que j'ai oublie la camera.",
+    quote: "J'avais peur de me livrer. L'équipe m'a mise tellement à l'aise que j'ai oublié la caméra.",
     author: 'Nadia K.',
-    role: 'A partage en video',
+    role: 'A partagé en vidéo',
     image: '/placeholder.svg',
     color: '#8B5CF6',
   },
   {
-    quote: "Je recois encore des messages de personnes que mon temoignage a aidees. C'est incroyable.",
+    quote: "Je reçois encore des messages de personnes que mon témoignage a aidées. C'est incroyable.",
     author: 'Thomas R.',
-    role: 'A partage en video',
+    role: 'A partagé en vidéo',
     image: '/placeholder.svg',
     color: '#F59E0B',
   },
   {
-    quote: "Le podcast m'a permis de raconter sans montrer mon visage. C'etait parfait pour moi.",
+    quote: "Le podcast m'a permis de raconter sans montrer mon visage. C'était parfait pour moi.",
     author: 'Anonyme',
-    role: 'A partage en podcast',
+    role: 'A partagé en podcast',
     image: '/placeholder.svg',
     color: '#10B981',
   },
@@ -181,11 +183,11 @@ const participantTestimonials = [
 
 const faqs = [
   { q: "C'est vraiment gratuit ?", a: "Oui, 100% gratuit. Notre mission est de donner la parole." },
-  { q: 'Qui peut participer ?', a: "Tout le monde. Chaque histoire compte, meme les plus simples." },
-  { q: 'Je peux rester anonyme ?', a: 'Absolument. Pseudonyme, voix modifiee, visage floute.' },
-  { q: "J'ai le droit de relecture ?", a: "Bien sur. Vous validez tout avant publication." },
-  { q: 'Ca prend combien de temps ?', a: 'De 2 semaines a 6 mois selon le format choisi.' },
-  { q: 'Et si je change d\'avis ?', a: "Vous pouvez vous retirer a tout moment." },
+  { q: 'Qui peut participer ?', a: "Tout le monde. Chaque histoire compte, même les plus simples." },
+  { q: 'Je peux rester anonyme ?', a: 'Absolument. Pseudonyme, voix modifiée, visage flouté.' },
+  { q: "J'ai le droit de relecture ?", a: "Bien sûr. Vous validez tout avant publication." },
+  { q: 'Ça prend combien de temps ?', a: 'De 2 semaines à 6 mois selon le format choisi.' },
+  { q: 'Et si je change d\'avis ?', a: "Vous pouvez vous retirer à tout moment." },
 ];
 
 // ============ INLINE SVG ICONS ============
@@ -314,12 +316,19 @@ const ShareStoryPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // State pour les videos Sanity
   const [featuredVideo, setFeaturedVideo] = useState<SanityVideo | null>(null);
   const [randomVideos, setRandomVideos] = useState<SanityVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(true);
 
-  // Fetch videos from Sanity
+  useEffect(() => {
+    document.body.style.background = "var(--paper)";
+    document.body.style.color = "var(--ink)";
+    return () => {
+      document.body.style.background = "";
+      document.body.style.color = "";
+    };
+  }, []);
+
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -357,12 +366,16 @@ const ShareStoryPage: React.FC = () => {
 
   return (
     <>
-      <SEO
-        title="Racontez votre histoire | Origines Media"
-        description="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalise."
-        url="/racontez-votre-histoire"
-      />
+      <Helmet>
+        <title>Racontez votre histoire — Origines Media</title>
+        <meta
+          name="description"
+          content="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalisé."
+        />
+        <link rel="canonical" href="https://www.origines.media/racontez-votre-histoire" />
+      </Helmet>
 
+      <Ticker />
       <SiteHeader />
 
       <main className={s.page}>
@@ -374,19 +387,20 @@ const ShareStoryPage: React.FC = () => {
 
               {/* Left - Content */}
               <div className={s.heroContent}>
-                <span className={s.heroKicker}>
-                  <span className={s.heroKickerDot} />
-                  RACONTEZ VOTRE HISTOIRE
-                </span>
+                <div className={s.chapterMark}>
+                  <span className={s.cNum}>Ch.01</span>
+                  <span className={s.cSep}>/</span>
+                  <span className={s.cLabel}>Racontez votre histoire</span>
+                </div>
 
                 <h1 className={s.heroTitle}>
                   Votre histoire{' '}
-                  <em>merite d'etre entendue</em>
+                  <em>mérite d'être entendue</em>
                 </h1>
 
                 <p className={s.heroDeck}>
-                  Vous avez traverse quelque chose d'important ? Partagez votre parcours
-                  et inspirez des milliers de personnes qui vivent la meme chose.
+                  Vous avez traversé quelque chose d'important ? Partagez votre parcours
+                  et inspirez des milliers de personnes qui vivent la même chose.
                 </p>
 
                 <a href="#formulaire" className={s.heroCta}>
@@ -466,8 +480,12 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 2. COMMENT CA MARCHE ============ */}
         <section className={s.process}>
           <div className={s.inner}>
-            <p className={s.processLabel}>Processus simple</p>
-            <h2 className={s.processTitle}>Comment ca marche ?</h2>
+            <div className={s.chapterMarkDark}>
+              <span className={s.cNum}>Ch.02</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>Processus</span>
+            </div>
+            <h2 className={s.processTitle}>Comment ça marche ?</h2>
 
             <div className={s.processGrid}>
               {processSteps.map((step, index) => (
@@ -495,13 +513,14 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 3. NOS HISTOIRES ============ */}
         <section className={s.stories}>
           <div className={s.inner}>
+            <div className={s.chapterMark}>
+              <span className={s.cNum}>Ch.03</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>Communaut&eacute;</span>
+            </div>
             <div className={s.storiesHeader}>
               <div className={s.storiesLabel}>
-                <span className={s.storiesKicker}>
-                  <span className={s.storiesKickerDot} />
-                  Communaute
-                </span>
-                <h2 className={s.storiesTitle}>Des histoires qui inspirent</h2>
+                <h2 className={s.storiesTitle}>Des histoires qui <em>inspirent.</em></h2>
               </div>
               <Link to="/videos" className={s.storiesLink}>
                 Voir tout
@@ -566,10 +585,14 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 4. POURQUOI PARTAGER ============ */}
         <section className={s.reasons}>
           <div className={s.inner}>
-            <p className={s.reasonsLabel}>L'impact de votre voix</p>
+            <div className={s.chapterMarkDark}>
+              <span className={s.cNum}>Ch.04</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>L&rsquo;impact</span>
+            </div>
             <h2 className={s.reasonsTitle}>Pourquoi partager votre histoire ?</h2>
             <p className={s.reasonsDeck}>
-              Chaque temoignage a le pouvoir de transformer des vies.
+              Chaque témoignage a le pouvoir de transformer des vies.
               Voici ce qui se passe quand vous osez raconter.
             </p>
 
@@ -604,6 +627,11 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 5. IMPACT STATS ============ */}
         <section className={s.impact}>
           <div className={s.inner}>
+            <div className={s.chapterMarkDark}>
+              <span className={s.cNum}>Ch.05</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>En chiffres</span>
+            </div>
             <div className={s.impactGrid}>
               {impactStats.map((stat, index) => {
                 const Icon = impactIcons[index];
@@ -622,14 +650,15 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 6. NOS FORMATS ============ */}
         <section className={s.formats}>
           <div className={s.inner}>
+            <div className={s.chapterMark}>
+              <span className={s.cNum}>Ch.06</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>Formats</span>
+            </div>
             <div className={s.formatsHeader}>
-              <span className={s.formatsKicker}>
-                <span className={s.formatsKickerDot} />
-                Formats
-              </span>
-              <h2 className={s.formatsTitle}>Choisissez votre format</h2>
+              <h2 className={s.formatsTitle}>Choisissez votre <em>format.</em></h2>
               <p className={s.formatsDeck}>
-                Cinq facons de raconter, selon vos envies
+                Cinq façons de raconter, selon vos envies
               </p>
             </div>
 
@@ -667,13 +696,14 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 7. TEMOIGNAGES PARTICIPANTS ============ */}
         <section className={s.testimonials}>
           <div className={s.inner}>
+            <div className={s.chapterMark}>
+              <span className={s.cNum}>Ch.07</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>T&eacute;moignages</span>
+            </div>
             <div className={s.testimonialsHeader}>
-              <span className={s.testimonialsKicker}>
-                <span className={s.testimonialsKickerDot} />
-                Temoignages
-              </span>
-              <h2 className={s.testimonialsTitle}>Ils ont partage leur histoire</h2>
-              <p className={s.testimonialsDeck}>Ce qu'ils disent de l'experience</p>
+              <h2 className={s.testimonialsTitle}>Ils ont partag&eacute; leur <em>histoire.</em></h2>
+              <p className={s.testimonialsDeck}>Ce qu&rsquo;ils disent de l&rsquo;exp&eacute;rience</p>
             </div>
 
             <div className={s.testimonialsGrid}>
@@ -708,13 +738,18 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 8. FORMULAIRE ============ */}
         <section id="formulaire" className={s.formSection}>
           <div className={s.inner}>
+            <div className={s.chapterMarkDark}>
+              <span className={s.cNum}>Ch.08</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>Formulaire</span>
+            </div>
             <div className={s.formSectionHeader}>
               <div className={s.formKicker}>
                 <HeartIcon />
-                Rejoignez 1 000+ temoins
+                Rejoignez 1 000+ t&eacute;moins
               </div>
               <h2 className={s.formSectionTitle}>
-                Pret(e) a partager votre histoire ?
+                Pr&ecirc;t(e) &agrave; partager votre <em>histoire&thinsp;?</em>
               </h2>
               <p className={s.formSectionDeck}>
                 Remplissez ce formulaire en 2 minutes.
@@ -728,7 +763,7 @@ const ShareStoryPage: React.FC = () => {
 
                   {/* Format selection */}
                   <div className={s.formatSelector}>
-                    <span className={s.formatSelectorLabel}>Format souhaite</span>
+                    <span className={s.formatSelectorLabel}>Format souhaité</span>
                     <div className={s.formatSelectorGrid}>
                       {formats.map((f) => {
                         const isSelected = selectedFormat === f.id;
@@ -760,7 +795,7 @@ const ShareStoryPage: React.FC = () => {
                   {/* Name & Email */}
                   <div className={s.fieldRow}>
                     <div className={s.fieldGroup}>
-                      <label className={s.label}>Prenom</label>
+                      <label className={s.label}>Prénom</label>
                       <input
                         type="text"
                         value={formData.name}
@@ -786,7 +821,7 @@ const ShareStoryPage: React.FC = () => {
                   {/* Phone */}
                   <div className={s.fieldGroup}>
                     <label className={s.label}>
-                      Telephone <span className={s.labelOptional}>(optionnel)</span>
+                      Téléphone <span className={s.labelOptional}>(optionnel)</span>
                     </label>
                     <input
                       type="tel"
@@ -833,11 +868,11 @@ const ShareStoryPage: React.FC = () => {
                   <div className={s.guarantees}>
                     <span className={s.guarantee}>
                       <ShieldIcon />
-                      Donnees protegees
+                      Données protégées
                     </span>
                     <span className={s.guarantee}>
                       <ClockIcon />
-                      Reponse sous 48h
+                      Réponse sous 48h
                     </span>
                     <span className={s.guarantee}>
                       <CheckIcon />
@@ -855,11 +890,11 @@ const ShareStoryPage: React.FC = () => {
                   Merci {formData.name} !
                 </h3>
                 <p className={s.successText}>
-                  Votre demande a bien ete envoyee.
-                  On vous recontacte tres vite pour faire connaissance.
+                  Votre demande a bien été envoyée.
+                  On vous recontacte très vite pour faire connaissance.
                 </p>
                 <Link to="/histoires" className={s.successLink}>
-                  Decouvrir les histoires
+                  Découvrir les histoires
                   <ArrowRightIcon />
                 </Link>
               </div>
@@ -870,12 +905,13 @@ const ShareStoryPage: React.FC = () => {
         {/* ============ 9. FAQ ============ */}
         <section className={s.faq}>
           <div className={s.inner}>
+            <div className={s.chapterMark}>
+              <span className={s.cNum}>Ch.09</span>
+              <span className={s.cSep}>/</span>
+              <span className={s.cLabel}>FAQ</span>
+            </div>
             <div className={s.faqHeader}>
-              <span className={s.faqKicker}>
-                <span className={s.faqKickerDot} />
-                FAQ
-              </span>
-              <h2 className={s.faqTitle}>Questions frequentes</h2>
+              <h2 className={s.faqTitle}>Questions <em>fr&eacute;quentes.</em></h2>
             </div>
 
             <div className={s.faqGrid}>
@@ -889,6 +925,7 @@ const ShareStoryPage: React.FC = () => {
           </div>
         </section>
 
+        <Marquee />
       </main>
 
       <Footer2 />

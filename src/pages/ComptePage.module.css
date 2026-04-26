@@ -1,0 +1,471 @@
+/* ===== ComptePage — Espace compte pré-auth ===== */
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.inner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Chapter marks
+   ══════════════════════════════════════════════════════════ */
+
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500, #8A8A8A);
+}
+
+.chapterMarkDark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+.cNum { font-weight: 500; letter-spacing: 0.2em; }
+.cSep { opacity: 0.3; }
+.cLabel { opacity: 0.75; }
+
+/* ══════════════════════════════════════════════════════════
+   Ch.01 — Hero
+   ══════════════════════════════════════════════════════════ */
+
+.hero {
+  padding: 56px 0 64px;
+  text-align: center;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.heroKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 20px;
+}
+
+.heroKickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.heroTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+.heroTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.heroDeck {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.5;
+  color: var(--stone600);
+  max-width: 48ch;
+  margin: 0 auto 32px;
+}
+
+.heroCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.25s ease;
+}
+
+.heroCta:hover {
+  opacity: 0.9;
+}
+
+.heroCta svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s ease;
+}
+
+.heroCta:hover svg {
+  transform: translateX(3px);
+}
+
+.heroNote {
+  display: block;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Ch.02 — Espaces (4 feature cards)
+   ══════════════════════════════════════════════════════════ */
+
+.spaces {
+  padding: 56px 0;
+}
+
+.spacesTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 36px);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 32px;
+}
+
+.spacesTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.spacesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.spaceCard {
+  background: var(--pure, #fff);
+  padding: 32px 24px;
+  transition: background 0.25s ease;
+}
+
+.spaceCard:hover {
+  background: var(--stone50, #F0EDE6);
+}
+
+.spaceIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--stone50, #F0EDE6);
+  margin-bottom: 20px;
+}
+
+.spaceIcon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--ink);
+}
+
+.spaceNum {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.spaceCardTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.spaceCardDesc {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--stone600);
+  margin: 0 0 16px;
+}
+
+.spaceFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spaceFeature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+
+.spaceFeature svg {
+  width: 12px;
+  height: 12px;
+  color: #34A853;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Ch.03 — Avantages (dark section)
+   ══════════════════════════════════════════════════════════ */
+
+.benefits {
+  background: var(--ink);
+  padding: 56px 0;
+  margin-left: calc(-1 * var(--side, 24px));
+  margin-right: calc(-1 * var(--side, 24px));
+  padding-left: var(--side, 24px);
+  padding-right: var(--side, 24px);
+}
+
+.benefitsInner {
+  max-width: var(--max, 1360px);
+  margin: 0 auto;
+}
+
+.benefitsTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 36px);
+  letter-spacing: -0.03em;
+  color: var(--pure, #fff);
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+.benefitsTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.benefitCard {
+  background: rgba(255,255,255,0.04);
+  padding: 32px 28px;
+  transition: background 0.25s ease;
+}
+
+.benefitCard:hover {
+  background: rgba(255,255,255,0.07);
+}
+
+.benefitStat {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+  color: var(--pure, #fff);
+  margin: 0 0 6px;
+  line-height: 1;
+}
+
+.benefitCardTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--pure, #fff);
+  margin: 0 0 8px;
+}
+
+.benefitCardDesc {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Ch.04 — CTA final
+   ══════════════════════════════════════════════════════════ */
+
+.cta {
+  padding: 64px 0;
+  text-align: center;
+}
+
+.ctaTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3.5vw, 44px);
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.ctaTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.ctaDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--stone600);
+  max-width: 44ch;
+  margin: 0 auto 28px;
+}
+
+.ctaForm {
+  display: flex;
+  max-width: 480px;
+  margin: 0 auto;
+  gap: 0;
+}
+
+.ctaInput {
+  flex: 1;
+  font-family: var(--body);
+  font-size: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--stone100);
+  border-right: none;
+  background: var(--pure, #fff);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.ctaInput::placeholder {
+  color: var(--stone400);
+}
+
+.ctaInput:focus {
+  border-color: var(--ink);
+}
+
+.ctaBtn {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: opacity 0.25s;
+  white-space: nowrap;
+}
+
+.ctaBtn:hover {
+  opacity: 0.9;
+}
+
+.ctaGuarantees {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.ctaGuarantee {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+}
+
+.ctaGuarantee svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Responsive
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .spacesGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .benefitsGrid { grid-template-columns: 1fr; }
+  .inner { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (max-width: 640px) {
+  .spacesGrid { grid-template-columns: 1fr; }
+  .hero { padding: 40px 0 48px; }
+  .spaces { padding: 40px 0; }
+  .benefits { padding: 40px var(--side, 24px); }
+  .cta { padding: 48px 0; }
+  .ctaForm { flex-direction: column; }
+  .ctaInput { border-right: 1px solid var(--stone100); border-bottom: none; }
+  .ctaGuarantees { flex-direction: column; gap: 8px; }
+  .inner { padding-left: 16px; padding-right: 16px; }
+}
