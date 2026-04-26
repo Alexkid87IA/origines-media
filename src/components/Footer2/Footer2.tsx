@@ -919,14 +919,11 @@ export default function Footer2() {
           ))}
 
           <div className={s.mobileSocial}>
-            <span className={s.mobileSocialLabel}>Suivez-nous</span>
-            <div className={s.mobileSocialRow}>
-              {SOCIAL_LINKS.map((social) => (
-                <a key={social.href} href={social.href} aria-label={social.label} rel="noopener" className={s.mobileSocialLink}>
-                  {social.icon}
-                </a>
-              ))}
-            </div>
+            {SOCIAL_LINKS.map((social) => (
+              <a key={social.href} href={social.href} aria-label={social.label} rel="noopener" className={s.mobileSocialLink}>
+                {social.icon}
+              </a>
+            ))}
           </div>
         </nav>
 
