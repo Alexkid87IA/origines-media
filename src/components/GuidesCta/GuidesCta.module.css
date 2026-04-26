@@ -1,0 +1,297 @@
+/* ===== Ch.06 — Guides CTA (version pilier Média) ===== */
+
+.section {
+  margin-top: 72px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Chapter mark */
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+
+.cNum { font-weight: 500; letter-spacing: 0.2em; }
+.cSep { opacity: 0.3; }
+.cLabel { opacity: 0.75; }
+
+/* ── Band ── */
+.band {
+  display: flex;
+  position: relative;
+  text-decoration: none;
+  color: var(--paper);
+  overflow: hidden;
+  min-height: 380px;
+  border: 1px solid rgba(10, 10, 10, 0.1);
+}
+
+/* Background image */
+.bandImg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bandImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transition: transform 0.7s cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+.band:hover .bandImg img {
+  transform: scale(1.03);
+}
+
+/* Dark overlay */
+.bandOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to right,
+    rgba(10, 10, 10, 0.92) 0%,
+    rgba(10, 10, 10, 0.85) 35%,
+    rgba(10, 10, 10, 0.55) 65%,
+    rgba(10, 10, 10, 0.4) 100%
+  );
+  transition: background 0.5s ease;
+}
+
+.band:hover .bandOverlay {
+  background: linear-gradient(
+    to right,
+    rgba(10, 10, 10, 0.88) 0%,
+    rgba(10, 10, 10, 0.78) 35%,
+    rgba(10, 10, 10, 0.45) 65%,
+    rgba(10, 10, 10, 0.3) 100%
+  );
+}
+
+/* Content */
+.bandContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 56px 52px;
+  width: 100%;
+}
+
+.bandLeft {
+  max-width: 520px;
+}
+
+.bandKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.5);
+  margin-bottom: 16px;
+}
+
+.bandKickerDot {
+  width: 6px;
+  height: 6px;
+  background: #059669;
+}
+
+.bandTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--paper);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.bandTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.bandDeck {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(247, 245, 240, 0.55);
+  margin: 18px 0 0;
+  max-width: 48ch;
+}
+
+/* Right side */
+.bandRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 32px;
+  flex-shrink: 0;
+}
+
+/* Format pills */
+.formats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.format {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 20px;
+  border: 1px solid rgba(247, 245, 240, 0.08);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.band:hover .format {
+  border-color: rgba(247, 245, 240, 0.15);
+  background: rgba(247, 245, 240, 0.04);
+}
+
+.formatCount {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+  color: #059669;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.4s ease;
+}
+
+.band:hover .formatCount {
+  opacity: 1;
+}
+
+.formatLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.35);
+}
+
+/* Action */
+.bandAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bandIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #059669;
+  border: none;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
+}
+
+.band:hover .bandIcon {
+  background: #10B981;
+  transform: scale(1.12);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
+}
+
+.bandActionLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.4);
+  transition: color 0.3s ease;
+}
+
+.band:hover .bandActionLabel {
+  color: var(--paper);
+}
+
+.bandArrow {
+  color: rgba(247, 245, 240, 0.3);
+  flex-shrink: 0;
+  transition: color 0.3s ease,
+              transform 0.5s cubic-bezier(.2,.7,.2,1);
+}
+
+.band:hover .bandArrow {
+  color: var(--paper);
+  transform: translateX(6px);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 880px) {
+  .bandContent { flex-direction: column; align-items: flex-start; gap: 28px; padding: 36px 32px; }
+  .bandRight { align-items: flex-start; width: 100%; }
+  .formats { grid-template-columns: repeat(4, 1fr); }
+  .bandOverlay {
+    background: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.92) 0%,
+      rgba(10, 10, 10, 0.75) 50%,
+      rgba(10, 10, 10, 0.45) 100%
+    );
+  }
+  .band:hover .bandOverlay {
+    background: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.88) 0%,
+      rgba(10, 10, 10, 0.65) 50%,
+      rgba(10, 10, 10, 0.35) 100%
+    );
+  }
+}
+
+@media (max-width: 640px) {
+  .section { margin-top: 56px; }
+  .band { min-height: 320px; }
+  .bandContent { padding: 28px 24px; gap: 20px; }
+  .bandTitle { font-size: clamp(24px, 6vw, 34px); }
+  .bandDeck { font-size: 13px; }
+  .bandRight { gap: 16px; }
+  .formats { gap: 8px; }
+  .format { padding: 10px 14px; }
+  .formatCount { font-size: 22px; }
+}
+
+@media (max-width: 480px) {
+  .band { min-height: 280px; }
+  .bandContent { padding: 24px 20px; }
+  .bandTitle { font-size: 24px; }
+  .bandDeck { display: none; }
+  .formats { grid-template-columns: repeat(2, 1fr); }
+  .bandIcon { width: 34px; height: 34px; }
+  .bandActionLabel { font-size: 10px; }
+}

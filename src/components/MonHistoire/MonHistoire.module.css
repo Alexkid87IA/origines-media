@@ -1,0 +1,348 @@
+/* ===== Mon Histoire — community CTA ===== */
+
+.section {
+  margin-top: 72px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Portrait strip ── */
+.strip {
+  width: 100%;
+  overflow: hidden;
+}
+
+.strip img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: grayscale(1);
+}
+
+/* ── Two-column content ── */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 56px;
+  padding: 64px 0 72px;
+}
+
+/* ── Left column ── */
+.left {
+  display: flex;
+  flex-direction: column;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 28px;
+}
+
+.kickerLine {
+  width: 40px;
+  height: 1px;
+  background: var(--ink);
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(36px, 5vw, 62px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.titleItalic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(34px, 4.8vw, 58px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 4px 0 0;
+}
+
+.titleItalic em {
+  font-style: italic;
+}
+
+.body {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--stone500);
+  margin: 28px 0 0;
+  max-width: 56ch;
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid var(--stone-border);
+  margin: 32px 0;
+}
+
+/* ── Steps ── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+}
+
+.stepNum {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--stone500);
+  margin-bottom: 10px;
+}
+
+.stepTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.stepDesc {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--stone500);
+  margin: 0;
+}
+
+/* ── CTAs ── */
+.actions {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 32px;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: none;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.ctaPrimary:hover {
+  background: #1a1a1a;
+  transform: translateY(-1px);
+}
+
+.ctaPrimary svg {
+  flex-shrink: 0;
+}
+
+.ctaPrimary svg:last-child {
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.ctaPrimary:hover svg:last-child {
+  transform: translateX(4px);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 32px;
+  background: rgba(10, 10, 10, 0.06);
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: background 0.3s ease;
+}
+
+.ctaSecondary:hover {
+  background: rgba(10, 10, 10, 0.1);
+}
+
+.ctaBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+/* Trust line */
+.trust {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 0;
+}
+
+.trust svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+/* ── Right column — testimonial card ── */
+.right {
+  display: flex;
+  align-items: flex-start;
+}
+
+.card {
+  background: rgba(10, 10, 10, 0.92);
+  border-left: 3px solid #7B5CD6;
+  padding: 36px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.cardQuote {
+  font-family: var(--serif);
+  font-size: 48px;
+  line-height: 1;
+  color: rgba(247, 245, 240, 0.2);
+  margin-bottom: 8px;
+}
+
+.cardText {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.cardText p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--paper);
+  margin: 0;
+}
+
+.cardText strong {
+  font-weight: 700;
+  font-style: normal;
+}
+
+.cardAttrib {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.4);
+  margin: 24px 0 0;
+}
+
+.cardStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(247, 245, 240, 0.08);
+}
+
+.cardStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardStatNum {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+  line-height: 1;
+}
+
+.cardStatLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.35);
+  line-height: 1.3;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 960px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .right { order: -1; }
+  .card { max-width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .section { margin-top: 56px; }
+  .content { padding: 40px 0 48px; gap: 32px; }
+  .title { font-size: clamp(28px, 7vw, 40px); }
+  .titleItalic { font-size: clamp(26px, 6.5vw, 38px); }
+  .body { font-size: 14px; }
+  .steps { grid-template-columns: 1fr; gap: 20px; }
+  .actions { flex-direction: column; }
+  .ctaPrimary, .ctaSecondary { width: 100%; justify-content: center; }
+  .cardStats { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .cardStatNum { font-size: 22px; }
+}
+
+@media (max-width: 480px) {
+  .content { padding: 32px 0 40px; }
+  .kicker { margin-bottom: 20px; }
+  .body { font-size: 13px; }
+  .ctaPrimary, .ctaSecondary { padding: 16px 24px; font-size: 10px; }
+  .card { padding: 28px 24px; }
+  .cardText p { font-size: 16px; }
+}

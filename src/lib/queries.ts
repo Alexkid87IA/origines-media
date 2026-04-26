@@ -19,6 +19,41 @@ export const V2_QUESTION_QUERY = `
   }
 `;
 
+// Vidéo à la une pour le hero (curée depuis siteSettings, fallback sur la plus récente)
+export const V2_HERO_VIDEO_QUERY = `
+  coalesce(
+    *[_type == "siteSettings"][0].videoALaUne-> {
+      titre,
+      "slug": slug.current,
+      videoUrl,
+      duree,
+      category,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
+      "verticaleNom": verticale->nom
+    },
+    *[_type == "production" && rubrique == "videos" && defined(videoUrl) && isOriginal == true] | order(datePublication desc) [0] {
+      titre,
+      "slug": slug.current,
+      videoUrl,
+      duree,
+      category,
+      "imageUrl": coalesce(image.asset->url, imageUrl),
+      "verticaleNom": verticale->nom
+    }
+  )
+`;
+
+// Recommandation aléatoire pour le hero
+export const V2_HERO_RECO_QUERY = `
+  *[_type == "recommendation" && defined(image.asset)] | order(datePublication desc) [0...10] {
+    titre,
+    type,
+    auteur,
+    "slug": slug.current,
+    "imageUrl": coalesce(image.asset->url, imageUrl)
+  }
+`;
+
 // Dossiers — listing de toutes les questions de la semaine
 export const V2_DOSSIERS_QUERY = `
   *[_type == "questionDeLaSemaine"] | order(annee desc, semaine desc) {
@@ -59,7 +94,7 @@ export const V2_HERO_MAIN_QUERY = `
     *[_type == "siteSettings"][0].articleALaUne-> {
       _id, titre, extrait, description,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
-      typeArticle,
+      typeArticle, category,
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
       datePublication, tempsLecture, univpilar,
@@ -70,7 +105,7 @@ export const V2_HERO_MAIN_QUERY = `
     *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [0] {
       _id, titre, extrait, description,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
-      typeArticle,
+      typeArticle, category,
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
       datePublication, tempsLecture, univpilar,
@@ -99,30 +134,46 @@ export const V2_HERO_SECONDARY_QUERY = `
   }
 `
 
-// Choix de la rédaction — curé depuis siteSettings, fallback sur le plus vu
-export const V2_SPOTLIGHT_QUERY = `
-  coalesce(
-    *[_type == "siteSettings"][0].choixDeLaRedaction-> {
-      _id, titre, extrait, description,
-      "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
-      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+// Carrousel hero Média — unes curées depuis siteSettings, fallback 5 articles récents
+export const MEDIA_HERO_SLIDES_QUERY = `
+  {
+    "curated": *[_id == "siteSettings"][0].unesDuJour[]-> {
+      _id, titre, extrait, description, category, typeArticle,
+      "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+      "imageUrl": image.asset->url,
       "slug": slug.current,
       tempsLecture, univpilar,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name
     },
-    *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(coalesce(stats.views, views, vues, 0) desc) [0] {
-      _id, titre, extrait, description,
-      "contenuTexte": array::join(contenu[_type == "block"][0...4].children[].text, " "),
-      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+    "fallback": *[_type == "production" && rubrique == "articles" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0...5] {
+      _id, titre, extrait, description, category, typeArticle,
+      "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+      "imageUrl": image.asset->url,
       "slug": slug.current,
       tempsLecture, univpilar,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name
     }
-  )
+  }
+`;
+
+// Ce qui vient de paraître — 6 articles les plus récents (avec image)
+export const V2_SPOTLIGHT_QUERY = `
+  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides"] | order(datePublication desc) [0...6] {
+    _id, titre, extrait, description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+    typeArticle,
+    "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
+    "slug": slug.current,
+    datePublication, tempsLecture, univpilar,
+    videoUrl, duree,
+    "verticaleSlug": verticale->slug.current,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
 `
 
 // Articles pour le Feed (16 derniers, avec image)
@@ -201,6 +252,38 @@ export const V2_VIDEOS_QUERY = `
     "verticaleNom": verticale->nom
   }
 `
+
+// Vidéos par programme — pour la page /programmes
+export const PROD_PROGRAMMES_QUERY = `
+  {
+    "il-etait-une-fois": *[_type == "production" && rubrique == "videos" && programme == "il-etait-une-fois" && defined(image.asset)] | order(datePublication desc) [0...4] {
+      _id, titre, "imageUrl": image.asset->url, "slug": slug.current, duree, videoUrl
+    },
+    "etat-d-esprit": *[_type == "production" && rubrique == "videos" && programme == "etat-d-esprit" && defined(image.asset)] | order(datePublication desc) [0...4] {
+      _id, titre, "imageUrl": image.asset->url, "slug": slug.current, duree, videoUrl
+    },
+    "transmission": *[_type == "production" && rubrique == "videos" && programme == "transmission" && defined(image.asset)] | order(datePublication desc) [0...4] {
+      _id, titre, "imageUrl": image.asset->url, "slug": slug.current, duree, videoUrl
+    },
+    "secrets-pro": *[_type == "production" && rubrique == "videos" && programme == "secrets-pro" && defined(image.asset)] | order(datePublication desc) [0...4] {
+      _id, titre, "imageUrl": image.asset->url, "slug": slug.current, duree, videoUrl
+    },
+    "imagine": *[_type == "production" && rubrique == "videos" && programme == "imagine" && defined(image.asset)] | order(datePublication desc) [0...4] {
+      _id, titre, "imageUrl": image.asset->url, "slug": slug.current, duree, videoUrl
+    },
+    "la-lettre": *[_type == "production" && rubrique == "videos" && programme == "la-lettre" && defined(image.asset)] | order(datePublication desc) [0...4] {
+      _id, titre, "imageUrl": image.asset->url, "slug": slug.current, duree, videoUrl
+    },
+    "counts": {
+      "il-etait-une-fois": count(*[_type == "production" && rubrique == "videos" && programme == "il-etait-une-fois"]),
+      "etat-d-esprit": count(*[_type == "production" && rubrique == "videos" && programme == "etat-d-esprit"]),
+      "transmission": count(*[_type == "production" && rubrique == "videos" && programme == "transmission"]),
+      "secrets-pro": count(*[_type == "production" && rubrique == "videos" && programme == "secrets-pro"]),
+      "imagine": count(*[_type == "production" && rubrique == "videos" && programme == "imagine"]),
+      "la-lettre": count(*[_type == "production" && rubrique == "videos" && programme == "la-lettre"])
+    }
+  }
+`;
 
 // Immersions — articles long-format (les plus longs, avec image)
 export const V2_IMMERSIONS_QUERY = `

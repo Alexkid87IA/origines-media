@@ -169,8 +169,8 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 64px;
-  min-width: 64px;
+  height: 58px;
+  min-width: 58px;
 }
 
 .state {
@@ -187,7 +187,7 @@
 .stateSquare {
   animation: squareCycle 11.4s cubic-bezier(0.6, 0, 0.2, 1) infinite;
 }
-.stateSquare img { display: block; width: 64px; height: 64px; object-fit: contain; }
+.stateSquare img { display: block; width: 58px; height: 58px; object-fit: contain; }
 
 @keyframes squareCycle {
   0%   { opacity: 1; transform: translateY(-50%) scale(1) rotate(0deg); filter: blur(0); }
@@ -201,13 +201,13 @@
   animation: targetCycle 11.4s cubic-bezier(0.6, 0, 0.2, 1) infinite;
 }
 
-.oMark { width: 44px; height: 44px; flex-shrink: 0; display: block; color: var(--ink); }
+.oMark { width: 35px; height: 35px; flex-shrink: 0; display: block; color: var(--ink); }
 .oMark svg { width: 100%; height: 100%; display: block; }
 
 .wordmark {
   font-family: var(--display);
   font-weight: 900;
-  font-size: 22px;
+  font-size: 18px;
   letter-spacing: -0.03em;
   line-height: 1;
   color: var(--ink);
@@ -260,7 +260,7 @@
 .nav {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 4px;
   flex: 1;
   min-width: 0;
@@ -484,10 +484,8 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: var(--pure);
-  border-bottom: 1px solid var(--stone100);
-  box-shadow: 0 24px 80px -16px rgba(10,10,10,0.12);
-  padding: 0;
+  background: var(--ink);
+  box-shadow: 0 32px 80px -16px rgba(10,10,10,0.6);
   z-index: 45;
   opacity: 0;
   visibility: hidden;
@@ -498,7 +496,6 @@
     visibility 0s linear 0.3s;
   pointer-events: none;
 }
-
 .megaOpen {
   opacity: 1;
   visibility: visible;
@@ -507,34 +504,81 @@
   pointer-events: auto;
 }
 
+.megaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0 16px;
+  border-bottom: 1px solid rgba(247,245,240,0.06);
+}
+.megaHeaderLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(247,245,240,0.3);
+}
+.megaHeaderHint {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247,245,240,0.18);
+}
+
 .megaGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 0;
+}
+.megaGrid4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .megaCol {
   display: flex;
   flex-direction: column;
-  padding: 32px 28px 36px;
-  border-right: 1px solid var(--stone100);
-  transition: background 0.2s ease;
+  padding: 28px 28px 32px;
+  border-right: 1px solid rgba(247,245,240,0.05);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.25s ease;
 }
-.megaCol:first-child { padding-left: var(--side); }
-.megaCol:last-child { border-right: none; padding-right: var(--side); }
-.megaCol:hover {
-  background: var(--paper);
+.megaOpen .megaCol {
+  opacity: 1;
+  transform: translateY(0);
 }
+.megaOpen .megaCol:nth-child(1) { transition-delay: 0.03s; }
+.megaOpen .megaCol:nth-child(2) { transition-delay: 0.07s; }
+.megaOpen .megaCol:nth-child(3) { transition-delay: 0.11s; }
+.megaOpen .megaCol:nth-child(4) { transition-delay: 0.15s; }
+.megaOpen .megaCol:nth-child(5) { transition-delay: 0.19s; }
+.megaCol:last-child { border-right: none; }
+.megaCol:hover { background: rgba(247,245,240,0.03); }
 
 .megaColAccent {
-  width: 100%;
-  height: 3px;
+  width: 28px;
+  height: 2px;
   margin-bottom: 20px;
-  background: var(--col-color, var(--ink));
-  opacity: 0.3;
-  transition: opacity 0.2s ease;
+  background: var(--col-color, rgba(247,245,240,0.5));
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.megaCol:hover .megaColAccent { opacity: 1; }
+.megaCol:hover .megaColAccent { width: 100%; }
+
+.megaNum {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(247,245,240,0.12);
+  margin-bottom: 4px;
+  user-select: none;
+}
 
 .megaTitle {
   display: flex;
@@ -542,21 +586,21 @@
   gap: 8px;
   font-family: var(--display);
   font-weight: 800;
-  font-size: 18px;
+  font-size: 20px;
   letter-spacing: -0.02em;
-  color: var(--ink);
+  color: var(--paper);
   text-decoration: none;
   margin-bottom: 6px;
-  transition: color 0.2s ease;
+  transition: color 0.25s ease;
 }
-.megaTitle:hover { color: var(--col-color, var(--ink)); }
+.megaTitle:hover { color: var(--col-color, var(--paper)); }
 
 .megaTagline {
   font-family: var(--body);
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--stone500);
-  margin-bottom: 20px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: rgba(247,245,240,0.32);
+  margin-bottom: 22px;
 }
 
 .megaLinks {
@@ -567,35 +611,40 @@
 
 .megaLink {
   font-family: var(--body);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
-  color: var(--stone700);
-  padding: 5px 0;
+  color: rgba(247,245,240,0.45);
+  padding: 4px 0 4px 12px;
   text-decoration: none;
-  transition: color 0.15s ease, padding-left 0.15s ease;
+  border-left: 2px solid transparent;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    padding-left 0.2s ease;
 }
 .megaLink:hover {
-  color: var(--col-color, var(--ink));
-  padding-left: 6px;
+  color: var(--paper);
+  border-left-color: var(--col-color, var(--paper));
+  padding-left: 16px;
 }
 
 .megaAll {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--stone100);
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(247,245,240,0.06);
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--stone500);
+  color: rgba(247,245,240,0.28);
   text-decoration: none;
-  transition: color 0.2s ease, gap 0.2s ease;
+  transition: color 0.25s ease, gap 0.25s ease;
 }
-.megaAll:hover { color: var(--col-color, var(--ink)); gap: 8px; }
+.megaAll:hover { color: var(--col-color, var(--paper)); gap: 10px; }
 
 .actionBtn {
   display: inline-flex;
@@ -651,12 +700,10 @@
 
 .megaDot {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
-  margin-right: 8px;
-  vertical-align: middle;
 }
 
 .accountWrap {
@@ -910,9 +957,10 @@
   .navLink { padding: 7px 8px; font-size: 12px; }
   .num { display: none; }
   .navDropdown { min-width: 220px; padding: 16px 20px; }
-  .megaCol { padding: 0 16px; }
-  .megaLink { font-size: 13px; }
-  .mega { padding: 32px 0 40px; }
+  .megaCol { padding: 24px 16px 28px; }
+  .megaLink { font-size: 12px; padding-left: 12px; }
+  .megaTitle { font-size: 17px; }
+  .megaNum { font-size: 28px; }
 }
 
 @media (max-width: 880px) {

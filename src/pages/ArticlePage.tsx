@@ -1150,15 +1150,30 @@ export default function ArticlePage() {
         </div>
       </section>
 
-      {/* Scroll to Top */}
-      <div className="py-6 flex justify-center bg-white border-t border-gray-200">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-gray-600 hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all shadow-sm"
-        >
-          <ChevronUp className="w-5 h-5" />
-          <span className="text-sm font-medium">Retour en haut</span>
-        </button>
+      {/* Colophon */}
+      <div className="border-t border-gray-100 py-10">
+        <div className="max-w-3xl mx-auto px-6 flex items-center gap-8">
+          <div className="flex items-center gap-5 flex-1 min-w-0">
+            <svg className="w-9 h-9 flex-shrink-0 text-gray-300" viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" strokeWidth="6" />
+              <circle cx="50" cy="50" r="8" fill="currentColor" />
+            </svg>
+            <p className="font-serif italic text-sm text-gray-400 leading-relaxed m-0">
+              &laquo;&nbsp;Ce qui compte, ce n&rsquo;est pas d&rsquo;avoir toutes les r&eacute;ponses.
+              C&rsquo;est de poser les bonnes questions.&nbsp;&raquo;
+            </p>
+            <span className="font-mono text-[9px] tracking-widest uppercase text-gray-400 whitespace-nowrap flex-shrink-0">
+              &mdash; Origines Media
+            </span>
+          </div>
+          <button
+            className="w-9 h-9 flex-shrink-0 inline-flex items-center justify-center border border-gray-200 text-gray-400 hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="Remonter en haut"
+          >
+            <ChevronUp className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
       <Footer />

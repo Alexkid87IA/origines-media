@@ -1468,37 +1468,67 @@
    Scroll to top
    ────────────────────────────────────────────────────────── */
 
-.scrollTopSection {
-  padding: 24px 0;
-  display: flex;
-  justify-content: center;
+.colophon {
   border-top: 1px solid var(--stone100);
+  padding: 40px 0;
 }
-
-.scrollTopBtn {
+.colophonInner {
+  max-width: var(--content, 720px);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.colophonLeft {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+.colophonMark {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  color: var(--stone300);
+}
+.colophonQuote {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--stone500);
+  margin: 0;
+}
+.colophonAttr {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.colophonUp {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink);
+  justify-content: center;
+  border: 1px solid var(--stone200);
   background: transparent;
-  border: 1px solid var(--stone100);
+  color: var(--stone400);
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-
-.scrollTopBtn:hover {
+.colophonUp:hover {
   background: var(--ink);
   color: var(--paper);
   border-color: var(--ink);
 }
-
-.scrollTopBtn svg {
+.colophonUp svg {
   width: 14px;
   height: 14px;
 }
@@ -1771,6 +1801,14 @@
     flex-direction: column;
     gap: 16px;
   }
+
+  .colophonLeft {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .colophonInner { gap: 20px; }
+  .colophonQuote { font-size: 13px; }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1791,7 +1829,7 @@
   .ctaWidgetArrow,
   .ctaWidgetIcon,
   .videoPlayCircle,
-  .scrollTopBtn,
+  .colophonUp,
   .authorSocialLink {
     transition: none !important;
   }

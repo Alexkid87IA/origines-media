@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SplashScreen from './components/SplashScreen';
 import CookieConsent from './components/CookieConsent';
 import ExitIntentPopup from './components/ExitIntentPopup';
@@ -45,13 +45,12 @@ const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
 const JoinPartnerPage = lazy(() => import('./pages/JoinPartnerPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
-const ComprendrePage = lazy(() => import('./pages/ComprendrePage'));
+const MediaPage = lazy(() => import('./pages/MediaPage'));
+const ProdPage = lazy(() => import('./pages/ProdPage'));
+const TypePage = lazy(() => import('./pages/TypePage'));
 const ComprendreArticlePage = lazy(() => import('./pages/ComprendreArticlePage'));
-const ReflexionsPage = lazy(() => import('./pages/ReflexionsPage'));
 const ReflexionsArticlePage = lazy(() => import('./pages/ReflexionsArticlePage'));
-const TemoignagesPage = lazy(() => import('./pages/TemoignagesPage'));
 const TemoignagesArticlePage = lazy(() => import('./pages/TemoignagesArticlePage'));
-const PortraitsPage = lazy(() => import('./pages/PortraitsPage'));
 const PortraitsArticlePage = lazy(() => import('./pages/PortraitsArticlePage'));
 const DossiersPage = lazy(() => import('./pages/DossiersPage'));
 const DossierDetailPage = lazy(() => import('./pages/DossierDetailPage'));
@@ -72,6 +71,7 @@ function App() {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/media" element={<MediaPage />} />
         <Route path="/univers" element={<UniversPage />} />
         <Route path="/univers/:universId" element={<UniversPage />} />
         <Route path="/series" element={<SeriesPage />} />
@@ -79,6 +79,7 @@ function App() {
         <Route path="/format/:formatId" element={<FormatPage />} />
         <Route path="/bibliotheque" element={<BibliothequePage />} />
         <Route path="/videos" element={<VideosPage />} />
+        <Route path="/programmes" element={<ProdPage />} />
         <Route path="/production/:slug" element={<ArticlePage />} /> {/* Rétrocompatibilité - redirige vers ArticlePage */}
         <Route path="/histoires" element={<HistoiresPage />} />
         <Route path="/portraits" element={<HistoiresPage />} />
@@ -104,13 +105,13 @@ function App() {
         <Route path="/academy" element={<BoutiquePage />} />
         <Route path="/communaute" element={<EnsemblePage />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
-        <Route path="/comprendre" element={<ComprendrePage />} />
+        <Route path="/comprendre" element={<Navigate to="/articles" replace />} />
         <Route path="/comprendre/:slug" element={<ComprendreArticlePage />} />
-        <Route path="/reflexions" element={<ReflexionsPage />} />
+        <Route path="/reflexions" element={<Navigate to="/articles" replace />} />
         <Route path="/reflexions/:slug" element={<ReflexionsArticlePage />} />
-        <Route path="/temoignages" element={<TemoignagesPage />} />
+        <Route path="/temoignages" element={<TypePage type="temoignages" />} />
         <Route path="/temoignages/:slug" element={<TemoignagesArticlePage />} />
-        <Route path="/portraits" element={<PortraitsPage />} />
+        <Route path="/portraits" element={<Navigate to="/temoignages" replace />} />
         <Route path="/portraits/:slug" element={<PortraitsArticlePage />} />
         <Route path="/dossiers" element={<DossiersPage />} />
         <Route path="/dossiers/:slug" element={<DossierDetailPage />} />

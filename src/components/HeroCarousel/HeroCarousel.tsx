@@ -1,9 +1,14 @@
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
 import s from "./HeroCarousel.module.css";
 
+function frTypo(text: string): string {
+  return text.replace(/ ([:;?!])/g, " $1");
+}
+
 export interface CMSArticle {
   univers: UniversId;
   category: string;
+  subCategory?: string;
   title: string;
   excerpt: string;
   author: string;
@@ -20,12 +25,30 @@ export interface CMSQuestion {
   publishedCount: number;
   totalCount: number;
   href: string;
+  image?: string;
+}
+
+export interface CMSHeroVideo {
+  title: string;
+  duration: string;
+  thumbnail: string;
+  href: string;
+  channel: string;
+}
+
+export interface CMSReco {
+  title: string;
+  type: string;
+  author: string;
+  href: string;
+  image: string;
 }
 
 interface HeroCarouselProps {
   cmsMain?: CMSArticle;
-  cmsSecondary?: CMSArticle[];
   cmsQuestion?: CMSQuestion;
+  cmsVideo?: CMSHeroVideo;
+  cmsReco?: CMSReco;
 }
 
 const MAIN_ARTICLE = {
@@ -50,6 +73,7 @@ const DOSSIER = {
   publishedCount: 3,
   totalCount: 7,
   href: "/dossiers/semaine-17-sommeil",
+  image: "/covers/cover-02.jpg",
 };
 
 const VIDEO = {
@@ -68,47 +92,12 @@ const GUIDE = {
   cta: "Télécharger le guide",
 };
 
-const SECONDARY = [
-  {
-    univers: "monde" as UniversId,
-    category: "Voyage",
-    title: "2 200 kilomètres pour cesser d'avoir peur.",
-    excerpt: "Elle est partie seule, sans itinéraire. Ce qu'elle a trouvé en chemin, c'est tout ce qu'elle fuyait.",
-    author: "Camille Dufresne",
-    readTime: "18 min",
-    href: "/article/2200-kilometres",
-    image: "/covers/cover-02.jpg",
-  },
-  {
-    univers: "liens" as UniversId,
-    category: "Famille",
-    title: "Ma mère ne veut plus qu'on se voie.",
-    excerpt: "Un jour, le téléphone a cessé de sonner. Récit d'une rupture que personne n'ose nommer.",
-    author: "Mathilde Aubry",
-    readTime: "16 min",
-    href: "/article/rupture-mere-fille",
-    image: "/covers/cover-05.jpg",
-  },
-  {
-    univers: "avenir" as UniversId,
-    category: "Tech",
-    title: "L'IA va-t-elle nous remplacer ?",
-    excerpt: "La question n'est plus si, mais quand. Et surtout : comment s'y préparer sans paniquer.",
-    author: "Studio Origines",
-    readTime: "20 min",
-    href: "/article/ia-travail",
-    image: "/covers/cover-04.jpg",
-  },
-];
-
-export default function HeroCarousel({ cmsMain, cmsSecondary, cmsQuestion }: HeroCarouselProps) {
+export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCarouselProps) {
   const main = cmsMain
     ? { ...MAIN_ARTICLE, univers: cmsMain.univers, category: cmsMain.category, title: cmsMain.title, deck: cmsMain.excerpt, author: cmsMain.author, readTime: cmsMain.readTime, href: cmsMain.href, image: cmsMain.image }
     : MAIN_ARTICLE;
-  const secondary = cmsSecondary
-    ? cmsSecondary.map((a, i) => ({ ...(SECONDARY[i] || SECONDARY[0]), univers: a.univers, category: a.category, title: a.title, excerpt: a.excerpt, author: a.author, readTime: a.readTime, href: a.href, image: a.image }))
-    : SECONDARY;
   const dossier = cmsQuestion || DOSSIER;
+  const video = cmsVideo || VIDEO;
   const mainU = UNIVERS_MAP[main.univers];
   const dossierU = UNIVERS_MAP[dossier.univers];
   const progress = (dossier.publishedCount / dossier.totalCount) * 100;
@@ -122,125 +111,128 @@ export default function HeroCarousel({ cmsMain, cmsSecondary, cmsQuestion }: Her
         </div>
 
         <div className={s.heroGrid}>
-          {/* COL 1 — Article principal */}
+          {/* COL 1 — Vidéo (immersive, pleine hauteur) */}
           <a
-            href={main.href}
+            href={video.href}
             className={s.mainCol}
             style={{
-              backgroundImage: `url('${main.image}')`,
-              backgroundPosition: `${main.coverFocusX}% ${main.coverFocusY}%`,
+              backgroundImage: `url('${video.thumbnail}')`,
+              backgroundPosition: "center",
             }}
           >
             <span className={s.mainGradient} />
+            <span className={s.videoPlayLarge} aria-label="Lire la vidéo">
+              <img src="/icons/play-button.png" alt="" aria-hidden="true" />
+            </span>
             <div className={s.mainContent}>
               <div className={s.mainKicker}>
-                <span className={s.mainTag} style={{ background: mainU.color }}>
-                  {main.category || mainU.name}
-                </span>
-                <span className={s.mainMeta}>{main.meta}</span>
+                <span className={s.mainMeta}>{video.channel}</span>
               </div>
-              <h1 className={s.mainTitle}>{main.title}</h1>
-              <p className={s.mainDeck}>{main.deck}</p>
+              <h1 className={s.mainTitle}>{frTypo(video.title)}</h1>
               <div className={s.mainByline}>
-                Par <strong>{main.author}</strong>
-                <span className={s.dot} />
-                {main.readTime}
+                {video.duration}
               </div>
             </div>
           </a>
 
-          {/* COL 2 — Dossier + Vidéo + Guide */}
+          {/* COL 2 — Question (haut) + Article à la une (bas) */}
           <div className={s.centerCol}>
-            <a href={dossier.href} className={s.dossierBlock}>
-              <div className={s.dossierHead}>
-                <span className={s.dossierLabel}>La question de la semaine</span>
-                <span className={s.dossierWeek}>S.{dossier.week}</span>
+            <a
+              href={dossier.href}
+              className={s.questionBlock}
+              style={dossier.image ? { backgroundImage: `url('${dossier.image}')` } : undefined}
+            >
+              <span className={s.questionOverlay} />
+              <div className={s.questionContent}>
+                <div className={s.questionHead}>
+                  <span className={s.questionLabel}>La question de la semaine</span>
+                  <span className={s.questionWeek}>S.{dossier.week}</span>
+                </div>
+                <h3 className={s.questionTitle}>{frTypo(dossier.question)}</h3>
+                <div className={s.questionFoot}>
+                  <span className={s.questionUnivers} style={{ background: dossierU.color }}>
+                    {dossierU.name}
+                  </span>
+                  <span className={s.questionProgress}>
+                    {dossier.publishedCount}/{dossier.totalCount}
+                  </span>
+                  <div className={s.progressBar}>
+                    <div
+                      className={s.progressFill}
+                      style={{ width: `${progress}%`, background: dossierU.color }}
+                    />
+                  </div>
+                </div>
+                <span className={s.questionCta}>
+                  Lire le dossier
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </span>
               </div>
-              <h2 className={s.dossierQuestion}>{dossier.question}</h2>
-              <div className={s.dossierFoot}>
-                <span className={s.dossierUnivers} style={{ background: dossierU.color }}>
-                  {dossierU.name}
-                </span>
-                <span className={s.dossierProgress}>
-                  {dossier.publishedCount}/{dossier.totalCount}
-                </span>
-                <div className={s.progressBar}>
-                  <div
-                    className={s.progressFill}
-                    style={{ width: `${progress}%`, background: dossierU.color }}
-                  />
+            </a>
+
+            <a
+              href={main.href}
+              className={s.articleBlock}
+              style={{ backgroundImage: `url('${main.image}')` }}
+            >
+              <span className={s.articleOverlay} />
+              <div className={s.articleInfo}>
+                <div className={s.mainKicker}>
+                  <span className={s.mainTag} style={{ background: mainU.color }}>
+                    {main.category || mainU.name}
+                  </span>
+                  {main.subCategory && (
+                    <span className={s.mainMeta}>{main.subCategory}</span>
+                  )}
+                  <span className={s.mainMeta}>{main.meta}</span>
+                </div>
+                <h3 className={s.articleTitle}>{frTypo(main.title)}</h3>
+                <p className={s.articleDeck}>{main.deck}</p>
+                <div className={s.mainByline}>
+                  Par <strong>{main.author}</strong>
+                  <span className={s.dot} />
+                  {main.readTime}
                 </div>
               </div>
-              <span className={s.dossierCta}>
-                Lire le dossier
+            </a>
+          </div>
+
+          {/* COL 3 — Guide + Boutique */}
+          <div className={s.rightCol}>
+            {/* Guide (Guides pillar) */}
+            <a href={GUIDE.href} className={s.guideBlock}>
+              <div className={s.guideAccent} />
+              <span className={s.guideLabel}>{GUIDE.label}</span>
+              <h3 className={s.guideTitle}>{frTypo(GUIDE.title)}</h3>
+              <p className={s.guideDesc}>{GUIDE.description}</p>
+              <span className={s.guideCta}>
+                {GUIDE.cta}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                   <path d="M5 12h14M13 5l7 7-7 7" />
                 </svg>
               </span>
             </a>
 
-            <a href={VIDEO.href} className={s.videoBlock}>
-              <div
-                className={s.videoThumb}
-                style={{ backgroundImage: `url('${VIDEO.thumbnail}')` }}
-              >
-                <span className={s.videoPlay}>
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M8 5.14v14.72a1 1 0 001.5.86l11-7.36a1 1 0 000-1.72l-11-7.36a1 1 0 00-1.5.86z" />
-                  </svg>
-                </span>
-                <span className={s.videoDuration}>{VIDEO.duration}</span>
+            {/* Boutique (Boutique pillar) */}
+            <a href="/boutique" className={s.boutiqueBlock}>
+              <span className={s.boutiqueLabel}>Boutique</span>
+              <h3 className={s.boutiqueTitle}>Coffret Nouveau D&eacute;part</h3>
+              <p className={s.boutiqueDesc}>
+                Carnet, guide illustr&eacute; et exercices &mdash;
+                tout pour red&eacute;marrer avec intention.
+              </p>
+              <div className={s.boutiquePrice}>
+                <span className={s.boutiquePriceTag}>39&nbsp;&euro;</span>
+                <span className={s.boutiquePriceSub}>&Eacute;dition limit&eacute;e</span>
               </div>
-              <div className={s.videoInfo}>
-                <span className={s.videoChannel}>{VIDEO.channel}</span>
-                <h3 className={s.videoTitle}>{VIDEO.title}</h3>
-              </div>
-            </a>
-
-            <a href={GUIDE.href} className={s.guideBlock}>
-              <span className={s.guideLabel}>{GUIDE.label}</span>
-              <h3 className={s.guideTitle}>{GUIDE.title}</h3>
-              <p className={s.guideDesc}>{GUIDE.description}</p>
-              <span className={s.guideCta}>
-                {GUIDE.cta}
+              <span className={s.boutiqueCta}>
+                D&eacute;couvrir
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                  <path d="M12 5v14M5 12l7 7 7-7" />
+                  <path d="M5 12h14M13 5l7 7-7 7" />
                 </svg>
               </span>
-            </a>
-          </div>
-
-          {/* COL 3 — Articles secondaires */}
-          <div className={s.rightCol}>
-            <span className={s.rightLabel}>
-              &Agrave; lire aussi
-            </span>
-            {secondary.map((article) => {
-              const u = UNIVERS_MAP[article.univers];
-              return (
-                <a key={article.href} href={article.href} className={s.secCard}>
-                  <div
-                    className={s.secThumb}
-                    style={{ backgroundImage: `url('${article.image}')` }}
-                  />
-                  <div className={s.secContent}>
-                    <span className={s.secTag} style={{ color: u.color }}>
-                      {article.category || u.name}
-                    </span>
-                    <h3 className={s.secTitle}>{article.title}</h3>
-                    <p className={s.secExcerpt}>{article.excerpt}</p>
-                    <span className={s.secMeta}>
-                      {article.author} &middot; {article.readTime}
-                    </span>
-                  </div>
-                </a>
-              );
-            })}
-            <a href="/articles" className={s.rightCta}>
-              Voir tous les articles
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
             </a>
           </div>
         </div>

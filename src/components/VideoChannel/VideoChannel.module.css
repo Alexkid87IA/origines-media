@@ -4,13 +4,32 @@
   margin-top: 72px;
   margin-left: calc(-1 * var(--side));
   margin-right: calc(-1 * var(--side));
-  padding: 0 var(--side) 56px;
-  background: var(--ink);
   position: relative;
   z-index: 2;
 }
 
-/* ── Chapter mark ── */
+/* ══════════════════════════════════════════════════════════════
+   Full-bleed faces banner (image alone)
+   ══════════════════════════════════════════════════════════════ */
+.banner {
+  width: 100%;
+  overflow: hidden;
+}
+
+.bannerImg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Editorial intro block
+   ══════════════════════════════════════════════════════════════ */
+.intro {
+  background: var(--ink);
+  padding: 0 var(--side);
+}
+
 .chapterMark {
   display: flex;
   align-items: baseline;
@@ -26,36 +45,18 @@
 .cSep { opacity: 0.25; }
 .cLabel { font-weight: 400; }
 
-/* ── Section intro ── */
-.sectionHead {
+.introGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1fr auto;
   align-items: end;
   gap: 48px;
-  margin-bottom: 56px;
   padding-bottom: 32px;
   border-bottom: 1px solid rgba(247, 245, 240, 0.08);
 }
-.sectionLabel { max-width: 62ch; }
-.sectionKicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.45);
-  margin-bottom: 18px;
-}
-.sectionKickerDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--paper);
-}
-.sectionTitle {
+
+.introLeft { max-width: 62ch; }
+
+.introTitle {
   font-family: var(--display);
   font-weight: 900;
   font-size: clamp(30px, 4vw, 52px);
@@ -65,13 +66,14 @@
   margin: 0;
   text-wrap: balance;
 }
-.sectionTitle em {
+.introTitle em {
   font-family: var(--serif);
   font-style: italic;
   font-weight: 500;
   letter-spacing: -0.015em;
 }
-.sectionDeck {
+
+.introDeck {
   font-family: var(--body);
   font-size: 15px;
   font-weight: 450;
@@ -81,30 +83,125 @@
   max-width: 56ch;
 }
 
-/* Right — faces banner */
-.sectionRight {
+/* Right — stats + link */
+.introRight {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 20px;
 }
 
-.faceBanner {
-  width: 100%;
-  max-width: 640px;
-  overflow: hidden;
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.statNum {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+  line-height: 1;
+}
+.statLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.4);
+}
+.statSep {
+  width: 1px;
+  height: 32px;
+  background: rgba(247, 245, 240, 0.1);
 }
 
-.faceBannerImg {
-  width: 100%;
-  height: auto;
-  display: block;
-  filter: grayscale(100%);
+.introAll {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.4);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.25s ease, gap 0.25s ease;
+  white-space: nowrap;
+}
+.introAll:hover {
+  color: var(--paper);
+  gap: 10px;
+}
+
+/* ── Programme chips ── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 32px 0 40px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.7);
+  background: rgba(247, 245, 240, 0.04);
+  border: 1px solid rgba(247, 245, 240, 0.08);
+  text-decoration: none;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+.chip:hover {
+  border-color: var(--p-color, rgba(247, 245, 240, 0.3));
+  background: rgba(247, 245, 240, 0.06);
+  color: var(--paper);
+}
+.chipDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--p-color, rgba(247, 245, 240, 0.3));
+  flex-shrink: 0;
+}
+.chipName {}
+.chipCount {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(247, 245, 240, 0.25);
+  padding-left: 8px;
+  border-left: 1px solid rgba(247, 245, 240, 0.08);
+  margin-left: 2px;
+  transition: color 0.25s ease;
+}
+.chip:hover .chipCount {
+  color: var(--p-color, rgba(247, 245, 240, 0.5));
 }
 
 /* ══════════════════════════════════════════════════════════════
-   Programme row
+   Content — programme rows
    ══════════════════════════════════════════════════════════════ */
+.content {
+  background: var(--ink);
+  padding: 0 var(--side) 56px;
+}
+
+/* ── Programme row ── */
 .row {
   margin-bottom: 48px;
   padding-top: 32px;
@@ -183,12 +280,6 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
-}
-
-/* ── Featured variant (first programme) ── */
-.rowFeatured .rowGrid {
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
 }
 
 /* ── Video card ── */
@@ -347,26 +438,21 @@
 @media (max-width: 1280px) {
   .rowGrid { gap: 16px; }
   .vidTitle { font-size: 14px; }
-  .rowFeatured .rowGrid { gap: 2px; }
 }
 
 @media (max-width: 1080px) {
-  .sectionHead {
+  .introGrid {
     grid-template-columns: 1fr;
     gap: 24px;
     align-items: start;
   }
-  .sectionRight {
+  .introRight {
     flex-direction: row;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
   }
   .rowGrid { gap: 14px; }
-  .rowFeatured .rowGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-  }
   .vidPlay svg { width: 36px; height: 36px; }
 }
 
@@ -381,9 +467,6 @@
     padding: 0 var(--side);
     scrollbar-width: none;
   }
-  .rowFeatured .rowGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
   .rowGrid::-webkit-scrollbar { display: none; }
   .rowGrid > .vid {
     min-width: 240px;
@@ -391,14 +474,20 @@
   }
   .row { margin-bottom: 36px; padding-top: 24px; }
   .rowTagline { padding-left: 0; }
+  .chips { gap: 8px; }
+  .chip { padding: 8px 12px; font-size: 10px; }
 }
 
 @media (max-width: 640px) {
-  .vc { margin-top: 56px; padding-bottom: 40px; }
+  .vc { margin-top: 56px; }
   .chapterMark { padding-top: 36px; }
-  .sectionTitle { font-size: clamp(24px, 6vw, 36px); }
-  .sectionDeck { font-size: 14px; }
-  .sectionRight { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .introTitle { font-size: clamp(24px, 6vw, 36px); }
+  .introDeck { font-size: 14px; }
+  .introRight { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .statNum { font-size: 24px; }
+  .chips { gap: 6px; padding: 24px 0 32px; }
+  .chip { padding: 7px 10px; font-size: 10px; }
+  .content { padding-bottom: 40px; }
   .rowName { font-size: 17px; }
   .rowCount { display: none; }
   .rowTagline { font-size: 13px; }
@@ -409,16 +498,18 @@
 }
 
 @media (max-width: 480px) {
-  .sectionTitle { font-size: clamp(22px, 6vw, 30px); }
+  .introTitle { font-size: clamp(22px, 6vw, 30px); }
   .rowGrid > .vid { min-width: 200px; }
   .vidTitle { font-size: 12px; }
   .rowTagline { display: none; }
+  .chipCount { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vidImg,
   .vidPlay,
-  .rowAll {
+  .rowAll,
+  .introAll {
     transition: none !important;
   }
 }

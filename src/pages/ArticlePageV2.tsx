@@ -1161,22 +1161,30 @@ export default function ArticlePageV2() {
         </div>
       </section>
 
-      {/* ═══ Scroll to top ═══ */}
-      <div className={s.scrollTopSection}>
-        <button
-          className={s.scrollTopBtn}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
+      {/* ═══ Colophon ═══ */}
+      <div className={s.colophon}>
+        <div className={s.colophonInner}>
+          <div className={s.colophonLeft}>
+            <svg className={s.colophonMark} viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" strokeWidth="6" />
+              <circle cx="50" cy="50" r="8" fill="currentColor" />
+            </svg>
+            <p className={s.colophonQuote}>
+              <em>&laquo;&nbsp;Ce qui compte, ce n&rsquo;est pas d&rsquo;avoir toutes les r&eacute;ponses.
+              C&rsquo;est de poser les bonnes questions.&nbsp;&raquo;</em>
+            </p>
+            <span className={s.colophonAttr}>&mdash; Origines Media, depuis 2024</span>
+          </div>
+          <button
+            className={s.colophonUp}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Remonter en haut"
           >
-            <path d="M18 15l-6-6-6 6" />
-          </svg>
-          Retour en haut
-        </button>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <Footer2 />

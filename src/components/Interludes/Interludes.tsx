@@ -160,10 +160,17 @@ export function Interlude2() {
             <span>Fondateur d&rsquo;Origines</span>
           </span>
         </div>
-        <a href="/lettre/42" className={s.halfCta}>
-          Lire la lettre en entier
-          <span aria-hidden="true">&rarr;</span>
-        </a>
+        <div className={s.halfCtaGroup}>
+          <a href="/lettre/42" className={s.halfCta}>
+            Lire la lettre
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+          <span className={s.halfCtaSep} aria-hidden="true" />
+          <a href="/lettres" className={s.halfCta}>
+            Toutes les lettres
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
       </div>
 
       <div className={s.separator} aria-hidden="true" />
@@ -189,10 +196,17 @@ export function Interlude2() {
           <span className={s.recoMetaSep}>&middot;</span>
           <span>2023</span>
         </div>
-        <a href="/recommandations/film-perfect-days" className={s.halfCta}>
-          Lire notre critique
-          <span aria-hidden="true">&rarr;</span>
-        </a>
+        <div className={s.halfCtaGroup}>
+          <a href="/recommandations/film-perfect-days" className={s.halfCta}>
+            Lire notre critique
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+          <span className={s.halfCtaSep} aria-hidden="true" />
+          <a href="/recommandations" className={s.halfCta}>
+            Toutes les recos
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
       </div>
     </div>
   );

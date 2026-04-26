@@ -1,0 +1,127 @@
+.edito {
+  padding: 80px 0 72px;
+  border-top: 1px solid rgba(10, 10, 10, 0.08);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.text {
+  max-width: 600px;
+}
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(10, 10, 10, 0.35);
+  margin: 0 0 24px;
+}
+
+.statement {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(28px, 3.2vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.statement em {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(10, 10, 10, 0.55);
+}
+
+.coda {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgba(10, 10, 10, 0.5);
+  margin: 24px 0 0;
+}
+
+.coda strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.visual {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.imageWrap {
+  position: relative;
+  max-width: 620px;
+  width: 100%;
+}
+
+/* Halo sombre derrière pour donner du contraste au glass */
+.imageWrap::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(10, 10, 10, 0.25) 0%,
+    rgba(10, 10, 10, 0.1) 50%,
+    transparent 75%
+  );
+  border-radius: 16px;
+  z-index: -1;
+}
+
+/* Cadre glassmorphism */
+.imageWrap::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  box-shadow:
+    0 12px 40px rgba(10, 10, 10, 0.15),
+    0 2px 8px rgba(10, 10, 10, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  z-index: 0;
+}
+
+.image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+}
+
+@media (max-width: 880px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .visual { justify-content: flex-start; }
+  .imageWrap { max-width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .edito { padding: 56px 0 48px; }
+  .statement { font-size: 24px; }
+  .coda { font-size: 15px; }
+}
+
+@media (max-width: 480px) {
+  .edito { padding: 40px 0 36px; }
+  .statement { font-size: 22px; }
+}

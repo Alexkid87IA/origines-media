@@ -5,6 +5,68 @@ import styles from "./SiteHeader.module.css";
 
 const COMING_SOON_SECTIONS = new Set<string>();
 
+type MegaTarget = "galaxie" | "univers" | null;
+
+const GALAXIE = [
+  {
+    id: "media",
+    name: "Média",
+    tagline: "Articles, récits, immersions et témoignages.",
+    color: "#6D28D9",
+    href: "/media",
+    items: [
+      { label: "Articles", href: "/articles" },
+      { label: "Réflexions", href: "/reflexions" },
+      { label: "Témoignages", href: "/temoignages" },
+      { label: "Portraits", href: "/portraits" },
+      { label: "Dossiers", href: "/dossiers" },
+      { label: "Newsletter", href: "/newsletter" },
+      { label: "Recommandations", href: "/recommandations" },
+    ],
+  },
+  {
+    id: "prod",
+    name: "Prod",
+    tagline: "Reportages, documentaires et formats courts.",
+    color: "#C2410C",
+    href: "/programmes",
+    items: [
+      { label: "Reportages", href: "/videos?format=reportages" },
+      { label: "Documentaires", href: "/videos?format=documentaires" },
+      { label: "Interviews", href: "/videos?format=interviews" },
+      { label: "Shorts", href: "/videos?format=shorts" },
+      { label: "Programmes", href: "/programmes" },
+    ],
+  },
+  {
+    id: "ateliers",
+    name: "Ateliers",
+    tagline: "Masterclass, ateliers et programmes.",
+    color: "#059669",
+    href: "/guides",
+    items: [
+      { label: "Masterclass", href: "/guides/masterclass" },
+      { label: "Ateliers", href: "/guides/ateliers" },
+      { label: "Programmes", href: "/guides/programmes" },
+      { label: "Kits gratuits", href: "/guides/kits-gratuits" },
+    ],
+  },
+  {
+    id: "boutique",
+    name: "Boutique",
+    tagline: "E-books, workbooks, audio et carnets.",
+    color: "#E11D48",
+    href: "/boutique",
+    items: [
+      { label: "E-books", href: "/boutique?cat=ebooks" },
+      { label: "Workbooks", href: "/boutique?cat=workbooks" },
+      { label: "Audio", href: "/boutique?cat=audio" },
+      { label: "Carnets", href: "/boutique?cat=carnets" },
+      { label: "Coffrets", href: "/boutique?cat=coffrets" },
+    ],
+  },
+];
+
 interface DropdownItem {
   href: string;
   label: string;
@@ -18,6 +80,7 @@ interface SecondaryNav {
   hoverColor: string;
   dropdownLabel: string;
   allLabel: string;
+  allHref?: string;
   items: DropdownItem[];
   secondaryLabel?: string;
   secondaryItems?: DropdownItem[];
@@ -25,12 +88,13 @@ interface SecondaryNav {
 
 const SECONDARY: SecondaryNav[] = [
   {
-    href: "/articles",
-    label: "Articles",
+    href: "/media",
+    label: "La Rédac",
     num: "01",
     hoverColor: "#7B5CD6",
     dropdownLabel: "Par univers",
     allLabel: "Tous les articles",
+    allHref: "/articles",
     items: [
       { href: "/articles?univers=esprit", label: "L'Esprit", color: "#7B5CD6" },
       { href: "/articles?univers=corps", label: "Le Corps", color: "#5AA352" },
@@ -40,20 +104,19 @@ const SECONDARY: SecondaryNav[] = [
     ],
     secondaryLabel: "Par type",
     secondaryItems: [
-      { href: "/comprendre", label: "Comprendre", color: "#7B5CD6" },
-      { href: "/reflexions", label: "Réflexions", color: "#D64C90" },
-      { href: "/temoignages", label: "Témoignages", color: "#E67839" },
+      { href: "/media", label: "Articles", color: "#7B5CD6" },
       { href: "/dossiers", label: "Dossiers", color: "#2E9B74" },
-      { href: "/portraits", label: "Portraits", color: "#2E94B5" },
+      { href: "/temoignages", label: "Témoignages", color: "#E67839" },
     ],
   },
   {
-    href: "/videos",
-    label: "Vidéos",
+    href: "/programmes",
+    label: "Programmes",
     num: "02",
-    hoverColor: "#2E94B5",
+    hoverColor: "#E67839",
     dropdownLabel: "Par format",
     allLabel: "Toutes les vidéos",
+    allHref: "/videos",
     items: [
       { href: "/videos?format=reportages", label: "Reportages", color: "#2E94B5" },
       { href: "/videos?format=documentaires", label: "Documentaires", color: "#7B5CD6" },
@@ -70,7 +133,7 @@ const SECONDARY: SecondaryNav[] = [
     href: "/guides",
     label: "Guides",
     num: "03",
-    hoverColor: "#E67839",
+    hoverColor: "#2E94B5",
     dropdownLabel: "Nos programmes",
     allLabel: "Tous les guides",
     items: [
@@ -122,7 +185,7 @@ const POPULAR_SEARCHES = [
 
 export default function SiteHeader() {
   const scrolled = useScrolled();
-  const [megaOpen, setMegaOpen] = useState(false);
+  const [megaTarget, setMegaTarget] = useState<MegaTarget>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [comingSoon, setComingSoon] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
@@ -135,19 +198,19 @@ export default function SiteHeader() {
     return () => clearTimeout(t);
   }, [comingSoon]);
 
-  const openMega = useCallback(() => {
+  const openMega = useCallback((target: MegaTarget) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    setMegaOpen(true);
+    setMegaTarget(target);
   }, []);
 
   const closeMega = useCallback(() => {
-    closeTimer.current = setTimeout(() => setMegaOpen(false), 150);
+    closeTimer.current = setTimeout(() => setMegaTarget(null), 150);
   }, []);
 
   const toggleSearch = useCallback(() => {
     setSearchOpen((o) => {
       if (!o) {
-        setMegaOpen(false);
+        setMegaTarget(null);
         requestAnimationFrame(() => searchRef.current?.focus());
       }
       return !o;
@@ -185,14 +248,53 @@ export default function SiteHeader() {
           <nav className={styles.nav} aria-label="Navigation principale">
             <div
               className={styles.megaTrigger}
-              onMouseEnter={openMega}
+              onMouseEnter={() => openMega("galaxie")}
               onMouseLeave={closeMega}
             >
               <button
                 type="button"
-                className={`${styles.megaBtn}${megaOpen ? ` ${styles.megaBtnActive}` : ""}`}
-                onClick={() => setMegaOpen((o) => !o)}
-                aria-expanded={megaOpen}
+                className={`${styles.megaBtn}${megaTarget === "galaxie" ? ` ${styles.megaBtnActive}` : ""}`}
+                onClick={() => setMegaTarget((t) => t === "galaxie" ? null : "galaxie")}
+                aria-expanded={megaTarget === "galaxie"}
+                aria-controls="mega-galaxie"
+              >
+                <svg
+                  className={styles.megaIcon}
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  aria-hidden="true"
+                >
+                  <circle cx="8" cy="8" r="6" />
+                  <ellipse cx="8" cy="8" rx="6" ry="2.5" />
+                  <ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)" />
+                  <ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(120 8 8)" />
+                </svg>
+                Galaxie
+                <svg
+                  className={`${styles.megaChevron}${megaTarget === "galaxie" ? ` ${styles.megaChevronOpen}` : ""}`}
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <path d="M4 6l4 4 4-4" />
+                </svg>
+              </button>
+            </div>
+
+            <div
+              className={styles.megaTrigger}
+              onMouseEnter={() => openMega("univers")}
+              onMouseLeave={closeMega}
+            >
+              <button
+                type="button"
+                className={`${styles.megaBtn}${megaTarget === "univers" ? ` ${styles.megaBtnActive}` : ""}`}
+                onClick={() => setMegaTarget((t) => t === "univers" ? null : "univers")}
+                aria-expanded={megaTarget === "univers"}
                 aria-controls="mega-univers"
               >
                 <svg
@@ -208,7 +310,7 @@ export default function SiteHeader() {
                 </svg>
                 Univers
                 <svg
-                  className={`${styles.megaChevron}${megaOpen ? ` ${styles.megaChevronOpen}` : ""}`}
+                  className={`${styles.megaChevron}${megaTarget === "univers" ? ` ${styles.megaChevronOpen}` : ""}`}
                   viewBox="0 0 16 16"
                   fill="none"
                   stroke="currentColor"
@@ -270,7 +372,7 @@ export default function SiteHeader() {
                           ))}
                         </>
                       )}
-                      <a href={section.href} className={styles.navDropdownAll}>
+                      <a href={section.allHref || section.href} className={styles.navDropdownAll}>
                         {section.allLabel}
                       </a>
                     </div>
@@ -380,21 +482,81 @@ export default function SiteHeader() {
       </div>
 
       <div
-        id="mega-univers"
-        className={`${styles.mega}${megaOpen ? ` ${styles.megaOpen}` : ""}`}
-        onMouseEnter={openMega}
+        id="mega-galaxie"
+        className={`${styles.mega}${megaTarget === "galaxie" ? ` ${styles.megaOpen}` : ""}`}
+        onMouseEnter={() => openMega("galaxie")}
         onMouseLeave={closeMega}
-        aria-hidden={!megaOpen}
+        aria-hidden={megaTarget !== "galaxie"}
       >
         <div className="v2-container">
+          <div className={styles.megaHeader}>
+            <span className={styles.megaHeaderLabel}>La Galaxie Origines</span>
+            <span className={styles.megaHeaderHint}>Nos 4 piliers</span>
+          </div>
+          <div className={styles.megaGrid4}>
+            {GALAXIE.map((p, i) => (
+              <div
+                key={p.id}
+                className={styles.megaCol}
+                style={{ "--col-color": p.color } as React.CSSProperties}
+              >
+                <div className={styles.megaColAccent} aria-hidden="true" />
+                <span className={styles.megaNum} aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <a href={p.href} className={styles.megaTitle}>
+                  <span
+                    className={styles.megaDot}
+                    style={{ background: p.color }}
+                    aria-hidden="true"
+                  />
+                  {p.name}
+                </a>
+                <p className={styles.megaTagline}>{p.tagline}</p>
+                <div className={styles.megaLinks}>
+                  {p.items.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className={styles.megaLink}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+                <a href={p.href} className={styles.megaAll}>
+                  Explorer {p.name.toLowerCase()}
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="mega-univers"
+        className={`${styles.mega}${megaTarget === "univers" ? ` ${styles.megaOpen}` : ""}`}
+        onMouseEnter={() => openMega("univers")}
+        onMouseLeave={closeMega}
+        aria-hidden={megaTarget !== "univers"}
+      >
+        <div className="v2-container">
+          <div className={styles.megaHeader}>
+            <span className={styles.megaHeaderLabel}>Les 5 Univers</span>
+            <span className={styles.megaHeaderHint}>Explorer par thème</span>
+          </div>
           <div className={styles.megaGrid}>
-            {UNIVERS.map((u) => (
+            {UNIVERS.map((u, i) => (
               <div
                 key={u.id}
                 className={styles.megaCol}
                 style={{ "--col-color": u.color } as React.CSSProperties}
               >
                 <div className={styles.megaColAccent} aria-hidden="true" />
+                <span className={styles.megaNum} aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <a href={`/${u.id}`} className={styles.megaTitle}>
                   <span
                     className={styles.megaDot}
@@ -468,7 +630,7 @@ export default function SiteHeader() {
               <a href="/articles" className={styles.searchQuickLink}>
                 Derniers articles <span aria-hidden="true">&rarr;</span>
               </a>
-              <a href="/videos" className={styles.searchQuickLink}>
+              <a href="/programmes" className={styles.searchQuickLink}>
                 Derni&egrave;res vid&eacute;os <span aria-hidden="true">&rarr;</span>
               </a>
             </div>

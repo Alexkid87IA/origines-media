@@ -956,12 +956,12 @@ export const createPortableTextComponentsV2 = ({
                 <div>
                   <p className={s.takeawaysItemTitle}>
                     {typeof itemTitle === "string"
-                      ? itemTitle
+                      ? parseInlineMarkdown(itemTitle)
                       : extractText(itemTitle)}
                   </p>
                   <div className={s.takeawaysItemText}>
                     {typeof itemContent === "string" ? (
-                      <p>{itemContent}</p>
+                      <p>{parseInlineMarkdown(itemContent)}</p>
                     ) : Array.isArray(itemContent) ? (
                       <PortableText value={itemContent} />
                     ) : (
@@ -992,7 +992,7 @@ export const createPortableTextComponentsV2 = ({
                 <span className={s.takeawaysItemIcon}>
                   {getIconSvg(itemIcon)}
                 </span>
-                <span className={s.takeawaysItemText}>{itemContent}</span>
+                <span className={s.takeawaysItemText}>{parseInlineMarkdown(itemContent)}</span>
               </li>
             );
           }
@@ -1005,7 +1005,7 @@ export const createPortableTextComponentsV2 = ({
                 <span className={s.takeawaysItemIcon}>
                   {getIconSvg(itemIcon)}
                 </span>
-                <span className={s.takeawaysItemText}>{text}</span>
+                <span className={s.takeawaysItemText}>{parseInlineMarkdown(text)}</span>
               </li>
             );
           }
