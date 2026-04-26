@@ -2,43 +2,43 @@ import { useState } from "react";
 import { UNIVERS, type UniversId } from "@/data/univers";
 import s from "./Footer2.module.css";
 
-/* ---- Social SVG icons ---- */
+/* ---- Social SVG icons (same as SiteHeader) ---- */
+
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" />
+    <circle cx="12" cy="12" r="5" />
+    <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+  </svg>
+);
 
 const YouTubeIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1C4.5 20.5 12 20.5 12 20.5s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" />
-  </svg>
-);
-
-const XIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M18.9 2h3.3l-7.2 8.2L23.7 22h-6.6l-5.2-6.8L5.9 22H2.6l7.7-8.8L2 2h6.8l4.7 6.2L18.9 2Zm-1.2 18h1.8L6.4 4H4.5l13.2 16Z" />
-  </svg>
-);
-
-const InstagramIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-    <rect x="3" y="3" width="18" height="18" rx="5" />
-    <circle cx="12" cy="12" r="4" />
-    <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" />
+    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.9 31.9 0 0 0 0 12a31.9 31.9 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.5 15.6V8.4l6.3 3.6-6.3 3.6Z" />
   </svg>
 );
 
 const TikTokIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M20 8.3a7.3 7.3 0 0 1-4.3-1.4V16a6 6 0 1 1-6-6h1v3.3A2.7 2.7 0 1 0 12.7 16V2h3a4.3 4.3 0 0 0 4.3 4.3v2Z" />
-  </svg>
-);
-
-const FacebookIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5h1.7V4.6a22 22 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2.2H7.4V14h2.7v8h3.4Z" />
+    <path d="M19.3 7.1A4.5 4.5 0 0 1 16 5.6V2h-3.5v13.5a3 3 0 1 1-2-2.8V9a6.5 6.5 0 1 0 5.5 6.4V9.9a8 8 0 0 0 4.5 1.4V7.8a4.5 4.5 0 0 1-1.2-.7Z" />
   </svg>
 );
 
 const LinkedInIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z" />
+    <path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5v-9h3v9ZM6.5 8.5A1.75 1.75 0 1 1 8.3 6.8 1.75 1.75 0 0 1 6.5 8.5ZM20 19h-3v-4.7c0-1.1 0-2.6-1.6-2.6S13.5 13 13.5 14.2V19h-3v-9h2.9v1.2h0a3.2 3.2 0 0 1 2.8-1.5c3 0 3.6 2 3.6 4.5V19Z" />
+  </svg>
+);
+
+const XIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M18.2 2.3h3.5l-7.7 8.8L23 21.7h-7.1l-5.5-7.2-6.3 7.2H.6l8.2-9.4L.3 2.3h7.3l5 6.6 5.6-6.6Zm-1.2 17.5h1.9L7.1 4.2H5l12 15.6Z" />
+  </svg>
+);
+
+const SnapchatIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12.2 2c2.4 0 4.1 1.3 4.7 3.6.2.7.2 1.7.1 2.8l-.1.9c.4.2.9.3 1.3.2.5-.1 1 .2 1.1.6.1.5-.1.9-.5 1.1-.3.1-.6.2-1 .3-.3.1-.7.2-.9.3-.1.1-.2.2-.1.4.4 1.4 1.3 2.4 2.5 3.1.3.2.7.3 1 .4.4.1.7.5.6.9-.1.5-.6.8-1.2.9-.5.1-1 .2-1.5.4-.2.1-.3.2-.4.5-.1.3-.2.6-.5.9-.3.4-.8.5-1.3.4-.5-.1-1-.2-1.6-.1-.7.1-1.3.5-2 1-.8.6-1.5.9-2.2.9s-1.4-.3-2.2-.9c-.7-.5-1.3-.9-2-1-.6-.1-1.1 0-1.6.1-.5.1-1 0-1.3-.4-.2-.3-.4-.6-.5-.9-.1-.2-.2-.4-.4-.5-.5-.2-1-.3-1.5-.4-.6-.1-1.1-.4-1.2-.9-.1-.4.2-.8.6-.9.3-.1.7-.2 1-.4 1.2-.7 2.1-1.7 2.5-3.1.1-.2 0-.3-.1-.4-.2-.1-.6-.2-.9-.3-.4-.1-.7-.2-1-.3-.4-.2-.6-.6-.5-1.1.1-.4.6-.7 1.1-.6.4.1.9 0 1.3-.2l-.1-.9c-.1-1.1-.1-2.1.1-2.8C7.9 3.3 9.6 2 12 2h.2Z" />
   </svg>
 );
 
@@ -53,12 +53,12 @@ const LEGAL_LINKS = [
 ];
 
 const SOCIAL_LINKS = [
+  { href: "https://instagram.com/origines.media", label: "Instagram", icon: <InstagramIcon /> },
   { href: "https://youtube.com/@originesmedia", label: "YouTube", icon: <YouTubeIcon /> },
+  { href: "https://tiktok.com/@origines.media", label: "TikTok", icon: <TikTokIcon /> },
+  { href: "https://linkedin.com/company/origines-media", label: "LinkedIn", icon: <LinkedInIcon /> },
   { href: "https://x.com/originesmedia", label: "X", icon: <XIcon /> },
-  { href: "https://instagram.com/originesmedia", label: "Instagram", icon: <InstagramIcon /> },
-  { href: "https://tiktok.com/@originesmedia", label: "TikTok", icon: <TikTokIcon /> },
-  { href: "https://facebook.com/originesmedia", label: "Facebook", icon: <FacebookIcon /> },
-  { href: "https://linkedin.com/company/originesmedia", label: "LinkedIn", icon: <LinkedInIcon /> },
+  { href: "https://snapchat.com/add/originesmedia", label: "Snapchat", icon: <SnapchatIcon /> },
 ];
 
 /* ---- Explorez tab data ---- */

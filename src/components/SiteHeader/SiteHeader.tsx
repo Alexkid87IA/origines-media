@@ -3,6 +3,7 @@ import { useScrolled } from "@/hooks/useScrollDirection";
 import { useAuth } from "@/contexts/AuthContext";
 import { UNIVERS } from "@/data/univers";
 import { sanityFetch } from "@/lib/sanity";
+import { sanityImg } from "@/lib/sanityImage";
 import styles from "./SiteHeader.module.css";
 
 interface SearchResult {
@@ -742,7 +743,7 @@ export default function SiteHeader() {
                     >
                       {r.imageUrl && (
                         <img
-                          src={r.imageUrl}
+                          src={sanityImg(r.imageUrl, 160)}
                           alt={r.title}
                           className={styles.searchResultImg}
                           loading="lazy"
@@ -917,6 +918,9 @@ export default function SiteHeader() {
                 </a>
                 <a href="https://x.com/originesmedia" target="_blank" rel="noopener noreferrer" aria-label="X" className={styles.mobileSocialLink}>
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2.3h3.5l-7.7 8.8L23 21.7h-7.1l-5.5-7.2-6.3 7.2H.6l8.2-9.4L.3 2.3h7.3l5 6.6 5.6-6.6Zm-1.2 17.5h1.9L7.1 4.2H5l12 15.6Z" /></svg>
+                </a>
+                <a href="https://snapchat.com/add/originesmedia" target="_blank" rel="noopener noreferrer" aria-label="Snapchat" className={styles.mobileSocialLink}>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.2 2c2.4 0 4.1 1.3 4.7 3.6.2.7.2 1.7.1 2.8l-.1.9c.4.2.9.3 1.3.2.5-.1 1 .2 1.1.6.1.5-.1.9-.5 1.1-.3.1-.6.2-1 .3-.3.1-.7.2-.9.3-.1.1-.2.2-.1.4.4 1.4 1.3 2.4 2.5 3.1.3.2.7.3 1 .4.4.1.7.5.6.9-.1.5-.6.8-1.2.9-.5.1-1 .2-1.5.4-.2.1-.3.2-.4.5-.1.3-.2.6-.5.9-.3.4-.8.5-1.3.4-.5-.1-1-.2-1.6-.1-.7.1-1.3.5-2 1-.8.6-1.5.9-2.2.9s-1.4-.3-2.2-.9c-.7-.5-1.3-.9-2-1-.6-.1-1.1 0-1.6.1-.5.1-1 0-1.3-.4-.2-.3-.4-.6-.5-.9-.1-.2-.2-.4-.4-.5-.5-.2-1-.3-1.5-.4-.6-.1-1.1-.4-1.2-.9-.1-.4.2-.8.6-.9.3-.1.7-.2 1-.4 1.2-.7 2.1-1.7 2.5-3.1.1-.2 0-.3-.1-.4-.2-.1-.6-.2-.9-.3-.4-.1-.7-.2-1-.3-.4-.2-.6-.6-.5-1.1.1-.4.6-.7 1.1-.6.4.1.9 0 1.3-.2l-.1-.9c-.1-1.1-.1-2.1.1-2.8C7.9 3.3 9.6 2 12 2h.2Z" /></svg>
                 </a>
               </div>
             </div>
