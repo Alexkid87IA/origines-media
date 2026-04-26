@@ -225,17 +225,17 @@ const typeIcons: Record<string, React.FC> = {
   "reseaux-sociaux": GlobeSvg,
 };
 
-const recommendationTypes: Record<string, { color: string; label: string; ctaLabel: string }> = {
-  livre: { color: "#EC4899", label: "Livres", ctaLabel: "Decouvrir le livre" },
-  film: { color: "#8B5CF6", label: "Films & Series", ctaLabel: "Voir la bande-annonce" },
-  musique: { color: "#6366F1", label: "Musique", ctaLabel: "Ecouter" },
-  podcast: { color: "#14B8A6", label: "Podcasts", ctaLabel: "Ecouter le podcast" },
-  youtube: { color: "#EF4444", label: "YouTube", ctaLabel: "Voir la chaine" },
-  activite: { color: "#10B981", label: "Activite", ctaLabel: "En savoir plus" },
-  destination: { color: "#0EA5E9", label: "Destination", ctaLabel: "Explorer" },
-  culture: { color: "#A855F7", label: "Culture", ctaLabel: "Decouvrir" },
-  produit: { color: "#F59E0B", label: "Produits", ctaLabel: "Voir le produit" },
-  "reseaux-sociaux": { color: "#E11D48", label: "Reseaux sociaux", ctaLabel: "Voir le compte" },
+const recommendationTypes: Record<string, { color: string; label: string; ctaLabel: string; slug: string }> = {
+  livre: { color: "#EC4899", label: "Livres", ctaLabel: "Decouvrir le livre", slug: "livres" },
+  film: { color: "#8B5CF6", label: "Films & Series", ctaLabel: "Voir la bande-annonce", slug: "films-series" },
+  musique: { color: "#6366F1", label: "Musique", ctaLabel: "Ecouter", slug: "musique" },
+  podcast: { color: "#14B8A6", label: "Podcasts", ctaLabel: "Ecouter le podcast", slug: "podcasts" },
+  youtube: { color: "#EF4444", label: "YouTube", ctaLabel: "Voir la chaine", slug: "youtube" },
+  activite: { color: "#10B981", label: "Activite", ctaLabel: "En savoir plus", slug: "activite" },
+  destination: { color: "#0EA5E9", label: "Destination", ctaLabel: "Explorer", slug: "destination" },
+  culture: { color: "#A855F7", label: "Culture", ctaLabel: "Decouvrir", slug: "culture" },
+  produit: { color: "#F59E0B", label: "Produits", ctaLabel: "Voir le produit", slug: "produit" },
+  "reseaux-sociaux": { color: "#E11D48", label: "Reseaux sociaux", ctaLabel: "Voir le compte", slug: "reseaux-sociaux" },
 };
 
 type RecoType = keyof typeof recommendationTypes;
@@ -585,13 +585,14 @@ export default function RecommandationPage() {
             <div className={s.heroContent}>
               {/* Badges */}
               <div className={s.heroBadges}>
-                <span
+                <Link
+                  to={`/recommandations/${typeConfig.slug}`}
                   className={s.heroTypeBadge}
                   style={{ backgroundColor: typeConfig.color }}
                 >
                   <TypeIcon />
                   {typeConfig.label}
-                </span>
+                </Link>
                 {reco.coupDeCoeur && (
                   <span className={s.heroCoupDeCoeur}>
                     <HeartSvg />

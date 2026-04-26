@@ -25,6 +25,21 @@ function RedirectToRecommandation() {
   return <Navigate to={`/recommandations/${slug}`} replace />;
 }
 
+const RecommandationTypePage = lazy(() => import('./pages/RecommandationTypePage'));
+
+const RECO_TYPE_KEYS = new Set([
+  "livres", "films-series", "musique", "podcasts", "youtube",
+  "reseaux-sociaux", "activite", "destination", "culture", "produit",
+]);
+
+function RecommandationResolver() {
+  const { slug } = useParams();
+  if (slug && RECO_TYPE_KEYS.has(slug)) {
+    return <RecommandationTypePage />;
+  }
+  return <RecommandationPage />;
+}
+
 // Lazy loading des pages
 const HomePage = lazy(() => import('./pages/HomePageV2'));
 const UniversPage = lazy(() => import('./pages/UniversPage'));
@@ -121,7 +136,7 @@ function App() {
         <Route path="/racontez-votre-histoire" element={<ShareStoryPage />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
         <Route path="/recommandation/:slug" element={<RedirectToRecommandation />} />
-        <Route path="/recommandations/:slug" element={<RecommandationPage />} />
+        <Route path="/recommandations/:slug" element={<RecommandationResolver />} />
         <Route path="/boutique" element={<BoutiquePage />} />
         <Route path="/boutique/:guideSlug" element={<BoutiquePage />} />
         <Route path="/academie" element={<Navigate to="/boutique" replace />} />
