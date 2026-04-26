@@ -5,7 +5,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
-import { smartExcerpt } from "@/lib/typography";
+import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./ArticlesPageV2.module.css";
@@ -602,12 +602,15 @@ export default function ArticlesPageV2() {
                                   <span className={s.cardCategory} style={{ color: uData.color }}>
                                     {categoryLabel}
                                   </span>
-                                  {article.tempsLecture && (
-                                    <>
-                                      <span className={s.cardSep}>&middot;</span>
-                                      <span className={s.cardTime}>{article.tempsLecture} min</span>
-                                    </>
-                                  )}
+                                  {(() => {
+                                    const rt = estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture;
+                                    return rt ? (
+                                      <>
+                                        <span className={s.cardSep}>&middot;</span>
+                                        <span className={s.cardTime}>{rt} min</span>
+                                      </>
+                                    ) : null;
+                                  })()}
                                 </div>
                                 <h3 className={s.cardTitle}>{article.titre}</h3>
                                 <p className={s.cardExcerpt}>{getExtrait(article)}</p>

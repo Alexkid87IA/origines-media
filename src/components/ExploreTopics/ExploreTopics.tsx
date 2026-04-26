@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_EXPLORE_QUERY } from "@/lib/queries";
-import { smartExcerpt } from "@/lib/typography";
+import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { sanityImg } from "@/lib/sanityImage";
 import { verticaleToUnivers } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
@@ -116,7 +116,7 @@ function buildArticleItem(a: SanityExploreArticle): ArticleItem {
     headlineSuffix: ".",
     excerpt: smartExcerpt(excerpt || a.contenuTexte || "", 160),
     author: a.authorName || "Rédaction Origines",
-    readTime: a.tempsLecture ? `${a.tempsLecture} min` : "",
+    readTime: `${estimateReadingTimeFromText(a.contenuTexte) || a.tempsLecture || 5} min`,
     isVideo,
     category: u.name,
   };

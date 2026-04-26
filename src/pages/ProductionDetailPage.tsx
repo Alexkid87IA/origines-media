@@ -576,7 +576,7 @@ export default function ProductionDetailPage() {
 
   if (!production) return null;
 
-  const readTime = production.tempsLecture || production.duree || estimateReadingTime(production.contenu || production.body);
+  const readTime = estimateReadingTime(production.contenu || production.body) || production.tempsLecture || production.duree || 1;
   const tags = production.tags || [];
 
   return (

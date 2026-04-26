@@ -3,6 +3,7 @@ import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import EmailCapture from "@/components/EmailCapture";
+import { estimateReadingTimeFromText } from "@/lib/typography";
 import s from "./ComprendreArticlePage.module.css";
 
 const MOCK = {
@@ -12,7 +13,10 @@ const MOCK = {
   chapeau: "Changer d'habitude, c'est aller contre des millions d'années d'évolution. Voici ce que la neuroscience dit — et ce qu'on peut faire.",
   author: "Émilie Roux",
   date: "22 avril 2026",
-  readTime: "14 min",
+  get readTime() {
+    const allText = this.chapeau + " " + this.sections.map((sec: any) => sec.content).join(" ");
+    return `${estimateReadingTimeFromText(allText)} min`;
+  },
   univers: "L'Esprit",
   universColor: "#7B5CD6",
   keyTakeaways: [

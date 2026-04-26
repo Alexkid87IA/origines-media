@@ -18,7 +18,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { MEDIA_HERO_SLIDES_QUERY, V2_FEED_QUERY, V2_RECOS_QUERY } from "@/lib/queries";
 import { UNIVERS_MAP, type UniversId, verticaleToUnivers, getUniversColor, getUniversDark } from "@/data/univers";
-import { smartExcerpt } from "@/lib/typography";
+import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 
 interface SanityFeedArticle {
   _id: string;
@@ -105,7 +105,7 @@ function sanityToSlide(a: SanitySlide, index: number): Slide {
     title: a.titre,
     deck,
     author: a.authorName || "Rédaction Origines",
-    readTime: a.tempsLecture ? `Lecture ${a.tempsLecture} min` : "Lecture 5 min",
+    readTime: `Lecture ${estimateReadingTimeFromText(a.contenuTexte) || a.tempsLecture || 5} min`,
     href: `/article/${a.slug || ""}`,
     caption: a.authorName ? `Par ${a.authorName} pour Origines` : "Rédaction Origines",
     image: a.imageUrl || "/placeholder.svg",
@@ -163,7 +163,7 @@ function sanityToFeedItem(a: SanityFeedArticle, idx: number): CMSFeedItem {
     headlineSuffix: ".",
     excerpt: smartExcerpt(excerpt, 200),
     author: a.authorName || "Origines",
-    readTime: isVideo ? (a.duree || "Vidéo") : (a.tempsLecture ? `${a.tempsLecture} min` : ""),
+    readTime: isVideo ? (a.duree || "Vidéo") : `${estimateReadingTimeFromText(a.contenuTexte) || a.tempsLecture || 5} min`,
     isVideo,
     schemaType: isVideo ? "VideoObject" : "Article",
     catColor: color,

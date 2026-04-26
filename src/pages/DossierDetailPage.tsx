@@ -5,7 +5,7 @@ import Footer2 from "@/components/Footer2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_DOSSIER_DETAIL_QUERY } from "@/lib/queries";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
-import { smartExcerpt } from "@/lib/typography";
+import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import s from "./DossierDetailPage.module.css";
 
 interface SanityArticle {
@@ -150,8 +150,8 @@ export default function DossierDetailPage() {
                           aria-hidden="true"
                         />
                         {au.name}
-                        {article.tempsLecture && (
-                          <> &middot; {article.tempsLecture} min</>
+                        {(estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture) && (
+                          <> &middot; {estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture} min</>
                         )}
                       </span>
                       <h2 className={s.articleTitle}>{article.titre}</h2>

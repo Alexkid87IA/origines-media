@@ -3,6 +3,7 @@ import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import EmailCapture from "@/components/EmailCapture";
+import { estimateReadingTimeFromText } from "@/lib/typography";
 import s from "./ReflexionsArticlePage.module.css";
 
 const MOCK = {
@@ -12,7 +13,10 @@ const MOCK = {
   author: "Mathilde Aubry",
   authorBio: "Essayiste, autrice de Disparitions douces (Gallimard, 2025). Elle écrit sur ce qui disparaît sans bruit.",
   date: "20 avril 2026",
-  readTime: "18 min",
+  get readTime() {
+    const allText = this.chapeau + " " + this.authorNote + " " + this.paragraphs.join(" ");
+    return `${estimateReadingTimeFromText(allText)} min`;
+  },
   pullQuote: "Le bruit n'est pas le contraire du silence. Le bruit, c'est ce qui arrive quand on a oublié que le silence existait.",
   authorNote: "Ce texte est né d'une semaine passée dans un monastère des Cévennes. Pas pour trouver Dieu — pour trouver le calme. J'y suis restée cinq jours. Le sixième, je suis repartie. Mais quelque chose avait changé.",
   paragraphs: [

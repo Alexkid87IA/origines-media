@@ -335,7 +335,7 @@ export default function VideoPage() {
   const description = article.description || article.excerpt || "";
   const imageUrl = article.imageUrl || article.mainImage || "";
   const date = article.datePublication || article.publishedAt;
-  const readTime = article.tempsLecture || article.readTime || estimateReadingTime(article.contenu || article.body);
+  const readTime = estimateReadingTime(article.contenu || article.body) || article.tempsLecture || article.readTime || 1;
   const rawContent = article.contenu || article.body || [];
   const content = rawContent.filter((block: any, i: number) => {
     if (block._type === "block" && block.style === "h1") {

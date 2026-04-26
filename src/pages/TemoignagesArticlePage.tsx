@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
+import { estimateReadingTimeFromText } from "@/lib/typography";
 import s from "./TemoignagesArticlePage.module.css";
 
 const MOCK = {
@@ -13,7 +14,10 @@ const MOCK = {
   ville: "Lyon",
   isAnonymous: false,
   date: "21 avril 2026",
-  readTime: "12 min",
+  get readTime() {
+    const allText = this.chapeau + " " + this.paragraphs.join(" ");
+    return `${estimateReadingTimeFromText(allText)} min`;
+  },
   paragraphs: [
     "Je ne sais pas pourquoi je l'ai écrite ce soir-là. Il devait être minuit, peut-être une heure. L'appartement était vide — Thomas venait de partir. Pas pour toujours, pas encore. Juste pour la nuit. Il faisait ça de plus en plus souvent.",
     "J'ai pris un carnet. Un vieux Moleskine noir que ma mère m'avait offert pour mes vingt ans. Je ne m'en étais jamais servie — j'avais peur de gâcher les pages. Cette nuit-là, j'avais plus peur du silence que du gâchis.",

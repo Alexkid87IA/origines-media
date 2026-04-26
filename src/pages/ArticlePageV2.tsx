@@ -387,7 +387,7 @@ export default function ArticlePageV2() {
   const description = article.description || article.excerpt || "";
   const imageUrl = article.imageUrl || article.mainImage?.asset?.url || (typeof article.mainImage === "string" ? article.mainImage : "") || "";
   const date = article.datePublication || article.publishedAt;
-  const readTime = article.tempsLecture || article.readTime || estimateReadingTime(article.contenu || article.body);
+  const readTime = estimateReadingTime(article.contenu || article.body) || article.tempsLecture || article.readTime || 1;
   const fullContent = article.contenu || article.body || [];
   const firstParaIndex = fullContent.findIndex(
     (b: any) => b._type === "block" && (b.style === "normal" || !b.style)
@@ -1237,6 +1237,23 @@ export default function ArticlePageV2() {
       {/* ═══ Mobile floating action bar ═══ */}
       <div className={s.mobileBar}>
         <div className={s.mobileBarInner}>
+          {headings.length > 0 && (
+            <button
+              className={s.mobileBarBtn}
+              onClick={() => setShowMobileToc(true)}
+              aria-label="Ouvrir le sommaire"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              >
+                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+              </svg>
+            </button>
+          )}
+
           <button
             onClick={() => setIsLiked(!isLiked)}
             className={isLiked ? s.mobileBarBtnActive : s.mobileBarBtn}
@@ -1288,24 +1305,6 @@ export default function ArticlePageV2() {
           </button>
         </div>
       </div>
-
-      {/* ═══ Mobile TOC button ═══ */}
-      {headings.length > 0 && (
-        <button
-          className={s.mobileTocBtn}
-          onClick={() => setShowMobileToc(true)}
-          aria-label="Ouvrir le sommaire"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-          >
-            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-          </svg>
-        </button>
-      )}
 
       {/* ═══ Mobile TOC modal ═══ */}
       {showMobileToc && (
@@ -1436,7 +1435,9 @@ export default function ArticlePageV2() {
         )}
       </AnimatePresence>
 
-      <ScrollToTopV2 />
+      <div className={s.scrollTopWrap}>
+        <ScrollToTopV2 />
+      </div>
     </div>
   );
 }

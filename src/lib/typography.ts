@@ -45,7 +45,7 @@ export function smartExcerpt(text: string | undefined | null, maxLen = 200): str
 const WORDS_PER_MINUTE = 230;
 
 export function estimateReadingTime(blocks: any[] | undefined | null): number {
-  if (!blocks || !Array.isArray(blocks)) return 1;
+  if (!blocks || !Array.isArray(blocks)) return 0;
   let wordCount = 0;
   for (const block of blocks) {
     if (block._type === "block" && Array.isArray(block.children)) {
@@ -56,5 +56,12 @@ export function estimateReadingTime(blocks: any[] | undefined | null): number {
       }
     }
   }
+  return Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
+}
+
+export function estimateReadingTimeFromText(text: string | undefined | null): number {
+  if (!text) return 0;
+  const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+  if (wordCount === 0) return 0;
   return Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
 }

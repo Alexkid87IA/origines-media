@@ -4,7 +4,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
-import { typo } from "../lib/typography";
+import { typo, estimateReadingTimeFromText } from "../lib/typography";
 import { sanityFetch } from "@/lib/sanity";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { TAG_CATEGORIES, CATEGORY_ORDER, getTagCategory, countStoriesByCategory, filterStoriesByCategory } from "@/lib/tagCategories";
@@ -26,6 +26,7 @@ interface Temoignage {
   slug: string;
   datePublication: string;
   tempsLecture?: number;
+  contenuTexte?: string;
   univpilar?: string;
   category?: string;
   soustopic?: string;
@@ -42,6 +43,7 @@ const QUERY = `
     "slug": slug.current,
     datePublication,
     tempsLecture,
+    "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
     univpilar,
     category,
     soustopic,
@@ -281,7 +283,9 @@ export default function TemoignagesPage() {
                         <p className={s.featuredDeck}>{typo(featured.deck)}</p>
                       )}
                       <div className={s.featuredMeta}>
-                        {featured.tempsLecture && <span>{featured.tempsLecture} min de lecture</span>}
+                        {(estimateReadingTimeFromText(featured.contenuTexte) || featured.tempsLecture) && (
+                          <span>{estimateReadingTimeFromText(featured.contenuTexte) || featured.tempsLecture} min de lecture</span>
+                        )}
                         {featured.datePublication && (
                           <>
                             <span className={s.dot} />
@@ -331,7 +335,9 @@ export default function TemoignagesPage() {
                             <p className={s.cardDeck}>{typo(t.deck)}</p>
                           )}
                           <div className={s.cardMeta}>
-                            {t.tempsLecture && <span>{t.tempsLecture} min</span>}
+                            {(estimateReadingTimeFromText(t.contenuTexte) || t.tempsLecture) && (
+                              <span>{estimateReadingTimeFromText(t.contenuTexte) || t.tempsLecture} min</span>
+                            )}
                             {t.datePublication && (
                               <>
                                 <span className={s.dot} />

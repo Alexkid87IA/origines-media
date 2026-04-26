@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
+import { estimateReadingTimeFromText } from "@/lib/typography";
 import s from "./PortraitsArticlePage.module.css";
 
 const MOCK = {
@@ -12,7 +13,10 @@ const MOCK = {
   image: "/covers/cover-01.webp",
   author: "Camille Dufresne",
   date: "22 avril 2026",
-  readTime: "28 min",
+  get readTime() {
+    const allText = this.chapeau + " " + this.intro.join(" ") + " " + this.interview.map((qa: any) => qa.question + " " + qa.answer).join(" ");
+    return `${estimateReadingTimeFromText(allText)} min`;
+  },
   sponsor: {
     name: "Fondation pour les Lettres",
     note: "Ce portrait fait partie de la série Parcours, soutenue par la Fondation pour les Lettres.",

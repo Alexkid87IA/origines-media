@@ -5,7 +5,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
-import { smartExcerpt } from "@/lib/typography";
+import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./SousTopicPage.module.css";
@@ -347,11 +347,11 @@ export default function SousTopicPage() {
                           >
                             {subtopic.label}
                           </span>
-                          {article.tempsLecture && (
+                          {(estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture) && (
                             <>
                               <span className={s.cardSep}>&middot;</span>
                               <span className={s.cardTime}>
-                                {article.tempsLecture} min
+                                {estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture} min
                               </span>
                             </>
                           )}
