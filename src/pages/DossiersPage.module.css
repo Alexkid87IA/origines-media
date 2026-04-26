@@ -179,6 +179,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
+  animation: filterPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
 }
 
 .filters::-webkit-scrollbar { display: none; }
@@ -544,4 +545,14 @@
   .cardChapeau { max-width: 100%; font-size: 13px; }
   .cardFoot { max-width: 100%; flex-direction: column; align-items: flex-start; gap: 10px; }
   .card::after { display: none; }
+}
+
+@keyframes filterPeek {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filters { animation: none !important; }
 }

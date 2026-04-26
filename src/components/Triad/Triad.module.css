@@ -307,6 +307,7 @@
     scrollbar-width: none;
     gap: 0;
     margin-bottom: 24px;
+    animation: tabsPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
   }
   .tabs::-webkit-scrollbar { display: none; }
   .tab {
@@ -395,9 +396,16 @@
   .seeAll { margin-top: 14px; font-size: 9px; gap: 6px; }
 }
 
+@keyframes tabsPeek {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .itemExplore,
   .seeAll {
     transition: none !important;
   }
+  .tabs { animation: none !important; }
 }

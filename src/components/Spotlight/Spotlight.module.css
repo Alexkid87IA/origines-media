@@ -411,6 +411,7 @@
     gap: 0;
     margin-top: 12px;
     padding-bottom: 4px;
+    animation: gridPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
   }
   .grid::-webkit-scrollbar { display: none; }
   .card {
@@ -436,10 +437,17 @@
   .cardTitle { font-size: 12px; }
 }
 
+@keyframes gridPeek {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .leadImg,
   .cardImg,
   .sectionAllArrow {
     transition: none !important;
   }
+  .grid { animation: none !important; }
 }
