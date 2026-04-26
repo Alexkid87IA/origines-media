@@ -1084,8 +1084,8 @@
   }
 
   .articleBlock {
-    min-height: 280px;
-    aspect-ratio: 16 / 10;
+    min-height: 360px;
+    aspect-ratio: auto;
   }
   .articleOverlay {
     background: linear-gradient(
@@ -1192,7 +1192,7 @@
   .mainTitle { font-size: 16px !important; }
   .questionBlock { min-height: 200px; padding: 24px 16px 22px; }
   .questionTitle { font-size: 20px; }
-  .articleBlock { min-height: 220px; aspect-ratio: auto; }
+  .articleBlock { min-height: 300px; }
   .articleTitle { font-size: 18px; }
   .rightCol { flex-direction: column; }
 }
