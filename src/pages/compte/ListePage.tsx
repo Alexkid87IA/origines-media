@@ -3,7 +3,7 @@ import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedList } from "@/hooks/useSavedList";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import s from "./compte.module.css";
 
 const TYPE_LABELS: Record<string, string> = {

@@ -2,11 +2,11 @@
 // V2 — angular design system, CSS modules, no lucide-react
 // Page de recherche globale - Filtrage cote client
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, memo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import SiteHeader from '@/components/SiteHeader/SiteHeader';
-import Footer2 from '@/components/Footer2/Footer2';
+import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
 import { sanityFetch } from '../lib/sanity';
@@ -199,7 +199,7 @@ const TYPE_CONFIG: Record<
 /*  Result card                                                        */
 /* ------------------------------------------------------------------ */
 
-const ResultCard: React.FC<{ result: SearchResult; index: number }> = ({
+const ResultCard: React.FC<{ result: SearchResult; index: number }> = memo(({
   result,
   index,
 }) => {
@@ -277,7 +277,7 @@ const ResultCard: React.FC<{ result: SearchResult; index: number }> = ({
       </Link>
     </motion.div>
   );
-};
+});
 
 /* ------------------------------------------------------------------ */
 /*  Skeleton loader                                                    */

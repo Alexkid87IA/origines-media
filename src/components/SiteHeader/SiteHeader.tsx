@@ -420,7 +420,6 @@ export default function SiteHeader() {
                     style={{ "--hover": section.hoverColor } as React.CSSProperties}
                     onClick={handleSoon}
                   >
-                    <span className={styles.num}>{section.num}</span>
                     {section.label}
                   </a>
                   {!isSoon && (
@@ -869,7 +868,6 @@ export default function SiteHeader() {
                   className={styles.mobileSectionTitle}
                   onClick={() => setMobileOpen(false)}
                 >
-                  <span className={styles.mobileSectionNum}>{sec.num}</span>
                   <span className={styles.mobileSectionAccent} aria-hidden="true" />
                   {sec.label}
                   <svg

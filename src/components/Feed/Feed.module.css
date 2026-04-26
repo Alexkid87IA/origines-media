@@ -4,6 +4,8 @@
   margin-top: 72px;
   position: relative;
   z-index: 2;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
 }
 
 /* ----- Chapter mark (unified with Ch.01 / Ch.02) ----- */

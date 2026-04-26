@@ -1,10 +1,10 @@
 // src/pages/HistoiresPage.tsx
 // V2 Design — Text-First stories with editorial grid layout
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { sanityFetch } from "../lib/sanity";
@@ -294,7 +294,7 @@ interface HistoireCardProps {
   cmsTags: Tag[];
 }
 
-function HistoireCard({ histoire, cmsTags }: HistoireCardProps) {
+const HistoireCard = memo(function HistoireCard({ histoire, cmsTags }: HistoireCardProps) {
   const mainCategory = useMemo(() => {
     if (!histoire.tags || histoire.tags.length === 0) return null;
     for (const tag of histoire.tags) {
@@ -369,7 +369,7 @@ function HistoireCard({ histoire, cmsTags }: HistoireCardProps) {
       </Link>
     </article>
   );
-}
+});
 
 /* ------------------------------------------------------------------ */
 /*  Sub-component: Featured Story                                      */

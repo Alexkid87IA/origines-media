@@ -1,6 +1,6 @@
 import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
 import s from "./TypePage.module.css";
 

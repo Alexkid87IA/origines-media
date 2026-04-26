@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { TAG_CATEGORIES, CATEGORY_ORDER } from "@/lib/tagCategories";
 import { UNIVERS } from "@/data/univers";
@@ -80,6 +80,8 @@ export default function EcrireHistoirePage() {
     if (!user || draftLoaded) return;
     const loadDraft = async () => {
       try {
+        const db = await getFirebaseDb();
+        if (!db) return;
         const ref = doc(db, "temoignages-brouillons", user.uid);
         const snap = await getDoc(ref);
         if (snap.exists()) {
@@ -100,6 +102,8 @@ export default function EcrireHistoirePage() {
     async (data: StoryDraft) => {
       if (!user) return;
       try {
+        const db = await getFirebaseDb();
+        if (!db) return;
         const ref = doc(db, "temoignages-brouillons", user.uid);
         await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
       } catch {
@@ -133,6 +137,8 @@ export default function EcrireHistoirePage() {
     setSaving(true);
     try {
       const resolvedPseudo = draft.pseudonyme || (draft.identite === "prenom" ? user.displayName?.split(" ")[0] || "" : "");
+      const db = await getFirebaseDb();
+      if (!db) return;
       await addDoc(collection(db, "temoignages-soumissions"), {
         userId: user.uid,
         userEmail: user.email,
@@ -142,7 +148,6 @@ export default function EcrireHistoirePage() {
         status: "en-attente",
         createdAt: serverTimestamp(),
       });
-      // Clean draft
       const ref = doc(db, "temoignages-brouillons", user.uid);
       await setDoc(ref, { submitted: true, updatedAt: serverTimestamp() });
       setSubmitted(true);

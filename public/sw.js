@@ -1,10 +1,10 @@
 // Service Worker pour Origines Media
 // Stratégie: Cache-First pour assets statiques, Network-First pour API
 
-const CACHE_NAME = 'origines-media-v2';
-const STATIC_CACHE = 'origines-static-v2';
-const DYNAMIC_CACHE = 'origines-dynamic-v2';
-const IMAGE_CACHE = 'origines-images-v2';
+const CACHE_NAME = 'origines-media-v3';
+const STATIC_CACHE = 'origines-static-v3';
+const DYNAMIC_CACHE = 'origines-dynamic-v3';
+const IMAGE_CACHE = 'origines-images-v3';
 
 // Assets statiques à pré-cacher
 const STATIC_ASSETS = [
@@ -154,9 +154,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Pages HTML - Stale While Revalidate
+  // Pages HTML - Network First (avoids serving stale index.html after deploys)
   if (request.headers.get('accept')?.includes('text/html')) {
-    event.respondWith(staleWhileRevalidateStrategy(request, DYNAMIC_CACHE));
+    event.respondWith(networkFirstStrategy(request, DYNAMIC_CACHE));
     return;
   }
 

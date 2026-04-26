@@ -1,7 +1,7 @@
 // src/components/HistoiresSection.tsx
 // Section Histoires pour la homepage - Layout 2 colonnes avec image catégorie 16:9
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Loader2, Quote, Heart, TrendingUp, Route, Users, Brain, Flame, LucideIcon } from 'lucide-react';
@@ -154,7 +154,7 @@ interface HistoireCardProps {
   index: number;
 }
 
-const HistoireCard: React.FC<HistoireCardProps> = ({ histoire, index }) => {
+const HistoireCard: React.FC<HistoireCardProps> = memo(({ histoire, index }) => {
   const category = histoire.thematicCategory;
   const categoryColor = category?.couleur || '#6366F1';
 
@@ -207,7 +207,7 @@ const HistoireCard: React.FC<HistoireCardProps> = ({ histoire, index }) => {
       </Link>
     </motion.div>
   );
-};
+});
 
 export default function HistoiresSection() {
   const [histoires, setHistoires] = useState<Histoire[]>([]);

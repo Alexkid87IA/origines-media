@@ -4,6 +4,8 @@
   margin-top: 96px;
   position: relative;
   z-index: 2;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 /* ── Chapter mark ── */

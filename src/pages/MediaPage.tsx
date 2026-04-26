@@ -13,7 +13,7 @@ import GuidesCta from "@/components/GuidesCta/GuidesCta";
 import MonHistoire from "@/components/MonHistoire/MonHistoire";
 import Recos from "@/components/Recos/Recos";
 import Marquee from "@/components/Marquee/Marquee";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { MEDIA_HERO_SLIDES_QUERY, V2_FEED_QUERY, V2_RECOS_QUERY } from "@/lib/queries";

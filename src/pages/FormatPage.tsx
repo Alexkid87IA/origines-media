@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { sanityFetch } from '../lib/sanity';
 import SiteHeader from '@/components/SiteHeader/SiteHeader';
-import Footer2 from '@/components/Footer2/Footer2';
+import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
 import s from './FormatPage.module.css';

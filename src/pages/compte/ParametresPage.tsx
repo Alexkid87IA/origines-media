@@ -3,9 +3,9 @@ import { Navigate } from "react-router-dom";
 import SEO from "@/components/SEO";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import s from "./compte.module.css";
 
 interface Settings {
@@ -26,11 +26,16 @@ export default function ParametresPage() {
 
   useEffect(() => {
     if (!user) return;
-    const ref = doc(db, "users", user.uid, "settings", "preferences");
-    const unsub = onSnapshot(ref, (snap) => {
-      if (snap.exists()) setSettings({ ...DEFAULTS, ...snap.data() } as Settings);
+    let unsub: (() => void) | undefined;
+    let cancelled = false;
+    getFirebaseDb().then((db) => {
+      if (cancelled || !db) return;
+      const ref = doc(db, "users", user.uid, "settings", "preferences");
+      unsub = onSnapshot(ref, (snap) => {
+        if (snap.exists()) setSettings({ ...DEFAULTS, ...snap.data() } as Settings);
+      });
     });
-    return unsub;
+    return () => { cancelled = true; unsub?.(); };
   }, [user]);
 
   if (authLoading) return null;
@@ -39,6 +44,8 @@ export default function ParametresPage() {
   async function toggle(key: keyof Settings) {
     const next = { ...settings, [key]: !settings[key] };
     setSettings(next);
+    const db = await getFirebaseDb();
+    if (!db) return;
     const ref = doc(db, "users", user!.uid, "settings", "preferences");
     await setDoc(ref, next, { merge: true });
   }

@@ -5,7 +5,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import SiteHeader from '@/components/SiteHeader/SiteHeader';
-import Footer2 from '@/components/Footer2/Footer2';
+import Footer2 from '@/components/Footer2';
+import LiteYouTube from '@/components/ui/LiteYouTube';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '@/components/SEO';
 import EmailCapture from '@/components/EmailCapture';
@@ -122,12 +123,7 @@ function renderPortableText(
 
       return (
         <div key={block._key} className={s.youtubeEmbed}>
-          <iframe
-            src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-            title="Video YouTube"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <LiteYouTube videoId={videoId} title="Video YouTube" />
         </div>
       );
     }

@@ -638,8 +638,8 @@ function ExploreItem({ item }: { item: ItemData }) {
       <p className={s.itemTagline}>{item.tagline}</p>
 
       <div className={s.itemArticles}>
-        {item.articles.map((a) => (
-          <a key={a.href} href={a.href} className={s.itemLink}>
+        {item.articles.map((a, i) => (
+          <a key={`${a.href}-${i}`} href={a.href} className={s.itemLink}>
             {a.title}
           </a>
         ))}

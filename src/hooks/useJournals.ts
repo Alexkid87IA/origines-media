@@ -8,7 +8,7 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 
 export interface JournalEntry {
@@ -27,23 +27,37 @@ export function useJournals() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || !db) {
+    if (!user) {
       setEntries([]);
       setLoading(false);
       return;
     }
-    const col = collection(db, "users", user.uid, "journals");
-    const unsub = onSnapshot(col, (snap) => {
-      const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as JournalEntry));
-      list.sort((a, b) => b.date.localeCompare(a.date));
-      setEntries(list);
-      setLoading(false);
+    let unsub: (() => void) | undefined;
+    let cancelled = false;
+
+    getFirebaseDb().then((db) => {
+      if (cancelled || !db) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+      const col = collection(db, "users", user.uid, "journals");
+      unsub = onSnapshot(col, (snap) => {
+        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as JournalEntry));
+        list.sort((a, b) => b.date.localeCompare(a.date));
+        setEntries(list);
+        setLoading(false);
+      });
     });
-    return unsub;
+
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, [user]);
 
   const saveEntry = useCallback(
     async (date: string, content: string, prompt?: string, mood?: string) => {
+      const db = await getFirebaseDb();
       if (!user || !db) return;
       const ref = doc(db, "users", user.uid, "journals", date);
       await setDoc(ref, {
@@ -60,6 +74,7 @@ export function useJournals() {
 
   const deleteEntry = useCallback(
     async (date: string) => {
+      const db = await getFirebaseDb();
       if (!user || !db) return;
       await deleteDoc(doc(db, "users", user.uid, "journals", date));
     },

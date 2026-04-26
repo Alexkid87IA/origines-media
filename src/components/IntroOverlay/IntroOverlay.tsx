@@ -46,13 +46,13 @@ export default function IntroOverlay() {
     document.body.classList.add("intro-playing");
     sessionStorage.setItem("intro-seen", "1");
 
-    const outroTimer = setTimeout(() => setPhase("outro"), 3400);
+    const outroTimer = setTimeout(() => setPhase("outro"), 1200);
     timersRef.current.push(outroTimer);
 
     const endTimer = setTimeout(() => {
       document.body.classList.remove("intro-playing");
       setPhase("hidden");
-    }, 4100);
+    }, 1500);
     timersRef.current.push(endTimer);
 
     return () => {

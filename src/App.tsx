@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
-const SplashScreen = lazy(() => import('./components/SplashScreen'));
+import PageTransition from './components/PageTransition/PageTransition';
 const CookieConsent = lazy(() => import('./components/CookieConsent'));
 const ExitIntentPopup = lazy(() => import('./components/ExitIntentPopup'));
 
@@ -77,6 +77,7 @@ const RecherchePage = lazy(() => import('./pages/RecherchePage'));
 const ConfidentialitePage = lazy(() => import('./pages/ConfidentialitePage'));
 const CookiesPage = lazy(() => import('./pages/CookiesPage'));
 const PlanDuSitePage = lazy(() => import('./pages/PlanDuSitePage'));
+const SousTopicPage = lazy(() => import('./pages/SousTopicPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
@@ -88,14 +89,15 @@ const LoadingFallback = () => (
 function App() {
   return (
     <>
-      <Suspense fallback={null}><SplashScreen /></Suspense>
       <ScrollToTop />
+      <PageTransition />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/media" element={<MediaPage />} />
         <Route path="/univers" element={<UniversPage />} />
         <Route path="/univers/:universId" element={<UniversPage />} />
+        <Route path="/univers/:universId/:soustopic" element={<SousTopicPage />} />
         <Route path="/series" element={<SeriesPage />} />
         <Route path="/series/:slug" element={<SeriesDetailPage />} />
         <Route path="/format/:formatId" element={<FormatPage />} />

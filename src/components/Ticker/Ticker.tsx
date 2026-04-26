@@ -11,6 +11,14 @@ const TICKER_MESSAGES = [
 export default function Ticker() {
   const time = useParisClock();
 
+  const now = new Date();
+  const isoDate = now.toISOString().slice(0, 10);
+  const label = now.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div className={styles.tickerBar}>
       <div className="v2-container">
@@ -29,8 +37,7 @@ export default function Ticker() {
           </div>
 
           <span className={styles.tickerEdition}>
-            N&deg; 128 &middot; Edition du{" "}
-            <time dateTime="2026-04-21">21 avril 2026</time>
+            Edition du <time dateTime={isoDate}>{label}</time>
           </span>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import s from "./TemoignagesArticlePage.module.css";
 
 const MOCK = {

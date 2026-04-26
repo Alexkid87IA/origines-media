@@ -121,7 +121,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
               src={video.thumbnail}
               alt={video.title}
               className={s.mainColImg}
-              fetchPriority="high"
+              fetchpriority="high"
               loading="eager"
               decoding="async"
             />

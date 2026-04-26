@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_DOSSIER_DETAIL_QUERY } from "@/lib/queries";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";

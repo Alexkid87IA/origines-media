@@ -3,8 +3,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
+import LiteYouTube from "@/components/ui/LiteYouTube";
 import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
 import { typo, estimateReadingTime } from "@/lib/typography";
@@ -377,11 +378,9 @@ export default function VideoPage() {
         <section className={s.videoHero}>
           <div className={s.videoHeroInner}>
             <div className={s.videoFrame}>
-              <iframe
-                src={`https://www.youtube.com/embed/${extractYouTubeId(article.videoUrl!)}?rel=0&modestbranding=1`}
+              <LiteYouTube
+                videoId={extractYouTubeId(article.videoUrl!)!}
                 title={title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
               />
             </div>
           </div>
@@ -392,7 +391,7 @@ export default function VideoPage() {
       {!hasYT && (
         <section className={s.splitHero}>
           <div className={s.splitImage}>
-            <img src={sanityImg(imageUrl, 1200) || "/placeholder.svg"} alt={title} className={s.splitImageBg} loading="eager" fetchPriority="high" />
+            <img src={sanityImg(imageUrl, 1200) || "/placeholder.svg"} alt={title} className={s.splitImageBg} loading="eager" fetchpriority="high" />
             <div className={s.splitImageOverlay} />
           </div>
           <div className={s.splitContent}>

@@ -297,7 +297,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
                 loading="eager"
-                fetchPriority="high"
+                fetchpriority="high"
                 decoding="async"
               />
             </AnimatePresence>

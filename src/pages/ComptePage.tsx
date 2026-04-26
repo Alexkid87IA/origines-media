@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSavedList } from "@/hooks/useSavedList";
 import { useJournals } from "@/hooks/useJournals";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import Ticker from "@/components/Ticker/Ticker";
 import Marquee from "@/components/Marquee/Marquee";

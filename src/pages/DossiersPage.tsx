@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_DOSSIERS_QUERY } from "@/lib/queries";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";

@@ -1,14 +1,21 @@
-import { initializeApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import type { FirebaseApp } from "firebase/app";
+import type { Auth } from "firebase/auth";
+import type { Firestore } from "firebase/firestore";
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
+let initPromise: Promise<void> | null = null;
 
-const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+async function initFirebase() {
+  if (app) return;
+  const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+  if (!apiKey) return;
 
-if (apiKey) {
+  const { initializeApp } = await import("firebase/app");
+  const { getAuth } = await import("firebase/auth");
+  const { getFirestore } = await import("firebase/firestore");
+
   const firebaseConfig = {
     apiKey,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -22,4 +29,14 @@ if (apiKey) {
   db = getFirestore(app);
 }
 
-export { auth, db };
+export async function getFirebaseAuth(): Promise<Auth | null> {
+  if (!initPromise) initPromise = initFirebase();
+  await initPromise;
+  return auth;
+}
+
+export async function getFirebaseDb(): Promise<Firestore | null> {
+  if (!initPromise) initPromise = initFirebase();
+  await initPromise;
+  return db;
+}

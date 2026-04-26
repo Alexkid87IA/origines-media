@@ -1,7 +1,7 @@
 // src/components/EngagementSection.tsx
 // Section Boutique - Cartes Premium avec images - Optimisé mobile
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, Star, Check } from 'lucide-react';
@@ -74,7 +74,7 @@ interface ProductCardProps {
   index: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
+const ProductCard: React.FC<ProductCardProps> = memo(({ product, index }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -185,7 +185,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
       </Link>
     </motion.div>
   );
-};
+});
 
 const EngagementSection: React.FC = () => {
   return (

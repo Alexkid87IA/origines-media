@@ -1,0 +1,191 @@
+.wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── Layers ── */
+.layer {
+  position: absolute;
+  inset: -12% 0;
+  will-change: transform;
+  transform: translateY(-130%) skewY(-3deg);
+}
+
+.primary {
+  background: var(--ink, #0A0A0A);
+  z-index: 1;
+}
+
+.accent {
+  background: #14121e;
+  z-index: 2;
+}
+
+/* ── Enter — diagonal wipe down ── */
+.in .primary {
+  animation: layerIn 440ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+.in .accent {
+  animation: layerIn 440ms cubic-bezier(0.76, 0, 0.24, 1) 70ms forwards;
+  --skew: -2deg;
+}
+
+/* ── Hold ── */
+.hold .primary {
+  transform: translateY(0) skewY(-3deg);
+}
+
+.hold .accent {
+  transform: translateY(0) skewY(-2deg);
+}
+
+/* ── Exit — layers peel away down ── */
+.out .accent {
+  animation: layerOut 420ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  --skew: -2deg;
+}
+
+.out .primary {
+  animation: layerOut 420ms cubic-bezier(0.76, 0, 0.24, 1) 60ms forwards;
+}
+
+@keyframes layerIn {
+  from { transform: translateY(-130%) skewY(var(--skew, -3deg)); }
+  to   { transform: translateY(0) skewY(var(--skew, -3deg)); }
+}
+
+@keyframes layerOut {
+  from { transform: translateY(0) skewY(var(--skew, -3deg)); }
+  to   { transform: translateY(130%) skewY(var(--skew, -3deg)); }
+}
+
+/* ── Center — logo + bar ── */
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.7);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.in .center {
+  animation: centerIn 350ms cubic-bezier(0.16, 1, 0.3, 1) 120ms forwards;
+}
+
+.hold .center {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.out .center {
+  animation: centerOut 200ms ease forwards;
+}
+
+@keyframes centerIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); filter: blur(8px); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+}
+
+@keyframes centerOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to   { opacity: 0; transform: translate(-50%, calc(-50% - 20px)) scale(0.92); }
+}
+
+/* Logo */
+.logo {
+  height: 130px;
+  width: auto;
+  animation: logoPulse 800ms ease-in-out infinite alternate;
+}
+
+@keyframes logoPulse {
+  from {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 12px rgba(123, 92, 214, 0.2));
+  }
+  to {
+    opacity: 1;
+    filter: drop-shadow(0 0 32px rgba(123, 92, 214, 0.5));
+  }
+}
+
+/* Progress bar */
+.bar {
+  width: 100px;
+  height: 2px;
+  background: rgba(247, 245, 240, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #7B5CD6, #EC4899);
+  transform: translateX(-100%);
+}
+
+.in .barFill {
+  animation: barSlide 660ms cubic-bezier(0.4, 0, 0.2, 1) 200ms forwards;
+}
+
+.hold .barFill {
+  transform: translateX(0);
+}
+
+@keyframes barSlide {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .layer {
+    animation: none !important;
+    transform: none !important;
+    inset: 0;
+  }
+
+  .center {
+    animation: none !important;
+  }
+
+  .logo {
+    animation: none !important;
+    opacity: 0.9;
+  }
+
+  .barFill {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .wrap.in {
+    animation: fadeIn 150ms ease forwards;
+  }
+
+  .wrap.out {
+    animation: fadeOut 180ms ease forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}

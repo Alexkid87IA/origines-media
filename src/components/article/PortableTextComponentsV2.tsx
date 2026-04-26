@@ -6,6 +6,7 @@ import { getImageUrl } from "../../lib/imageUrl";
 import { sanityImg } from "../../lib/sanityImage";
 import { extractText } from "./Accordion";
 import SafeHTML from "../ui/SafeHTML";
+import LiteYouTube from "../ui/LiteYouTube";
 import s from "./PortableTextV2.module.css";
 
 function parseInlineMarkdown(text: string): React.ReactNode[] {
@@ -1158,22 +1159,8 @@ export const createPortableTextComponentsV2 = ({
           /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
         )?.[1];
         return videoId ? (
-          <div
-            className={s.videoEmbed}
-            onClick={(e) => {
-              const overlay = e.currentTarget.querySelector(
-                `.${s.videoScrollOverlay}`
-              );
-              if (overlay) (overlay as HTMLElement).style.pointerEvents = "none";
-            }}
-          >
-            <iframe
-              src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-              title={value.title || "Vidéo"}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-            <div className={s.videoScrollOverlay} />
+          <div className={s.videoEmbed}>
+            <LiteYouTube videoId={videoId} title={value.title || "Vidéo"} />
           </div>
         ) : null;
       },

@@ -1,10 +1,10 @@
 // src/pages/BibliothequePage.tsx
 // Page Explorer V2 — Hub central de tous les contenus
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useSearchParams } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { sanityFetch } from "../lib/sanity";
@@ -274,7 +274,7 @@ function getSubInfo(item: ContentItem): string {
 /*  Content Card                                                       */
 /* ------------------------------------------------------------------ */
 
-function ContentCard({ item }: { item: ContentItem }) {
+const ContentCard = memo(function ContentCard({ item }: { item: ContentItem }) {
   const color =
     item.verticale?.couleurDominante ||
     CONTENT_TYPES.find((t) => t.id === item.contentType)?.color ||
@@ -385,7 +385,7 @@ function ContentCard({ item }: { item: ContentItem }) {
       </a>
     </article>
   );
-}
+});
 
 /* ------------------------------------------------------------------ */
 /*  Main component                                                     */

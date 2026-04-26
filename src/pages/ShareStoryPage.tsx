@@ -7,7 +7,7 @@ import SEO from '@/components/SEO';
 import Ticker from '@/components/Ticker/Ticker';
 import SiteHeader from '@/components/SiteHeader/SiteHeader';
 import Marquee from '@/components/Marquee/Marquee';
-import Footer2 from '@/components/Footer2/Footer2';
+import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import { sanityFetch } from '../lib/sanity';
 import { VIDEOS_SECTION_QUERY } from '../lib/queries';
@@ -155,15 +155,6 @@ const formats = [
     color: '#EF4444',
     popular: false,
   },
-  {
-    id: 'lettre',
-    title: 'Lettre',
-    subtitle: 'Court et sincère',
-    desc: 'Une lettre ouverte, anonyme ou signée.',
-    duration: '1-2 semaines',
-    color: '#2E94B5',
-    popular: false,
-  },
 ];
 
 const participantTestimonials = [
@@ -225,8 +216,8 @@ const SendIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const HeartIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+const HeartIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
   </svg>
 );
@@ -319,7 +310,6 @@ const formatIconMap: Record<string, React.FC<{ className?: string; style?: React
   podcast: MicIcon,
   livre: BookIcon,
   documentaire: FilmIcon,
-  lettre: MailIcon,
 };
 
 // Map impact stat index to icon
@@ -620,7 +610,7 @@ const ShareStoryPage: React.FC = () => {
                   <div className={s.reasonStat} style={{ color: reason.color }}>
                     {reason.stat}
                   </div>
-                  <div className={s.reasonIcon} style={{ background: `${reason.color}18` }}>
+                  <div className={s.reasonIcon} style={{ background: `${reason.color}25` }}>
                     <HeartIcon style={{ color: reason.color }} />
                   </div>
                   <h3 className={s.reasonCardTitle}>{reason.title}</h3>

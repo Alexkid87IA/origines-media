@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import s from "./InscriptionPage.module.css";
 
 const FIREBASE_ERRORS: Record<string, string> = {

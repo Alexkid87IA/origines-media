@@ -1,11 +1,11 @@
 // src/pages/RecommandationPage.tsx
 // Page detail d'une recommandation — V2 Design System
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { PortableText } from "@portabletext/react";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
@@ -280,7 +280,7 @@ interface RelatedReco {
 
 // ============ LIST ITEM COMPONENT ============
 
-function ListItemCard({
+const ListItemCard = memo(function ListItemCard({
   item,
   index,
   typeConfig,
@@ -344,7 +344,7 @@ function ListItemCard({
       </div>
     </article>
   );
-}
+});
 
 // ============ MAIN COMPONENT ============
 
@@ -576,7 +576,7 @@ export default function RecommandationPage() {
                   alt={`Illustration de la recommandation : ${reco.titre || ""}`}
                   className={s.heroBgImg}
                   loading="eager"
-                  fetchPriority="high"
+                  fetchpriority="high"
                 />
                 <div className={s.heroBgOverlay} />
               </div>

@@ -6,7 +6,7 @@ import VideoChannel from "@/components/VideoChannel/VideoChannel";
 import type { CMSProgramme } from "@/components/VideoChannel/VideoChannel";
 import VideoCatalog from "@/components/VideoCatalog/VideoCatalog";
 import Marquee from "@/components/Marquee/Marquee";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { PROD_PROGRAMMES_QUERY } from "@/lib/queries";
@@ -112,7 +112,7 @@ export default function ProdPage() {
               src="/visages-origines.webp"
               alt="Les visages d'Origines"
               loading="eager"
-              fetchPriority="high"
+              fetchpriority="high"
               decoding="async"
             />
           </div>

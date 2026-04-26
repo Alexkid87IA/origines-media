@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import SiteHeader from '@/components/SiteHeader/SiteHeader';
-import Footer2 from '@/components/Footer2/Footer2';
+import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
 import s from './SeriesPage.module.css';
@@ -339,7 +339,7 @@ export default function SeriesPage() {
               alt={`Banniere de la serie ${featuredSerie.titre || 'en vedette'}`}
               className={s.heroBgImg}
               loading="eager"
-              fetchPriority="high"
+              fetchpriority="high"
             />
             <div className={s.heroBgGradientH} />
             <div className={s.heroBgGradientV} />

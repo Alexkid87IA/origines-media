@@ -1,7 +1,7 @@
 // src/components/RecommandationsSection.tsx
 // Section recommandations homepage - Design avec image featured + 3 recos
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -166,7 +166,7 @@ const CategoryIllustration: React.FC<{ type: RecommendationType }> = ({ type }) 
 };
 
 // Composant mini carte (pour la liste à droite)
-const MiniRecoCard: React.FC<{ reco: Reco; index: number }> = ({ reco, index }) => {
+const MiniRecoCard: React.FC<{ reco: Reco; index: number }> = memo(({ reco, index }) => {
   const config = recommendationTypes[reco.type];
   const Icon = config.icon;
   const hasImage = reco.imageUrl && !reco.imageUrl.includes('placeholder');
@@ -238,7 +238,7 @@ const MiniRecoCard: React.FC<{ reco: Reco; index: number }> = ({ reco, index }) 
       </Link>
     </motion.div>
   );
-};
+});
 
 export default function RecommandationsSection() {
   const [recommendations, setRecommendations] = useState<Reco[]>([]);

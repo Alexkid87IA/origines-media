@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import SEO from "@/components/SEO";
 import { useSearchParams } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
 import { smartExcerpt } from "@/lib/typography";

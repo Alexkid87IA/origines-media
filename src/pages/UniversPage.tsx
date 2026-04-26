@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { sanityFetch } from "../lib/sanity";
@@ -15,6 +15,7 @@ import {
 } from "../lib/queries";
 import { typo } from "../lib/typography";
 import { getUniversColors } from "../lib/universColors";
+import { UNIVERS_MAP, verticaleToUnivers } from "../data/univers";
 import s from "./UniversPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -424,7 +425,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
               src={sanityImg(verticale.imageUrl, 1200)}
               alt={verticale.nom}
               className={s.heroImg}
-              fetchPriority="high"
+              fetchpriority="high"
               loading="eager"
             />
             <div className={s.heroOverlay} />
@@ -529,6 +530,33 @@ function UniversDetailPage({ universId }: { universId: string }) {
             </div>
           </div>
         </section>
+
+        {/* ── Sous-topics navigation ── */}
+        {(() => {
+          const universIdMapped = verticaleToUnivers(verticale.nom);
+          const uni = UNIVERS_MAP[universIdMapped];
+          if (!uni || uni.subtopics.length === 0) return null;
+          return (
+            <section className={s.subtopicSection}>
+              <div className={s.subtopicInner}>
+                <h2 className={s.subtopicTitle}>Explorer par th&eacute;matique</h2>
+                <div className={s.subtopicGrid}>
+                  {uni.subtopics.map((st) => (
+                    <Link
+                      key={st.slug}
+                      to={`/univers/${uni.id}/${st.slug}`}
+                      className={s.subtopicChip}
+                      style={{ "--cat-color": colors.bg } as React.CSSProperties}
+                    >
+                      {st.label}
+                      <ArrowRightIcon size={12} className={s.subtopicArrow} />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* ── Featured production ── */}
         {featuredProduction && (

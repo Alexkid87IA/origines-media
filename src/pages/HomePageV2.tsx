@@ -9,7 +9,7 @@ import HeroCarousel from "@/components/HeroCarousel/HeroCarousel";
 import Edito from "@/components/Edito/Edito";
 import Pillars from "@/components/Pillars/Pillars";
 import Marquee from "@/components/Marquee/Marquee";
-import Footer2 from "@/components/Footer2/Footer2";
+import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { useHeroData } from "@/hooks/useHeroData";
 

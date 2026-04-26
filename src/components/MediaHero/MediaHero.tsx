@@ -198,7 +198,7 @@ export default function MediaHero({ cmsSlides }: MediaHeroProps) {
             src={sanityImg(slide.image, 1200)}
             alt={slide.title}
             className={s.heroCoverImg}
-            fetchPriority="high"
+            fetchpriority="high"
             loading="eager"
             decoding="async"
           />
