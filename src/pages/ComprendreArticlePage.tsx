@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import EmailCapture from "@/components/EmailCapture";
@@ -77,31 +77,16 @@ export default function ComprendreArticlePage() {
 
   return (
     <div className={s.page}>
-      <Helmet>
-        <title>{a.seoTitle} — Origines Media</title>
-        <meta name="description" content={a.chapeau} />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: a.title,
-          description: a.chapeau,
-          author: { "@type": "Person", name: a.author },
-          publisher: { "@type": "Organization", name: "Origines Media" },
-          url: `https://www.origines.media/comprendre/${a.slug}`,
-          mainEntityOfPage: { "@type": "WebPage" },
-        })}</script>
-        {a.faq.length > 0 && (
-          <script type="application/ld+json">{JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: a.faq.map((f) => ({
-              "@type": "Question",
-              name: f.question,
-              acceptedAnswer: { "@type": "Answer", text: f.answer },
-            })),
-          })}</script>
-        )}
-      </Helmet>
+      <SEO
+        title={a.seoTitle}
+        description={a.chapeau}
+        url={`/comprendre/${a.slug}`}
+        type="article"
+        author={a.author}
+        section="Comprendre"
+        jsonLd="article"
+        faqData={a.faq.map((f) => ({ question: f.question, answer: f.answer }))}
+      />
       <SiteHeader />
 
       {/* ── Hero ── */}

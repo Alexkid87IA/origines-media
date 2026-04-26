@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import s from "./TemoignagesArticlePage.module.css";
@@ -37,19 +37,15 @@ export default function TemoignagesArticlePage() {
 
   return (
     <div className={s.page}>
-      <Helmet>
-        <title>{t.title} — T&eacute;moignages — Origines Media</title>
-        <meta name="description" content={t.chapeau} />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: t.title,
-          description: t.chapeau,
-          author: { "@type": "Person", name: t.isAnonymous ? "Anonyme" : t.prenom },
-          publisher: { "@type": "Organization", name: "Origines Media" },
-          articleSection: "Témoignages",
-        })}</script>
-      </Helmet>
+      <SEO
+        title={`${t.title} — Témoignages`}
+        description={t.chapeau}
+        url={`/temoignages/${t.slug}`}
+        type="article"
+        author={t.isAnonymous ? "Anonyme" : t.prenom}
+        section="Témoignages"
+        jsonLd="article"
+      />
       <SiteHeader />
 
       <div className={s.layout}>

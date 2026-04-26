@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import s from "./PortraitsArticlePage.module.css";
@@ -51,20 +51,16 @@ export default function PortraitsArticlePage() {
 
   return (
     <div className={s.page}>
-      <Helmet>
-        <title>{p.title} — Portraits — Origines Media</title>
-        <meta name="description" content={p.chapeau} />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: `Portrait : ${p.title}`,
-          description: p.chapeau,
-          author: { "@type": "Person", name: p.author },
-          about: { "@type": "Person", name: p.title, jobTitle: p.role },
-          publisher: { "@type": "Organization", name: "Origines Media" },
-          articleSection: "Portraits",
-        })}</script>
-      </Helmet>
+      <SEO
+        title={`${p.title} — Portraits`}
+        description={p.chapeau}
+        url={`/portraits/${p.slug}`}
+        type="article"
+        image={p.image}
+        author={p.author}
+        section="Portraits"
+        jsonLd="article"
+      />
       <SiteHeader />
 
       {/* ── Sponsor banner ── */}

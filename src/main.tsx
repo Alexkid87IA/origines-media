@@ -13,6 +13,21 @@ import './index.css';
 // Enregistrer le Service Worker en production
 registerServiceWorker();
 
+// Google Analytics
+const gaId = import.meta.env.VITE_GA_ID;
+if (gaId) {
+  const script = document.createElement('script');
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+  script.async = true;
+  document.head.appendChild(script);
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function (...args: unknown[]) {
+    window.dataLayer!.push(args);
+  };
+  window.gtag('js', new Date());
+  window.gtag('config', gaId);
+}
+
 // Configuration React Query avec cache optimisé
 const queryClient = new QueryClient({
   defaultOptions: {

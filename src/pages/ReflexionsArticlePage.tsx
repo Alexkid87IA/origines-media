@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import EmailCapture from "@/components/EmailCapture";
@@ -35,19 +35,15 @@ export default function ReflexionsArticlePage() {
 
   return (
     <div className={s.page}>
-      <Helmet>
-        <title>{a.title} — R&eacute;flexions — Origines Media</title>
-        <meta name="description" content={a.chapeau} />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: a.title,
-          description: a.chapeau,
-          author: { "@type": "Person", name: a.author },
-          publisher: { "@type": "Organization", name: "Origines Media" },
-          articleSection: "Réflexions",
-        })}</script>
-      </Helmet>
+      <SEO
+        title={`${a.title} — Réflexions`}
+        description={a.chapeau}
+        url={`/reflexions/${a.slug}`}
+        type="article"
+        author={a.author}
+        section="Réflexions"
+        jsonLd="article"
+      />
       <SiteHeader />
 
       <article className={s.article}>
