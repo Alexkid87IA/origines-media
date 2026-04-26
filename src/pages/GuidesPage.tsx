@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
@@ -232,13 +231,11 @@ export default function GuidesPage() {
 
             <div className={s.masterGrid}>
               {MASTERCLASSES.map((mc, i) => (
-                <Link key={i} to="/guides/masterclass" className={s.masterCard}>
+                <div key={i} className={`${s.masterCard} ${s.cardSoon}`}>
                   <div className={s.masterImg}>
                     <img src={mc.image} alt={mc.title} loading="lazy" />
                     <span className={s.masterGrad} />
-                    {mc.badge && (
-                      <span className={s.masterBadge} style={{ background: mc.color }}>{mc.badge}</span>
-                    )}
+                    <span className={s.soonBadge}>Bient&ocirc;t dispo</span>
                     <span className={s.masterPlay} aria-hidden="true">
                       <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="8,5 19,12 8,19" /></svg>
                     </span>
@@ -249,17 +246,12 @@ export default function GuidesPage() {
                     <p className={s.masterSub}>{mc.subtitle}</p>
                     <div className={s.masterFoot}>
                       <span className={s.masterDuration}>{mc.duration}</span>
-                      <span className={s.masterStudents}>{mc.students} inscrits</span>
                     </div>
                     <div className={s.masterPriceLine}>
                       <span className={s.masterPrice}>{mc.price}</span>
-                      <span className={s.masterCta}>
-                        D&eacute;couvrir
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 6 15 12 9 18" /></svg>
-                      </span>
                     </div>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -295,18 +287,14 @@ export default function GuidesPage() {
                   On avance pas &agrave; pas, avec un objectif clair et un accompagnement complet.
                 </p>
               </div>
-              <Link className={s.sectionAll} to="/guides/programmes">
-                Tous les programmes
-                <span className={s.sectionAllArrow}>&rarr;</span>
-              </Link>
             </header>
 
             <div className={s.progGrid}>
               {PROGRAMMES.map((p, i) => (
-                <Link key={i} to="/guides/programmes" className={s.progCard}>
+                <div key={i} className={`${s.progCard} ${s.cardSoon}`}>
                   <div className={s.progHeader}>
                     <span className={s.progTag} style={{ color: p.color }}>{p.tag}</span>
-                    <span className={s.progModules}>{p.modules} {p.modules > 10 ? "jours" : "modules"}</span>
+                    <span className={s.soonBadgeSmall}>Bient&ocirc;t dispo</span>
                   </div>
                   <h3 className={s.progTitle}>{typo(p.title)}</h3>
                   <p className={s.progDesc}>{p.desc}</p>
@@ -315,7 +303,7 @@ export default function GuidesPage() {
                     <span className={s.progPrice}>{p.price}</span>
                   </div>
                   <div className={s.progBar} style={{ background: p.color }} aria-hidden="true" />
-                </Link>
+                </div>
               ))}
             </div>
           </section>
@@ -334,15 +322,11 @@ export default function GuidesPage() {
                   pr&eacute;cise en une ou deux heures.
                 </p>
               </div>
-              <Link className={s.sectionAll} to="/guides/ateliers">
-                Tous les ateliers
-                <span className={s.sectionAllArrow}>&rarr;</span>
-              </Link>
             </header>
 
             <div className={s.atelierGrid}>
               {ATELIERS.map((a, i) => (
-                <Link key={i} to="/guides/ateliers" className={s.atelierCard}>
+                <div key={i} className={`${s.atelierCard} ${s.cardSoon}`}>
                   <span className={s.atelierDot} style={{ background: a.color }} />
                   <div className={s.atelierBody}>
                     <h3 className={s.atelierTitle}>{typo(a.title)}</h3>
@@ -352,8 +336,8 @@ export default function GuidesPage() {
                       <span className={s.atelierPrice}>{a.price}</span>
                     </div>
                   </div>
-                  <svg className={s.atelierArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><polyline points="9 6 15 12 9 18" /></svg>
-                </Link>
+                  <span className={s.soonBadgeSmall}>Bient&ocirc;t</span>
+                </div>
               ))}
             </div>
           </section>

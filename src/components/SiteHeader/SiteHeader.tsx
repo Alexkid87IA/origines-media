@@ -545,7 +545,7 @@ export default function SiteHeader() {
             const tags = u.subtopics.map((st) => (
               <a
                 key={`${u.id}-${st.slug}`}
-                href={`/${u.id}/${st.slug}`}
+                href={`/univers/${u.id}/${st.slug}`}
                 className={styles.tag}
                 style={{ "--tag-color": u.color } as React.CSSProperties}
               >
@@ -670,7 +670,7 @@ export default function SiteHeader() {
                   {u.subtopics.map((st) => (
                     <a
                       key={st.slug}
-                      href={`/${u.id}/${st.slug}`}
+                      href={`/univers/${u.id}/${st.slug}`}
                       className={styles.megaLink}
                     >
                       {st.label}
