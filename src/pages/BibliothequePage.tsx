@@ -238,7 +238,7 @@ function getContentLink(item: ContentItem): string {
     case "video":
       return `/video/${item.slug}`;
     case "reco":
-      return `/recommandation/${item.slug}`;
+      return `/recommandations/${item.slug}`;
     case "histoire":
       return `/histoire/${item.slug}`;
     default:
@@ -678,6 +678,10 @@ export default function BibliothequePage() {
         title="Bibliothèque — Explorer nos contenus"
         description="Explorez tous nos contenus : articles, vidéos, recommandations et histoires inspirantes."
         url="/bibliotheque"
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Bibliothèque', url: '/bibliotheque' },
+        ]}
       />
       <SiteHeader />
 

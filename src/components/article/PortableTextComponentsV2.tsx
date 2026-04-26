@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { PortableText } from "@portabletext/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getImageUrl } from "../../lib/imageUrl";
+import { sanityImg } from "../../lib/sanityImage";
 import { extractText } from "./Accordion";
 import SafeHTML from "../ui/SafeHTML";
 import s from "./PortableTextV2.module.css";
@@ -597,7 +598,7 @@ export const createPortableTextComponentsV2 = ({
               {value.images.map((img: any) => (
                 <figure key={img._key} className={s.galleryItem}>
                   <img
-                    src={img.imageUrl || img.asset?.url}
+                    src={sanityImg(img.imageUrl || img.asset?.url, 600)}
                     alt={img.caption || img.alt || ""}
                     loading="lazy"
                     className={s.galleryImg}

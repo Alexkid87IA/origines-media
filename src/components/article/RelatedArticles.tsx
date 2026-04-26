@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { sanityImg } from '../../lib/sanityImage';
 import { RelatedArticle } from './types';
 
 interface RelatedArticlesProps {
@@ -30,7 +31,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ articles }) => {
             >
               <div className="aspect-video overflow-hidden">
                 <img
-                  src={related.imageUrl || '/placeholder.svg'}
+                  src={sanityImg(related.imageUrl, 400) || '/placeholder.svg'}
                   alt={related.titre || related.title || 'Article recommandé'}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"

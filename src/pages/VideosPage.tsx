@@ -244,6 +244,12 @@ export default function VideosPage() {
           { name: "Accueil", url: "/" },
           { name: "Vidéos", url: "/videos" },
         ]}
+        itemListData={sortedVideos.slice(0, 10).map((v) => ({
+          name: v.titre,
+          description: v.description,
+          image: v.imageUrl,
+          url: `/video/${v.slug}`,
+        }))}
       />
       <SiteHeader />
 

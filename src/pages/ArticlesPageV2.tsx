@@ -310,6 +310,12 @@ export default function ArticlesPageV2() {
           { name: "Accueil", url: "/" },
           { name: "Articles", url: "/articles" },
         ]}
+        itemListData={articles.slice(0, 10).map((a) => ({
+          name: a.titre,
+          description: getExtrait(a),
+          image: a.imageUrl,
+          url: `/article/${a.slug}`,
+        }))}
       />
       <SiteHeader />
       <main id="main" role="main">

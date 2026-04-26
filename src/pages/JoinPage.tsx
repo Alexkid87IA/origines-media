@@ -250,6 +250,10 @@ export default function JoinPage() {
         title="Rejoindre l'equipe - Carrieres"
         description="Rejoignez l'equipe Origines Media. Decouvrez nos offres d'emploi et participez a la creation de contenus qui inspirent des millions de personnes."
         url="/rejoindre"
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Rejoindre', url: '/rejoindre' },
+        ]}
       />
       <SiteHeader />
 

@@ -159,6 +159,12 @@ export default function TemoignagesPage() {
           { name: "Accueil", url: "/" },
           { name: "Témoignages", url: "/temoignages" },
         ]}
+        itemListData={filtered.slice(0, 10).map((t) => ({
+          name: t.titre,
+          description: t.deck || '',
+          image: t.imageUrl || '',
+          url: `/article/${t.slug}`,
+        }))}
       />
       <SiteHeader />
 

@@ -193,6 +193,10 @@ function UniversListPage() {
         title="Nos Univers"
         description={`Explorez nos ${verticales.length} univers thématiques : ${verticales.map((v) => v.nom).join(", ")}.`.slice(0, 155)}
         url="/univers"
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Univers', url: '/univers' },
+        ]}
       />
 
       <SiteHeader />
@@ -403,6 +407,11 @@ function UniversDetailPage({ universId }: { universId: string }) {
         title={`Univers ${verticale.nom}`}
         description={verticale.description}
         url={`/univers/${verticale.slug}`}
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Univers', url: '/univers' },
+          { name: verticale.nom, url: `/univers/${verticale.slug}` },
+        ]}
       />
 
       <SiteHeader />

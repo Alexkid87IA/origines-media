@@ -87,7 +87,9 @@ const generateArticleSchema = (props: {
     name: 'Origines Media',
     logo: {
       '@type': 'ImageObject',
-      url: `${SITE_URL}/logos/logo-black.png`
+      url: `${SITE_URL}/logos/logo-publisher.png`,
+      width: 255,
+      height: 60
     }
   },
   mainEntityOfPage: {

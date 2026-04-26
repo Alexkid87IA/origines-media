@@ -575,6 +575,8 @@ export default function RecommandationPage() {
                   src={reco.imageUrl}
                   alt={`Illustration de la recommandation : ${reco.titre || ""}`}
                   className={s.heroBgImg}
+                  loading="eager"
+                  fetchPriority="high"
                 />
                 <div className={s.heroBgOverlay} />
               </div>
@@ -759,7 +761,7 @@ export default function RecommandationPage() {
                       {relatedRecos.map((related) => (
                         <Link
                           key={related._id}
-                          to={`/recommandation/${related.slug}`}
+                          to={`/recommandations/${related.slug}`}
                           className={s.relItem}
                         >
                           {related.imageUrl ? (

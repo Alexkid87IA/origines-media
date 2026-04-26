@@ -9,6 +9,7 @@ import { ArrowRight } from 'lucide-react';
 import { getUniversColors } from '../lib/universColors';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
+import { sanityImg } from '../lib/sanityImage';
 
 interface Portrait {
   id: number;
@@ -288,7 +289,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
             <AnimatePresence mode="wait">
               <motion.img
                 key={safeIndex}
-                src={currentItem.imageUrl}
+                src={sanityImg(currentItem.imageUrl, 800)}
                 alt={currentItem.titre}
                 className="absolute inset-0 w-full h-full object-cover"
                 initial={{ opacity: 0 }}
@@ -433,7 +434,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                         <Link to={`/article/${article.slug}`} className="group block">
                           <div className="aspect-[4/3] overflow-hidden mb-4">
                             <img
-                              src={article.imageUrl || '/placeholder.svg'}
+                              src={sanityImg(article.imageUrl, 400) || '/placeholder.svg'}
                               alt={article.titre}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                               loading="lazy"
@@ -514,7 +515,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                     transition={{ duration: 0.4, delay: 0.15 + index * 0.08 }}
                   >
                     <Link
-                      to={`/recommandation/${reco.slug}`}
+                      to={`/recommandations/${reco.slug}`}
                       className="group flex gap-4 sm:gap-5"
                     >
                       <div className="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 overflow-hidden">

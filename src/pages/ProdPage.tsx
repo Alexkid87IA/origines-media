@@ -111,6 +111,8 @@ export default function ProdPage() {
             <img
               src="/visages-origines.webp"
               alt="Les visages d'Origines"
+              loading="eager"
+              fetchPriority="high"
               decoding="async"
             />
           </div>

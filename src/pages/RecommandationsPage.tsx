@@ -444,6 +444,12 @@ export default function RecommandationsPage() {
           { name: "Accueil", url: "/" },
           { name: "Recommandations", url: "/recommandations" },
         ]}
+        itemListData={filteredRecos.slice(0, 10).map((r) => ({
+          name: r.title,
+          description: r.description,
+          image: r.imageUrl || '',
+          url: `/recommandations/${r.slug}`,
+        }))}
       />
       <SiteHeader />
 
@@ -775,7 +781,7 @@ export default function RecommandationsPage() {
                           }
                         >
                           <Link
-                            to={`/recommandation/${reco.slug}`}
+                            to={`/recommandations/${reco.slug}`}
                             className={s.cardLink}
                           >
                             {/* Cover image */}

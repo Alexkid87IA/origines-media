@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { typo } from '../lib/typography';
 import { sanityFetch } from '../lib/sanity';
+import { sanityImg } from '../lib/sanityImage';
 
 // Types de recommandations (SYNCHRONISÉ avec RecommandationsPage)
 const recommendationTypes = {
@@ -176,12 +177,12 @@ const MiniRecoCard: React.FC<{ reco: Reco; index: number }> = ({ reco, index }) 
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <Link to={`/recommandation/${reco.slug}`} className="group flex gap-3 p-3 rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+      <Link to={`/recommandations/${reco.slug}`} className="group flex gap-3 p-3 rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
         {/* Image miniature carrée */}
         <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden">
           {hasImage ? (
             <img
-              src={reco.imageUrl}
+              src={sanityImg(reco.imageUrl, 160)}
               alt={reco.titre}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             />

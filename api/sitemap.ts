@@ -26,8 +26,6 @@ const STATIC_PAGES = [
   { url: '/contact', priority: 0.5, changefreq: 'monthly' },
   { url: '/partenariats', priority: 0.5, changefreq: 'monthly' },
   { url: '/rejoindre', priority: 0.5, changefreq: 'monthly' },
-  { url: '/racontez-votre-histoire', priority: 0.5, changefreq: 'monthly' },
-  { url: '/ecrire-mon-histoire', priority: 0.5, changefreq: 'monthly' },
   { url: '/series', priority: 0.8, changefreq: 'weekly' },
   { url: '/videos', priority: 0.9, changefreq: 'daily' },
   { url: '/mentions-legales', priority: 0.3, changefreq: 'yearly' },
@@ -42,6 +40,14 @@ const STATIC_PAGES = [
   { url: '/univers/liens', priority: 0.7, changefreq: 'weekly' },
   { url: '/univers/monde', priority: 0.7, changefreq: 'weekly' },
   { url: '/univers/avenir', priority: 0.7, changefreq: 'weekly' },
+  { url: '/format/la-lettre', priority: 0.6, changefreq: 'weekly' },
+  { url: '/format/secrets-pro', priority: 0.6, changefreq: 'weekly' },
+  { url: '/format/il-etait-une-fois', priority: 0.6, changefreq: 'weekly' },
+  { url: '/format/connexion', priority: 0.6, changefreq: 'weekly' },
+  { url: '/format/transmission', priority: 0.6, changefreq: 'weekly' },
+  { url: '/format/etat-esprit', priority: 0.6, changefreq: 'weekly' },
+  { url: '/format/apparence', priority: 0.6, changefreq: 'weekly' },
+  { url: '/format/je-suis', priority: 0.6, changefreq: 'weekly' },
 ]
 
 // GROQ queries pour récupérer tous les contenus dynamiques

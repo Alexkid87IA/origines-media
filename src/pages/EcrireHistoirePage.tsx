@@ -195,6 +195,7 @@ export default function EcrireHistoirePage() {
           title="Écrire mon histoire"
           description="Partagez votre témoignage en toute confidentialité. Espace réservé aux membres."
           url="/ecrire-mon-histoire"
+          noindex
         />
         <SiteHeader />
         <main>
@@ -250,7 +251,7 @@ export default function EcrireHistoirePage() {
   if (submitted) {
     return (
       <div className={s.page}>
-        <SEO title="Récit envoyé" description="Votre témoignage a bien été envoyé. Merci pour votre confiance." url="/ecrire-mon-histoire" />
+        <SEO title="Récit envoyé" description="Votre témoignage a bien été envoyé. Merci pour votre confiance." url="/ecrire-mon-histoire" noindex />
         <SiteHeader />
         <main>
           <section className={s.successSection}>
@@ -289,6 +290,7 @@ export default function EcrireHistoirePage() {
         title="Écrire mon histoire"
         description="Partagez votre témoignage en toute confidentialité."
         url="/ecrire-mon-histoire"
+        noindex
       />
       <SiteHeader />
 

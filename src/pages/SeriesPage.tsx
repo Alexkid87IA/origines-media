@@ -338,6 +338,8 @@ export default function SeriesPage() {
               src={featuredSerie.bannerUrl}
               alt={`Banniere de la serie ${featuredSerie.titre || 'en vedette'}`}
               className={s.heroBgImg}
+              loading="eager"
+              fetchPriority="high"
             />
             <div className={s.heroBgGradientH} />
             <div className={s.heroBgGradientV} />
@@ -366,7 +368,8 @@ export default function SeriesPage() {
                   </div>
                 </div>
 
-                <h1 className={s.heroTitle}>{featuredSerie.titre}</h1>
+                <h1 className="sr-only">Séries Origines</h1>
+                <h2 className={s.heroTitle}>{featuredSerie.titre}</h2>
                 <p className={s.heroDesc}>{featuredSerie.description}</p>
 
                 {/* Buttons */}

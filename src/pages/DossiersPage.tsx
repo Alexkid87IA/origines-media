@@ -115,6 +115,10 @@ export default function DossiersPage() {
             : "Chaque semaine, une question. 7 jours, 7 articles, un dossier complet. Les dossiers thématiques d’Origines Media."
         }
         url="/dossiers"
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Dossiers', url: '/dossiers' },
+        ]}
       />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(schemaLD)}</script>

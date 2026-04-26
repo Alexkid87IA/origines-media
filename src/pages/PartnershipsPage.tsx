@@ -239,6 +239,10 @@ const PartnershipsPage: React.FC = () => {
         title="Partenariats - Annonceurs"
         description="Associez votre marque a des histoires incroyables. Origines Media : 5 milliards de vues, 3 millions d'abonnes."
         url="/partenariats"
+        breadcrumbs={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Partenariats', url: '/partenariats' },
+        ]}
       />
 
       <SiteHeader />

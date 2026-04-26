@@ -180,7 +180,7 @@ function sanityToReco(r: SanityReco) {
   const color = RECO_COLORS[r.type || "livre"] || "#7B5CD6";
   const categoryLabel = r.type ? r.type.charAt(0).toUpperCase() + r.type.slice(1) : "Livre";
   return {
-    href: `/recommandation/${r.slug}`,
+    href: `/recommandations/${r.slug}`,
     img: r.imageUrl || "/recos/reco_livre.webp",
     category: categoryLabel,
     categoryColor: color,
