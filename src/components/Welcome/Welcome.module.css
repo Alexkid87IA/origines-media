@@ -382,6 +382,13 @@
   }
 }
 
+@keyframes pillarPeek {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-40px); }
+  70%  { transform: translateX(0); }
+  100% { transform: translateX(0); }
+}
+
 /* ══════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════ */
@@ -466,7 +473,7 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 0;
-    justify-content: center;
+    animation: pillarPeek 1.6s ease 0.8s 1;
   }
 
   .pillars::-webkit-scrollbar {

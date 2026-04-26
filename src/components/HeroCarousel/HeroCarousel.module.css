@@ -1134,6 +1134,12 @@
     background: linear-gradient(135deg, #7B5CD6 0%, #5A3FB5 100%);
     color: var(--paper);
   }
+  .guideBlock:hover {
+    background: linear-gradient(135deg, #7B5CD6 0%, #5A3FB5 100%);
+  }
+  .guideBlock:hover .guideTitle {
+    text-decoration: none;
+  }
   .guideLabel { font-size: 8px; margin-bottom: 8px; color: rgba(247, 245, 240, 0.6); }
   .guideTitle { font-size: 16px; line-height: 1.15; color: var(--paper); }
   .guideDesc { display: none; }
@@ -1144,6 +1150,31 @@
     flex: 1;
     padding: 14px;
   }
+  .boutiqueBlock:hover { background: var(--ink); }
+
+  .mainCol:hover .mainGradient {
+    background:
+      linear-gradient(
+        to top,
+        rgba(10, 10, 10, 0.97) 0%,
+        rgba(10, 10, 10, 0.85) 30%,
+        rgba(10, 10, 10, 0.5) 60%,
+        rgba(10, 10, 10, 0.35) 100%
+      );
+  }
+  .mainCol:hover .mainTitle { text-decoration: none; }
+  .questionBlock:hover .questionTitle { text-decoration: none; }
+  .articleBlock:hover .articleTitle { text-decoration: none; }
+  .articleBlock:hover .articleOverlay {
+    background: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.97) 0%,
+      rgba(10, 10, 10, 0.85) 40%,
+      rgba(10, 10, 10, 0.55) 65%,
+      rgba(10, 10, 10, 0.45) 100%
+    );
+  }
+  .videoBlock:hover { background: var(--ink); }
   .boutiqueLabel { font-size: 7px; margin-bottom: 6px; }
   .boutiqueTitle { font-size: 14px; }
   .boutiqueDesc { display: none; }
