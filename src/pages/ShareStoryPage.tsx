@@ -155,6 +155,15 @@ const formats = [
     color: '#EF4444',
     popular: false,
   },
+  {
+    id: 'lettre',
+    title: 'Lettre',
+    subtitle: 'Court et sincère',
+    desc: 'Une lettre ouverte, anonyme ou signée.',
+    duration: '1-2 semaines',
+    color: '#2E94B5',
+    popular: false,
+  },
 ];
 
 const participantTestimonials = [
@@ -296,6 +305,13 @@ const FilmIcon = ({ className, style }: { className?: string; style?: React.CSSP
   </svg>
 );
 
+const MailIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="M22 4L12 13 2 4" />
+  </svg>
+);
+
 // Map format id to icon component
 const formatIconMap: Record<string, React.FC<{ className?: string; style?: React.CSSProperties }>> = {
   video: VideoIcon,
@@ -303,6 +319,7 @@ const formatIconMap: Record<string, React.FC<{ className?: string; style?: React
   podcast: MicIcon,
   livre: BookIcon,
   documentaire: FilmIcon,
+  lettre: MailIcon,
 };
 
 // Map impact stat index to icon
