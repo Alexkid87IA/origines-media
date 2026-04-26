@@ -10,6 +10,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   updateProfile,
@@ -19,6 +21,7 @@ import {
 import { auth } from "@/lib/firebase";
 
 const googleProvider = new GoogleAuthProvider();
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 interface AuthContextValue {
   user: User | null;
@@ -41,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
+    getRedirectResult(auth).catch(() => {});
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -61,7 +65,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function loginWithGoogle() {
     if (!auth) return;
-    await signInWithPopup(auth, googleProvider);
+    if (isMobile) {
+      await signInWithRedirect(auth, googleProvider);
+    } else {
+      await signInWithPopup(auth, googleProvider);
+    }
   }
 
   async function logout() {
