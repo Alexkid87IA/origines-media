@@ -189,7 +189,7 @@ export default function Immersions({ cmsItems }: ImmersionsProps) {
             R&eacute;serv&eacute;s &agrave; nos abonn&eacute;s.
           </p>
         </div>
-        <a className={s.sectionAll} href="/immersions" aria-label="Toutes les immersions">
+        <a className={s.sectionAll} href="/articles" aria-label="Toutes les immersions">
           Toutes les immersions
           <span className={s.sectionAllArrow} aria-hidden="true">&rarr;</span>
         </a>
@@ -338,7 +338,7 @@ export default function Immersions({ cmsItems }: ImmersionsProps) {
             </p>
           </div>
         </div>
-        <a href="/abonnement" className={s.subscribeCta}>
+        <a href="/newsletter" className={s.subscribeCta}>
           S&rsquo;abonner &middot; 7&nbsp;&euro;/mois
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <path d="M5 12h14M13 5l7 7-7 7" />

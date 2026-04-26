@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
@@ -106,16 +107,16 @@ export default function DossiersPage() {
 
   return (
     <div className={s.page}>
+      <SEO
+        title="Dossiers"
+        description={
+          activeDossier
+            ? `Dossier en cours : « ${activeDossier.question} ». Chaque semaine, une question explorée en 7 articles.`
+            : "Chaque semaine, une question. 7 jours, 7 articles, un dossier complet. Les dossiers thématiques d’Origines Media."
+        }
+        url="/dossiers"
+      />
       <Helmet>
-        <title>Dossiers th&eacute;matiques &mdash; Origines Media</title>
-        <meta
-          name="description"
-          content={
-            activeDossier
-              ? `Dossier en cours : « ${activeDossier.question} ». Chaque semaine, une question explorée en 7 articles.`
-              : "Chaque semaine, une question. 7 jours, 7 articles, un dossier complet. Les dossiers thématiques d’Origines Media."
-          }
-        />
         <script type="application/ld+json">{JSON.stringify(schemaLD)}</script>
       </Helmet>
       <SiteHeader />

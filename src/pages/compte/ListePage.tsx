@@ -59,7 +59,7 @@ export default function ListePage() {
             <div className={s.listGrid}>
               {items.map((item) => (
                 <div key={item.id} className={s.listCard}>
-                  {item.image && <img src={item.image} alt="" className={s.listCardImage} />}
+                  {item.image && <img src={item.image} alt={item.title} className={s.listCardImage} />}
                   <span className={s.listCardType}>{TYPE_LABELS[item.type] || item.type}</span>
                   <h3 className={s.listCardTitle}>{item.title}</h3>
                   <div className={s.listCardActions}>

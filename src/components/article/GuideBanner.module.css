@@ -12,7 +12,7 @@
   position: relative;
   border: 1px solid var(--stone150, #e8e4df);
   border-left: 3px solid var(--theme, var(--ink));
-  border-radius: 2px;
+  border-radius: 0;
   background: var(--stone50, #f9f7f4);
   padding: 28px 32px 24px;
 }
@@ -105,7 +105,7 @@
   font-size: 11px;
   background: var(--stone100, #f0ece7);
   border: 1px solid var(--stone200, #ddd8d1);
-  border-radius: 3px;
+  border-radius: 0;
   padding: 1px 5px;
   color: var(--stone500, #78716c);
   vertical-align: 1px;

@@ -712,6 +712,7 @@ export default function RecommandationPage() {
                           onClick={() => handleShare(btn.id)}
                           className={s.shareBtn}
                           title={btn.label}
+                          aria-label={`Partager sur ${btn.label}`}
                         >
                           <btn.icon />
                         </button>
@@ -726,6 +727,7 @@ export default function RecommandationPage() {
                         }
                         className={s.shareBtn}
                         title="Threads"
+                        aria-label="Partager sur Threads"
                       >
                         <ThreadsIcon />
                       </button>
@@ -736,6 +738,7 @@ export default function RecommandationPage() {
                           copySuccess ? s.shareBtnSuccess : s.shareBtn
                         }
                         title="Copier le lien"
+                        aria-label="Copier le lien"
                       >
                         {copySuccess ? <CheckSvg /> : <LinkSvg />}
                       </button>

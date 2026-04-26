@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
@@ -55,10 +55,11 @@ export default function ConnexionPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Se connecter — Origines Media</title>
-        <meta name="description" content="Connectez-vous à votre espace Origines Media." />
-      </Helmet>
+      <SEO
+        title="Connexion"
+        description="Connectez-vous à votre espace Origines Media."
+        url="/connexion"
+      />
 
       <SiteHeader />
 

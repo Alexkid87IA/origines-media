@@ -16,8 +16,6 @@ export function registerServiceWorker(config: SWConfig = {}): void {
           scope: '/',
         });
 
-        console.log('[SW] Registration successful:', registration.scope);
-
         // Vérifier les mises à jour périodiquement (toutes les heures)
         setInterval(() => {
           registration.update();
@@ -32,7 +30,6 @@ export function registerServiceWorker(config: SWConfig = {}): void {
             if (installingWorker.state === 'installed') {
               if (navigator.serviceWorker.controller) {
                 // Nouvelle version disponible
-                console.log('[SW] New content available, please refresh.');
                 config.onUpdate?.(registration);
 
                 // Afficher une notification de mise à jour (optionnel)
@@ -44,7 +41,6 @@ export function registerServiceWorker(config: SWConfig = {}): void {
                 }
               } else {
                 // Premier cache
-                console.log('[SW] Content cached for offline use.');
                 config.onSuccess?.(registration);
               }
             }
@@ -57,10 +53,8 @@ export function registerServiceWorker(config: SWConfig = {}): void {
     });
 
     // Écouter les messages du SW
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data?.type === 'CACHE_UPDATED') {
-        console.log('[SW] Cache updated:', event.data.url);
-      }
+    navigator.serviceWorker.addEventListener('message', (_event) => {
+      // SW message handler — silent in production
     });
   }
 }
@@ -89,5 +83,4 @@ export async function isServiceWorkerActive(): Promise<boolean> {
 export async function clearAllCaches(): Promise<void> {
   const cacheNames = await caches.keys();
   await Promise.all(cacheNames.map((name) => caches.delete(name)));
-  console.log('[SW] All caches cleared');
 }

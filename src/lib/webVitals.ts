@@ -30,19 +30,9 @@ function getRating(name: MetricName, value: number): 'good' | 'needs-improvement
   return 'poor';
 }
 
-// Report to console in development
-function reportToConsole(metric: Metric) {
-  if (process.env.NODE_ENV === 'development') {
-    const colors = {
-      good: 'color: green',
-      'needs-improvement': 'color: orange',
-      poor: 'color: red',
-    };
-    console.log(
-      `%c[Web Vitals] ${metric.name}: ${metric.value.toFixed(2)} (${metric.rating})`,
-      colors[metric.rating]
-    );
-  }
+// Report to console in development (disabled for production cleanliness)
+function reportToConsole(_metric: Metric) {
+  // Intentionally silent — use browser DevTools Performance panel instead
 }
 
 // Report to analytics (customize for your analytics provider)
@@ -85,9 +75,8 @@ export async function initWebVitals(onReport?: ReportCallback) {
     onINP(handleMetric);
     onLCP(handleMetric);
     onTTFB(handleMetric);
-  } catch (error) {
+  } catch {
     // web-vitals library not available, silently ignore
-    console.debug('Web Vitals tracking not available');
   }
 }
 

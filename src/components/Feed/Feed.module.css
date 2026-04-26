@@ -273,7 +273,7 @@
   font-size: 14px;
   color: var(--stone500);
   border: 1px dashed var(--stone100);
-  border-radius: 8px;
+  border-radius: 0;
   margin: 0 0 16px;
 }
 .feedEmpty a {

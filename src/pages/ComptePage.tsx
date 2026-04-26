@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedList } from "@/hooks/useSavedList";
 import { useJournals } from "@/hooks/useJournals";
@@ -252,9 +252,12 @@ function Dashboard() {
 
   return (
     <>
-      <Helmet>
-        <title>Mon espace — Origines Media</title>
-      </Helmet>
+      <SEO
+        title="Mon compte"
+        description="Votre espace personnel Origines Media. Profil, journaux, liste de lecture et paramètres."
+        url="/compte"
+        noindex
+      />
 
       <SiteHeader />
       <Ticker />
@@ -418,13 +421,12 @@ function Dashboard() {
 function PreAuthLanding() {
   return (
     <>
-      <Helmet>
-        <title>Mon compte — Origines Media</title>
-        <meta
-          name="description"
-          content="Votre espace personnel Origines Media. Profil, journaux, liste de lecture et paramètres — un compte pensé pour vous."
-        />
-      </Helmet>
+      <SEO
+        title="Mon compte"
+        description="Votre espace personnel Origines Media. Profil, journaux, liste de lecture et paramètres — un compte pensé pour vous."
+        url="/compte"
+        noindex
+      />
 
       <SiteHeader />
       <Ticker />

@@ -635,6 +635,7 @@ export default function ProductionDetailPage() {
                 className={
                   isLiked ? s.heroActionBtnActive : s.heroActionBtn
                 }
+                aria-label={isLiked ? "Retirer le j'aime" : "J'aime"}
               >
                 <HeartIcon filled={isLiked} />
               </button>
@@ -643,12 +644,14 @@ export default function ProductionDetailPage() {
                 className={
                   isBookmarked ? s.heroActionBtnActive : s.heroActionBtn
                 }
+                aria-label={isBookmarked ? "Retirer des favoris" : "Ajouter aux favoris"}
               >
                 <BookmarkIcon filled={isBookmarked} />
               </button>
               <button
                 onClick={() => setShowShareModal(true)}
                 className={s.heroActionBtn}
+                aria-label="Partager"
               >
                 <ShareIcon />
               </button>
@@ -902,6 +905,7 @@ export default function ProductionDetailPage() {
                           onClick={() => handleShare(btn.id)}
                           className={s.shareBtn}
                           title={btn.label}
+                          aria-label={`Partager sur ${btn.label}`}
                         >
                           <btn.icon />
                         </button>
@@ -910,6 +914,7 @@ export default function ProductionDetailPage() {
                         onClick={() => handleShare("copy")}
                         className={s.shareBtn}
                         title="Copier le lien"
+                        aria-label="Copier le lien"
                       >
                         {copySuccess ? (
                           <svg
@@ -1262,6 +1267,7 @@ export default function ProductionDetailPage() {
             className={
               isLiked ? s.mobileBarBtnActive : s.mobileBarBtn
             }
+            aria-label={isLiked ? "Retirer le j'aime" : "J'aime"}
           >
             <HeartIcon filled={isLiked} />
           </button>
@@ -1279,6 +1285,7 @@ export default function ProductionDetailPage() {
             className={
               isBookmarked ? s.mobileBarBtnActive : s.mobileBarBtn
             }
+            aria-label={isBookmarked ? "Retirer des favoris" : "Ajouter aux favoris"}
           >
             <BookmarkIcon filled={isBookmarked} />
           </button>
@@ -1307,6 +1314,7 @@ export default function ProductionDetailPage() {
                 <button
                   className={s.shareModalClose}
                   onClick={() => setShowShareModal(false)}
+                  aria-label="Fermer"
                 >
                   <svg
                     viewBox="0 0 24 24"

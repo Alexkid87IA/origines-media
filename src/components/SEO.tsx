@@ -42,7 +42,7 @@ const generateOrganizationSchema = () => ({
   '@type': 'Organization',
   name: 'Origines Media',
   url: SITE_URL,
-  logo: `${SITE_URL}/logo.png`,
+  logo: `${SITE_URL}/logos/logo-black.png`,
   description: DEFAULT_DESCRIPTION,
   sameAs: [
     'https://twitter.com/originesmedia',
@@ -84,7 +84,7 @@ const generateArticleSchema = (props: {
     name: 'Origines Media',
     logo: {
       '@type': 'ImageObject',
-      url: `${SITE_URL}/logo.png`
+      url: `${SITE_URL}/logos/logo-black.png`
     }
   },
   mainEntityOfPage: {

@@ -22,6 +22,26 @@ export function frenchTypography(text: string | undefined | null): string {
  */
 export const typo = frenchTypography;
 
+export function smartExcerpt(text: string | undefined | null, maxLen = 200): string {
+  if (!text) return "";
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= maxLen) return clean;
+  const sentenceEnd = /[.!?…]/g;
+  let lastGoodCut = -1;
+  let match;
+  while ((match = sentenceEnd.exec(clean)) !== null) {
+    if (match.index + 1 <= maxLen) {
+      lastGoodCut = match.index + 1;
+    } else {
+      break;
+    }
+  }
+  if (lastGoodCut > 40) return clean.slice(0, lastGoodCut).trim();
+  const wordBoundary = clean.lastIndexOf(" ", maxLen);
+  if (wordBoundary > 40) return clean.slice(0, wordBoundary).trim() + "…";
+  return clean.slice(0, maxLen).trim() + "…";
+}
+
 const WORDS_PER_MINUTE = 230;
 
 export function estimateReadingTime(blocks: any[] | undefined | null): number {

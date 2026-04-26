@@ -1,7 +1,50 @@
 import { useState, useMemo, useCallback } from "react";
-import { UNIVERS, UNIVERS_MAP, ARTICLES, TOTAL_ARTICLES, type UniversId } from "@/data/univers";
+import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
+import { useSanityQuery } from "@/hooks/useSanityQuery";
+import { V2_EXPLORE_QUERY } from "@/lib/queries";
+import { smartExcerpt } from "@/lib/typography";
+import { verticaleToUnivers } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./ExploreTopics.module.css";
+
+interface SanityExploreArticle {
+  _id: string;
+  titre: string;
+  extrait?: string;
+  description?: string;
+  contenuTexte?: string;
+  imageUrl?: string;
+  slug?: string;
+  datePublication?: string;
+  tempsLecture?: number;
+  univpilar?: string;
+  soustopic?: string;
+  typeArticle?: string;
+  videoUrl?: string;
+  verticaleNom?: string;
+  authorName?: string;
+}
+
+interface ArticleItem {
+  id: string;
+  univers: UniversId;
+  subtopic: string;
+  date: string;
+  title: string;
+  href: string;
+  imgSrc: string;
+  imgAlt: string;
+  timeLabel: string;
+  format: string;
+  headline: string;
+  headlineEm: string;
+  headlineSuffix: string;
+  excerpt: string;
+  author: string;
+  readTime: string;
+  isVideo?: boolean;
+  category: string;
+}
 
 interface SubtopicDef {
   slug: string;
@@ -11,22 +54,72 @@ interface SubtopicDef {
   count: number;
 }
 
+const SOUSTOPIC_LABELS: Record<string, string> = {
+  emotions: "Émotions", conscience: "Conscience", meditation: "Méditation",
+  "developpement-personnel": "Développement personnel", neurosciences: "Neurosciences",
+  philosophie: "Philosophie", "quete-de-sens": "Quête de sens", therapies: "Thérapies",
+  nutrition: "Nutrition", sommeil: "Sommeil", mouvement: "Mouvement",
+  prevention: "Prévention", "bien-etre-physique": "Bien-être physique",
+  sport: "Sport", respiration: "Respiration",
+  parentalite: "Parentalité", couples: "Couples", amitie: "Amitié",
+  education: "Éducation", generations: "Générations", communaute: "Communauté",
+  ruptures: "Ruptures", "enquetes-sociales": "Enquêtes sociales",
+  "recits-de-voyage": "Récits de voyage", destinations: "Destinations",
+  art: "Art", musique: "Musique", litterature: "Littérature",
+  cinema: "Cinéma", creativite: "Créativité", photographie: "Photographie",
+  carriere: "Carrière", entrepreneuriat: "Entrepreneuriat", innovation: "Innovation",
+  ia: "Intelligence artificielle", economie: "Économie",
+  leadership: "Leadership", numerique: "Numérique", nomadisme: "Nomadisme",
+};
+
 const MAX_VISIBLE = 12;
-
-const ALL_SUBTOPICS: SubtopicDef[] = UNIVERS.flatMap((u) =>
-  u.subtopics.map((st) => {
-    const count = ARTICLES.filter((a) => a.subtopic === st.slug).length;
-    return {
-      slug: st.slug,
-      label: st.label,
-      univers: u.id,
-      color: u.color,
-      count,
-    };
-  })
-).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "fr"));
-
 const ALL_KEY = "all";
+
+function formatTimeLabel(dateStr?: string): string {
+  if (!dateStr) return "";
+  const now = new Date();
+  const d = new Date(dateStr);
+  const diffMs = now.getTime() - d.getTime();
+  const diffH = Math.floor(diffMs / 3600000);
+  if (diffH < 1) return "il y a quelques min";
+  if (diffH < 24) return `il y a ${diffH} h`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD === 1) return "hier";
+  if (diffD < 7) return `il y a ${diffD} j`;
+  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+}
+
+function buildArticleItem(a: SanityExploreArticle): ArticleItem {
+  const univers = (a.univpilar || "esprit") as UniversId;
+  const u = UNIVERS_MAP[univers] || UNIVERS_MAP.esprit;
+  const isVideo = a.typeArticle === "video" || !!a.videoUrl;
+  const title = a.titre || "";
+  const spaceIdx = title.indexOf(" ", Math.floor(title.length * 0.4));
+  const splitAt = spaceIdx > 0 ? spaceIdx : Math.floor(title.length * 0.4);
+  const stLabel = a.soustopic ? (SOUSTOPIC_LABELS[a.soustopic] || a.soustopic) : "";
+  const excerpt = a.extrait || a.description || "";
+
+  return {
+    id: a._id,
+    univers,
+    subtopic: a.soustopic || "",
+    date: a.datePublication || "",
+    title,
+    href: isVideo ? `/video/${a.slug}` : `/article/${a.slug}`,
+    imgSrc: a.imageUrl || "/placeholder.svg",
+    imgAlt: title,
+    timeLabel: formatTimeLabel(a.datePublication),
+    format: stLabel ? `${isVideo ? "Vidéo" : "Article"} · ${u.name}` : `${isVideo ? "Vidéo" : "Article"} · ${u.name}`,
+    headline: title.slice(0, splitAt) + " ",
+    headlineEm: title.slice(splitAt).split(/[.!?]/)[0],
+    headlineSuffix: ".",
+    excerpt: smartExcerpt(excerpt || a.contenuTexte || "", 160),
+    author: a.authorName || "Rédaction Origines",
+    readTime: a.tempsLecture ? `${a.tempsLecture} min` : "",
+    isVideo,
+    category: u.name,
+  };
+}
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -38,33 +131,57 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function ExploreTopics() {
+  const { data: rawArticles } = useSanityQuery<SanityExploreArticle[]>("explore-topics", V2_EXPLORE_QUERY);
+
+  const articles = useMemo(
+    () => (rawArticles || []).map(buildArticleItem),
+    [rawArticles]
+  );
+
   const [active, setActive] = useState<string>(ALL_KEY);
   const [showAll, setShowAll] = useState(false);
   const [entering, setEntering] = useState(false);
   const [shuffleKey, setShuffleKey] = useState(0);
 
+  const subtopics = useMemo(() => {
+    const counts: Record<string, number> = {};
+    articles.forEach((a) => { if (a.subtopic) counts[a.subtopic] = (counts[a.subtopic] || 0) + 1; });
+    return Object.entries(counts)
+      .map(([slug, count]) => {
+        const u = UNIVERS.find((u) => u.subtopics.some((st) => st.slug === slug));
+        return {
+          slug,
+          label: SOUSTOPIC_LABELS[slug] || slug,
+          univers: (u?.id || "esprit") as UniversId,
+          color: u?.color || "#7B5CD6",
+          count,
+        };
+      })
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "fr"));
+  }, [articles]);
+
   const visiblePills = useMemo(
-    () => (showAll ? ALL_SUBTOPICS : ALL_SUBTOPICS.slice(0, MAX_VISIBLE)),
-    [showAll]
+    () => (showAll ? subtopics : subtopics.slice(0, MAX_VISIBLE)),
+    [showAll, subtopics]
   );
 
-  const hiddenCount = ALL_SUBTOPICS.length - MAX_VISIBLE;
+  const hiddenCount = subtopics.length - MAX_VISIBLE;
 
   const filteredArticles = useMemo(() => {
     if (active === ALL_KEY) {
       void shuffleKey;
-      return shuffle(ARTICLES).slice(0, 12);
+      return shuffle(articles).slice(0, 12);
     }
-    return ARTICLES
+    return articles
       .filter((a) => a.subtopic === active)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 12);
-  }, [active, shuffleKey]);
+  }, [active, shuffleKey, articles]);
 
   const activeLabel = useMemo(() => {
     if (active === ALL_KEY) return "Tous les thèmes";
-    return ALL_SUBTOPICS.find((st) => st.slug === active)?.label ?? active;
-  }, [active]);
+    return subtopics.find((st) => st.slug === active)?.label ?? active;
+  }, [active, subtopics]);
 
   const handlePillClick = useCallback(
     (slug: string) => {
@@ -83,6 +200,8 @@ export default function ExploreTopics() {
     },
     [active]
   );
+
+  if (!rawArticles) return null;
 
   return (
     <section className={s.explore} aria-labelledby="explore-heading">
@@ -112,7 +231,6 @@ export default function ExploreTopics() {
         </a>
       </header>
 
-      {/* Subtopic pills */}
       <nav className={s.pills} aria-label="Filtrer par thème">
         <button
           type="button"
@@ -121,7 +239,7 @@ export default function ExploreTopics() {
         >
           <span className={`${s.pillDot} ${s.pillDotAll}`} />
           Tout
-          <span className={s.pillCount}>{ARTICLES.length}</span>
+          <span className={s.pillCount}>{articles.length}</span>
         </button>
         {visiblePills.map((st) => (
           <button
@@ -149,7 +267,6 @@ export default function ExploreTopics() {
         )}
       </nav>
 
-      {/* Articles */}
       {filteredArticles.length > 0 && (
         <>
           <div className={s.toolbar}>
@@ -185,14 +302,6 @@ export default function ExploreTopics() {
                         <span className={s.cardPlay} aria-hidden="true">
                           <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10">
                             <path d="M8 5.5v13l11-6.5z" />
-                          </svg>
-                        </span>
-                      )}
-                      {item.isPaywall && (
-                        <span className={s.cardLock} aria-hidden="true">
-                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" width="9" height="9">
-                            <rect x="3" y="7" width="10" height="7" rx="1" />
-                            <path d="M5 7V5a3 3 0 0 1 6 0v2" />
                           </svg>
                         </span>
                       )}
@@ -243,14 +352,13 @@ export default function ExploreTopics() {
         </p>
       )}
 
-      {/* CTA — Explorer toute la librairie */}
       <a href="/articles" className={s.cta}>
         <span className={s.ctaLeft}>
-          <span className={s.ctaNum}>{TOTAL_ARTICLES}</span>
+          <span className={s.ctaNum}>{articles.length}</span>
           <span className={s.ctaItalic}>articles &agrave; explorer</span>
         </span>
         <span className={s.ctaRight}>
-          <span className={s.ctaUniversLabel}>5 univers &middot; 40 th&egrave;mes</span>
+          <span className={s.ctaUniversLabel}>5 univers &middot; {subtopics.length} th&egrave;mes</span>
           <span className={s.ctaPills}>
             {UNIVERS.map((u) => (
               <span

@@ -927,12 +927,14 @@ const PartnershipCarouselSection: React.FC = () => {
               {/* Navigation Arrows - Hidden on mobile (using swipe) */}
               <button
                 onClick={prevSlide}
+                aria-label="Précédent"
                 className="hidden md:flex absolute -left-16 lg:-left-20 top-1/2 -translate-y-1/2 w-14 h-14 bg-gray-100 shadow-sm border border-gray-300 rounded-2xl items-center justify-center hover:bg-white/20 transition-all duration-300 group hover:scale-110"
               >
                 <ChevronLeft className="w-7 h-7 text-gray-900 group-hover:text-orange-300 transition-colors" />
               </button>
               <button
                 onClick={nextSlide}
+                aria-label="Suivant"
                 className="hidden md:flex absolute -right-16 lg:-right-20 top-1/2 -translate-y-1/2 w-14 h-14 bg-gray-100 shadow-sm border border-gray-300 rounded-2xl items-center justify-center hover:bg-white/20 transition-all duration-300 group hover:scale-110"
               >
                 <ChevronRight className="w-7 h-7 text-gray-900 group-hover:text-purple-300 transition-colors" />
@@ -944,12 +946,14 @@ const PartnershipCarouselSection: React.FC = () => {
           <div className="flex md:hidden justify-center gap-4 mb-6">
             <button
               onClick={prevSlide}
+              aria-label="Précédent"
               className="w-12 h-12 bg-gray-100 shadow-sm border border-gray-300 rounded-xl flex items-center justify-center"
             >
               <ChevronLeft className="w-6 h-6 text-gray-900" />
             </button>
             <button
               onClick={nextSlide}
+              aria-label="Suivant"
               className="w-12 h-12 bg-gray-100 shadow-sm border border-gray-300 rounded-xl flex items-center justify-center"
             >
               <ChevronRight className="w-6 h-6 text-gray-900" />

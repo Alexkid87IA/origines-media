@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import Ticker from "@/components/Ticker/Ticker";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import VideoChannel from "@/components/VideoChannel/VideoChannel";
@@ -92,14 +92,11 @@ export default function ProdPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Programmes — Origines Prod</title>
-        <meta
-          name="description"
-          content="Découvrez les programmes originaux d'Origines Prod : enquêtes, documentaires, portraits et formats courts. 10 programmes, 106 vidéos, 5 univers."
-        />
-        <link rel="canonical" href="https://www.origines.media/programmes" />
-      </Helmet>
+      <SEO
+        title="Programmes"
+        description="Découvrez les programmes originaux d'Origines Prod : enquêtes, documentaires, portraits et formats courts. 10 programmes, 106 vidéos, 5 univers."
+        url="/programmes"
+      />
       <Ticker />
       <SiteHeader />
 

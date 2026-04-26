@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import IntroOverlay from "@/components/IntroOverlay/IntroOverlay";
 import Ticker from "@/components/Ticker/Ticker";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
@@ -60,10 +61,13 @@ export default function HomePageV2() {
 
   return (
     <>
+      <SEO
+        title="Origines Media — Psychologie, bien-être, relations, culture, avenir"
+        description="Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations pour ceux qui cherchent la profondeur."
+        url="/"
+        jsonLd="organization"
+      />
       <Helmet>
-        <title>Origines Media — Psychologie, bien-être, relations, culture, avenir</title>
-        <meta name="description" content="Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations pour ceux qui cherchent la profondeur." />
-        <link rel="canonical" href="https://www.origines.media" />
         <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(navSchema)}</script>
       </Helmet>

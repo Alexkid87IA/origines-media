@@ -8,7 +8,7 @@ const MIN_TIME_ON_PAGE_MS = 15000;
 
 function setCookie(name: string, value: string, days: number) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${value};expires=${expires};path=/;SameSite=Lax`;
+  document.cookie = `${name}=${value};expires=${expires};path=/;Secure;SameSite=Lax`;
 }
 
 function getCookie(name: string): string | null {

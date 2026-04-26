@@ -8,4 +8,3 @@ export { default as ShareModal } from './ShareModal';
 export { default as RelatedArticles } from './RelatedArticles';
 export { default as ArticleHero } from './ArticleHero';
 export { MobileActionBar, MobileTocButton, MobileTocModal } from './MobileActions';
-export { createPortableTextComponents } from './PortableTextComponents';

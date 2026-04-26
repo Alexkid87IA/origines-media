@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import Ticker from '@/components/Ticker/Ticker';
 import SiteHeader from '@/components/SiteHeader/SiteHeader';
 import Marquee from '@/components/Marquee/Marquee';
@@ -366,14 +366,11 @@ const ShareStoryPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Racontez votre histoire — Origines Media</title>
-        <meta
-          name="description"
-          content="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalisé."
-        />
-        <link rel="canonical" href="https://www.origines.media/racontez-votre-histoire" />
-      </Helmet>
+      <SEO
+        title="Racontez votre histoire"
+        description="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalisé."
+        url="/racontez-votre-histoire"
+      />
 
       <Ticker />
       <SiteHeader />

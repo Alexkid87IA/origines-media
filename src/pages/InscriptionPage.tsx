@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
@@ -40,10 +40,11 @@ export default function InscriptionPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Créer un compte — Origines Media</title>
-        <meta name="description" content="Rejoignez Origines Media. Créez votre espace personnel gratuit." />
-      </Helmet>
+      <SEO
+        title="Inscription"
+        description="Rejoignez Origines Media. Créez votre espace personnel gratuit."
+        url="/inscription"
+      />
 
       <SiteHeader />
 

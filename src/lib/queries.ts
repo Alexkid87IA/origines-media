@@ -219,6 +219,20 @@ export const V2_EDITORIAL_QUERY = `
   }
 `
 
+// ExploreTopics — articles récents avec sous-topic pour filtrage par thème
+export const V2_EXPLORE_QUERY = `
+  *[_type == "production" && defined(image.asset) && defined(soustopic) && rubrique == "articles"] | order(datePublication desc) [0...60] {
+    _id, titre, extrait, description,
+    "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+    "slug": slug.current,
+    datePublication, tempsLecture, univpilar, soustopic,
+    typeArticle, videoUrl,
+    "verticaleNom": verticale->nom,
+    "authorName": author->name
+  }
+`;
+
 // Triad — 3 articles par verticale (pour les 5 univers)
 export const V2_TRIAD_QUERY = `
   *[_type == "verticale"] | order(ordre asc) {

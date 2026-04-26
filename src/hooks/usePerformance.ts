@@ -56,10 +56,6 @@ export function useAsyncPerformance(operationName: string) {
       const result = await operation();
       const duration = performance.now() - start;
 
-      if (import.meta.env.DEV) {
-        console.log(`[Perf] ${operationName}: ${duration.toFixed(2)}ms`);
-      }
-
       return result;
     } catch (error) {
       const duration = performance.now() - start;
@@ -128,11 +124,6 @@ export function useLCPObserver(callback?: (value: number) => void): void {
         if (lastEntry) {
           const lcpValue = lastEntry.startTime;
 
-          if (import.meta.env.DEV) {
-            const rating = lcpValue <= 2500 ? 'good' : lcpValue <= 4000 ? 'needs-improvement' : 'poor';
-            console.log(`[Perf] LCP: ${lcpValue.toFixed(2)}ms (${rating})`);
-          }
-
           callback?.(lcpValue);
         }
       });
@@ -161,11 +152,6 @@ export function useCLSObserver(callback?: (value: number) => void): void {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
           }
-        }
-
-        if (import.meta.env.DEV) {
-          const rating = clsValue <= 0.1 ? 'good' : clsValue <= 0.25 ? 'needs-improvement' : 'poor';
-          console.log(`[Perf] CLS: ${clsValue.toFixed(4)} (${rating})`);
         }
 
         callback?.(clsValue);

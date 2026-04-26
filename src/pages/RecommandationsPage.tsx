@@ -779,7 +779,7 @@ export default function RecommandationsPage() {
                               <div className={s.cardImgWrap}>
                                 <img
                                   src={reco.imageUrl}
-                                  alt=""
+                                  alt={reco.title}
                                   className={s.cardImg}
                                   loading="lazy"
                                 />

@@ -24,7 +24,6 @@ Allow: /contact
 
 # Bloquer les pages d'administration et API
 Disallow: /api/
-Disallow: /_next/
 Disallow: /admin/
 Disallow: /studio/
 
@@ -75,6 +74,3 @@ Disallow: /
 
 # Sitemap
 Sitemap: https://www.origines.media/sitemap.xml
-
-# Host préféré
-Host: https://www.origines.media

@@ -5,6 +5,7 @@ import {
   V2_HERO_VIDEO_QUERY,
 } from "@/lib/queries";
 import { verticaleToUnivers, UNIVERS_MAP, type UniversId } from "@/data/univers";
+import { smartExcerpt } from "@/lib/typography";
 import type { CMSArticle, CMSQuestion, CMSHeroVideo } from "@/components/HeroCarousel/HeroCarousel";
 
 interface SanityArticle {
@@ -47,8 +48,7 @@ function getExcerpt(a: SanityArticle): string {
   if (a.extrait) return a.extrait;
   if (a.description) return a.description;
   if (a.contenuTexte) {
-    const t = a.contenuTexte.substring(0, 180);
-    return t.length === 180 ? t + "…" : t;
+    return smartExcerpt(a.contenuTexte, 200);
   }
   return "";
 }

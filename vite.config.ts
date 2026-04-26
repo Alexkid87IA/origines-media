@@ -14,14 +14,10 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   build: {
-    // Désactiver le modulepreload automatique (évite les warnings console)
-    modulePreload: false,
     // Activer la minification avec esbuild (plus rapide)
     minify: 'esbuild',
     // Target navigateurs modernes pour des bundles plus petits
     target: 'es2020',
-    // Activer le tree shaking agressif
-    treeshake: true,
     rollupOptions: {
       output: {
         // Noms de fichiers optimisés avec hash court
@@ -44,6 +40,10 @@ export default defineConfig({
           // Sanity - chunk séparé
           if (id.includes('node_modules/@sanity') || id.includes('node_modules/@portabletext')) {
             return 'vendor-sanity';
+          }
+          // Firebase - chunk séparé (volumineux)
+          if (id.includes('node_modules/firebase') || id.includes('node_modules/@firebase')) {
+            return 'vendor-firebase';
           }
           // Lucide icons - séparés car volumineux
           if (id.includes('node_modules/lucide-react')) {

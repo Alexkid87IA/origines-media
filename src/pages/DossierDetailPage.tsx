@@ -5,6 +5,7 @@ import Footer2 from "@/components/Footer2/Footer2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_DOSSIER_DETAIL_QUERY } from "@/lib/queries";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
+import { smartExcerpt } from "@/lib/typography";
 import s from "./DossierDetailPage.module.css";
 
 interface SanityArticle {
@@ -38,8 +39,7 @@ function getExcerpt(a: SanityArticle): string {
   if (a.extrait) return a.extrait;
   if (a.description) return a.description;
   if (a.contenuTexte) {
-    const t = a.contenuTexte.substring(0, 160);
-    return t.length === 160 ? t + "…" : t;
+    return smartExcerpt(a.contenuTexte, 180);
   }
   return "";
 }
@@ -133,7 +133,7 @@ export default function DossierDetailPage() {
                       <div className={s.articleImgWrap}>
                         <img
                           src={article.imageUrl}
-                          alt=""
+                          alt={article.titre}
                           className={s.articleImg}
                           loading="lazy"
                         />

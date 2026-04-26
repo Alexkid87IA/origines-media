@@ -76,7 +76,7 @@
     rgba(10, 10, 10, 0.1) 50%,
     transparent 75%
   );
-  border-radius: 16px;
+  border-radius: 0;
   z-index: -1;
 }
 
@@ -89,7 +89,7 @@
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow:
     0 12px 40px rgba(10, 10, 10, 0.15),
     0 2px 8px rgba(10, 10, 10, 0.08),
@@ -103,7 +103,7 @@
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 @media (max-width: 880px) {

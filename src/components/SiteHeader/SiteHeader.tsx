@@ -312,7 +312,7 @@ export default function SiteHeader() {
           <a href="/" className={styles.logo} aria-label="Origines — Accueil">
             <img
               src="/logos/logo-black.png"
-              alt=""
+              alt="Origines Media"
               className={styles.logoImg}
             />
           </a>
@@ -727,7 +727,7 @@ export default function SiteHeader() {
                       {r.imageUrl && (
                         <img
                           src={r.imageUrl}
-                          alt=""
+                          alt={r.title}
                           className={styles.searchResultImg}
                           loading="lazy"
                         />

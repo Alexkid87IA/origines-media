@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import Ticker from "@/components/Ticker/Ticker";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import MediaHero from "@/components/MediaHero/MediaHero";
@@ -18,6 +18,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { MEDIA_HERO_SLIDES_QUERY, V2_FEED_QUERY, V2_RECOS_QUERY } from "@/lib/queries";
 import { UNIVERS_MAP, type UniversId, verticaleToUnivers, getUniversColor, getUniversDark } from "@/data/univers";
+import { smartExcerpt } from "@/lib/typography";
 
 interface SanityFeedArticle {
   _id: string;
@@ -95,8 +96,7 @@ function sanityToSlide(a: SanitySlide, index: number): Slide {
 
   let deck = a.extrait || a.description || "";
   if (!deck && a.contenuTexte) {
-    deck = a.contenuTexte.substring(0, 180);
-    if (deck.length === 180) deck += "…";
+    deck = smartExcerpt(a.contenuTexte, 200);
   }
 
   return {
@@ -161,7 +161,7 @@ function sanityToFeedItem(a: SanityFeedArticle, idx: number): CMSFeedItem {
     headline: title.slice(0, splitAt) + " ",
     headlineEm: title.slice(splitAt).split(/[.!?]/)[0],
     headlineSuffix: ".",
-    excerpt: excerpt.slice(0, 180),
+    excerpt: smartExcerpt(excerpt, 200),
     author: a.authorName || "Origines",
     readTime: isVideo ? (a.duree || "Vidéo") : (a.tempsLecture ? `${a.tempsLecture} min` : ""),
     isVideo,
@@ -220,14 +220,11 @@ export default function MediaPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Média — Origines Media</title>
-        <meta
-          name="description"
-          content="Articles, récits, immersions et témoignages. Explorez les cinq univers d'Origines Media : Esprit, Corps, Liens, Culture et Futur."
-        />
-        <link rel="canonical" href="https://www.origines.media/media" />
-      </Helmet>
+      <SEO
+        title="Média"
+        description="Articles, récits, immersions et témoignages. Explorez les cinq univers d'Origines Media : Esprit, Corps, Liens, Culture et Futur."
+        url="/media"
+      />
       <Ticker />
       <SiteHeader />
       <main id="main" role="main">

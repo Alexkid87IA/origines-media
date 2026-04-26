@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { useSearchParams } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
+import { smartExcerpt } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./ArticlesPageV2.module.css";
@@ -90,8 +91,7 @@ function getExtrait(a: Article): string {
   if (a.extrait) return a.extrait;
   if (a.description) return a.description;
   if (a.contenuTexte) {
-    const t = a.contenuTexte.substring(0, 140);
-    return t.length === 140 ? t + "…" : t;
+    return smartExcerpt(a.contenuTexte, 160);
   }
   return "";
 }
@@ -302,11 +302,11 @@ export default function ArticlesPageV2() {
   /* ── Render ── */
   return (
     <>
-      <Helmet>
-        <title>Articles — Psychologie, santé, relations, culture, avenir | Origines Media</title>
-        <meta name="description" content="Explorez tous les articles Origines Media par univers et thématique. Psychologie, bien-être, relations, culture et avenir — filtrez, triez, trouvez ce qui vous parle." />
-        <link rel="canonical" href="https://www.origines.media/articles" />
-      </Helmet>
+      <SEO
+        title="Articles — Psychologie, santé, relations, culture, avenir"
+        description="Explorez tous les articles Origines Media par univers et thématique. Psychologie, bien-être, relations, culture et avenir — filtrez, triez, trouvez ce qui vous parle."
+        url="/articles"
+      />
       <SiteHeader />
       <main id="main" role="main">
         <div className="v2-container">

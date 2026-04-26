@@ -1,5 +1,6 @@
 // API serverless pour validation du mot de passe (sécurisé côté serveur)
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { timingSafeEqual } from 'crypto'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Uniquement POST
@@ -22,8 +23,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Password is required' })
   }
 
-  // Comparaison sécurisée (timing-safe serait mieux mais OK pour ce cas)
-  const isValid = password === CORRECT_PASSWORD
+  // Comparaison timing-safe pour éviter les attaques par timing
+  const a = Buffer.from(password)
+  const b = Buffer.from(CORRECT_PASSWORD)
+  const isValid = a.length === b.length && timingSafeEqual(a, b)
 
   // Rate limiting basique via headers (Vercel gère le reste)
   res.setHeader('Cache-Control', 'no-store')

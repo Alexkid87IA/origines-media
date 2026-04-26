@@ -95,7 +95,6 @@ function App() {
         <Route path="/programmes" element={<ProdPage />} />
         <Route path="/production/:slug" element={<ArticlePage />} /> {/* Rétrocompatibilité - redirige vers ArticlePage */}
         <Route path="/histoires" element={<HistoiresPage />} />
-        <Route path="/portraits" element={<HistoiresPage />} />
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/histoire/:slug" element={<PortraitDetailPage />} />

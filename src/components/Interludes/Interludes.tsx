@@ -80,7 +80,7 @@ export function Interlude1() {
             );
           })}
         </ol>
-        <a href="/calendrier" className={s.halfCta}>
+        <a href="/ensemble#calendrier" className={s.halfCta}>
           Calendrier complet
           <span aria-hidden="true">&rarr;</span>
         </a>
@@ -123,7 +123,7 @@ export function Interlude1() {
             <span className={s.pollPct} style={{ color: "#2E94B5" }}>18%</span>
           </div>
         </div>
-        <a href="/question/semaine-17" className={s.halfCta}>
+        <a href="/ensemble#question" className={s.halfCta}>
           Lire les réponses
           <span aria-hidden="true">&rarr;</span>
         </a>
@@ -161,12 +161,12 @@ export function Interlude2() {
           </span>
         </div>
         <div className={s.halfCtaGroup}>
-          <a href="/lettre/42" className={s.halfCta}>
+          <a href="/newsletter" className={s.halfCta}>
             Lire la lettre
             <span aria-hidden="true">&rarr;</span>
           </a>
           <span className={s.halfCtaSep} aria-hidden="true" />
-          <a href="/lettres" className={s.halfCta}>
+          <a href="/newsletter" className={s.halfCta}>
             Toutes les lettres
             <span aria-hidden="true">&rarr;</span>
           </a>
@@ -309,7 +309,7 @@ export function Interlude4() {
             </a>
           ))}
         </div>
-        <a href="/redaction" className={s.halfCta}>
+        <a href="/media" className={s.halfCta}>
           Toute la rédaction
           <span aria-hidden="true">&rarr;</span>
         </a>
@@ -342,7 +342,7 @@ export function Interlude4() {
           <a href="/articles?tag=resilience&u=corps" className={s.wordTag} style={{ "--t-color": "#2E9B74" } as React.CSSProperties}>Le Corps</a>
           <a href="/articles?tag=resilience&u=liens" className={s.wordTag} style={{ "--t-color": "#D64C90" } as React.CSSProperties}>Les Liens</a>
         </div>
-        <a href="/mot/resilience" className={s.halfCta}>
+        <a href="/articles" className={s.halfCta}>
           Explorer ce mot
           <span aria-hidden="true">&rarr;</span>
         </a>

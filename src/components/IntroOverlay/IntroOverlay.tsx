@@ -90,6 +90,7 @@ export default function IntroOverlay() {
       <img
         src="/visages-origines.png"
         alt=""
+        aria-hidden="true"
         className={styles.bgImage}
       />
 

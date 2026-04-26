@@ -537,14 +537,14 @@ export default function VideoPage() {
                   <div className={s.widgetBody}>
                     <div className={s.shareGrid}>
                       {shareButtons.map((btn) => (
-                        <button key={btn.id} onClick={() => handleShare(btn.id)} className={s.shareBtn} title={btn.label}>
+                        <button key={btn.id} onClick={() => handleShare(btn.id)} className={s.shareBtn} title={btn.label} aria-label={`Partager sur ${btn.label}`}>
                           <btn.icon />
                         </button>
                       ))}
-                      <button onClick={() => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(title)} ${encodeURIComponent(window.location.href)}`, "_blank")} className={s.shareBtn} title="Threads">
+                      <button onClick={() => window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(title)} ${encodeURIComponent(window.location.href)}`, "_blank")} className={s.shareBtn} title="Threads" aria-label="Partager sur Threads">
                         <ThreadsSvg />
                       </button>
-                      <button onClick={() => handleShare("copy")} className={s.shareBtn} title="Copier le lien">
+                      <button onClick={() => handleShare("copy")} className={s.shareBtn} title="Copier le lien" aria-label="Copier le lien">
                         {copySuccess ? <CheckSvg /> : <LinkSvg />}
                       </button>
                     </div>
@@ -698,14 +698,14 @@ export default function VideoPage() {
       {/* Mobile bar */}
       <div className={s.mobileBar}>
         <div className={s.mobileBarInner}>
-          <button onClick={() => setIsLiked(!isLiked)} className={`${s.mobileBarBtn} ${isLiked ? s.mobileBarBtnActive : ""}`}>
+          <button onClick={() => setIsLiked(!isLiked)} className={`${s.mobileBarBtn} ${isLiked ? s.mobileBarBtnActive : ""}`} aria-label={isLiked ? "Retirer le j'aime" : "J'aime"}>
             <HeartSvg filled={isLiked} />
           </button>
           <button onClick={() => setShowShareModal(true)} className={s.mobileBarShare}>
             <ShareSvg />
             <span>Partager</span>
           </button>
-          <button onClick={() => setIsBookmarked(!isBookmarked)} className={`${s.mobileBarBtn} ${isBookmarked ? s.mobileBarBtnActive : ""}`}>
+          <button onClick={() => setIsBookmarked(!isBookmarked)} className={`${s.mobileBarBtn} ${isBookmarked ? s.mobileBarBtnActive : ""}`} aria-label={isBookmarked ? "Retirer des favoris" : "Ajouter aux favoris"}>
             <BookmarkSvg filled={isBookmarked} />
           </button>
         </div>
@@ -713,7 +713,7 @@ export default function VideoPage() {
 
       {/* Mobile TOC button */}
       {headings.length > 0 && (
-        <button onClick={() => setShowMobileToc(true)} className={s.mobileTocBtn}>
+        <button onClick={() => setShowMobileToc(true)} className={s.mobileTocBtn} aria-label="Ouvrir le sommaire">
           <ListSvg />
         </button>
       )}
@@ -738,7 +738,7 @@ export default function VideoPage() {
             >
               <div className={s.modalHeader}>
                 <h3 className={s.modalTitle}>Sommaire</h3>
-                <button onClick={() => setShowMobileToc(false)} className={s.modalClose}><XSvg /></button>
+                <button onClick={() => setShowMobileToc(false)} className={s.modalClose} aria-label="Fermer"><XSvg /></button>
               </div>
               <nav>
                 {headings.map((h) => (
@@ -775,7 +775,7 @@ export default function VideoPage() {
             >
               <div className={s.modalHeader}>
                 <h3 className={s.modalTitle}>Partager</h3>
-                <button onClick={() => setShowShareModal(false)} className={s.modalClose}><XSvg /></button>
+                <button onClick={() => setShowShareModal(false)} className={s.modalClose} aria-label="Fermer"><XSvg /></button>
               </div>
               <div className={s.modalShareGrid}>
                 {shareButtons.map((btn) => (
