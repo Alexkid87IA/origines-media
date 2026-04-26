@@ -1,4 +1,4 @@
-/* ====== HERO — 3 zones : article · vidéo+question · guide+reco ====== */
+/* ====== HERO — 3 zones : vidéo · question+article · guide+boutique ====== */
 
 .hero {
   position: relative;
@@ -16,6 +16,8 @@
   margin-bottom: 20px;
   position: relative;
   z-index: 2;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.1s;
 }
 
 .cNum { letter-spacing: 0.2em; font-weight: 500; }
@@ -25,16 +27,17 @@
 /* ====== 3-COLUMN GRID ====== */
 
 .heroGrid {
+  position: relative;
   display: grid;
   grid-template-columns: 1.4fr 1fr 340px;
   grid-template-rows: auto 1fr;
-  border: none;
+  border: 1px solid var(--ink);
   min-height: 680px;
   overflow: hidden;
 }
 
 /* ======================================================================
-   COL 1 — Article principal (immersive cover)
+   COL 1 — Vidéo immersive (pleine hauteur)
    ====================================================================== */
 
 .mainCol {
@@ -43,9 +46,12 @@
   flex-direction: column;
   justify-content: flex-end;
   background-size: cover;
+  background-position: center;
   text-decoration: none;
   overflow: hidden;
   grid-row: 1 / -1;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 0.2s;
 }
 
 .mainGradient {
@@ -54,13 +60,25 @@
   background:
     linear-gradient(
       to top,
-      rgba(10, 10, 10, 0.85) 0%,
-      rgba(10, 10, 10, 0.5) 40%,
-      rgba(10, 10, 10, 0.25) 70%,
-      rgba(10, 10, 10, 0.15) 100%
+      rgba(10, 10, 10, 0.95) 0%,
+      rgba(10, 10, 10, 0.8) 25%,
+      rgba(10, 10, 10, 0.45) 55%,
+      rgba(10, 10, 10, 0.25) 100%
     );
   z-index: 1;
   pointer-events: none;
+  transition: background 0.4s ease;
+}
+
+.mainCol:hover .mainGradient {
+  background:
+    linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.97) 0%,
+      rgba(10, 10, 10, 0.85) 25%,
+      rgba(10, 10, 10, 0.5) 55%,
+      rgba(10, 10, 10, 0.3) 100%
+    );
 }
 
 .mainContent {
@@ -68,6 +86,8 @@
   z-index: 2;
   padding: 44px 36px;
   color: var(--paper);
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.6s;
 }
 
 .mainKicker {
@@ -80,12 +100,13 @@
 .mainTag {
   display: inline-flex;
   padding: 4px 10px;
-  color: #fff;
+  color: var(--paper);
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  background: rgba(247, 245, 240, 0.15);
 }
 
 .mainMeta {
@@ -105,6 +126,7 @@
   margin: 0;
   color: var(--paper);
   text-wrap: balance;
+  transition: opacity 0.3s ease;
 }
 
 .mainTitle::before {
@@ -117,31 +139,38 @@
   margin-bottom: 14px;
 }
 
+.mainCol:hover .mainTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  text-decoration-color: rgba(247, 245, 240, 0.5);
+}
+
 .mainDeck {
   margin: 16px 0 0;
   max-width: 500px;
   font-family: var(--body);
   font-size: 16px;
   line-height: 1.5;
-  color: rgba(247, 245, 240, 0.8);
+  color: rgba(247, 245, 240, 0.75);
 }
 
 .mainByline {
   margin-top: 20px;
   padding-top: 14px;
-  border-top: 1px solid rgba(247, 245, 240, 0.15);
+  border-top: 1px solid rgba(247, 245, 240, 0.12);
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.5);
+  color: rgba(247, 245, 240, 0.45);
   display: inline-flex;
   align-items: center;
   gap: 10px;
 }
 
 .mainByline strong {
-  color: rgba(247, 245, 240, 0.9);
+  color: rgba(247, 245, 240, 0.85);
   font-weight: 500;
 }
 
@@ -154,31 +183,183 @@
   display: inline-block;
 }
 
-.mainCol:hover .mainTitle {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
-}
-
 /* ======================================================================
-   COL 2 — Vidéo (haut) + Question (bas)
+   COL 2 — Question (haut) + Article (bas)
    ====================================================================== */
 
 .centerCol {
   display: grid;
   grid-row: 1 / -1;
   grid-template-rows: subgrid;
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(247, 245, 240, 0.08);
+  border-right: 1px solid rgba(247, 245, 240, 0.08);
 }
 
-/* — Vidéo — */
+/* — Question de la semaine — */
+
+.questionBlock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 26px;
+  background-color: var(--ink);
+  background-size: cover;
+  background-position: center;
+  color: var(--paper);
+  text-decoration: none;
+  flex-shrink: 0;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.35s;
+}
+
+.questionOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.9) 0%,
+    rgba(10, 10, 10, 0.5) 40%,
+    rgba(10, 10, 10, 0.3) 70%,
+    rgba(10, 10, 10, 0.25) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+  transition: background 0.4s ease;
+}
+.questionBlock:hover .questionOverlay {
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.94) 0%,
+    rgba(10, 10, 10, 0.55) 40%,
+    rgba(10, 10, 10, 0.35) 70%,
+    rgba(10, 10, 10, 0.3) 100%
+  );
+}
+
+.questionContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.questionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.questionLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.55);
+}
+
+.questionWeek {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: rgba(247, 245, 240, 0.35);
+}
+
+.questionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(22px, 2.4vw, 32px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: var(--paper);
+  text-wrap: balance;
+}
+
+.questionBlock:hover .questionTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(247, 245, 240, 0.45);
+}
+
+.questionFoot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.questionUnivers {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  color: var(--paper);
+  font-weight: 500;
+  flex-shrink: 0;
+  background: rgba(247, 245, 240, 0.15);
+}
+
+.questionProgress {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(247, 245, 240, 0.45);
+  flex-shrink: 0;
+}
+
+.progressBar {
+  flex: 1;
+  min-width: 40px;
+  height: 3px;
+  background: rgba(247, 245, 240, 0.15);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: rgba(247, 245, 240, 0.6);
+  transform-origin: left;
+  animation: progressGrow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 1s;
+  transform: scaleX(0);
+}
+
+.questionCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 240, 0.75);
+  transition: gap 0.3s ease, color 0.3s ease;
+}
+
+.questionBlock:hover .questionCta { gap: 12px; color: var(--paper); }
+
+.questionCta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* — Vidéo (COL 2, dans centerCol si utilisé comme vidéo) — */
 
 .videoBlock {
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  background: #111;
+  background: var(--ink);
   color: var(--paper);
   flex: 1;
   min-height: 0;
@@ -186,7 +367,7 @@
 }
 
 .videoBlock:hover {
-  background: #181818;
+  background: #141414;
 }
 
 .videoThumb {
@@ -209,19 +390,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  color: #fff;
+  color: var(--paper);
   transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 .videoBlock:hover .videoPlay {
   transform: translate(-50%, -50%) scale(1.08);
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .videoPlay svg {
@@ -253,7 +434,7 @@
   font-size: 9px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.45);
+  color: rgba(247, 245, 240, 0.4);
   display: block;
   margin-bottom: 8px;
 }
@@ -274,7 +455,7 @@
   text-underline-offset: 3px;
 }
 
-/* — Play button (large, on immersive video COL 1) — */
+/* — Play button (large, on immersive COL 1) — */
 
 .videoPlayLarge {
   position: absolute;
@@ -283,16 +464,18 @@
   transform: translate(-50%, -50%);
   z-index: 3;
   transition: transform 0.35s ease, opacity 0.35s ease;
-  opacity: 0.85;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards 0.8s, playPulse 3s ease-in-out infinite 1.3s;
 }
 .mainCol:hover .videoPlayLarge {
   transform: translate(-50%, -50%) scale(1.1);
   opacity: 1;
+  animation: none;
 }
 .videoPlayLarge img {
   width: 88px;
   height: 88px;
-  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.4));
 }
 
 /* — Article à la une (COL 2 bas) — */
@@ -304,13 +487,14 @@
   justify-content: flex-end;
   text-decoration: none;
   color: var(--paper);
-  background-color: #6D28D9;
+  background-color: var(--ink);
   background-size: cover;
   background-position: center;
   flex: 1;
   min-height: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.5s;
 }
 
 .articleOverlay {
@@ -318,29 +502,29 @@
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(109, 40, 217, 0.92) 0%,
-    rgba(109, 40, 217, 0.55) 40%,
-    rgba(109, 40, 217, 0.15) 70%,
-    transparent 100%
+    rgba(10, 10, 10, 0.92) 0%,
+    rgba(10, 10, 10, 0.6) 35%,
+    rgba(10, 10, 10, 0.45) 65%,
+    rgba(10, 10, 10, 0.55) 100%
   );
   z-index: 1;
   pointer-events: none;
-  transition: background 0.3s ease;
+  transition: background 0.4s ease;
 }
 .articleBlock:hover .articleOverlay {
   background: linear-gradient(
     to top,
-    rgba(124, 58, 237, 0.92) 0%,
-    rgba(124, 58, 237, 0.5) 40%,
-    rgba(124, 58, 237, 0.1) 70%,
-    transparent 100%
+    rgba(10, 10, 10, 0.95) 0%,
+    rgba(10, 10, 10, 0.65) 35%,
+    rgba(10, 10, 10, 0.5) 65%,
+    rgba(10, 10, 10, 0.6) 100%
   );
 }
 
 .articleInfo {
   position: relative;
   z-index: 2;
-  padding: 18px 26px 20px;
+  padding: 20px 26px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -349,24 +533,25 @@
 
 .articleTitle {
   font-family: var(--display);
-  font-weight: 800;
+  font-weight: 900;
   font-size: 20px;
   line-height: 1.15;
   letter-spacing: -0.025em;
-  color: #fff;
+  color: var(--paper);
   margin: 8px 0 0;
 }
 .articleBlock:hover .articleTitle {
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
+  text-decoration-color: rgba(247, 245, 240, 0.5);
 }
 
 .articleDeck {
   font-family: var(--body);
   font-size: 13px;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(247, 245, 240, 0.6);
   margin: 8px 0 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -374,160 +559,15 @@
   overflow: hidden;
 }
 
-.articleBlock .mainMeta { color: rgba(255, 255, 255, 0.55); }
-.articleBlock .mainTag { background: rgba(255, 255, 255, 0.2) !important; color: #fff; }
+.articleBlock .mainMeta { color: rgba(247, 245, 240, 0.5); }
 .articleBlock .mainByline {
-  color: rgba(255, 255, 255, 0.5);
-  border-top-color: rgba(255, 255, 255, 0.15);
+  color: rgba(247, 245, 240, 0.4);
+  border-top-color: rgba(247, 245, 240, 0.1);
 }
-.articleBlock .mainByline strong { color: rgba(255, 255, 255, 0.9); }
-
-/* — Question de la semaine (bas de COL 2) — */
-
-.questionBlock {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 28px 26px;
-  background-color: #6D28D9;
-  background-size: cover;
-  background-position: center;
-  color: var(--paper);
-  text-decoration: none;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.questionOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(109, 40, 217, 0.92) 0%,
-    rgba(109, 40, 217, 0.55) 40%,
-    rgba(109, 40, 217, 0.15) 70%,
-    transparent 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-  transition: background 0.3s ease;
-}
-.questionBlock:hover .questionOverlay {
-  background: linear-gradient(
-    to top,
-    rgba(124, 58, 237, 0.92) 0%,
-    rgba(124, 58, 237, 0.5) 40%,
-    rgba(124, 58, 237, 0.1) 70%,
-    transparent 100%
-  );
-}
-
-.questionContent {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  flex: 1;
-}
-
-.questionHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.questionLabel {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.questionWeek {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.questionTitle {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(22px, 2.4vw, 32px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  margin: 0;
-  color: #fff;
-  text-wrap: balance;
-}
-
-.questionFoot {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-
-.questionUnivers {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  color: #fff;
-  font-weight: 500;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-.questionProgress {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.5);
-  flex-shrink: 0;
-}
-
-.progressBar {
-  flex: 1;
-  min-width: 40px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.2);
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.questionCta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 18px;
-  font-family: var(--body);
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-  transition: gap 0.3s ease;
-}
-
-.questionBlock:hover .questionCta { gap: 12px; }
-
-.questionCta svg {
-  width: 14px;
-  height: 14px;
-}
+.articleBlock .mainByline strong { color: rgba(247, 245, 240, 0.85); }
 
 /* ======================================================================
-   COL 3 — Guide + Reco
+   COL 3 — Guide + Boutique
    ====================================================================== */
 
 .rightCol {
@@ -536,32 +576,30 @@
   grid-template-rows: subgrid;
 }
 
-/* — Guide gratuit (editorial, sobre) — */
+/* — Guide gratuit — */
 
 .guideBlock {
   position: relative;
   display: flex;
   flex-direction: column;
   padding: 28px 26px;
-  padding-top: 31px;
-  background: #059669;
+  background: var(--paper);
   text-decoration: none;
-  color: var(--paper);
+  color: var(--ink);
   overflow: hidden;
+  border-top: 1px solid var(--stone100, #E8E5DE);
+  border-left: 1px solid var(--stone100, #E8E5DE);
   transition: background 0.3s ease;
+  opacity: 0;
+  animation: slideInRight 0.6s ease forwards 0.4s;
 }
 
 .guideBlock:hover {
-  background: #10B981;
+  background: var(--stone50, #F0EDE6);
 }
 
 .guideAccent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.35);
+  display: none;
 }
 
 .guideLabel {
@@ -569,7 +607,7 @@
   font-size: 9px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--ink);
   margin-bottom: 14px;
   font-weight: 600;
 }
@@ -580,16 +618,23 @@
   font-size: 22px;
   line-height: 1.15;
   letter-spacing: -0.03em;
-  color: var(--paper);
+  color: var(--ink);
   margin: 0;
   text-wrap: balance;
+}
+
+.guideBlock:hover .guideTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(10, 10, 10, 0.3);
 }
 
 .guideDesc {
   font-family: var(--body);
   font-size: 13px;
   line-height: 1.5;
-  color: rgba(247, 245, 240, 0.6);
+  color: var(--stone600, #6B6860);
   margin: 12px 0 0;
 }
 
@@ -597,80 +642,119 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: auto;
+  padding-top: 18px;
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
-  transition: gap 0.3s ease, color 0.2s ease;
+  color: var(--stone500, #8A8780);
+  transition: gap 0.3s ease, color 0.3s ease;
 }
 
-.guideBlock:hover .guideCta { gap: 12px; color: #fff; }
+.guideBlock:hover .guideCta { gap: 12px; color: var(--ink); }
 
 .guideCta svg {
   width: 14px;
   height: 14px;
 }
 
-/* — Row 2 wrapper (reco + sondage) — */
-
-/* — Boutique promo — */
+/* — Boutique — */
 
 .boutiqueBlock {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 28px 28px 24px;
-  background: #E11D48;
+  padding: 28px 26px;
+  background: var(--ink);
   color: var(--paper);
   text-decoration: none;
   flex: 1;
+  overflow: hidden;
   transition: background 0.3s ease;
+  opacity: 0;
+  animation: slideInRight 0.6s ease forwards 0.55s;
+  border-top: 1px solid rgba(247, 245, 240, 0.06);
 }
-.boutiqueBlock:hover { background: #F43F5E; }
+.boutiqueBlock:hover { background: #141414; }
+
+.boutiqueBlock::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(247, 245, 240, 0.04) 0%, transparent 55%),
+    radial-gradient(ellipse at 15% 85%, rgba(247, 245, 240, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.boutiqueBlock::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 25%,
+    rgba(247, 245, 240, 0.03) 45%,
+    rgba(247, 245, 240, 0.02) 55%,
+    transparent 75%
+  );
+  background-size: 250% 250%;
+  animation: boutiqueShimmer 8s ease-in-out infinite 1.5s;
+  pointer-events: none;
+}
 
 .boutiqueLabel {
+  position: relative;
+  z-index: 1;
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(247, 245, 240, 0.5);
   margin-bottom: 14px;
 }
 
 .boutiqueTitle {
+  position: relative;
+  z-index: 1;
   font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(20px, 1.8vw, 26px);
-  line-height: 1.1;
+  font-size: 22px;
+  line-height: 1.15;
   letter-spacing: -0.03em;
-  color: #fff;
+  color: var(--paper);
   margin: 0;
 }
 .boutiqueBlock:hover .boutiqueTitle {
   text-decoration: underline;
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 4px;
+  text-decoration-color: rgba(247, 245, 240, 0.4);
 }
 
 .boutiqueDesc {
+  position: relative;
+  z-index: 1;
   font-family: var(--body);
   font-size: 13px;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(247, 245, 240, 0.5);
   margin: 12px 0 0;
 }
 
 .boutiquePrice {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: baseline;
   gap: 10px;
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid rgba(247, 245, 240, 0.08);
 }
 
 .boutiquePriceTag {
@@ -678,7 +762,7 @@
   font-weight: 900;
   font-size: 24px;
   letter-spacing: -0.03em;
-  color: #fff;
+  color: var(--paper);
 }
 
 .boutiquePriceSub {
@@ -686,10 +770,12 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(247, 245, 240, 0.35);
 }
 
 .boutiqueCta {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -698,16 +784,121 @@
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  transition: gap 0.3s ease, color 0.2s ease;
+  color: rgba(247, 245, 240, 0.6);
+  transition: gap 0.3s ease, color 0.3s ease;
 }
 .boutiqueBlock:hover .boutiqueCta {
   gap: 12px;
-  color: #fff;
+  color: var(--paper);
 }
 .boutiqueCta svg {
   width: 14px;
   height: 14px;
+}
+
+/* ======================================================================
+   SHINE SWEEP — diagonal light on first load
+   ====================================================================== */
+
+.heroGrid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 55%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  animation: shineSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.9s;
+}
+
+/* ======================================================================
+   KEYFRAMES
+   ====================================================================== */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 0.85; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes playPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+  50%      { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
+}
+
+@keyframes progressGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes shineSweep {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@keyframes boutiqueGlow {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes boutiqueShimmer {
+  0%   { background-position: 100% 0%; }
+  50%  { background-position: 0% 100%; }
+  100% { background-position: 100% 0%; }
+}
+
+/* ======================================================================
+   REDUCED MOTION
+   ====================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .chapterMark,
+  .mainCol,
+  .mainContent,
+  .questionBlock,
+  .articleBlock,
+  .guideBlock,
+  .boutiqueBlock,
+  .videoPlayLarge {
+    opacity: 1;
+    animation: none !important;
+  }
+
+  .progressFill {
+    transform: scaleX(1);
+    animation: none !important;
+  }
+
+  .heroGrid::after {
+    animation: none !important;
+    display: none;
+  }
+
+  .boutiqueBlock::before {
+    opacity: 1;
+    animation: none !important;
+  }
+
+  .boutiqueBlock::after {
+    animation: none !important;
+  }
 }
 
 /* ======================================================================
@@ -725,10 +916,10 @@
   .videoInfo { padding: 14px 22px 18px; }
   .questionBlock { padding: 24px 22px; }
   .questionTitle { font-size: clamp(20px, 2.2vw, 28px); }
-  .guideBlock { padding: 24px 22px; padding-top: 27px; }
+  .guideBlock { padding: 24px 22px; }
   .guideTitle { font-size: 20px; }
   .boutiqueTitle { font-size: 20px; }
-  .boutiqueBlock { padding: 22px; }
+  .boutiqueBlock { padding: 24px 22px; }
 }
 
 @media (max-width: 1080px) {
@@ -760,8 +951,8 @@
   }
   .videoInfo { padding: 14px 24px 18px; }
   .questionBlock { padding: 24px; }
-  .guideBlock { padding: 24px 24px; padding-top: 27px; }
-  .boutiqueBlock { padding: 22px 24px; }
+  .guideBlock { padding: 24px; }
+  .boutiqueBlock { padding: 24px; }
 }
 
 @media (max-width: 640px) {

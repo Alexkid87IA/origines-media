@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { UNIVERS, UNIVERS_MAP, ARTICLES, TOTAL_ARTICLES, type UniversId } from "@/data/univers";
+import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./ExploreTopics.module.css";
 
 interface SubtopicDef {
@@ -217,6 +218,14 @@ export default function ExploreTopics() {
                         <span>{item.author}</span>
                         <span className={s.cardSep} aria-hidden="true">&middot;</span>
                         <span>{item.readTime}</span>
+                        <SaveBookmark
+                          inline
+                          type={item.isVideo ? "video" : "article"}
+                          slug={item.href.split("/").pop() || ""}
+                          title={item.title}
+                          image={item.imgSrc}
+                          univers={item.category}
+                        />
                       </footer>
                     </div>
                   </a>

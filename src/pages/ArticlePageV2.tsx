@@ -8,7 +8,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import EmailCapture from "@/components/EmailCapture";
 import { sanityFetch } from "@/lib/sanity";
-import { typo } from "@/lib/typography";
+import { typo, estimateReadingTime } from "@/lib/typography";
 import { AdPlaceholder } from "@/components/AdSense";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import {
@@ -18,6 +18,7 @@ import {
   shareButtons,
 } from "@/components/article/SocialIcons";
 import GuideBanner from "@/components/article/GuideBanner";
+import SaveButton from "@/components/SaveButton/SaveButton";
 import type {
   Heading,
   Article,
@@ -385,7 +386,7 @@ export default function ArticlePageV2() {
   const description = article.description || article.excerpt || "";
   const imageUrl = article.imageUrl || article.mainImage?.asset?.url || (typeof article.mainImage === "string" ? article.mainImage : "") || "";
   const date = article.datePublication || article.publishedAt;
-  const readTime = article.tempsLecture || article.readTime || 5;
+  const readTime = article.tempsLecture || article.readTime || estimateReadingTime(article.contenu || article.body);
   const fullContent = article.contenu || article.body || [];
   const firstParaIndex = fullContent.findIndex(
     (b: any) => b._type === "block" && (b.style === "normal" || !b.style)
@@ -492,6 +493,14 @@ export default function ArticlePageV2() {
               <span className={s.headerReadTime}>
                 {readTime} min de lecture
               </span>
+              <span className={s.headerDot} aria-hidden="true" />
+              <SaveButton
+                type="article"
+                slug={slug || ""}
+                title={title}
+                image={imageUrl}
+                univers={verticale}
+              />
             </div>
           </div>
         </header>
@@ -1077,31 +1086,56 @@ export default function ArticlePageV2() {
                 Articles <em>recommand&eacute;s.</em>
               </h2>
               <div className={s.relatedGrid}>
-                {relatedArticles.slice(0, 4).map((related) => (
-                  <Link
-                    key={related._id}
-                    to={`/article/${related.slug.current}`}
-                    className={s.relCard}
-                  >
-                    <div className={s.relCardImgWrap}>
-                      <img
-                        src={related.imageUrl || "/placeholder.svg"}
-                        alt={related.titre || related.title || ""}
-                        className={s.relCardImg}
-                        loading="lazy"
-                        decoding="async"
-                      />
+                {relatedArticles.slice(0, 4).map((related) => {
+                  const relSlug = related.slug.current;
+                  const relTitle = related.titre || related.title || "";
+                  return (
+                    <div key={related._id} className={s.relCard}>
+                      <Link
+                        to={`/article/${relSlug}`}
+                        className={s.relCardLink}
+                      >
+                        <div className={s.relCardImgWrap}>
+                          <img
+                            src={related.imageUrl || "/placeholder.svg"}
+                            alt={relTitle}
+                            className={s.relCardImg}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          {related.readingTime && (
+                            <span className={s.relCardTime}>
+                              {related.readingTime} min
+                            </span>
+                          )}
+                        </div>
+                        <div className={s.relCardBody}>
+                          {related.verticale && (
+                            <span className={s.relCardVert}>
+                              {related.verticale.nom}
+                            </span>
+                          )}
+                          <h3 className={s.relCardTitle}>{relTitle}</h3>
+                          {related.excerpt && (
+                            <p className={s.relCardExcerpt}>{related.excerpt}</p>
+                          )}
+                        </div>
+                      </Link>
+                      <div className={s.relCardFooter}>
+                        {related.author && (
+                          <span className={s.relCardAuthor}>Par {related.author}</span>
+                        )}
+                        <SaveButton
+                          type="article"
+                          slug={relSlug}
+                          title={relTitle}
+                          image={related.imageUrl}
+                          univers={related.verticale?.nom}
+                        />
+                      </div>
                     </div>
-                    {related.verticale && (
-                      <span className={s.relCardVert}>
-                        {related.verticale.nom}
-                      </span>
-                    )}
-                    <h3 className={s.relCardTitle}>
-                      {related.titre || related.title}
-                    </h3>
-                  </Link>
-                ))}
+                  );
+                })}
               </div>
               <div className={s.relatedCtaWrap}>
                 <Link to="/articles" className={s.relatedCta}>
@@ -1163,17 +1197,22 @@ export default function ArticlePageV2() {
 
       {/* ═══ Colophon ═══ */}
       <div className={s.colophon}>
+        <div className={s.colophonSpectrum} aria-hidden="true" />
         <div className={s.colophonInner}>
-          <div className={s.colophonLeft}>
-            <svg className={s.colophonMark} viewBox="0 0 100 100" aria-hidden="true">
-              <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" strokeWidth="6" />
-              <circle cx="50" cy="50" r="8" fill="currentColor" />
-            </svg>
-            <p className={s.colophonQuote}>
-              <em>&laquo;&nbsp;Ce qui compte, ce n&rsquo;est pas d&rsquo;avoir toutes les r&eacute;ponses.
-              C&rsquo;est de poser les bonnes questions.&nbsp;&raquo;</em>
-            </p>
-            <span className={s.colophonAttr}>&mdash; Origines Media, depuis 2024</span>
+          <img
+            src="/logos/logo-black.png"
+            alt=""
+            className={s.colophonLogo}
+            aria-hidden="true"
+          />
+          <p className={s.colophonQuote}>
+            &laquo;&nbsp;Ce qui compte, ce n&rsquo;est pas d&rsquo;avoir toutes les
+            r&eacute;ponses. C&rsquo;est de poser les bonnes questions.&nbsp;&raquo;
+          </p>
+          <div className={s.colophonMeta}>
+            <span className={s.colophonAttr}>Origines Media</span>
+            <span className={s.colophonSep} aria-hidden="true" />
+            <span className={s.colophonSince}>Depuis 2021</span>
           </div>
           <button
             className={s.colophonUp}

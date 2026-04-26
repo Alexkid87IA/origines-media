@@ -741,7 +741,7 @@ const ShareStoryPage: React.FC = () => {
             <div className={s.chapterMarkDark}>
               <span className={s.cNum}>Ch.08</span>
               <span className={s.cSep}>/</span>
-              <span className={s.cLabel}>Formulaire</span>
+              <span className={s.cLabel}>Participez</span>
             </div>
             <div className={s.formSectionHeader}>
               <div className={s.formKicker}>
@@ -752,153 +752,226 @@ const ShareStoryPage: React.FC = () => {
                 Pr&ecirc;t(e) &agrave; partager votre <em>histoire&thinsp;?</em>
               </h2>
               <p className={s.formSectionDeck}>
-                Remplissez ce formulaire en 2 minutes.
-                On vous recontacte sous 48h pour faire connaissance.
+                Choisissez votre format. Chaque parcours a sa forme id&eacute;ale.
               </p>
             </div>
 
-            {!isSubmitted ? (
-              <div className={s.formCard}>
-                <form onSubmit={handleSubmit} className={s.form}>
+            {/* Format selection — always visible */}
+            <div className={s.formCard}>
+              <div className={s.formatSelector}>
+                <span className={s.formatSelectorLabel}>Choisissez votre format</span>
+                <div className={s.formatSelectorGrid}>
+                  {formats.map((f) => {
+                    const isSelected = selectedFormat === f.id;
+                    const FmtIcon = formatIconMap[f.id];
+                    return (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => { setSelectedFormat(f.id); setIsSubmitted(false); }}
+                        className={`${s.formatSelectorBtn} ${isSelected ? s.formatSelectorBtnActive : ''}`}
+                      >
+                        {FmtIcon && (
+                          <FmtIcon
+                            style={{ color: isSelected ? '#fff' : f.color }}
+                          />
+                        )}
+                        <span className={s.formatSelectorBtnLabel}>{f.title}</span>
+                        {isSelected && (
+                          <span className={s.formatSelectorCheck}>
+                            <CheckIcon />
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-                  {/* Format selection */}
-                  <div className={s.formatSelector}>
-                    <span className={s.formatSelectorLabel}>Format souhaité</span>
-                    <div className={s.formatSelectorGrid}>
-                      {formats.map((f) => {
-                        const isSelected = selectedFormat === f.id;
-                        const FmtIcon = formatIconMap[f.id];
-                        return (
-                          <button
-                            key={f.id}
-                            type="button"
-                            onClick={() => setSelectedFormat(f.id)}
-                            className={`${s.formatSelectorBtn} ${isSelected ? s.formatSelectorBtnActive : ''}`}
-                          >
-                            {FmtIcon && (
-                              <FmtIcon
-                                style={{ color: isSelected ? '#fff' : f.color }}
-                              />
-                            )}
-                            <span className={s.formatSelectorBtnLabel}>{f.title}</span>
-                            {isSelected && (
-                              <span className={s.formatSelectorCheck}>
-                                <CheckIcon />
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
+              {/* ── ARTICLE → direct writing tool ── */}
+              {selectedFormat === 'article' && (
+                <div className={s.form}>
+                  <div className={s.formatExplain}>
+                    <PenIcon className={s.formatExplainIcon} style={{ color: '#6366F1' }} />
+                    <div>
+                      <h3 className={s.formatExplainTitle}>&Eacute;crivez directement sur Origines</h3>
+                      <p className={s.formatExplainDesc}>
+                        Notre outil d&rsquo;&eacute;criture guid&eacute; vous accompagne pas &agrave; pas.
+                        Anonymat garanti, sauvegarde automatique, relecture avant publication.
+                        R&eacute;serv&eacute; aux membres inscrits — c&rsquo;est gratuit.
+                      </p>
                     </div>
                   </div>
-
-                  {/* Name & Email */}
-                  <div className={s.fieldRow}>
-                    <div className={s.fieldGroup}>
-                      <label className={s.label}>Prénom</label>
-                      <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className={s.input}
-                        placeholder="Marie"
-                        required
-                      />
-                    </div>
-                    <div className={s.fieldGroup}>
-                      <label className={s.label}>Email</label>
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className={s.input}
-                        placeholder="marie@exemple.com"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Phone */}
-                  <div className={s.fieldGroup}>
-                    <label className={s.label}>
-                      Téléphone <span className={s.labelOptional}>(optionnel)</span>
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={s.input}
-                      placeholder="06 12 34 56 78"
-                    />
-                  </div>
-
-                  {/* Message */}
-                  <div className={s.fieldGroup}>
-                    <label className={s.label}>Votre histoire en quelques mots</label>
-                    <textarea
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      rows={4}
-                      className={s.textarea}
-                      placeholder="J'aimerais partager mon parcours sur..."
-                      required
-                    />
-                  </div>
-
-                  {/* Submit */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={s.submitBtn}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className={s.spinner} />
-                        Envoi en cours...
-                      </>
-                    ) : (
-                      <>
-                        Envoyer ma demande
-                        <SendIcon />
-                      </>
-                    )}
-                  </button>
-
-                  {/* Guarantees */}
+                  <Link to="/ecrire-mon-histoire" className={s.submitBtn}>
+                    Commencer &agrave; &eacute;crire
+                    <ArrowRightIcon className={s.submitBtnIcon} />
+                  </Link>
                   <div className={s.guarantees}>
                     <span className={s.guarantee}>
                       <ShieldIcon />
-                      Données protégées
+                      Anonymat garanti
                     </span>
                     <span className={s.guarantee}>
                       <ClockIcon />
-                      Réponse sous 48h
+                      Sauvegarde auto
                     </span>
                     <span className={s.guarantee}>
                       <CheckIcon />
                       100% gratuit
                     </span>
                   </div>
-                </form>
-              </div>
-            ) : (
-              <div className={s.successCard}>
-                <div className={s.successIcon}>
-                  <CheckIcon />
                 </div>
-                <h3 className={s.successTitle}>
-                  Merci {formData.name} !
-                </h3>
-                <p className={s.successText}>
-                  Votre demande a bien été envoyée.
-                  On vous recontacte très vite pour faire connaissance.
-                </p>
-                <Link to="/histoires" className={s.successLink}>
-                  Découvrir les histoires
-                  <ArrowRightIcon />
-                </Link>
-              </div>
-            )}
+              )}
+
+              {/* ── VIDEO → contact form ── */}
+              {selectedFormat === 'video' && !isSubmitted && (
+                <form onSubmit={handleSubmit} className={s.form}>
+                  <div className={s.formatExplain}>
+                    <VideoIcon className={s.formatExplainIcon} style={{ color: '#EC4899' }} />
+                    <div>
+                      <h3 className={s.formatExplainTitle}>Tournage vid&eacute;o professionnel</h3>
+                      <p className={s.formatExplainDesc}>
+                        Notre &eacute;quipe vous accompagne de A &agrave; Z : coaching, tournage
+                        chez vous ou en studio, montage pro. 100% gratuit. On vous recontacte sous 48h.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={s.fieldRow}>
+                    <div className={s.fieldGroup}>
+                      <label className={s.label}>Pr&eacute;nom</label>
+                      <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={s.input} placeholder="Marie" required />
+                    </div>
+                    <div className={s.fieldGroup}>
+                      <label className={s.label}>Email</label>
+                      <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={s.input} placeholder="marie@exemple.com" required />
+                    </div>
+                  </div>
+                  <div className={s.fieldGroup}>
+                    <label className={s.label}>T&eacute;l&eacute;phone <span className={s.labelOptional}>(optionnel)</span></label>
+                    <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className={s.input} placeholder="06 12 34 56 78" />
+                  </div>
+                  <div className={s.fieldGroup}>
+                    <label className={s.label}>Votre histoire en quelques mots</label>
+                    <textarea value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={4} className={s.textarea} placeholder="J'aimerais partager mon parcours sur..." required />
+                  </div>
+
+                  <button type="submit" disabled={isSubmitting} className={s.submitBtn}>
+                    {isSubmitting ? (<><span className={s.spinner} />Envoi en cours...</>) : (<>Envoyer ma demande<SendIcon /></>)}
+                  </button>
+                  <div className={s.guarantees}>
+                    <span className={s.guarantee}><ShieldIcon />Donn&eacute;es prot&eacute;g&eacute;es</span>
+                    <span className={s.guarantee}><ClockIcon />R&eacute;ponse sous 48h</span>
+                    <span className={s.guarantee}><CheckIcon />100% gratuit</span>
+                  </div>
+                </form>
+              )}
+
+              {/* ── PODCAST / LIVRE / DOCUMENTAIRE → coproduction ── */}
+              {(selectedFormat === 'podcast' || selectedFormat === 'livre' || selectedFormat === 'documentaire') && !isSubmitted && (
+                <form onSubmit={handleSubmit} className={s.form}>
+                  <div className={s.formatExplain}>
+                    {selectedFormat === 'podcast' && <MicIcon className={s.formatExplainIcon} style={{ color: '#10B981' }} />}
+                    {selectedFormat === 'livre' && <BookIcon className={s.formatExplainIcon} style={{ color: '#F59E0B' }} />}
+                    {selectedFormat === 'documentaire' && <FilmIcon className={s.formatExplainIcon} style={{ color: '#EF4444' }} />}
+                    <div>
+                      <h3 className={s.formatExplainTitle}>Mod&egrave;le de coproduction</h3>
+                      <p className={s.formatExplainDesc}>
+                        {selectedFormat === 'podcast' && "Nous coproduisons votre épisode podcast avec vous. Enregistrement professionnel, mixage, diffusion sur toutes les plateformes."}
+                        {selectedFormat === 'livre' && "Nous coproduisons votre livre avec vous. Accompagnement éditorial, mise en page, publication et distribution."}
+                        {selectedFormat === 'documentaire' && "Nous coproduisons votre documentaire avec vous. Réalisation, montage, diffusion sur nos canaux et festivals."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={s.formatExplainSteps}>
+                    <div className={s.formatExplainStep}>
+                      <span className={s.formatExplainStepNum}>1</span>
+                      <div>
+                        <strong>&Eacute;crivez votre histoire</strong>
+                        <span>R&eacute;digez votre t&eacute;moignage sur Origines via notre outil d&rsquo;&eacute;criture</span>
+                      </div>
+                    </div>
+                    <div className={s.formatExplainStep}>
+                      <span className={s.formatExplainStepNum}>2</span>
+                      <div>
+                        <strong>Validation &eacute;ditoriale</strong>
+                        <span>Notre &eacute;quipe lit et valide votre r&eacute;cit pour la coproduction</span>
+                      </div>
+                    </div>
+                    <div className={s.formatExplainStep}>
+                      <span className={s.formatExplainStepNum}>3</span>
+                      <div>
+                        <strong>Production ensemble</strong>
+                        <span>On coproduit le {selectedFormat} avec vous &mdash; vous gardez le contr&ocirc;le &agrave; chaque &eacute;tape</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={s.fieldRow}>
+                    <div className={s.fieldGroup}>
+                      <label className={s.label}>Pr&eacute;nom</label>
+                      <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={s.input} placeholder="Marie" required />
+                    </div>
+                    <div className={s.fieldGroup}>
+                      <label className={s.label}>Email</label>
+                      <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={s.input} placeholder="marie@exemple.com" required />
+                    </div>
+                  </div>
+                  <div className={s.fieldGroup}>
+                    <label className={s.label}>Votre histoire en quelques mots</label>
+                    <textarea value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={4} className={s.textarea} placeholder="Décrivez brièvement votre parcours et pourquoi ce format vous intéresse..." required />
+                  </div>
+                  <div className={s.fieldGroup}>
+                    <label className={s.label}>Avez-vous d&eacute;j&agrave; publi&eacute; sur Origines ?</label>
+                    <div className={s.fieldRow}>
+                      <label className={s.radioLabel}>
+                        <input type="radio" name="dejaPub" value="oui" className={s.radio} /> Oui, mon r&eacute;cit est en ligne
+                      </label>
+                      <label className={s.radioLabel}>
+                        <input type="radio" name="dejaPub" value="non" className={s.radio} /> Pas encore
+                      </label>
+                    </div>
+                  </div>
+
+                  <button type="submit" disabled={isSubmitting} className={s.submitBtn}>
+                    {isSubmitting ? (<><span className={s.spinner} />Envoi en cours...</>) : (<>Candidater &agrave; la coproduction<SendIcon /></>)}
+                  </button>
+                  <div className={s.guarantees}>
+                    <span className={s.guarantee}><ShieldIcon />Donn&eacute;es prot&eacute;g&eacute;es</span>
+                    <span className={s.guarantee}><ClockIcon />R&eacute;ponse sous 7 jours</span>
+                    <span className={s.guarantee}><CheckIcon />100% gratuit</span>
+                  </div>
+                </form>
+              )}
+
+              {/* ── No format selected ── */}
+              {!selectedFormat && (
+                <div className={s.form}>
+                  <p className={s.formatExplainDesc} style={{ textAlign: 'center', margin: '20px 0' }}>
+                    S&eacute;lectionnez un format ci-dessus pour d&eacute;couvrir comment participer.
+                  </p>
+                </div>
+              )}
+
+              {/* ── Success state (video / coproduction) ── */}
+              {isSubmitted && selectedFormat !== 'article' && (
+                <div className={s.form} style={{ textAlign: 'center', padding: '32px 0' }}>
+                  <div className={s.successIcon}>
+                    <CheckIcon />
+                  </div>
+                  <h3 className={s.successTitle}>Merci {formData.name} !</h3>
+                  <p className={s.successText}>
+                    Votre demande a bien &eacute;t&eacute; envoy&eacute;e.
+                    {selectedFormat === 'video' ? " On vous recontacte sous 48h pour faire connaissance." : " Notre équipe éditoriale reviendra vers vous sous 7 jours."}
+                  </p>
+                  <Link to="/temoignages" className={s.successLink}>
+                    D&eacute;couvrir les t&eacute;moignages
+                    <ArrowRightIcon />
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </section>
 

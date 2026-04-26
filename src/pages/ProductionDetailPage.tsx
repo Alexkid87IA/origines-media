@@ -12,7 +12,7 @@ import SEO from "@/components/SEO";
 import EmailCapture from "@/components/EmailCapture";
 import { sanityFetch } from "@/lib/sanity";
 import { PRODUCTION_BY_SLUG_QUERY } from "@/lib/queries";
-import { typo } from "@/lib/typography";
+import { typo, estimateReadingTime } from "@/lib/typography";
 import { AdPlaceholder } from "@/components/AdSense";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import { shareButtons } from "@/components/article/SocialIcons";
@@ -575,7 +575,7 @@ export default function ProductionDetailPage() {
 
   if (!production) return null;
 
-  const readTime = production.tempsLecture || production.duree || 5;
+  const readTime = production.tempsLecture || production.duree || estimateReadingTime(production.contenu || production.body);
   const tags = production.tags || [];
 
   return (

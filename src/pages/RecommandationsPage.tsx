@@ -10,6 +10,7 @@ import SEO from "../components/SEO";
 import { sanityFetch } from "../lib/sanity";
 import { EXPLORER_RECOS_QUERY } from "../lib/queries";
 import { typo } from "../lib/typography";
+import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./RecommandationsPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -182,6 +183,7 @@ interface Recommendation {
   rating?: number;
   author?: string;
   coupDeCoeur?: boolean;
+  imageUrl?: string;
 }
 
 interface SanityReco {
@@ -193,6 +195,7 @@ interface SanityReco {
   coupDeCoeur?: boolean;
   accroche?: string;
   slug?: string;
+  imageUrl?: string;
 }
 
 const typeMapping: Record<string, RecommendationType> = {
@@ -225,6 +228,7 @@ const transformSanityReco = (reco: SanityReco): Recommendation => {
     rating: reco.note,
     author: reco.auteur,
     coupDeCoeur: reco.coupDeCoeur,
+    imageUrl: reco.imageUrl,
   };
 };
 
@@ -770,56 +774,71 @@ export default function RecommandationsPage() {
                             to={`/recommandation/${reco.slug}`}
                             className={s.cardLink}
                           >
-                            {/* Header */}
-                            <div className={s.cardHeader}>
-                              <span className={s.cardType}>
-                                <span className={s.cardTypeDot} />
-                                <span className={s.cardTypeIcon}>
-                                  {config.icon}
-                                </span>
-                                {config.label}
-                              </span>
-                              {reco.rating && (
-                                <span className={s.cardRating}>
-                                  <svg
-                                    className={s.cardRatingStar}
-                                    viewBox="0 0 24 24"
-                                    fill="#CA8A04"
-                                    stroke="none"
-                                    width="12"
-                                    height="12"
-                                  >
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                  </svg>
-                                  {reco.rating}/5
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Title */}
-                            <h3 className={s.cardTitle}>
-                              {typo(reco.title)}
-                            </h3>
-
-                            {/* Description */}
-                            {reco.description && (
-                              <p className={s.cardDesc}>
-                                {typo(reco.description)}
-                              </p>
+                            {/* Cover image */}
+                            {reco.imageUrl && (
+                              <div className={s.cardImgWrap}>
+                                <img
+                                  src={reco.imageUrl}
+                                  alt=""
+                                  className={s.cardImg}
+                                  loading="lazy"
+                                />
+                              </div>
                             )}
 
-                            {/* Footer */}
-                            <div className={s.cardFoot}>
-                              {reco.author ? (
-                                <span className={s.cardAuthor}>
-                                  par {reco.author}
+                            <div className={s.cardBody}>
+                              {/* Header */}
+                              <div className={s.cardHeader}>
+                                <span className={s.cardType}>
+                                  <span className={s.cardTypeDot} />
+                                  <span className={s.cardTypeIcon}>
+                                    {config.icon}
+                                  </span>
+                                  {config.label}
                                 </span>
-                              ) : (
-                                <span />
+                                {reco.rating && (
+                                  <span className={s.cardRating}>
+                                    <svg
+                                      className={s.cardRatingStar}
+                                      viewBox="0 0 24 24"
+                                      fill="#CA8A04"
+                                      stroke="none"
+                                      width="12"
+                                      height="12"
+                                    >
+                                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                    </svg>
+                                    {reco.rating}/5
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Title */}
+                              <h3 className={s.cardTitle}>
+                                {typo(reco.title)}
+                              </h3>
+
+                              {/* Description */}
+                              {reco.description && (
+                                <p className={s.cardDesc}>
+                                  {typo(reco.description)}
+                                </p>
                               )}
-                              <span className={s.cardCta}>
-                                Voir &rarr;
-                              </span>
+
+                              {/* Footer */}
+                              <div className={s.cardFoot}>
+                                {reco.author ? (
+                                  <span className={s.cardAuthor}>
+                                    par {reco.author}
+                                  </span>
+                                ) : (
+                                  <span />
+                                )}
+                                <SaveBookmark inline type="recommandation" slug={reco.slug} title={reco.title} />
+                                <span className={s.cardCta}>
+                                  Voir &rarr;
+                                </span>
+                              </div>
                             </div>
                           </Link>
 

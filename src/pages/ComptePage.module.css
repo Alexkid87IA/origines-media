@@ -54,9 +54,163 @@
    ══════════════════════════════════════════════════════════ */
 
 .hero {
+  position: relative;
   padding: 56px 0 64px;
   text-align: center;
   border-bottom: 1px solid var(--stone100);
+}
+
+/* ── Quick login card ── */
+
+.loginCard {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  width: 300px;
+  padding: 24px;
+  border: 1px solid var(--stone100);
+  background: var(--pure, #fff);
+  text-align: left;
+}
+
+.loginCardTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+.loginCardForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.loginCardInput {
+  font-family: var(--body);
+  font-size: 13px;
+  padding: 10px 12px;
+  border: 1px solid var(--stone100);
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.loginCardInput::placeholder { color: var(--stone400); }
+.loginCardInput:focus { border-color: var(--ink); }
+
+.loginCardBtn {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  background: var(--ink);
+  color: var(--pure, #fff);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.25s;
+}
+
+.loginCardBtn:hover { opacity: 0.8; }
+.loginCardBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.loginCardDivider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0;
+}
+
+.loginCardDivider::before,
+.loginCardDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--stone100);
+}
+
+.loginCardDividerText {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone400);
+}
+
+.loginCardGoogle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--pure, #fff);
+  color: var(--ink);
+  border: 1px solid var(--stone100);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.loginCardGoogle:hover { border-color: var(--ink); }
+.loginCardGoogle svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+.loginCardError {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: #D64C4C;
+  margin: 0;
+}
+
+.loginCardFooter {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--stone400);
+}
+
+.loginCardFooter a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.loginCardFooter a:hover { text-decoration: underline; }
+
+@media (max-width: 1024px) {
+  .loginCard {
+    position: static;
+    width: 100%;
+    max-width: 360px;
+    margin: 32px auto 0;
+  }
+}
+
+.dashAvatar {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: -0.02em;
 }
 
 .heroKicker {
@@ -446,21 +600,285 @@
 }
 
 /* ══════════════════════════════════════════════════════════
+   Dashboard (logged-in)
+   ══════════════════════════════════════════════════════════ */
+
+.dashHero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 56px 0 64px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.dashHeroLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashMeta {
+  display: inline-block;
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  padding: 6px 12px;
+  border: 1px solid var(--stone100);
+}
+
+.dashHeroRight {
+  display: flex;
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+  flex-shrink: 0;
+}
+
+.dashStatCard {
+  background: var(--pure, #fff);
+  padding: 24px 28px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.dashStatValue {
+  display: block;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.dashStatLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+
+.dashCardAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  transition: color 0.2s;
+}
+
+.dashCardAction svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s;
+}
+
+.spaceCard:hover .dashCardAction { color: var(--ink); }
+.spaceCard:hover .dashCardAction svg { transform: translateX(3px); }
+
+/* ── Explore links ── */
+
+.dashExplore {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashExploreLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--stone100);
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left 0.25s;
+}
+
+.dashExploreLink:hover {
+  padding-left: 8px;
+}
+
+.dashExploreName {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.dashExploreArrow {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--stone400);
+  transition: color 0.2s, transform 0.25s;
+}
+
+.dashExploreLink:hover .dashExploreArrow {
+  color: var(--ink);
+  transform: translateX(4px);
+}
+
+/* ── Subscription cards ── */
+
+.dashSubGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.dashSubCard {
+  background: rgba(255,255,255,0.04);
+  padding: 32px 28px;
+}
+
+.dashSubCardPro {
+  background: rgba(255,255,255,0.07);
+  padding: 32px 28px;
+  border-left: 2px solid;
+  border-image: linear-gradient(180deg, #D64C90, #7B5CD6) 1;
+}
+
+.dashSubBadge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  padding: 4px 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 16px;
+}
+
+.dashSubBadgePro {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  margin-bottom: 16px;
+}
+
+.dashSubName {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--pure, #fff);
+  margin: 0 0 4px;
+}
+
+.dashSubPrice {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.5);
+  margin: 0 0 20px;
+}
+
+.dashSubFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.6);
+}
+
+.dashSubCardPro .dashSubFeatures { color: rgba(255,255,255,0.8); }
+
+.dashSubFeatures li::before {
+  content: "→ ";
+  color: rgba(255,255,255,0.3);
+}
+
+.dashSubCardPro .dashSubFeatures li::before { color: #D64C90; }
+
+/* ── Footer actions ── */
+
+.dashFooterActions {
+  padding: 40px 0 56px;
+  display: flex;
+  justify-content: center;
+}
+
+.dashLogout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 1px solid var(--stone100);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.dashLogout:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.dashLogout svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════
    Responsive
    ══════════════════════════════════════════════════════════ */
 
 @media (max-width: 1024px) {
   .spacesGrid { grid-template-columns: repeat(2, 1fr); }
+  .dashHero { flex-direction: column; gap: 32px; }
+  .dashHeroRight { width: 100%; }
+  .dashStatCard { flex: 1; }
 }
 
 @media (max-width: 768px) {
   .benefitsGrid { grid-template-columns: 1fr; }
+  .dashSubGrid { grid-template-columns: 1fr; }
   .inner { padding-left: 20px; padding-right: 20px; }
 }
 
 @media (max-width: 640px) {
   .spacesGrid { grid-template-columns: 1fr; }
   .hero { padding: 40px 0 48px; }
+  .dashHero { padding: 40px 0 48px; }
+  .dashHeroRight { flex-direction: column; }
   .spaces { padding: 40px 0; }
   .benefits { padding: 40px var(--side, 24px); }
   .cta { padding: 48px 0; }

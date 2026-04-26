@@ -1381,9 +1381,115 @@
   background: var(--pure);
 }
 
+/* -- Format explanation block -- */
+
+.formatExplain {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: var(--stone50);
+  border: 1px solid var(--stone100);
+}
+
+.formatExplainIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.formatExplainTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+.formatExplainDesc {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 0;
+}
+
+/* -- Coproduction steps -- */
+
+.formatExplainSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--stone100);
+}
+
+.formatExplainStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.formatExplainStep:last-child {
+  border-bottom: none;
+}
+
+.formatExplainStepNum {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.formatExplainStep strong {
+  display: block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.formatExplainStep span {
+  font-family: var(--body);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--stone500);
+}
+
+/* -- Radio buttons -- */
+
+.radioLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+.radio {
+  accent-color: var(--ink);
+  width: 16px;
+  height: 16px;
+}
+
 /* -- Submit -- */
 
 .submitBtn {
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;

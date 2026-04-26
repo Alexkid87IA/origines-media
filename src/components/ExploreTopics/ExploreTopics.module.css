@@ -400,7 +400,7 @@
 .cardFoot {
   margin-top: auto;
   padding-top: 8px;
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;

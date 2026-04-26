@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { UNIVERS, UNIVERS_MAP, ARTICLES, TOTAL_ARTICLES, type UniversId } from "@/data/univers";
+import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./Feed.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -471,6 +472,14 @@ export default function Feed({ cmsItems }: FeedProps) {
                     <span className={s.feedCineExcerpt}>{item.excerpt}</span>
                     <span className={s.feedCineFoot}>
                       {item.author} · {item.readTime}
+                      <SaveBookmark
+                        inline
+                        type={item.isVideo ? "video" : "article"}
+                        slug={item.href.split("/").pop() || ""}
+                        title={item.title}
+                        image={item.imgSrc}
+                        univers={item.category}
+                      />
                     </span>
                   </span>
                   {item.isVideo && (
@@ -565,6 +574,14 @@ export default function Feed({ cmsItems }: FeedProps) {
                       ·
                     </span>
                     <span>{item.readTime}</span>
+                    <SaveBookmark
+                      inline
+                      type={item.isVideo ? "video" : "article"}
+                      slug={item.href.split("/").pop() || ""}
+                      title={item.title}
+                      image={item.imgSrc}
+                      univers={item.category}
+                    />
                     <span className={s.feedFootRead} aria-hidden="true">
                       Lire →
                     </span>

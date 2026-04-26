@@ -1,4 +1,5 @@
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
+import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./Spotlight.module.css";
 
 export interface CMSSpotlightItem {
@@ -176,6 +177,14 @@ export default function Spotlight({ cmsItems }: SpotlightProps) {
             Par <strong>{lead.author}</strong>
             <span className={s.dot} />
             {lead.readTime}
+            <SaveBookmark
+              inline
+              type={lead.isVideo ? "video" : "article"}
+              slug={lead.href.split("/").pop() || ""}
+              title={lead.title}
+              image={lead.image}
+              univers={lead.category}
+            />
           </div>
         </div>
       </a>
@@ -214,6 +223,14 @@ export default function Spotlight({ cmsItems }: SpotlightProps) {
                     {item.author}
                     <span className={s.dot} />
                     {item.readTime}
+                    <SaveBookmark
+                      inline
+                      type={item.isVideo ? "video" : "article"}
+                      slug={item.href.split("/").pop() || ""}
+                      title={item.title}
+                      image={item.image}
+                      univers={item.category}
+                    />
                   </span>
                 </div>
               </a>

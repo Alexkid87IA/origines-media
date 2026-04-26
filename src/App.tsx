@@ -50,12 +50,24 @@ const ProdPage = lazy(() => import('./pages/ProdPage'));
 const TypePage = lazy(() => import('./pages/TypePage'));
 const ComprendreArticlePage = lazy(() => import('./pages/ComprendreArticlePage'));
 const ReflexionsArticlePage = lazy(() => import('./pages/ReflexionsArticlePage'));
+const TemoignagesPage = lazy(() => import('./pages/TemoignagesPage'));
+const EcrireHistoirePage = lazy(() => import('./pages/EcrireHistoirePage'));
 const TemoignagesArticlePage = lazy(() => import('./pages/TemoignagesArticlePage'));
 const PortraitsArticlePage = lazy(() => import('./pages/PortraitsArticlePage'));
 const DossiersPage = lazy(() => import('./pages/DossiersPage'));
 const DossierDetailPage = lazy(() => import('./pages/DossierDetailPage'));
 const ComptePage = lazy(() => import('./pages/ComptePage'));
+const ProfilPage = lazy(() => import('./pages/compte/ProfilPage'));
+const ListePage = lazy(() => import('./pages/compte/ListePage'));
+const JournauxPage = lazy(() => import('./pages/compte/JournauxPage'));
+const ParametresPage = lazy(() => import('./pages/compte/ParametresPage'));
+const InscriptionPage = lazy(() => import('./pages/InscriptionPage'));
+const ConnexionPage = lazy(() => import('./pages/ConnexionPage'));
+const DeconnexionPage = lazy(() => import('./pages/DeconnexionPage'));
 const RecherchePage = lazy(() => import('./pages/RecherchePage'));
+const ConfidentialitePage = lazy(() => import('./pages/ConfidentialitePage'));
+const CookiesPage = lazy(() => import('./pages/CookiesPage'));
+const PlanDuSitePage = lazy(() => import('./pages/PlanDuSitePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
@@ -110,7 +122,8 @@ function App() {
         <Route path="/comprendre/:slug" element={<ComprendreArticlePage />} />
         <Route path="/reflexions" element={<Navigate to="/articles" replace />} />
         <Route path="/reflexions/:slug" element={<ReflexionsArticlePage />} />
-        <Route path="/temoignages" element={<TypePage type="temoignages" />} />
+        <Route path="/temoignages" element={<TemoignagesPage />} />
+        <Route path="/ecrire-mon-histoire" element={<EcrireHistoirePage />} />
         <Route path="/temoignages/:slug" element={<TemoignagesArticlePage />} />
         <Route path="/portraits" element={<Navigate to="/temoignages" replace />} />
         <Route path="/portraits/:slug" element={<PortraitsArticlePage />} />
@@ -119,9 +132,17 @@ function App() {
         <Route path="/mentions-legales" element={<LegalPage />} />
         <Route path="/cgu" element={<CGUPage />} />
         <Route path="/cgv" element={<CGVPage />} />
+        <Route path="/confidentialite" element={<ConfidentialitePage />} />
+        <Route path="/cookies" element={<CookiesPage />} />
+        <Route path="/plan-du-site" element={<PlanDuSitePage />} />
+        <Route path="/inscription" element={<InscriptionPage />} />
+        <Route path="/connexion" element={<ConnexionPage />} />
         <Route path="/compte" element={<ComptePage />} />
-        <Route path="/compte/*" element={<ComptePage />} />
-        <Route path="/deconnexion" element={<ComptePage />} />
+        <Route path="/compte/profil" element={<ProfilPage />} />
+        <Route path="/compte/liste" element={<ListePage />} />
+        <Route path="/compte/journaux" element={<JournauxPage />} />
+        <Route path="/compte/parametres" element={<ParametresPage />} />
+        <Route path="/deconnexion" element={<DeconnexionPage />} />
         <Route path="/recherche" element={<RecherchePage />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>

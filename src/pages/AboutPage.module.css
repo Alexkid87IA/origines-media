@@ -1,4 +1,4 @@
-/* ===== AboutPage V2 — Angular editorial design ===== */
+/* ===== AboutPage V3 — Rich editorial redesign ===== */
 
 /* ── Page wrapper ── */
 
@@ -17,16 +17,9 @@
   padding-right: 24px;
 }
 
-/* ══════════════════════════════════════════════════════════
-   Page header
-   ══════════════════════════════════════════════════════════ */
+/* ── Shared kicker ── */
 
-.header {
-  padding: 48px 24px 32px;
-  border-bottom: 1px solid var(--stone100);
-}
-
-.headerKicker {
+.kicker {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -39,143 +32,13 @@
   margin-bottom: 16px;
 }
 
-.headerKickerDot {
+.kickerDot {
   width: 6px;
   height: 6px;
   background: var(--ink);
 }
 
-.headerTitle {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(32px, 5vw, 56px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  color: var(--ink);
-  margin: 0 0 12px;
-}
-
-.headerDeck {
-  font-family: var(--body);
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--stone600);
-  max-width: 54ch;
-  margin: 0;
-}
-
-/* ══════════════════════════════════════════════════════════
-   Mission section
-   ══════════════════════════════════════════════════════════ */
-
-.mission {
-  background: var(--ink);
-  padding: 48px 24px;
-}
-
-.missionLabel {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--stone500);
-  margin-bottom: 20px;
-}
-
-.missionTitle {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(24px, 3.5vw, 40px);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: var(--pure, #fff);
-  margin: 0 0 24px;
-}
-
-.missionBody {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(16px, 2vw, 20px);
-  line-height: 1.65;
-  color: var(--stone400);
-  max-width: 64ch;
-}
-
-.missionBody strong {
-  font-style: normal;
-  font-weight: 600;
-  color: var(--pure, #fff);
-}
-
-/* ══════════════════════════════════════════════════════════
-   Stats section
-   ══════════════════════════════════════════════════════════ */
-
-.stats {
-  padding: 56px 24px;
-  border-bottom: 1px solid var(--stone100);
-}
-
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--stone100);
-  border: 1px solid var(--stone100);
-}
-
-.statCard {
-  background: var(--pure, #fff);
-  padding: 32px 24px;
-  text-align: center;
-}
-
-.statValue {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(28px, 3.5vw, 48px);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  margin-bottom: 8px;
-}
-
-.statLabel {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--stone500);
-}
-
-/* ══════════════════════════════════════════════════════════
-   Values section
-   ══════════════════════════════════════════════════════════ */
-
-.values {
-  padding: 56px 24px;
-  border-bottom: 1px solid var(--stone100);
-}
-
-.sectionKicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--stone500);
-  margin-bottom: 16px;
-}
-
-.sectionKickerDot {
-  width: 6px;
-  height: 6px;
-  background: var(--ink);
-}
+/* ── Shared section title ── */
 
 .sectionTitle {
   font-family: var(--display);
@@ -186,6 +49,394 @@
   color: var(--ink);
   margin: 0 0 32px;
   padding-bottom: 24px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Hero
+   ══════════════════════════════════════════════════════════ */
+
+.hero {
+  padding: 56px 24px 48px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.heroKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 20px;
+}
+
+.heroKickerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+}
+
+.heroTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(32px, 5vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 20px;
+  text-wrap: balance;
+}
+
+.heroTitle em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.heroDeck {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--stone600);
+  max-width: 60ch;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Stats bar
+   ══════════════════════════════════════════════════════════ */
+
+.statsBar {
+  padding: 0;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--stone100);
+  border-left: 1px solid var(--stone100);
+  border-right: 1px solid var(--stone100);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 16px;
+  background: var(--paper);
+  text-align: center;
+  gap: 6px;
+}
+
+.statVal {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(22px, 2.5vw, 36px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.statLbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone500);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Mission
+   ══════════════════════════════════════════════════════════ */
+
+.mission {
+  padding: 56px 24px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.missionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.missionLeft {}
+
+.missionTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.missionRight {
+  padding-left: 32px;
+  border-left: 1px solid var(--stone100);
+}
+
+.missionLede {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(17px, 2vw, 22px);
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0 0 20px;
+}
+
+.missionBody {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--stone600);
+  margin: 0 0 16px;
+}
+
+.missionBody:last-child {
+  margin-bottom: 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Timeline
+   ══════════════════════════════════════════════════════════ */
+
+.timeline {
+  padding: 56px 24px;
+  background: var(--stone50);
+  border-bottom: 1px solid var(--stone100);
+}
+
+.timelineGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.milestone {
+  background: var(--paper);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.milestoneYear {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.milestoneLine {
+  width: 24px;
+  height: 2px;
+  background: var(--ink);
+  margin-bottom: 16px;
+}
+
+.milestoneTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.milestoneText {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--stone600);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Founders
+   ══════════════════════════════════════════════════════════ */
+
+.foundersSection {
+  padding: 56px 24px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.foundersGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.founderCard {
+  background: var(--paper);
+  padding: 36px 32px;
+  position: relative;
+}
+
+.founderAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--f-color, #8B5CF6);
+}
+
+.founderAvatar {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--pure, #fff);
+  background: var(--f-color, #8B5CF6);
+  margin-bottom: 20px;
+}
+
+.founderName {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.founderRole {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin-bottom: 16px;
+}
+
+.founderBio {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--stone600);
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--stone100);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Team
+   ══════════════════════════════════════════════════════════ */
+
+.teamSection {
+  padding: 56px 24px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.teamCard {
+  background: var(--paper);
+  padding: 28px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.teamAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--t-color, #F59E0B);
+}
+
+.teamAvatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--pure, #fff);
+  flex-shrink: 0;
+}
+
+.teamInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.teamName {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.teamRole {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  margin: 0;
+}
+
+.teamNote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--stone500);
+  margin: 24px 0 0;
+  max-width: 60ch;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Values
+   ══════════════════════════════════════════════════════════ */
+
+.valuesSection {
+  padding: 56px 24px;
   border-bottom: 1px solid var(--stone100);
 }
 
@@ -221,7 +472,7 @@
   margin: 0 0 10px;
 }
 
-.valueDesc {
+.valueText {
   font-family: var(--body);
   font-size: 14px;
   line-height: 1.55;
@@ -230,72 +481,58 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   Team section
+   New site banner
    ══════════════════════════════════════════════════════════ */
 
-.team {
+.newSite {
   padding: 56px 24px;
+  background: var(--stone50);
   border-bottom: 1px solid var(--stone100);
 }
 
-.teamGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--stone100);
-  border: 1px solid var(--stone100);
+.newSiteInner {
+  max-width: 640px;
 }
 
-.teamCard {
-  background: var(--pure, #fff);
-  padding: 28px 24px;
-  position: relative;
-}
-
-.teamAccent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-}
-
-.teamAvatar {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--pure, #fff);
-  margin-bottom: 16px;
-}
-
-.teamName {
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 16px;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  margin: 0 0 4px;
-}
-
-.teamRole {
+.newSiteBadge {
+  display: inline-block;
   font-family: var(--mono);
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--stone500);
-  margin: 0;
+  color: var(--pure, #fff);
+  background: var(--ink);
+  padding: 6px 14px;
+  margin-bottom: 20px;
+}
+
+.newSiteTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+.newSiteText {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--stone600);
+  margin: 0 0 12px;
+}
+
+.newSiteText:last-child {
+  margin-bottom: 0;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 /* ══════════════════════════════════════════════════════════
-   Quote section
+   Quote
    ══════════════════════════════════════════════════════════ */
 
 .quote {
@@ -338,7 +575,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   CTA section
+   CTA
    ══════════════════════════════════════════════════════════ */
 
 .cta {
@@ -363,6 +600,13 @@
   color: var(--stone600);
   max-width: 48ch;
   margin: 0 auto 32px;
+}
+
+.ctaActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
 }
 
 .ctaBtn {
@@ -398,145 +642,150 @@
   transform: translateX(3px);
 }
 
+.ctaBtnOutline {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--stone200);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.ctaBtnOutline:hover {
+  border-color: var(--ink);
+  background: var(--stone50);
+}
+
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 
-/* -- Tablets (<=1024px) -- */
 @media (max-width: 1024px) {
-  .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
+  .statsRow {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .valuesGrid {
+  .timelineGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .foundersGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .teamGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .valuesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-/* -- Small tablets (<=768px) -- */
 @media (max-width: 768px) {
-  .header {
-    padding: 36px 20px 24px;
+  .hero { padding: 40px 20px 36px; }
+  .statsBar { padding: 0; }
+  .mission { padding: 40px 20px; }
+  .timeline { padding: 40px 20px; }
+  .foundersSection { padding: 40px 20px; }
+  .teamSection { padding: 40px 20px; }
+  .valuesSection { padding: 40px 20px; }
+  .newSite { padding: 40px 20px; }
+  .quote { padding: 48px 20px; }
+  .cta { padding: 48px 20px; }
+  .inner { padding-left: 20px; padding-right: 20px; }
+
+  .missionGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 
-  .mission {
-    padding: 40px 20px;
+  .missionRight {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 24px;
+    border-top: 1px solid var(--stone100);
   }
 
-  .stats {
-    padding: 40px 20px;
+  .statsRow {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .values {
-    padding: 40px 20px;
-  }
-
-  .team {
-    padding: 40px 20px;
-  }
-
-  .quote {
-    padding: 48px 20px;
-  }
-
-  .cta {
-    padding: 48px 20px;
-  }
-
-  .inner {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
-/* -- Phones (<=640px) -- */
-@media (max-width: 640px) {
-  .header {
-    padding: 24px 16px 20px;
-  }
-
-  .mission {
-    padding: 32px 16px;
-  }
-
-  .stats {
-    padding: 32px 16px;
-  }
-
-  .statsGrid {
+  .timelineGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .statCard {
-    padding: 24px 16px;
+  .founderCard {
+    padding: 28px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 28px 16px 24px; }
+  .mission { padding: 32px 16px; }
+  .timeline { padding: 32px 16px; }
+  .foundersSection { padding: 32px 16px; }
+  .teamSection { padding: 32px 16px; }
+  .valuesSection { padding: 32px 16px; }
+  .newSite { padding: 32px 16px; }
+  .quote { padding: 40px 16px; }
+  .cta { padding: 40px 16px; }
+  .inner { padding-left: 16px; padding-right: 16px; }
+
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .values {
-    padding: 32px 16px;
+  .stat { padding: 20px 12px; }
+
+  .timelineGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .milestone { padding: 24px 16px; }
+
+  .foundersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .founderCard { padding: 24px 16px; }
+
+  .teamGrid {
+    grid-template-columns: 1fr;
   }
 
   .valuesGrid {
     grid-template-columns: 1fr;
   }
 
-  .valueCard {
-    padding: 24px 16px;
-  }
-
-  .team {
-    padding: 32px 16px;
-  }
-
-  .teamGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .teamCard {
-    padding: 24px 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .teamAccent {
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: auto;
-    width: 3px;
-    height: auto;
-  }
-
-  .teamAvatar {
-    margin-bottom: 0;
-    flex-shrink: 0;
-  }
-
-  .teamInfo {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .quote {
-    padding: 40px 16px;
-  }
-
-  .cta {
-    padding: 40px 16px;
-  }
-
-  .inner {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
+  .valueCard { padding: 24px 16px; }
 
   .sectionTitle {
     margin-bottom: 24px;
     padding-bottom: 16px;
+  }
+
+  .ctaActions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ctaBtnOutline {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ctaBtn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -545,10 +794,8 @@
    ══════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .ctaBtn {
-    transition: none !important;
-  }
-
+  .ctaBtn,
+  .ctaBtnOutline,
   .ctaBtnArrow {
     transition: none !important;
   }

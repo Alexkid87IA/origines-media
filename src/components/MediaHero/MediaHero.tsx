@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
+import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./MediaHero.module.css";
 
 export interface Slide {
@@ -213,6 +214,13 @@ export default function MediaHero({ cmsSlides }: MediaHeroProps) {
               <span>Par <strong>{slide.author}</strong></span>
               <span className={s.bylineDot} />
               <span>{slide.readTime}</span>
+              <SaveBookmark
+                inline
+                type="article"
+                slug={slide.href.split("/").pop() || ""}
+                title={slide.title}
+                image={slide.image}
+              />
             </div>
             <a className={s.heroRead} href={slide.href}>
               Lire l'article

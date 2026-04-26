@@ -7,6 +7,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
 import { typo } from "@/lib/typography";
+import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./VideosPage.module.css";
 
 const VIDEOS_QUERY = `
@@ -146,7 +147,7 @@ const VideoCard = memo(function VideoCard({
       transition={{ delay: index * 0.04, duration: 0.3 }}
     >
       <Link to={`/video/${video.slug}`} className={s.card}>
-        <div className={s.cardThumb}>
+        <div className={s.cardThumb} style={{ position: "relative" }}>
           <img
             src={thumb}
             alt={video.titre}
@@ -156,6 +157,7 @@ const VideoCard = memo(function VideoCard({
               (e.target as HTMLImageElement).src = "/placeholder.svg";
             }}
           />
+          <SaveBookmark type="video" slug={video.slug} title={video.titre} image={thumb} />
           <div className={s.cardOverlay} />
           <div className={s.cardPlay}>
             <div className={s.playCircle}>

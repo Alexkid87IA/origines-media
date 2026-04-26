@@ -11,6 +11,7 @@ import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
 import { RECOMMENDATION_BY_SLUG_QUERY, RELATED_RECOS_QUERY } from "@/lib/queries";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
+import SaveButton from "@/components/SaveButton/SaveButton";
 import s from "./RecommandationPage.module.css";
 
 // ============ INLINE SVG ICONS ============
@@ -622,6 +623,7 @@ export default function RecommandationPage() {
                     Top {reco.items.length}
                   </span>
                 )}
+                <SaveButton type="recommandation" slug={slug || ""} title={reco.titre} image={reco.image?.asset?.url} />
               </div>
             </div>
           </div>

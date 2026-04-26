@@ -6,6 +6,7 @@ import Footer2 from "@/components/Footer2/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
+import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./ArticlesPageV2.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -612,6 +613,14 @@ export default function ArticlesPageV2() {
                                       </time>
                                     </>
                                   )}
+                                  <SaveBookmark
+                                    inline
+                                    type="article"
+                                    slug={article.slug}
+                                    title={article.titre}
+                                    image={article.imageUrl}
+                                    univers={categoryLabel}
+                                  />
                                   <span className={s.cardCta}>Lire &rarr;</span>
                                 </div>
                               </div>

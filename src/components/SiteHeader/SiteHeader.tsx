@@ -1,7 +1,47 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useScrolled } from "@/hooks/useScrollDirection";
+import { useAuth } from "@/contexts/AuthContext";
 import { UNIVERS } from "@/data/univers";
+import { sanityFetch } from "@/lib/sanity";
 import styles from "./SiteHeader.module.css";
+
+interface SearchResult {
+  _id: string;
+  title: string;
+  slug: string;
+  type: "article" | "video" | "histoire" | "guide";
+  imageUrl?: string;
+  excerpt?: string;
+  verticale?: string;
+}
+
+const SEARCH_QUERY = `
+  *[_type in ["production", "portrait"] && (
+    titre match $q ||
+    description match $q ||
+    accroche match $q
+  )] | order(datePublication desc) [0...8] {
+    _id,
+    "title": titre,
+    "slug": slug.current,
+    "type": select(
+      _type == "portrait" => "histoire",
+      coalesce(typeArticle, "article") == "video" => "video",
+      rubrique == "guides" => "guide",
+      "article"
+    ),
+    "imageUrl": coalesce(image.asset->url, imageUrl),
+    "excerpt": coalesce(description, extrait, accroche),
+    "verticale": verticale->nom
+  }
+`;
+
+const TYPE_LABELS: Record<string, string> = {
+  article: "Article",
+  video: "Vidéo",
+  histoire: "Témoignage",
+  guide: "Guide",
+};
 
 const COMING_SOON_SECTIONS = new Set<string>();
 
@@ -173,6 +213,21 @@ const SECONDARY: SecondaryNav[] = [
       { href: "/boutique/pack-affiches", label: "Pack Affiches", color: "#9B6B8D" },
     ],
   },
+  {
+    href: "/a-propos",
+    label: "À propos",
+    num: "06",
+    hoverColor: "#7B5CD6",
+    dropdownLabel: "Origines Media",
+    allLabel: "Découvrir Origines",
+    items: [
+      { href: "/a-propos", label: "Notre mission", color: "#8B5CF6" },
+      { href: "/a-propos#equipe", label: "L'équipe", color: "#EC4899" },
+      { href: "/contact", label: "Contact", color: "#10B981" },
+      { href: "/partenariats", label: "Partenariats", color: "#F59E0B" },
+      { href: "/rejoindre", label: "Rejoindre l'équipe", color: "#2E94B5" },
+    ],
+  },
 ];
 
 const POPULAR_SEARCHES = [
@@ -184,13 +239,18 @@ const POPULAR_SEARCHES = [
 ];
 
 export default function SiteHeader() {
+  const { user } = useAuth();
   const scrolled = useScrolled();
   const [megaTarget, setMegaTarget] = useState<MegaTarget>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
   const [comingSoon, setComingSoon] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!comingSoon) return;
@@ -212,9 +272,35 @@ export default function SiteHeader() {
       if (!o) {
         setMegaTarget(null);
         requestAnimationFrame(() => searchRef.current?.focus());
+      } else {
+        setSearchQuery("");
+        setSearchResults([]);
       }
       return !o;
     });
+  }, []);
+
+  const onSearchInput = useCallback((value: string) => {
+    setSearchQuery(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!value.trim()) {
+      setSearchResults([]);
+      setSearching(false);
+      return;
+    }
+    setSearching(true);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const results = await sanityFetch<SearchResult[]>(SEARCH_QUERY, {
+          q: `${value}*`,
+        });
+        setSearchResults(results || []);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 300);
   }, []);
 
   return (
@@ -224,25 +310,11 @@ export default function SiteHeader() {
       <div className="v2-container">
         <div className={styles.row}>
           <a href="/" className={styles.logo} aria-label="Origines — Accueil">
-            <span className={styles.logoLockup} aria-hidden="true">
-              <span className={`${styles.state} ${styles.stateSquare}`}>
-                <img
-                  src="/logos/logo-black.png"
-                  alt=""
-                  width={64}
-                  height={64}
-                />
-              </span>
-              <span className={`${styles.state} ${styles.stateTarget}`}>
-                <span className={styles.oMark}>
-                  <svg viewBox="0 0 100 100" aria-hidden="true">
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" strokeWidth="10" />
-                    <circle cx="50" cy="50" r="8" fill="currentColor" />
-                  </svg>
-                </span>
-                <span className={styles.wordmark}>Origines</span>
-              </span>
-            </span>
+            <img
+              src="/logos/logo-black.png"
+              alt=""
+              className={styles.logoImg}
+            />
           </a>
 
           <nav className={styles.nav} aria-label="Navigation principale">
@@ -409,24 +481,36 @@ export default function SiteHeader() {
             </a>
 
             <div className={styles.accountWrap}>
-              <a href="/compte" className={styles.accountBtn}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
-                </svg>
-                <span className={styles.accountLabel}>Mon compte</span>
-                <svg className={styles.accountChevron} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M4 6l4 4 4-4" />
-                </svg>
-              </a>
-              <div className={styles.accountDropdown}>
-                <a href="/compte">Mon profil</a>
-                <a href="/compte/journales">Mes journales</a>
-                <a href="/compte/liste">Ma liste</a>
-                <a href="/compte/parametres">Param&egrave;tres</a>
-                <span className={styles.accountSep} />
-                <a href="/deconnexion" className={styles.accountLogout}>Se d&eacute;connecter</a>
-              </div>
+              {user ? (
+                <>
+                  <a href="/compte" className={styles.accountBtn}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
+                    </svg>
+                    <span className={styles.accountLabel}>{user.displayName || "Mon compte"}</span>
+                    <svg className={styles.accountChevron} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M4 6l4 4 4-4" />
+                    </svg>
+                  </a>
+                  <div className={styles.accountDropdown}>
+                    <a href="/compte">Mon profil</a>
+                    <a href="/compte/journaux">Mes journaux</a>
+                    <a href="/compte/liste">Ma liste</a>
+                    <a href="/compte/parametres">Param&egrave;tres</a>
+                    <span className={styles.accountSep} />
+                    <a href="/deconnexion" className={styles.accountLogout}>Se d&eacute;connecter</a>
+                  </div>
+                </>
+              ) : (
+                <a href="/compte" className={styles.accountBtn}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
+                  </svg>
+                  <span className={styles.accountLabel}>Se connecter</span>
+                </a>
+              )}
             </div>
 
             <button
@@ -603,7 +687,12 @@ export default function SiteHeader() {
               className={styles.searchInput}
               placeholder="Rechercher un article, un sujet, un auteur…"
               aria-label="Rechercher"
-              onKeyDown={(e) => e.key === "Escape" && setSearchOpen(false)}
+              value={searchQuery}
+              onChange={(e) => onSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); }
+                if (e.key === "Enter" && searchQuery.trim()) { window.location.href = `/recherche?q=${encodeURIComponent(searchQuery)}`; }
+              }}
             />
             <button
               type="button"
@@ -617,24 +706,83 @@ export default function SiteHeader() {
             </button>
           </div>
 
-          <div className={styles.searchSuggestions}>
-            <span className={styles.searchSugLabel}>Recherches populaires</span>
-            <div className={styles.searchChips}>
-              {POPULAR_SEARCHES.map((s) => (
-                <a key={s} href={`/recherche?q=${encodeURIComponent(s)}`} className={styles.searchChip}>
-                  {s}
+          {searchQuery.trim() ? (
+            <div className={styles.searchResults}>
+              {searching && (
+                <span className={styles.searchStatus}>Recherche en cours…</span>
+              )}
+              {!searching && searchResults.length === 0 && (
+                <span className={styles.searchStatus}>
+                  Aucun r&eacute;sultat pour &laquo;&nbsp;{searchQuery}&nbsp;&raquo;
+                </span>
+              )}
+              {!searching && searchResults.length > 0 && (
+                <>
+                  {searchResults.map((r) => (
+                    <a
+                      key={r._id}
+                      href={r.type === "histoire" ? `/portrait/${r.slug}` : `/article/${r.slug}`}
+                      className={styles.searchResultItem}
+                    >
+                      {r.imageUrl && (
+                        <img
+                          src={r.imageUrl}
+                          alt=""
+                          className={styles.searchResultImg}
+                          loading="lazy"
+                        />
+                      )}
+                      <div className={styles.searchResultBody}>
+                        <div className={styles.searchResultMeta}>
+                          <span className={styles.searchResultType}>
+                            {TYPE_LABELS[r.type] || "Article"}
+                          </span>
+                          {r.verticale && (
+                            <span className={styles.searchResultVert}>{r.verticale}</span>
+                          )}
+                        </div>
+                        <span className={styles.searchResultTitle}>{r.title}</span>
+                        {r.excerpt && (
+                          <span className={styles.searchResultExcerpt}>{r.excerpt}</span>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                  <a
+                    href={`/recherche?q=${encodeURIComponent(searchQuery)}`}
+                    className={styles.searchResultsAll}
+                  >
+                    Voir tous les r&eacute;sultats
+                    <span aria-hidden="true">&rarr;</span>
+                  </a>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className={styles.searchSuggestions}>
+              <span className={styles.searchSugLabel}>Recherches populaires</span>
+              <div className={styles.searchChips}>
+                {POPULAR_SEARCHES.map((ps) => (
+                  <button
+                    key={ps}
+                    type="button"
+                    className={styles.searchChip}
+                    onClick={() => onSearchInput(ps)}
+                  >
+                    {ps}
+                  </button>
+                ))}
+              </div>
+              <div className={styles.searchQuick}>
+                <a href="/articles" className={styles.searchQuickLink}>
+                  Derniers articles <span aria-hidden="true">&rarr;</span>
                 </a>
-              ))}
+                <a href="/programmes" className={styles.searchQuickLink}>
+                  Derni&egrave;res vid&eacute;os <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
             </div>
-            <div className={styles.searchQuick}>
-              <a href="/articles" className={styles.searchQuickLink}>
-                Derniers articles <span aria-hidden="true">&rarr;</span>
-              </a>
-              <a href="/programmes" className={styles.searchQuickLink}>
-                Derni&egrave;res vid&eacute;os <span aria-hidden="true">&rarr;</span>
-              </a>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

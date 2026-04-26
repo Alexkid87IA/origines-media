@@ -7,9 +7,10 @@ import Footer2 from "@/components/Footer2/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
-import { typo } from "@/lib/typography";
+import { typo, estimateReadingTime } from "@/lib/typography";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import { shareButtons } from "@/components/article/SocialIcons";
+import SaveButton from "@/components/SaveButton/SaveButton";
 import type {
   Heading,
   Article,
@@ -332,7 +333,7 @@ export default function VideoPage() {
   const description = article.description || article.excerpt || "";
   const imageUrl = article.imageUrl || article.mainImage || "";
   const date = article.datePublication || article.publishedAt;
-  const readTime = article.tempsLecture || article.readTime || 5;
+  const readTime = article.tempsLecture || article.readTime || estimateReadingTime(article.contenu || article.body);
   const rawContent = article.contenu || article.body || [];
   const content = rawContent.filter((block: any, i: number) => {
     if (block._type === "block" && block.style === "h1") {
@@ -413,6 +414,7 @@ export default function VideoPage() {
                   {readTime} min
                 </span>
               </div>
+              <SaveButton type="video" slug={slug || ""} title={title} image={imageUrl} univers={verticale?.nom} />
             </div>
             {article.tags && article.tags.filter((t) => t?.title).length > 0 && (
               <div className={s.splitTags}>

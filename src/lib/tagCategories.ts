@@ -129,7 +129,7 @@ export function countStoriesByCategory(
   const category = TAG_CATEGORIES[categoryId];
   if (!category) return 0;
   return stories.filter(story =>
-    story.tags?.some(tag => category.tags.includes(tag.slug))
+    story.tags?.some(tag => tag && category.tags.includes(tag.slug))
   ).length;
 }
 
@@ -141,7 +141,7 @@ export function filterStoriesByCategory<T extends { tags?: { slug: string }[] }>
   const category = TAG_CATEGORIES[categoryId];
   if (!category) return stories;
   return stories.filter(story =>
-    story.tags?.some(tag => category.tags.includes(tag.slug))
+    story.tags?.some(tag => tag && category.tags.includes(tag.slug))
   );
 }
 

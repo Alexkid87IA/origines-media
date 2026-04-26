@@ -36,6 +36,12 @@ const FacebookIcon = () => (
   </svg>
 );
 
+const LinkedInIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z" />
+  </svg>
+);
+
 /* ---- Data ---- */
 
 const LEGAL_LINKS = [
@@ -43,7 +49,7 @@ const LEGAL_LINKS = [
   { href: "/cgu", label: "CGU" },
   { href: "/confidentialite", label: "Confidentialité" },
   { href: "/cookies", label: "Cookies" },
-  { href: "/sitemap.xml", label: "Plan du site" },
+  { href: "/plan-du-site", label: "Plan du site" },
 ];
 
 const SOCIAL_LINKS = [
@@ -52,11 +58,12 @@ const SOCIAL_LINKS = [
   { href: "https://instagram.com/originesmedia", label: "Instagram", icon: <InstagramIcon /> },
   { href: "https://tiktok.com/@originesmedia", label: "TikTok", icon: <TikTokIcon /> },
   { href: "https://facebook.com/originesmedia", label: "Facebook", icon: <FacebookIcon /> },
+  { href: "https://linkedin.com/company/originesmedia", label: "LinkedIn", icon: <LinkedInIcon /> },
 ];
 
 /* ---- Explorez tab data ---- */
 
-type TabId = "galaxie" | "univers" | "formats" | "dossiers" | "videos" | "guides" | "boutique" | "ensemble";
+type TabId = "galaxie" | "univers" | "formats" | "dossiers" | "videos" | "guides" | "boutique" | "ensemble" | "apropos";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "galaxie", label: "Galaxie" },
@@ -67,6 +74,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "guides", label: "Guides" },
   { id: "boutique", label: "Boutique" },
   { id: "ensemble", label: "Ensemble" },
+  { id: "apropos", label: "À propos" },
 ];
 
 /* ── Univers descriptions & icons ── */
@@ -548,6 +556,57 @@ const ENSEMBLE = [
   },
 ];
 
+const APROPOS = [
+  {
+    id: "mission",
+    name: "Notre mission",
+    tagline: "Pourquoi Origines existe — et pour qui.",
+    color: "#8B5CF6",
+    href: "/a-propos",
+    articles: [
+      { title: "Des contenus d'utilité publique, depuis 2021.", href: "/a-propos" },
+      { title: "Un média indépendant, sans publicité invasive.", href: "/a-propos" },
+      { title: "Des récits qui transforment, pas qui divertissent.", href: "/a-propos" },
+    ],
+  },
+  {
+    id: "equipe",
+    name: "L'équipe",
+    tagline: "Les personnes derrière chaque histoire.",
+    color: "#EC4899",
+    href: "/a-propos#equipe",
+    articles: [
+      { title: "Alexandre Quilghini — Co-fondateur, direction éditoriale.", href: "/a-propos#equipe" },
+      { title: "Alexis Chavetnoir — Co-fondateur, direction social media.", href: "/a-propos#equipe" },
+      { title: "Une équipe qui grandit avec le projet.", href: "/a-propos#equipe" },
+    ],
+  },
+  {
+    id: "contact",
+    name: "Contact",
+    tagline: "Une question, un projet, une idée — écrivez-nous.",
+    color: "#10B981",
+    href: "/contact",
+    articles: [
+      { title: "Formulaire de contact — réponse sous 48h.", href: "/contact" },
+      { title: "Proposer un partenariat éditorial.", href: "/partenariats" },
+      { title: "Rejoindre l'équipe Origines.", href: "/rejoindre" },
+    ],
+  },
+  {
+    id: "communaute",
+    name: "Communauté",
+    tagline: "Rejoignez ceux qui racontent et ceux qui lisent.",
+    color: "#F59E0B",
+    href: "/temoignages",
+    articles: [
+      { title: "Raconter votre histoire sur Origines.", href: "/racontez-votre-histoire" },
+      { title: "Lire les témoignages de la communauté.", href: "/temoignages" },
+      { title: "S'inscrire à la Lettre du dimanche.", href: "/newsletter" },
+    ],
+  },
+];
+
 /* ---- Generic item (for non-univers tabs) ---- */
 
 interface ItemData {
@@ -684,6 +743,7 @@ export default function Footer2() {
     { id: "guides", gridClass: s.grid4, items: GUIDES.map((g) => ({ ...g, ctaLabel: "Découvrir" })), allHref: "/guides", allLabel: "Tous les guides" },
     { id: "boutique", gridClass: s.grid5, items: BOUTIQUE.map((b) => ({ ...b, ctaLabel: "Voir" })), allHref: "/boutique", allLabel: "Toute la boutique" },
     { id: "ensemble", gridClass: s.grid4, items: ENSEMBLE.map((e) => ({ ...e, ctaLabel: "Voir" })), allHref: "/ensemble", allLabel: "Tout Ensemble" },
+    { id: "apropos", gridClass: s.grid4, items: APROPOS.map((a) => ({ ...a, ctaLabel: "Découvrir" })), allHref: "/a-propos", allLabel: "En savoir plus" },
   ];
 
   return (

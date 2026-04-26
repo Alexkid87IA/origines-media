@@ -150,7 +150,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
                 </div>
                 <h3 className={s.questionTitle}>{frTypo(dossier.question)}</h3>
                 <div className={s.questionFoot}>
-                  <span className={s.questionUnivers} style={{ background: dossierU.color }}>
+                  <span className={s.questionUnivers}>
                     {dossierU.name}
                   </span>
                   <span className={s.questionProgress}>
@@ -159,7 +159,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
                   <div className={s.progressBar}>
                     <div
                       className={s.progressFill}
-                      style={{ width: `${progress}%`, background: dossierU.color }}
+                      style={{ width: `${progress}%` }}
                     />
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
               <span className={s.articleOverlay} />
               <div className={s.articleInfo}>
                 <div className={s.mainKicker}>
-                  <span className={s.mainTag} style={{ background: mainU.color }}>
+                  <span className={s.mainTag}>
                     {main.category || mainU.name}
                   </span>
                   {main.subCategory && (

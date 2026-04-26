@@ -22,7 +22,7 @@ export const V2_QUESTION_QUERY = `
 // Vidéo à la une pour le hero (curée depuis siteSettings, fallback sur la plus récente)
 export const V2_HERO_VIDEO_QUERY = `
   coalesce(
-    *[_type == "siteSettings"][0].videoALaUne-> {
+    *[_id == "siteSettings"][0].videoALaUne-> {
       titre,
       "slug": slug.current,
       videoUrl,
@@ -91,7 +91,7 @@ export const V2_DOSSIER_DETAIL_QUERY = `
 // Article principal — curé depuis siteSettings, fallback sur le plus récent
 export const V2_HERO_MAIN_QUERY = `
   coalesce(
-    *[_type == "siteSettings"][0].articleALaUne-> {
+    *[_id == "siteSettings"][0].articleALaUne-> {
       _id, titre, extrait, description,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       typeArticle, category,
@@ -929,9 +929,10 @@ export const RELATED_ARTICLES_QUERY = `
       }
     },
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
-    "excerpt": description,
+    "excerpt": coalesce(description, chapeau, sousTitre),
     readingTime,
     "publishedAt": datePublication,
+    "author": coalesce(author->name, auteur->nom),
     categories[0]-> {
       title
     },
