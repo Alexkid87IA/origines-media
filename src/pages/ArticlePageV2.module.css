@@ -1314,33 +1314,11 @@
 }
 
 /* ──────────────────────────────────────────────────────────
-   Mobile TOC button
+   Hide scroll-to-top on mobile (integrated in mobile bar)
    ────────────────────────────────────────────────────────── */
 
-.mobileTocBtn {
-  position: fixed;
-  right: 16px;
-  z-index: 50;
-  bottom: calc(72px + env(safe-area-inset-bottom));
-  width: 44px;
-  height: 44px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: var(--ink);
-  color: var(--paper);
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.mobileTocBtn:hover {
-  background: var(--stone800);
-}
-
-.mobileTocBtn svg {
-  width: 20px;
-  height: 20px;
+.scrollTopWrap {
+  display: contents;
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -1763,8 +1741,8 @@
     display: block;
   }
 
-  .mobileTocBtn {
-    display: flex;
+  .scrollTopWrap {
+    display: none;
   }
 
   .header {
