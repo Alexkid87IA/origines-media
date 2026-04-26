@@ -1,10 +1,10 @@
 // Service Worker pour Origines Media
 // Stratégie: Cache-First pour assets statiques, Network-First pour API
 
-const CACHE_NAME = 'origines-media-v1';
-const STATIC_CACHE = 'origines-static-v1';
-const DYNAMIC_CACHE = 'origines-dynamic-v1';
-const IMAGE_CACHE = 'origines-images-v1';
+const CACHE_NAME = 'origines-media-v2';
+const STATIC_CACHE = 'origines-static-v2';
+const DYNAMIC_CACHE = 'origines-dynamic-v2';
+const IMAGE_CACHE = 'origines-images-v2';
 
 // Assets statiques à pré-cacher
 const STATIC_ASSETS = [
