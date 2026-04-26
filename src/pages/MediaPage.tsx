@@ -8,7 +8,7 @@ import Feed from "@/components/Feed/Feed";
 import type { CMSFeedItem } from "@/components/Feed/Feed";
 import ExploreTopics from "@/components/ExploreTopics/ExploreTopics";
 import VideoCta from "@/components/VideoCta/VideoCta";
-import { Interlude1, Interlude2, Interlude3, Interlude4 } from "@/components/Interludes/Interludes";
+import { Interlude1, Interlude2, Interlude4 } from "@/components/Interludes/Interludes";
 import GuidesCta from "@/components/GuidesCta/GuidesCta";
 import MonHistoire from "@/components/MonHistoire/MonHistoire";
 import Recos from "@/components/Recos/Recos";
@@ -236,7 +236,6 @@ export default function MediaPage() {
         <div className="v2-container">
           <MediaHero cmsSlides={cmsSlides} />
           <Interlude2 />
-          <Interlude3 />
           <Feed cmsItems={cmsFeed} />
           <ExploreTopics />
           <VideoCta />

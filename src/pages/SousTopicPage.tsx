@@ -196,7 +196,7 @@ export default function SousTopicPage() {
           { name: univers.name, url: `/univers/${univers.id}` },
           { name: subtopic.label, url: `/univers/${univers.id}/${subtopic.slug}` },
         ]}
-        itemListData={articles.slice(0, 10).map((a) => ({
+        itemListData={articles.filter((a) => a.imageUrl).slice(0, 10).map((a) => ({
           name: a.titre,
           description: getExtrait(a),
           image: a.imageUrl,
