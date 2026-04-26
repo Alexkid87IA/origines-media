@@ -128,7 +128,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
               <div className={s.mainKicker}>
                 <span className={s.mainMeta}>{video.channel}</span>
               </div>
-              <h1 className={s.mainTitle}>{frTypo(video.title)}</h1>
+              <h2 className={s.mainTitle}>{frTypo(video.title)}</h2>
               <div className={s.mainByline}>
                 {video.duration}
               </div>

@@ -141,7 +141,7 @@ export default function Welcome() {
       </p>
 
       <div className={s.masthead}>
-        <span className={s.mastheadWord}>Origines</span>
+        <h1 className={s.mastheadWord}>Origines</h1>
         <div className={s.social}>
           <span className={s.socialLabel}>Suivez Origines</span>
           <div className={s.socialIcons}>

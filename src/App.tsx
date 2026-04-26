@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import SplashScreen from './components/SplashScreen';
 import CookieConsent from './components/CookieConsent';
 import ExitIntentPopup from './components/ExitIntentPopup';
@@ -14,6 +14,16 @@ function ScrollToTop() {
   }, [pathname]);
 
   return null;
+}
+
+function RedirectToArticle() {
+  const { slug } = useParams();
+  return <Navigate to={`/article/${slug}`} replace />;
+}
+
+function RedirectToRecommandation() {
+  const { slug } = useParams();
+  return <Navigate to={`/recommandations/${slug}`} replace />;
 }
 
 // Lazy loading des pages
@@ -93,14 +103,14 @@ function App() {
         <Route path="/bibliotheque" element={<BibliothequePage />} />
         <Route path="/videos" element={<VideosPage />} />
         <Route path="/programmes" element={<ProdPage />} />
-        <Route path="/production/:slug" element={<ArticlePage />} /> {/* Rétrocompatibilité - redirige vers ArticlePage */}
+        <Route path="/production/:slug" element={<RedirectToArticle />} />
         <Route path="/histoires" element={<HistoiresPage />} />
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/histoire/:slug" element={<PortraitDetailPage />} />
         <Route path="/article/:slug" element={<ArticlePage />} />
         <Route path="/video/:slug" element={<VideoPage />} />
-        <Route path="/recit/:slug" element={<ArticlePage />} />
+        <Route path="/recit/:slug" element={<RedirectToArticle />} />
         <Route path="/a-propos" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/partenariats" element={<PartnershipsPage />} />
@@ -109,7 +119,7 @@ function App() {
         <Route path="/join-partner" element={<JoinPartnerPage />} />
         <Route path="/racontez-votre-histoire" element={<ShareStoryPage />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
-        <Route path="/recommandation/:slug" element={<RecommandationPage />} />
+        <Route path="/recommandation/:slug" element={<RedirectToRecommandation />} />
         <Route path="/recommandations/:slug" element={<RecommandationPage />} />
         <Route path="/boutique" element={<BoutiquePage />} />
         <Route path="/boutique/:guideSlug" element={<BoutiquePage />} />
