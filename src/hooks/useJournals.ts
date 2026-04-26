@@ -27,7 +27,7 @@ export function useJournals() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !db) {
       setEntries([]);
       setLoading(false);
       return;
@@ -44,7 +44,7 @@ export function useJournals() {
 
   const saveEntry = useCallback(
     async (date: string, content: string, prompt?: string, mood?: string) => {
-      if (!user) return;
+      if (!user || !db) return;
       const ref = doc(db, "users", user.uid, "journals", date);
       await setDoc(ref, {
         date,
@@ -60,7 +60,7 @@ export function useJournals() {
 
   const deleteEntry = useCallback(
     async (date: string) => {
-      if (!user) return;
+      if (!user || !db) return;
       await deleteDoc(doc(db, "users", user.uid, "journals", date));
     },
     [user]

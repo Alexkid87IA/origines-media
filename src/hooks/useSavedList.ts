@@ -26,7 +26,7 @@ export function useSavedList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !db) {
       setItems([]);
       setLoading(false);
       return;
@@ -43,7 +43,7 @@ export function useSavedList() {
 
   const save = useCallback(
     async (item: Omit<SavedItem, "id" | "savedAt">) => {
-      if (!user) return;
+      if (!user || !db) return;
       const ref = doc(db, "users", user.uid, "savedItems", `${item.type}_${item.slug}`);
       await setDoc(ref, { ...item, savedAt: serverTimestamp() });
     },
@@ -52,7 +52,7 @@ export function useSavedList() {
 
   const remove = useCallback(
     async (itemId: string) => {
-      if (!user) return;
+      if (!user || !db) return;
       const ref = doc(db, "users", user.uid, "savedItems", itemId);
       await deleteDoc(ref);
     },

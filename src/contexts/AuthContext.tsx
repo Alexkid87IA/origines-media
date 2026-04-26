@@ -37,6 +37,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -45,23 +49,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function signup(email: string, password: string, displayName: string) {
+    if (!auth) return;
     const { user: newUser } = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(newUser, { displayName });
   }
 
   async function login(email: string, password: string) {
+    if (!auth) return;
     await signInWithEmailAndPassword(auth, email, password);
   }
 
   async function loginWithGoogle() {
+    if (!auth) return;
     await signInWithPopup(auth, googleProvider);
   }
 
   async function logout() {
+    if (!auth) return;
     await signOut(auth);
   }
 
   async function resetPassword(email: string) {
+    if (!auth) return;
     await sendPasswordResetEmail(auth, email);
   }
 
