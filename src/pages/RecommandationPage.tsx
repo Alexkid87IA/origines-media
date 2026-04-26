@@ -548,11 +548,11 @@ export default function RecommandationPage() {
         title={reco.titre}
         description={reco.accroche || reco.description}
         image={reco.imageUrl}
-        url={`/recommandation/${reco.slug}`}
+        url={`/recommandations/${reco.slug}`}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
           { name: "Recommandations", url: "/recommandations" },
-          { name: reco.titre, url: `/recommandation/${reco.slug}` },
+          { name: reco.titre, url: `/recommandations/${reco.slug}` },
         ]}
       />
       <SiteHeader />

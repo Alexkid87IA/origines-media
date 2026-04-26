@@ -448,6 +448,7 @@ const RecherchePage: React.FC = () => {
         title={query ? `Recherche : ${query}` : 'Recherche'}
         description="Recherchez parmi nos articles, histoires, videos et recommandations."
         type="website"
+        noindex
       />
       <SiteHeader />
 

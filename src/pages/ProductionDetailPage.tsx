@@ -13,6 +13,7 @@ import EmailCapture from "@/components/EmailCapture";
 import { sanityFetch } from "@/lib/sanity";
 import { PRODUCTION_BY_SLUG_QUERY } from "@/lib/queries";
 import { typo, estimateReadingTime } from "@/lib/typography";
+import { sanityImg } from "@/lib/sanityImage";
 import { AdPlaceholder } from "@/components/AdSense";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import { shareButtons } from "@/components/article/SocialIcons";
@@ -662,11 +663,12 @@ export default function ProductionDetailPage() {
           <div className={s.heroGrid}>
             {/* Image column */}
             <div className={s.heroImageCol}>
-              <div
+              <img
                 className={s.heroImage}
-                style={{
-                  backgroundImage: `url(${production.imageUrl || "/placeholder.svg"})`,
-                }}
+                src={sanityImg(production.imageUrl || "/placeholder.svg", 1200)}
+                alt={production.titre}
+                loading="eager"
+                decoding="async"
               />
               <div className={s.heroImageOverlay} />
             </div>
@@ -981,7 +983,7 @@ export default function ProductionDetailPage() {
                         >
                           {item.imageUrl && (
                             <img
-                              src={item.imageUrl}
+                              src={sanityImg(item.imageUrl, 400)}
                               alt={item.titre || "Article connexe"}
                               className={s.exploreItemImg}
                               loading="lazy"
@@ -1119,7 +1121,7 @@ export default function ProductionDetailPage() {
                         >
                           {related.imageUrl && (
                             <img
-                              src={related.imageUrl}
+                              src={sanityImg(related.imageUrl, 400)}
                               alt={related.titre || "Article"}
                               className={s.relImg}
                               loading="lazy"
@@ -1187,7 +1189,7 @@ export default function ProductionDetailPage() {
                   >
                     <div className={s.relCardImgWrap}>
                       <img
-                        src={related.imageUrl || "/placeholder.svg"}
+                        src={sanityImg(related.imageUrl || "/placeholder.svg", 400)}
                         alt={related.titre || "Article recommandé"}
                         className={s.relCardImg}
                         loading="lazy"

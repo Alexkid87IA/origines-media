@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { UNIVERS, UNIVERS_MAP, ARTICLES, TOTAL_ARTICLES, type UniversId } from "@/data/univers";
+import { sanityImg } from "@/lib/sanityImage";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./Feed.module.css";
 
@@ -439,7 +440,7 @@ export default function Feed({ cmsItems }: FeedProps) {
                 <a href={item.href} className={s.feedCineLink} itemProp="url">
                   <div className={s.feedCineImgWrap}>
                     <img
-                      src={item.imgSrc}
+                      src={sanityImg(item.imgSrc, 800)}
                       alt={item.imgAlt}
                       className={s.feedCineImg}
                       loading="lazy"
@@ -494,7 +495,7 @@ export default function Feed({ cmsItems }: FeedProps) {
               <a href={item.href} className={s.feedLink} itemProp="url">
                 <figure className={s.feedThumb} itemProp="image">
                   <img
-                    src={item.imgSrc}
+                    src={sanityImg(item.imgSrc, 400)}
                     alt={item.imgAlt}
                     loading="lazy"
                     decoding="async"

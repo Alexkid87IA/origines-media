@@ -1846,9 +1846,25 @@
     padding: 0 16px;
   }
 
+  .prose {
+    font-size: 16px;
+  }
+
+  .proseGuide {
+    font-size: 16px;
+  }
+
   .relatedGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .endNl {
+    padding: 40px 16px;
+  }
+
+  .relCardExcerpt {
+    display: none;
   }
 
   .relatedSection {

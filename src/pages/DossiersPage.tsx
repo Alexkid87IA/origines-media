@@ -108,7 +108,7 @@ export default function DossiersPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Dossiers"
+        title="Dossiers — Une question, sept jours, sept articles"
         description={
           activeDossier
             ? `Dossier en cours : « ${activeDossier.question} ». Chaque semaine, une question explorée en 7 articles.`

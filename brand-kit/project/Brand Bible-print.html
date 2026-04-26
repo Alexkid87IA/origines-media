@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Origines — Brand Bible & Design System (PDF)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; background: #F7F5F0; color: #0A0A0A; }
+    body { font-family: 'Inter Tight', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: inherit; }
+
+    /* ===== PRINT ===== */
+    @page { size: A3 landscape; margin: 12mm; }
+
+    @media print {
+      html, body { background: #F7F5F0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .no-print, .toc, .tweaks-panel { display: none !important; }
+      section { break-before: page; break-inside: avoid; page-break-inside: avoid; min-height: auto !important; }
+      section:first-of-type { break-before: auto; }
+      img, svg { break-inside: avoid; }
+      h1, h2, h3 { break-after: avoid; }
+    }
+
+    /* Disable all transitions/hovers for print stability */
+    @media print {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="src/tokens.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="src/shared.jsx"></script>
+  <script type="text/babel" src="src/sections-intro.jsx"></script>
+  <script type="text/babel" src="src/sections-logo.jsx"></script>
+  <script type="text/babel" src="src/sections-visuals.jsx"></script>
+  <script type="text/babel" src="src/sections-components.jsx"></script>
+  <script type="text/babel" src="src/sections-editorial.jsx"></script>
+  <script type="text/babel" src="src/sections-social.jsx"></script>
+
+  <script type="text/babel">
+    function App() {
+      return (
+        <>
+          <SectionHero />
+          <SectionManifesto />
+          <SectionValues />
+          <SectionLogo />
+          <SectionColors />
+          <SectionTypo />
+          <SectionComponents />
+          <SectionVoice />
+          <SectionEditorial />
+          <SectionSocial />
+          <SectionFooter />
+        </>
+      );
+    }
+
+    setTimeout(() => {
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+      // Wait for fonts + render, then auto-print
+      const ready = async () => {
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
+        await new Promise(r => setTimeout(r, 1200));
+        window.print();
+      };
+      setTimeout(ready, 800);
+    }, 100);
+  </script>
+</body>
+</html>

@@ -167,9 +167,13 @@ export default function AboutPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="À propos — Origines Media"
+        title="À propos"
         description="Origines Media produit des contenus d’utilité publique depuis 2021. Découvrez notre mission, nos fondateurs, notre équipe et les valeurs qui guident chaque récit."
         url="/a-propos"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "À propos", url: "/a-propos" },
+        ]}
       />
       <SiteHeader />
 

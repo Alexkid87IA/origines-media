@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Origines — Brand Bible & Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,700;0,800;0,900;1,700;1,800&family=Inter+Tight:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@1,144,500;1,144,600;1,144,700&family=JetBrains+Mono:wght@400;500&family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@1,500;1,700;1,900&family=Bodoni+Moda:ital,opsz,wght@1,96,500;1,96,700;1,96,900&family=Cormorant+Garamond:ital,wght@1,400;1,500;1,700&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; background: #F7F5F0; color: #0A0A0A; }
+    body { font-family: 'Inter Tight', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    ::selection { background: #0A0A0A; color: #F7F5F0; }
+    a { color: inherit; }
+    button { font-family: inherit; }
+    html { scroll-behavior: smooth; }
+
+    /* Variant: Documentaire (dark mode) */
+    body[data-variant="documentaire"] { background: #0F0F0F !important; color: #F7F5F0 !important; }
+    body[data-variant="documentaire"] section[data-variant-bg="paper"] { background: #141414 !important; color: #F7F5F0 !important; }
+    body[data-variant="documentaire"] section[data-variant-bg="pure"] { background: #1A1A1A !important; color: #F7F5F0 !important; }
+    body[data-variant="documentaire"] section[data-variant-bg="stone"] { background: #0F0F0F !important; color: #F7F5F0 !important; }
+    body[data-variant="documentaire"] section[data-variant-bg="ink"] { background: #050505 !important; }
+    /* Cards on dark */
+    body[data-variant="documentaire"] section > div > div[style*="background: rgb(255, 255, 255)"],
+    body[data-variant="documentaire"] section [style*="background: rgb(247, 245, 240)"],
+    body[data-variant="documentaire"] section [style*="background: rgb(240, 237, 230)"] {
+      background: #1E1E1E !important;
+      color: #F7F5F0 !important;
+    }
+    body[data-variant="documentaire"] section [style*="border: 1px solid rgb(232, 229, 222)"],
+    body[data-variant="documentaire"] section [style*="border: 1px solid rgb(240, 237, 230)"] {
+      border-color: rgba(247,245,240,0.12) !important;
+    }
+
+    /* Variant: Minimale (N&B) */
+    body[data-variant="minimale"] .cat-hex,
+    body[data-variant="minimale"] section [style*="background: rgb("]:not([style*="rgb(10, 10, 10)"]):not([style*="rgb(247, 245, 240)"]):not([style*="rgb(255, 255, 255)"]):not([style*="rgb(240, 237, 230)"]) {
+      filter: grayscale(100%) contrast(1.05);
+    }
+
+    /* Tweaks panel */
+    .tweaks-panel {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      background: #0A0A0A; color: #F7F5F0;
+      padding: 20px; border: 1px solid rgba(247,245,240,0.2);
+      font-family: 'Inter Tight', sans-serif; font-size: 13;
+      min-width: 260px; display: none;
+    }
+    .tweaks-panel.active { display: block; }
+    .tweaks-panel h3 {
+      font-family: 'JetBrains Mono', monospace; font-size: 11;
+      letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.6;
+      margin: 0 0 14px 0; font-weight: 400;
+    }
+    .tweaks-panel .group { margin-bottom: 14px; }
+    .tweaks-panel .group-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 10;
+      letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5;
+      margin-bottom: 8px;
+    }
+    .tweaks-panel button {
+      display: block; width: 100%; text-align: left; background: transparent;
+      border: 1px solid rgba(247,245,240,0.2); color: #F7F5F0;
+      padding: 10px 14px; margin-bottom: 6px; cursor: pointer;
+      font-family: 'Inter Tight', sans-serif; font-size: 13px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .tweaks-panel button:hover { background: rgba(247,245,240,0.08); }
+    .tweaks-panel button[data-active="true"] { background: #F7F5F0; color: #0A0A0A; border-color: #F7F5F0; }
+
+    /* Side table of contents */
+    .toc {
+      position: fixed; left: 24px; top: 50%; transform: translateY(-50%);
+      z-index: 50;
+      font-family: 'JetBrains Mono', monospace; font-size: 10;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      display: flex; flex-direction: column; gap: 14px;
+      mix-blend-mode: difference; color: #F7F5F0;
+    }
+    .toc a { text-decoration: none; opacity: 0.55; display: flex; gap: 12px; align-items: center; }
+    .toc a:hover { opacity: 1; }
+    .toc .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    @media (max-width: 1100px) {
+      .toc { display: none; }
+    }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="src/tokens.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <nav class="toc">
+    <a href="#ch01"><span class="dot"></span> 01 Manifeste</a>
+    <a href="#ch02"><span class="dot"></span> 02 Logo</a>
+    <a href="#ch03"><span class="dot"></span> 03 Couleurs</a>
+    <a href="#ch04"><span class="dot"></span> 04 Typo</a>
+    <a href="#ch05"><span class="dot"></span> 05 Composants</a>
+    <a href="#ch06"><span class="dot"></span> 06 Éditorial</a>
+    <a href="#ch07"><span class="dot"></span> 07 Social</a>
+  </nav>
+
+  <div class="tweaks-panel" id="tweaks">
+    <h3>Tweaks</h3>
+    <div class="group">
+      <div class="group-label">Direction visuelle</div>
+      <button data-variant="editoriale" data-active="true">Éditoriale (défaut)</button>
+      <button data-variant="documentaire">Documentaire (dark)</button>
+      <button data-variant="minimale">Minimale (N&B)</button>
+    </div>
+  </div>
+
+  <script type="text/babel" src="src/shared.jsx"></script>
+  <script type="text/babel" src="src/sections-intro.jsx"></script>
+  <script type="text/babel" src="src/sections-logo.jsx"></script>
+  <script type="text/babel" src="src/sections-visuals.jsx"></script>
+  <script type="text/babel" src="src/sections-components.jsx"></script>
+  <script type="text/babel" src="src/sections-editorial.jsx"></script>
+  <script type="text/babel" src="src/sections-social.jsx"></script>
+
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "variant": "editoriale"
+    }/*EDITMODE-END*/;
+
+    function App() {
+      return (
+        <>
+          <SectionHero />
+          <SectionManifesto />
+          <SectionValues />
+          <SectionLogo />
+          <SectionColors />
+          <SectionTypo />
+          <SectionComponents />
+          <SectionVoice />
+          <SectionEditorial />
+          <SectionSocial />
+          <SectionFooter />
+        </>
+      );
+    }
+
+    // Wait for all babel scripts to load
+    setTimeout(() => {
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    }, 100);
+
+    // Tweaks wiring
+    const panel = document.getElementById('tweaks');
+    const buttons = panel.querySelectorAll('button[data-variant]');
+
+    function setVariant(v) {
+      document.body.setAttribute('data-variant', v);
+      buttons.forEach(b => b.setAttribute('data-active', b.dataset.variant === v));
+    }
+    setVariant(TWEAK_DEFAULTS.variant || 'editoriale');
+
+    buttons.forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.variant;
+        setVariant(v);
+        window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { variant: v } }, '*');
+      });
+    });
+
+    window.addEventListener('message', (e) => {
+      if (e.data?.type === '__activate_edit_mode') panel.classList.add('active');
+      if (e.data?.type === '__deactivate_edit_mode') panel.classList.remove('active');
+    });
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+  </script>
+</body>
+</html>

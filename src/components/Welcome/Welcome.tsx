@@ -141,7 +141,7 @@ export default function Welcome() {
       </p>
 
       <div className={s.masthead}>
-        <h1 className={s.mastheadWord}>Origines</h1>
+        <h1 className={s.mastheadWord}>Origines<span className="sr-only"> Media — Psychologie, bien-être, relations, culture, avenir</span></h1>
         <div className={s.social}>
           <span className={s.socialLabel}>Suivez Origines</span>
           <div className={s.socialIcons}>

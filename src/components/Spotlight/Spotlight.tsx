@@ -32,7 +32,7 @@ const FALLBACK: CMSSpotlightItem[] = [
     author: "Léo Marchand",
     readTime: "32 min",
     href: "/article/ecouter-son-corps",
-    image: "/covers/cover-03.jpg",
+    image: "/covers/cover-03.webp",
     date: "2026-04-25",
   },
   {
@@ -43,7 +43,7 @@ const FALLBACK: CMSSpotlightItem[] = [
     author: "Marie Dupont",
     readTime: "14 min",
     href: "/article/procrastination",
-    image: "/covers/cover-05.jpg",
+    image: "/covers/cover-05.webp",
     date: "2026-04-24",
   },
   {
@@ -54,7 +54,7 @@ const FALLBACK: CMSSpotlightItem[] = [
     author: "Clara Dubois",
     readTime: "18 min",
     href: "/article/conversation-repoussee",
-    image: "/covers/cover-06.jpg",
+    image: "/covers/cover-06.webp",
     date: "2026-04-23",
   },
   {
@@ -65,7 +65,7 @@ const FALLBACK: CMSSpotlightItem[] = [
     author: "Thomas Leroy",
     readTime: "22 min",
     href: "/article/2200-km-a-pied",
-    image: "/covers/cover-07.jpg",
+    image: "/covers/cover-07.webp",
     date: "2026-04-22",
   },
   {
@@ -76,7 +76,7 @@ const FALLBACK: CMSSpotlightItem[] = [
     author: "Sophie Martin",
     readTime: "8 min",
     href: "/article/numerique-lent",
-    image: "/covers/cover-08.jpg",
+    image: "/covers/cover-08.webp",
     date: "2026-04-21",
     isVideo: true,
   },
@@ -88,7 +88,7 @@ const FALLBACK: CMSSpotlightItem[] = [
     author: "Julie Perrin",
     readTime: "11 min",
     href: "/article/ennui-modernite",
-    image: "/covers/cover-09.jpg",
+    image: "/covers/cover-09.webp",
     date: "2026-04-20",
   },
 ];

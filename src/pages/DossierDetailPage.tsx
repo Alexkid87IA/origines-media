@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
@@ -83,13 +83,16 @@ export default function DossierDetailPage() {
 
   return (
     <div className={s.page}>
-      <Helmet>
-        <title>{dossier.question} — Dossiers · Origines Media</title>
-        <meta
-          name="description"
-          content={`Dossier S.${dossier.semaine} — ${dossier.question}. ${articles.length} articles pour explorer la question sous tous les angles.`}
-        />
-      </Helmet>
+      <SEO
+        title={`${dossier.question} — Dossiers · Origines Media`}
+        description={`Dossier S.${dossier.semaine} — ${dossier.question}. ${articles.length} articles pour explorer la question sous tous les angles.`}
+        url={`/dossiers/${dossier.slug || slug}`}
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Dossiers", url: "/dossiers" },
+          { name: dossier.question, url: `/dossiers/${dossier.slug || slug}` },
+        ]}
+      />
       <SiteHeader />
 
       <header className={s.hero} style={{ "--dossier-color": u.color } as React.CSSProperties}>

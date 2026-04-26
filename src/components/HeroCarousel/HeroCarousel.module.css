@@ -45,13 +45,21 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background-size: cover;
-  background-position: center;
   text-decoration: none;
   overflow: hidden;
   grid-row: 1 / -1;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.2s;
+}
+
+.mainColImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
 }
 
 .mainGradient {
@@ -937,16 +945,27 @@
 @media (max-width: 880px) {
   .heroGrid {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     min-height: auto;
   }
-  .mainCol { min-height: 400px; }
+  .mainCol {
+    min-height: 380px;
+    grid-row: auto;
+  }
   .centerCol {
+    grid-row: auto;
+    display: flex;
+    flex-direction: column;
     border-left: none;
     border-right: none;
     border-top: 1px solid rgba(10, 10, 10, 0.08);
   }
+  .questionBlock { min-height: 260px; }
+  .articleBlock { min-height: 240px; }
   .rightCol {
+    grid-row: auto;
     display: flex;
+    flex-direction: column;
     border-top: 1px solid rgba(10, 10, 10, 0.08);
   }
   .videoInfo { padding: 14px 24px 18px; }
@@ -956,32 +975,193 @@
 }
 
 @media (max-width: 640px) {
-  .hero { padding-top: 40px; }
-  .chapterMark { margin-bottom: 16px; }
-  .mainCol { min-height: 360px; }
-  .mainContent { padding: 24px 20px; }
-  .mainTitle { font-size: 24px !important; }
-  .mainDeck { font-size: 14px; }
-  .videoPlayLarge img { width: 64px; height: 64px; }
-  .videoInfo { padding: 12px 20px 16px; }
-  .videoTitle { font-size: 15px; }
-  .questionBlock { padding: 20px; }
-  .questionTitle { font-size: 20px; }
-  .guideBlock { padding: 24px 20px; }
-  .guideTitle { font-size: 18px; }
-  .boutiqueBlock { padding: 20px; }
-  .boutiqueTitle { font-size: 18px; }
+  .hero { padding-top: 10px; }
+  .chapterMark { margin-bottom: 6px; font-size: 9px; gap: 8px; }
+  .heroGrid { border-width: 0; }
+
+  .mainCol {
+    min-height: 360px;
+    aspect-ratio: auto;
+  }
+
+  .mainGradient {
+    background:
+      linear-gradient(
+        to top,
+        rgba(10, 10, 10, 0.97) 0%,
+        rgba(10, 10, 10, 0.85) 30%,
+        rgba(10, 10, 10, 0.5) 60%,
+        rgba(10, 10, 10, 0.35) 100%
+      );
+  }
+
+  .mainContent { padding: 14px 16px; }
+
+  .mainTitle {
+    font-size: 18px !important;
+    line-height: 1.1;
+  }
+
+  .mainTitle::before {
+    width: 28px;
+    height: 2px;
+    margin-bottom: 8px;
+  }
+
+  .mainDeck { display: none; }
+
+  .mainByline {
+    font-size: 9px;
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  .mainKicker { margin-bottom: 6px; }
+  .mainTag { font-size: 8px; padding: 3px 8px; }
+  .mainMeta { font-size: 9px; }
+  .videoPlayLarge img { width: 48px; height: 48px; }
+  .videoPlay { width: 44px; height: 44px; }
+  .videoPlay svg { width: 16px; height: 16px; }
+
+  .centerCol { border-top: none; }
+
+  .questionBlock {
+    padding: 32px 20px 28px;
+    min-height: 240px;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 100%, rgba(0,0,0,0.2) 0%, transparent 50%),
+      linear-gradient(135deg, #35B0CC 0%, #2E94B5 40%, #1A5F75 100%) !important;
+    border-bottom: 1px solid rgba(247, 245, 240, 0.08);
+  }
+  .questionOverlay { display: none; }
+  .questionContent {
+    justify-content: center;
+  }
+  .questionHead {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(247, 245, 240, 0.15);
+  }
+  .questionLabel {
+    font-size: 9px;
+    color: rgba(247, 245, 240, 0.85);
+    letter-spacing: 0.18em;
+    font-weight: 600;
+  }
+  .questionWeek {
+    font-size: 9px;
+    color: rgba(247, 245, 240, 0.5);
+    background: rgba(247, 245, 240, 0.1);
+    padding: 3px 8px;
+  }
+  .questionTitle {
+    font-size: 24px;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  }
+  .questionFoot {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(247, 245, 240, 0.12);
+  }
+  .questionCta {
+    display: inline-flex;
+    margin-top: 14px;
+    font-size: 9px;
+    color: rgba(247, 245, 240, 0.8);
+  }
+  .questionUnivers {
+    background: rgba(247, 245, 240, 0.15);
+    border: 1px solid rgba(247, 245, 240, 0.12);
+  }
+  .progressBar {
+    background: rgba(247, 245, 240, 0.12);
+  }
+  .progressFill {
+    background: rgba(247, 245, 240, 0.7);
+  }
+
+  .articleBlock {
+    min-height: 280px;
+    aspect-ratio: 16 / 10;
+  }
+  .articleOverlay {
+    background: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.97) 0%,
+      rgba(10, 10, 10, 0.85) 40%,
+      rgba(10, 10, 10, 0.55) 65%,
+      rgba(10, 10, 10, 0.45) 100%
+    );
+  }
+  .articleInfo { padding: 20px 16px; }
+  .articleBlock .mainKicker {
+    background: rgba(10, 10, 10, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    align-self: flex-start;
+  }
+  .articleBlock .mainTag {
+    background: rgba(247, 245, 240, 0.2);
+  }
+  .articleTitle { font-size: 20px; line-height: 1.1; }
+  .articleDeck {
+    -webkit-line-clamp: 3;
+    font-size: 13px;
+    margin-top: 8px;
+    color: rgba(247, 245, 240, 0.7);
+  }
+  .articleBlock .mainByline {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+
+  .rightCol {
+    display: flex !important;
+    flex-direction: row;
+    border-top: none;
+  }
+
+  .guideBlock {
+    flex: 1;
+    padding: 20px 16px;
+    border-left: none;
+    border-top: none;
+    background: linear-gradient(135deg, #7B5CD6 0%, #5A3FB5 100%);
+    color: var(--paper);
+  }
+  .guideLabel { font-size: 8px; margin-bottom: 8px; color: rgba(247, 245, 240, 0.6); }
+  .guideTitle { font-size: 16px; line-height: 1.15; color: var(--paper); }
+  .guideDesc { display: none; }
+  .guideCta { font-size: 9px; padding-top: 12px; color: rgba(247, 245, 240, 0.7); }
+  .guideBlock:hover .guideCta { color: var(--paper); }
+
+  .boutiqueBlock {
+    flex: 1;
+    padding: 14px;
+  }
+  .boutiqueLabel { font-size: 7px; margin-bottom: 6px; }
+  .boutiqueTitle { font-size: 14px; }
+  .boutiqueDesc { display: none; }
+  .boutiquePrice { margin-top: 8px; padding-top: 8px; }
+  .boutiquePriceTag { font-size: 16px; }
+  .boutiqueCta { font-size: 8px; margin-top: 8px; }
+
+  .videoInfo { padding: 10px 16px 12px; }
+  .videoTitle { font-size: 14px; }
+  .videoChannel { font-size: 8px; margin-bottom: 3px; }
 }
 
 @media (max-width: 480px) {
-  .hero { padding-top: 28px; }
-  .chapterMark { font-size: 10px; gap: 8px; }
-  .mainCol { min-height: 320px; }
-  .mainContent { padding: 20px 16px; }
-  .mainTitle { font-size: 22px !important; }
-  .videoTitle { font-size: 14px; }
-  .guideTitle { font-size: 16px; }
-  .boutiqueTitle { font-size: 16px; }
-  .boutiqueBlock { padding: 16px; }
-  .questionTitle { font-size: 18px; }
+  .mainCol { min-height: 300px; }
+  .mainTitle { font-size: 16px !important; }
+  .questionBlock { min-height: 200px; padding: 24px 16px 22px; }
+  .questionTitle { font-size: 20px; }
+  .articleBlock { min-height: 220px; aspect-ratio: auto; }
+  .articleTitle { font-size: 18px; }
+  .rightCol { flex-direction: column; }
 }

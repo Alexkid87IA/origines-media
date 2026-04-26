@@ -463,9 +463,9 @@ export const createPortableTextComponentsV2 = ({
             ? `heading-${index}`
             : `heading-${value._key}`;
         return (
-          <h1 id={id} className={s.h1}>
+          <h2 id={id} className={s.h1}>
             {children}
-          </h1>
+          </h2>
         );
       },
       h2: ({ children, value }: any) => {
@@ -571,7 +571,7 @@ export const createPortableTextComponentsV2 = ({
           <figure className={s.figure}>
             <img
               src={imageUrl}
-              alt={value.alt || ""}
+              alt={value.alt || value.caption || ""}
               className={s.figureImg}
               loading="lazy"
             />

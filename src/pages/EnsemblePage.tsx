@@ -21,16 +21,16 @@ const NAV_SECTIONS = [
 ];
 
 const HISTOIRES = [
-  { title: "J’ai quitté mon CDI pour traverser l’Atlantique à la voile", cat: "Parcours", author: "Camille Dufresne", time: "18 min", image: "/histoires/histoire_parcours_resilience.png" },
-  { title: "Comment j’ai appris à vivre avec mon TDAH à 35 ans", cat: "Épreuves", author: "Mathilde Aubry", time: "22 min", image: "/histoires/histoire_sante_mentale.png" },
-  { title: "Ma mère m’a donné un prénom que je n’ai jamais porté", cat: "Relations", author: "Émilie Roux", time: "14 min", image: "/histoires/histoire_relations_famille.png" },
+  { title: "J’ai quitté mon CDI pour traverser l’Atlantique à la voile", cat: "Parcours", author: "Camille Dufresne", time: "18 min", image: "/histoires/histoire_parcours_resilience.webp" },
+  { title: "Comment j’ai appris à vivre avec mon TDAH à 35 ans", cat: "Épreuves", author: "Mathilde Aubry", time: "22 min", image: "/histoires/histoire_sante_mentale.webp" },
+  { title: "Ma mère m’a donné un prénom que je n’ai jamais porté", cat: "Relations", author: "Émilie Roux", time: "14 min", image: "/histoires/histoire_relations_famille.webp" },
 ];
 
 const RECOS = [
-  { type: "Livre", title: "L’Art de la joie", author: "Goliarda Sapienza", color: "#8B5CF6", image: "/recos/reco_livre.png" },
-  { type: "Podcast", title: "Les Chemins de la philosophie", author: "France Culture", color: "#EC4899", image: "/recos/reco_podcast.png" },
-  { type: "Film", title: "Perfect Days", author: "Wim Wenders", color: "#F59E0B", image: "/recos/reco_film_serie.png" },
-  { type: "Musique", title: "Multitude", author: "Stromae", color: "#0891B2", image: "/recos/reco_musique.png" },
+  { type: "Livre", title: "L’Art de la joie", author: "Goliarda Sapienza", color: "#8B5CF6", image: "/recos/reco_livre.webp" },
+  { type: "Podcast", title: "Les Chemins de la philosophie", author: "France Culture", color: "#EC4899", image: "/recos/reco_podcast.webp" },
+  { type: "Film", title: "Perfect Days", author: "Wim Wenders", color: "#F59E0B", image: "/recos/reco_film_serie.webp" },
+  { type: "Musique", title: "Multitude", author: "Stromae", color: "#0891B2", image: "/recos/reco_musique.webp" },
 ];
 
 const LETTRES = [
@@ -94,6 +94,10 @@ export default function EnsemblePage() {
         title="Ensemble — Vie du média"
         description="Histoires, recommandations, lettres du dimanche, sondages et calendrier. La vie du média Origines."
         url="/ensemble"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Ensemble", url: "/ensemble" },
+        ]}
       />
       <SiteHeader />
 

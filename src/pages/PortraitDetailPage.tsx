@@ -12,6 +12,7 @@ import EmailCapture from '@/components/EmailCapture';
 import { sanityFetch } from '@/lib/sanity';
 import { PORTRAIT_BY_SLUG_QUERY, SIMILAR_HISTOIRES_QUERY, ALL_HISTOIRES_SLUGS_QUERY } from '@/lib/queries';
 import { typo } from '@/lib/typography';
+import { sanityImg } from '@/lib/sanityImage';
 import { getTagCategory, getCategoryColors } from '@/lib/tagCategories';
 import {
   shareButtons,
@@ -1189,9 +1190,12 @@ export default function PortraitDetailPage() {
           <div className={s.heroGrid}>
             {/* Image column */}
             <div className={s.heroImgCol}>
-              <div
+              <img
                 className={s.heroImgBg}
-                style={{ backgroundImage: `url(${portrait.imageUrl})` }}
+                src={sanityImg(portrait.imageUrl, 1200)}
+                alt={portrait.titre}
+                loading="eager"
+                decoding="async"
               />
               <div className={s.heroImgOverlay} />
             </div>

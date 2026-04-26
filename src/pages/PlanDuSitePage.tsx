@@ -90,8 +90,12 @@ export default function PlanDuSitePage() {
     <div className={s.page}>
       <SEO
         title="Plan du site"
-        description="Retrouvez l&rsquo;ensemble des pages et rubriques d&rsquo;Origines Media."
+        description="Retrouvez l'ensemble des pages et rubriques d'Origines Media."
         url="/plan-du-site"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Plan du site", url: "/plan-du-site" },
+        ]}
       />
       <SiteHeader />
 

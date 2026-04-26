@@ -40,10 +40,10 @@ const FALLBACK_PROGRAMMES: Programme[] = [
     color: "#8B7355",
     videoCount: 18,
     videos: [
-      { href: "/video/sommeil-enquete", title: "Le grand sommeil français.", duration: "24:12", thumb: "/videos/vid-01.jpg" },
-      { href: "/video/village-qui-a-dit-non", title: "Le village qui a dit non.", duration: "28:34", thumb: "/videos/vid-02.jpg" },
-      { href: "/video/riviere-oubliee", title: "La rivière qu'on a oubliée.", duration: "19:05", thumb: "/videos/vid-03.jpg" },
-      { href: "/video/murs-qui-parlent", title: "Les murs qui parlent.", duration: "22:41", thumb: "/videos/vid-04.jpg" },
+      { href: "/video/sommeil-enquete", title: "Le grand sommeil français.", duration: "24:12", thumb: "/videos/vid-01.webp" },
+      { href: "/video/village-qui-a-dit-non", title: "Le village qui a dit non.", duration: "28:34", thumb: "/videos/vid-02.webp" },
+      { href: "/video/riviere-oubliee", title: "La rivière qu'on a oubliée.", duration: "19:05", thumb: "/videos/vid-03.webp" },
+      { href: "/video/murs-qui-parlent", title: "Les murs qui parlent.", duration: "22:41", thumb: "/videos/vid-04.webp" },
     ],
   },
   {
@@ -53,10 +53,10 @@ const FALLBACK_PROGRAMMES: Programme[] = [
     color: "#5B7BA5",
     videoCount: 24,
     videos: [
-      { href: "/video/procrastination-short", title: "Ce que cache la procrastination.", duration: "14:30", thumb: "/videos/vid-05.jpg" },
-      { href: "/video/honte-et-parole", title: "La honte, en nous, sans nous.", duration: "18:22", thumb: "/videos/vid-06.jpg" },
-      { href: "/video/ennui-modernite", title: "Pourquoi on ne sait plus s'ennuyer.", duration: "11:48", thumb: "/videos/vid-07.jpg" },
-      { href: "/video/colere-invisible", title: "La colère qu'on ne montre pas.", duration: "16:09", thumb: "/videos/vid-08.jpg" },
+      { href: "/video/procrastination-short", title: "Ce que cache la procrastination.", duration: "14:30", thumb: "/videos/vid-05.webp" },
+      { href: "/video/honte-et-parole", title: "La honte, en nous, sans nous.", duration: "18:22", thumb: "/videos/vid-06.webp" },
+      { href: "/video/ennui-modernite", title: "Pourquoi on ne sait plus s'ennuyer.", duration: "11:48", thumb: "/videos/vid-07.webp" },
+      { href: "/video/colere-invisible", title: "La colère qu'on ne montre pas.", duration: "16:09", thumb: "/videos/vid-08.webp" },
     ],
   },
   {
@@ -66,10 +66,10 @@ const FALLBACK_PROGRAMMES: Programme[] = [
     color: "#6B8E6B",
     videoCount: 15,
     videos: [
-      { href: "/video/sens-du-silence", title: "Le sens du silence.", duration: "32:10", thumb: "/videos/vid-09.jpg" },
-      { href: "/video/heritage-silence", title: "Un héritage en silence.", duration: "21:55", thumb: "/videos/vid-10.jpg" },
-      { href: "/video/le-corps-invisible", title: "Le corps qu'on ne voit pas.", duration: "20:33", thumb: "/videos/vid-11.jpg" },
-      { href: "/video/la-main-de-mon-pere", title: "La main de mon père.", duration: "17:44", thumb: "/videos/vid-12.jpg" },
+      { href: "/video/sens-du-silence", title: "Le sens du silence.", duration: "32:10", thumb: "/videos/vid-09.webp" },
+      { href: "/video/heritage-silence", title: "Un héritage en silence.", duration: "21:55", thumb: "/videos/vid-10.webp" },
+      { href: "/video/le-corps-invisible", title: "Le corps qu'on ne voit pas.", duration: "20:33", thumb: "/videos/vid-11.webp" },
+      { href: "/video/la-main-de-mon-pere", title: "La main de mon père.", duration: "17:44", thumb: "/videos/vid-12.webp" },
     ],
   },
   {
@@ -79,10 +79,10 @@ const FALLBACK_PROGRAMMES: Programme[] = [
     color: "#A07850",
     videoCount: 21,
     videos: [
-      { href: "/video/ia-lente", title: "Le retour du numérique lent.", duration: "8:12", thumb: "/videos/vid-13.jpg" },
-      { href: "/video/demission-29-ans", title: "J'ai démissionné à 29 ans.", duration: "18:40", thumb: "/videos/vid-14.jpg" },
-      { href: "/video/travailler-moins", title: "Travailler moins pour créer plus.", duration: "7:55", thumb: "/videos/vid-15.jpg" },
-      { href: "/video/artisan-du-temps", title: "L'artisan qui refuse de grandir.", duration: "12:28", thumb: "/videos/vid-16.jpg" },
+      { href: "/video/ia-lente", title: "Le retour du numérique lent.", duration: "8:12", thumb: "/videos/vid-13.webp" },
+      { href: "/video/demission-29-ans", title: "J'ai démissionné à 29 ans.", duration: "18:40", thumb: "/videos/vid-14.webp" },
+      { href: "/video/travailler-moins", title: "Travailler moins pour créer plus.", duration: "7:55", thumb: "/videos/vid-15.webp" },
+      { href: "/video/artisan-du-temps", title: "L'artisan qui refuse de grandir.", duration: "12:28", thumb: "/videos/vid-16.webp" },
     ],
   },
   {
@@ -92,10 +92,10 @@ const FALLBACK_PROGRAMMES: Programme[] = [
     color: "#9B6B8D",
     videoCount: 12,
     videos: [
-      { href: "/video/soulages-vitraux", title: "Soulages, la lumière du noir.", duration: "9:18", thumb: "/videos/vid-17.jpg" },
-      { href: "/video/les-mains-qui-pensent", title: "Les mains qui pensent.", duration: "12:05", thumb: "/videos/vid-18.jpg" },
-      { href: "/video/beaute-des-ruines", title: "La beauté des ruines.", duration: "15:32", thumb: "/videos/vid-19.jpg" },
-      { href: "/video/photographe-oublie", title: "Le photographe qu'on a oublié.", duration: "11:20", thumb: "/videos/vid-20.jpg" },
+      { href: "/video/soulages-vitraux", title: "Soulages, la lumière du noir.", duration: "9:18", thumb: "/videos/vid-17.webp" },
+      { href: "/video/les-mains-qui-pensent", title: "Les mains qui pensent.", duration: "12:05", thumb: "/videos/vid-18.webp" },
+      { href: "/video/beaute-des-ruines", title: "La beauté des ruines.", duration: "15:32", thumb: "/videos/vid-19.webp" },
+      { href: "/video/photographe-oublie", title: "Le photographe qu'on a oublié.", duration: "11:20", thumb: "/videos/vid-20.webp" },
     ],
   },
   {
@@ -105,10 +105,10 @@ const FALLBACK_PROGRAMMES: Programme[] = [
     color: "#7A8B6B",
     videoCount: 16,
     videos: [
-      { href: "/video/ecole-du-dehors", title: "L'école du dehors.", duration: "15:47", thumb: "/videos/vid-21.jpg" },
-      { href: "/video/ecrire-pour-ne-pas-oublier", title: "Écrire pour ne pas oublier.", duration: "12:12", thumb: "/videos/vid-22.jpg" },
-      { href: "/video/le-mot-juste", title: "Le mot juste.", duration: "6:30", thumb: "/videos/vid-23.jpg" },
-      { href: "/video/lire-a-voix-haute", title: "Lire à voix haute.", duration: "9:55", thumb: "/videos/vid-24.jpg" },
+      { href: "/video/ecole-du-dehors", title: "L'école du dehors.", duration: "15:47", thumb: "/videos/vid-21.webp" },
+      { href: "/video/ecrire-pour-ne-pas-oublier", title: "Écrire pour ne pas oublier.", duration: "12:12", thumb: "/videos/vid-22.webp" },
+      { href: "/video/le-mot-juste", title: "Le mot juste.", duration: "6:30", thumb: "/videos/vid-23.webp" },
+      { href: "/video/lire-a-voix-haute", title: "Lire à voix haute.", duration: "9:55", thumb: "/videos/vid-24.webp" },
     ],
   },
 ];
@@ -176,7 +176,7 @@ export default function VideoChannel({ cmsProgrammes }: VideoChannelProps) {
     <section className={s.vc} aria-labelledby="vc-heading">
       <div className={s.banner}>
         <img
-          src="/visages-origines.png"
+          src="/visages-origines.webp"
           alt="Les visages d'Origines"
           className={s.bannerImg}
           loading="lazy"

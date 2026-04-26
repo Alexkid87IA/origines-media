@@ -44,6 +44,7 @@ export default function InscriptionPage() {
         title="Inscription"
         description="Rejoignez Origines Media. Créez votre espace personnel gratuit."
         url="/inscription"
+        noindex
       />
 
       <SiteHeader />

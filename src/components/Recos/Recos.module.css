@@ -408,32 +408,92 @@
 }
 
 @media (max-width: 640px) {
-  .recos { margin-top: 64px; }
-  .sectionTitle { font-size: clamp(24px, 6vw, 36px); }
-  .sectionDeck { font-size: 14px; }
-  .cats { gap: 6px; }
-  .cat { padding: 8px 12px; font-size: 10px; }
-  .featLink { gap: 20px; }
-  .featImgWrap { max-width: 100%; aspect-ratio: 4 / 3; }
-  .featH { font-size: 24px; }
+  .recos { margin-top: 28px; }
+
+  /* Chapter + section head */
+  .chapterMark { margin-bottom: 6px; font-size: 9px; gap: 6px; }
+  .sectionHead { margin-bottom: 14px; padding-bottom: 10px; gap: 0; }
+  .sectionTitle { font-size: 22px; }
+  .sectionDeck { font-size: 12px; margin-top: 6px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .sectionAll { display: none; }
+  .sectionKicker { font-size: 9px; margin-bottom: 8px; }
+
+  /* Categories — horizontal scroll */
+  .cats {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    margin-bottom: 20px;
+    animation: catsPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+  }
+  .cats::-webkit-scrollbar { display: none; }
+  .cat {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 5px 10px;
+    font-size: 9px;
+    gap: 5px;
+  }
+  .catDot { width: 5px; height: 5px; }
+  .catCount { font-size: 8px; padding-left: 5px; }
+
+  /* Featured — vertical stack, compact */
+  .featured { margin-bottom: 20px; }
+  .featLink {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .featImgWrap { max-width: 100%; aspect-ratio: 16 / 9; }
+  .featBadge { padding: 6px 10px; font-size: 8px; gap: 5px; }
+  .featBadge svg { width: 8px; height: 8px; }
+  .featBody { gap: 8px; }
+  .featCategory { font-size: 9px; }
+  .featH { font-size: 20px; }
+  .featExcerpt { font-size: 13px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .featFoot { font-size: 9px; gap: 6px; }
+  .featCta { display: none; }
+
+  /* Grid — horizontal compact cards */
   .grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 0;
   }
-  .grid .card:nth-child(3) {
-    grid-column: auto;
-    max-width: 100%;
+  .grid .card:nth-child(3) { grid-column: auto; max-width: 100%; }
+
+  .cardLink {
+    flex-direction: row;
+    border-left: none;
+    border-right: none;
+    border-top: none;
   }
+  .cardImgWrap {
+    width: 90px;
+    height: 90px;
+    aspect-ratio: auto;
+    flex-shrink: 0;
+  }
+  .cardType { font-size: 7px; padding: 3px 6px; bottom: 4px; left: 4px; }
+  .cardBody { padding: 12px 14px; gap: 4px; justify-content: center; }
+  .cardH { font-size: 14px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .cardExcerpt { display: none; }
+  .cardFoot { font-size: 8px; padding-top: 6px; gap: 5px; }
 }
 
 @media (max-width: 480px) {
-  .sectionTitle { font-size: clamp(22px, 6vw, 30px); }
-  .cat { padding: 7px 10px; font-size: 10px; }
-  .catCount { font-size: 9px; }
-  .featH { font-size: 22px; }
-  .featExcerpt { font-size: 14px; }
-  .cardBody { padding: 16px 18px 18px; }
-  .cardH { font-size: 16px; }
+  .sectionTitle { font-size: 20px; }
+  .featImgWrap { aspect-ratio: 16 / 10; }
+  .featH { font-size: 18px; }
+  .featExcerpt { font-size: 12px; }
+  .cardImgWrap { width: 72px; height: 72px; }
+  .cardH { font-size: 13px; }
+}
+
+@keyframes catsPeek {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-48px); }
+  100% { transform: translateX(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2/Footer2";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
@@ -138,11 +138,11 @@ const TEMOIGNAGES_MOCK: TemoignageItem[] = [
 ];
 
 const PORTRAITS_MOCK: PortraitItem[] = [
-  { name: "Fatou Diome", role: "Écrivaine, autrice de Le Ventre de l’Atlantique", slug: "fatou-diome", accroche: "« On ne quitte jamais vraiment son pays. On l’emporte dans sa façon de marcher. »", image: "/covers/cover-01.jpg", date: "22 avril 2026", readTime: "28 min" },
-  { name: "Dr. Christophe André", role: "Psychiatre, pionnier de la méditation en milieu hospitalier", slug: "christophe-andre", accroche: "« La méditation n’est pas une fuite. C’est un retour — brutal parfois — à ce qui est là. »", image: "/covers/cover-02.jpg", date: "18 avril 2026", readTime: "32 min" },
-  { name: "Céline Alvarez", role: "Chercheuse en sciences cognitives, ex-institutrice", slug: "celine-alvarez", accroche: "« On forme les enfants à un monde qui n’existera plus. Il faut réinventer l’école — pas la réparer. »", image: "/covers/cover-03.jpg", date: "14 avril 2026", readTime: "24 min" },
-  { name: "Idriss Aberkane", role: "Essayiste, chercheur en neurosciences cognitives", slug: "idriss-aberkane", accroche: "« Le savoir est la seule richesse qu’on multiplie en la partageant. C’est la seule économie qui ne connaît pas la rareté. »", image: "/covers/cover-04.jpg", date: "10 avril 2026", readTime: "26 min" },
-  { name: "Élise Lucet", role: "Journaliste d’investigation", slug: "elise-lucet", accroche: "« On me dit que je dérange. Tant mieux. Un journaliste qui ne dérange personne ne sert à rien. »", image: "/covers/cover-05.jpg", date: "6 avril 2026", readTime: "30 min" },
+  { name: "Fatou Diome", role: "Écrivaine, autrice de Le Ventre de l’Atlantique", slug: "fatou-diome", accroche: "« On ne quitte jamais vraiment son pays. On l’emporte dans sa façon de marcher. »", image: "/covers/cover-01.webp", date: "22 avril 2026", readTime: "28 min" },
+  { name: "Dr. Christophe André", role: "Psychiatre, pionnier de la méditation en milieu hospitalier", slug: "christophe-andre", accroche: "« La méditation n’est pas une fuite. C’est un retour — brutal parfois — à ce qui est là. »", image: "/covers/cover-02.webp", date: "18 avril 2026", readTime: "32 min" },
+  { name: "Céline Alvarez", role: "Chercheuse en sciences cognitives, ex-institutrice", slug: "celine-alvarez", accroche: "« On forme les enfants à un monde qui n’existera plus. Il faut réinventer l’école — pas la réparer. »", image: "/covers/cover-03.webp", date: "14 avril 2026", readTime: "24 min" },
+  { name: "Idriss Aberkane", role: "Essayiste, chercheur en neurosciences cognitives", slug: "idriss-aberkane", accroche: "« Le savoir est la seule richesse qu’on multiplie en la partageant. C’est la seule économie qui ne connaît pas la rareté. »", image: "/covers/cover-04.webp", date: "10 avril 2026", readTime: "26 min" },
+  { name: "Élise Lucet", role: "Journaliste d’investigation", slug: "elise-lucet", accroche: "« On me dit que je dérange. Tant mieux. Un journaliste qui ne dérange personne ne sert à rien. »", image: "/covers/cover-05.webp", date: "6 avril 2026", readTime: "30 min" },
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -253,7 +253,7 @@ function TemoignagesCallout() {
   return (
     <section className={s.callout}>
       <img
-        src="/visages-origines.png"
+        src="/visages-origines.webp"
         alt="Visages de ceux qui ont raconté leur histoire sur Origines"
         className={s.calloutImg}
         loading="lazy"
@@ -288,11 +288,12 @@ export default function TypePage({ type }: { type: ContentType }) {
 
   return (
     <div className={s.page}>
-      <Helmet>
-        <title>{cfg.seoTitle}</title>
-        <meta name="description" content={cfg.seoDescription} />
-        <link rel="canonical" href={`https://www.origines.media/${type}`} />
-      </Helmet>
+      <SEO
+        title={cfg.seoTitle}
+        description={cfg.seoDescription}
+        url={`/${type}`}
+        noindex
+      />
       <SiteHeader />
 
       <div className={s.container} style={{ maxWidth: cfg.maxWidth }}>

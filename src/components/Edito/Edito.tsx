@@ -5,7 +5,7 @@ export default function Edito() {
     <section className={s.edito} aria-label="Manifeste">
       <div className={s.grid}>
         <div className={s.text}>
-          <p className={s.kicker}>Depuis 2024</p>
+          <p className={s.kicker}>Depuis 2021</p>
           <h2 className={s.statement}>
             Origines explore ce qui nous construit&nbsp;:
             <em> les &eacute;motions qu&rsquo;on tait, les liens qu&rsquo;on porte,
@@ -19,7 +19,7 @@ export default function Edito() {
         <div className={s.visual}>
           <div className={s.imageWrap}>
             <img
-              src="/images/mosaic-origines.png"
+              src="/images/mosaic-origines.webp"
               alt="Mosaïque de visages — Origines Media"
               className={s.image}
               loading="lazy"

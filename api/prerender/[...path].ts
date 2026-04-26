@@ -206,6 +206,30 @@ const STATIC_PAGES: Record<string, PageMeta> = {
       'L\'actualité Origines : tous nos derniers articles, vidéos et contenus.',
     ogType: 'website',
   },
+  '/cgu': {
+    title: 'Conditions Générales d\'Utilisation — Origines Media',
+    description: 'Consultez les conditions générales d\'utilisation du site Origines Media.',
+  },
+  '/cgv': {
+    title: 'Conditions Générales de Vente — Origines Media',
+    description: 'Consultez les conditions générales de vente d\'Origines Media.',
+  },
+  '/confidentialite': {
+    title: 'Politique de Confidentialité — Origines Media',
+    description: 'Découvrez comment Origines Media protège vos données personnelles.',
+  },
+  '/cookies': {
+    title: 'Politique de Cookies — Origines Media',
+    description: 'Informations sur l\'utilisation des cookies sur le site Origines Media.',
+  },
+  '/mentions-legales': {
+    title: 'Mentions Légales — Origines Media',
+    description: 'Mentions légales du site Origines Media.',
+  },
+  '/plan-du-site': {
+    title: 'Plan du Site — Origines Media',
+    description: 'Retrouvez toutes les pages du site Origines Media.',
+  },
 }
 
 // ---------------------------------------------------------------------------
@@ -391,6 +415,40 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
     return defaults
   }
 
+  // /univers/:universId
+  if (segments.length === 2 && segments[0] === 'univers') {
+    const universId = segments[1]
+    const UNIVERS_NAMES: Record<string, string> = {
+      esprit: 'Esprit',
+      corps: 'Corps',
+      liens: 'Liens',
+      monde: 'Monde',
+      avenir: 'Avenir',
+    }
+    const name = UNIVERS_NAMES[universId]
+    if (name) {
+      return {
+        ...defaults,
+        title: `${name} — Origines Media`,
+        description: `Explorez l'univers ${name} sur Origines Media : articles, vidéos et contenus.`,
+        ogType: 'website',
+      }
+    }
+    return defaults
+  }
+
+  // /format/:formatId
+  if (segments.length === 2 && segments[0] === 'format') {
+    const formatId = segments[1]
+    const label = formatId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    return {
+      ...defaults,
+      title: `${label} — Origines Media`,
+      description: `Découvrez nos contenus au format ${label} sur Origines Media.`,
+      ogType: 'website',
+    }
+  }
+
   // /comprendre/:slug  /reflexions/:slug  /temoignages/:slug
   if (
     segments.length === 2 &&
@@ -421,6 +479,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
 // ---------------------------------------------------------------------------
 function renderHTML(meta: ResolvedMeta): string {
   const t = escapeHtml(meta.title)
+  const h1 = escapeHtml(meta.title.replace(/ — Origines Media$/, ''))
   const d = escapeHtml(meta.description)
   const img = meta.image // already a URL, no HTML escaping needed (not user-generated HTML)
 
@@ -464,7 +523,7 @@ function renderHTML(meta: ResolvedMeta): string {
   <meta name="theme-color" content="#0A0A0A" />
 </head>
 <body>
-  <h1>${t}</h1>
+  <h1>${h1}</h1>
   <p>${d}</p>
   <noscript>
     <p>Ce site nécessite JavaScript. <a href="${meta.url}">${meta.url}</a></p>

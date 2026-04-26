@@ -9,8 +9,12 @@ export default function CookiesPage() {
     <div className={s.page}>
       <SEO
         title="Politique de cookies"
-        description="Comment Origines Media utilise les cookies et comment g&eacute;rer vos pr&eacute;f&eacute;rences."
+        description="Comment Origines Media utilise les cookies et comment gérer vos préférences."
         url="/cookies"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Cookies", url: "/cookies" },
+        ]}
       />
       <SiteHeader />
 

@@ -8,6 +8,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
 import { typo, estimateReadingTime } from "@/lib/typography";
+import { sanityImg } from "@/lib/sanityImage";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import { shareButtons } from "@/components/article/SocialIcons";
 import SaveButton from "@/components/SaveButton/SaveButton";
@@ -391,7 +392,7 @@ export default function VideoPage() {
       {!hasYT && (
         <section className={s.splitHero}>
           <div className={s.splitImage}>
-            <div className={s.splitImageBg} style={{ backgroundImage: `url(${imageUrl || "/placeholder.svg"})` }} />
+            <img src={sanityImg(imageUrl, 1200) || "/placeholder.svg"} alt={title} className={s.splitImageBg} loading="eager" fetchPriority="high" />
             <div className={s.splitImageOverlay} />
           </div>
           <div className={s.splitContent}>
@@ -403,7 +404,7 @@ export default function VideoPage() {
             <h1 className={s.splitTitle}>{typo(title)}</h1>
             {description && <p className={s.splitDeck}>{typo(description)}</p>}
             <div className={s.splitMeta}>
-              {authorImage && <img src={authorImage} alt={authorName} className={s.splitAuthorImg} />}
+              {authorImage && <img src={authorImage} alt={authorName} className={s.splitAuthorImg} loading="lazy" />}
               <div className={s.splitAuthorInfo}>
                 <span className={s.splitAuthorName}>{authorName}</span>
                 <span className={s.splitMetaLine}>
@@ -469,7 +470,7 @@ export default function VideoPage() {
               {/* Author box */}
               <div className={s.authorBox}>
                 <div className={s.authorBoxInner}>
-                  {authorImage && <img src={authorImage} alt={authorName} className={s.authorBoxImg} />}
+                  {authorImage && <img src={authorImage} alt={authorName} className={s.authorBoxImg} loading="lazy" />}
                   <div>
                     <p className={s.authorBoxLabel}>Écrit par</p>
                     <h4 className={s.authorBoxName}>{authorName}</h4>
@@ -614,7 +615,7 @@ export default function VideoPage() {
                       {popularArticles.filter((p) => p?.title).slice(0, 4).map((pop, idx) => (
                         <Link key={pop._id} to={`/video/${pop.slug?.current || pop._id}`} className={s.popItem}>
                           <div className={s.popThumb}>
-                            <img src={pop.imageUrl || "/placeholder.svg"} alt={pop.title || ""} className={s.popThumbImg} />
+                            <img src={sanityImg(pop.imageUrl, 200) || "/placeholder.svg"} alt={pop.title || ""} className={s.popThumbImg} loading="lazy" />
                             <span className={s.popRank}>{idx + 1}</span>
                           </div>
                           <span className={s.popTitle}>{pop.title}</span>
@@ -634,7 +635,7 @@ export default function VideoPage() {
                     <div className={s.widgetBody}>
                       {relatedArticles.filter((r) => r?.slug?.current).slice(0, 3).map((rel) => (
                         <Link key={rel._id} to={`/video/${rel.slug.current}`} className={s.relItem}>
-                          <img src={rel.imageUrl || "/placeholder.svg"} alt={rel.titre || rel.title || ""} className={s.relThumb} />
+                          <img src={sanityImg(rel.imageUrl, 300) || "/placeholder.svg"} alt={rel.titre || rel.title || ""} className={s.relThumb} loading="lazy" />
                           <div className={s.relInfo}>
                             <span className={s.relTitle}>{rel.titre || rel.title}</span>
                             {rel.verticale && <span className={s.relCat}>{rel.verticale.nom}</span>}
@@ -673,7 +674,7 @@ export default function VideoPage() {
                 {relatedArticles.slice(0, 4).map((rel) => (
                   <Link key={rel._id} to={`/video/${rel.slug.current}`} className={s.relatedCard}>
                     <div className={s.relatedCardImg}>
-                      <img src={rel.imageUrl || "/placeholder.svg"} alt={rel.titre || rel.title || ""} />
+                      <img src={sanityImg(rel.imageUrl, 400) || "/placeholder.svg"} alt={rel.titre || rel.title || ""} loading="lazy" />
                     </div>
                     <div className={s.relatedCardBody}>
                       {rel.verticale && (

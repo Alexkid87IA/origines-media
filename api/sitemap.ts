@@ -22,7 +22,6 @@ const STATIC_PAGES = [
   { url: '/dossiers', priority: 0.8, changefreq: 'weekly' },
   { url: '/ensemble', priority: 0.7, changefreq: 'weekly' },
   { url: '/bibliotheque', priority: 0.7, changefreq: 'weekly' },
-  { url: '/recherche', priority: 0.5, changefreq: 'weekly' },
   { url: '/a-propos', priority: 0.6, changefreq: 'monthly' },
   { url: '/contact', priority: 0.5, changefreq: 'monthly' },
   { url: '/partenariats', priority: 0.5, changefreq: 'monthly' },
@@ -31,6 +30,18 @@ const STATIC_PAGES = [
   { url: '/ecrire-mon-histoire', priority: 0.5, changefreq: 'monthly' },
   { url: '/series', priority: 0.8, changefreq: 'weekly' },
   { url: '/videos', priority: 0.9, changefreq: 'daily' },
+  { url: '/mentions-legales', priority: 0.3, changefreq: 'yearly' },
+  { url: '/cgu', priority: 0.3, changefreq: 'yearly' },
+  { url: '/cgv', priority: 0.3, changefreq: 'yearly' },
+  { url: '/confidentialite', priority: 0.3, changefreq: 'yearly' },
+  { url: '/cookies', priority: 0.3, changefreq: 'yearly' },
+  { url: '/plan-du-site', priority: 0.4, changefreq: 'monthly' },
+  { url: '/univers', priority: 0.7, changefreq: 'weekly' },
+  { url: '/univers/esprit', priority: 0.7, changefreq: 'weekly' },
+  { url: '/univers/corps', priority: 0.7, changefreq: 'weekly' },
+  { url: '/univers/liens', priority: 0.7, changefreq: 'weekly' },
+  { url: '/univers/monde', priority: 0.7, changefreq: 'weekly' },
+  { url: '/univers/avenir', priority: 0.7, changefreq: 'weekly' },
 ]
 
 // GROQ queries pour récupérer tous les contenus dynamiques
@@ -60,6 +71,12 @@ const CONTENT_QUERY = `{
     "lastmod": _updatedAt,
     "titre": titre,
     "imageUrl": imageUrl
+  },
+  "dossiers": *[_type == "questionDeLaSemaine" && defined(slug.current)] | order(_createdAt desc) {
+    "slug": slug.current,
+    "lastmod": _updatedAt,
+    "titre": question,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url)
   }
 }`
 
@@ -85,6 +102,12 @@ interface SanityContent {
     imageUrl?: string
   }>
   series?: Array<{
+    slug: string
+    lastmod: string
+    titre?: string
+    imageUrl?: string
+  }>
+  dossiers?: Array<{
     slug: string
     lastmod: string
     titre?: string
@@ -207,7 +230,7 @@ function generateSitemapXML(content: SanityContent | null): string {
     for (const reco of content.recommendations) {
       urls += `
   <url>
-    <loc>${BASE_URL}/recommandation/${reco.slug}</loc>
+    <loc>${BASE_URL}/recommandations/${reco.slug}</loc>
     <lastmod>${formatDate(reco.lastmod)}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>${generateImageTag(reco.imageUrl, reco.titre)}
@@ -224,6 +247,19 @@ function generateSitemapXML(content: SanityContent | null): string {
     <lastmod>${formatDate(serie.lastmod)}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>${generateImageTag(serie.imageUrl, serie.titre)}
+  </url>`
+    }
+  }
+
+  // Dossiers
+  if (content?.dossiers) {
+    for (const dossier of content.dossiers) {
+      urls += `
+  <url>
+    <loc>${BASE_URL}/dossiers/${dossier.slug}</loc>
+    <lastmod>${formatDate(dossier.lastmod)}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>${generateImageTag(dossier.imageUrl, dossier.titre)}
   </url>`
     }
   }

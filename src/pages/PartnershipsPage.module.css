@@ -980,6 +980,278 @@
   }
 }
 
+/* — Compact mobile (<=640px) — */
+@media (max-width: 640px) {
+  .header {
+    padding: 28px 0 22px;
+  }
+
+  .headerInner {
+    padding: 0 16px;
+  }
+
+  .inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .kicker {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+
+  .downloadBadge {
+    font-size: 9px;
+    padding: 8px 16px;
+  }
+
+  /* — Section paddings — */
+
+  .statsSection,
+  .audienceSection,
+  .formatsSection,
+  .caseStudiesSection,
+  .offerSection {
+    padding: 32px 0;
+  }
+
+  .ctaSection {
+    padding: 44px 0;
+  }
+
+  .ctaInner {
+    padding: 0 16px;
+  }
+
+  /* — Section titles — */
+
+  .sectionTitle,
+  .caseSectionTitle {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .sectionLabel {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    margin-bottom: 18px;
+  }
+
+  .caseSectionDeck {
+    font-size: 13px;
+  }
+
+  /* — Stats cards — */
+
+  .statHeroCard {
+    padding: 24px;
+  }
+
+  .statHeroBig {
+    font-size: 36px;
+  }
+
+  .statHeroLabel {
+    font-size: 9px;
+    margin-bottom: 18px;
+  }
+
+  .miniStatValue {
+    font-size: 14px;
+  }
+
+  .miniStatLabel {
+    font-size: 8px;
+  }
+
+  .descriptionCard {
+    padding: 20px;
+  }
+
+  .descriptionText {
+    font-size: 13px;
+  }
+
+  /* — Formats grid collapse to 1 column — */
+
+  .formatsGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .formatCard {
+    padding: 16px 14px;
+  }
+
+  .formatTitle {
+    font-size: 12px;
+  }
+
+  .formatDesc {
+    font-size: 8px;
+  }
+
+  .formatIconWrap {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 8px;
+  }
+
+  .formatIconWrap svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* — Values row — */
+
+  .valuesRow {
+    gap: 6px;
+    margin-top: 18px;
+  }
+
+  .valuePill {
+    padding: 6px 12px;
+  }
+
+  .valuePillText {
+    font-size: 11px;
+  }
+
+  /* — Audience cards — */
+
+  .audienceCard,
+  .genderCard,
+  .engagementCard {
+    padding: 18px;
+  }
+
+  .audienceCardTitle {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .genderValue {
+    font-size: 24px;
+  }
+
+  .genderLabel {
+    font-size: 8px;
+  }
+
+  .engagementLabel {
+    font-size: 9px;
+  }
+
+  .engagementValue {
+    font-size: 11px;
+  }
+
+  /* — Case study cards — */
+
+  .caseBody {
+    padding: 16px;
+  }
+
+  .caseTag {
+    font-size: 8px;
+    padding: 3px 8px;
+    margin-bottom: 8px;
+  }
+
+  .caseTitle {
+    font-size: 14px;
+  }
+
+  .caseDesc {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .caseStats {
+    gap: 16px;
+    padding-top: 12px;
+  }
+
+  .caseStatValue {
+    font-size: 16px;
+  }
+
+  .caseStatLabel {
+    font-size: 7px;
+  }
+
+  /* — Offer cards — */
+
+  .offerCard {
+    padding: 20px;
+  }
+
+  .offerTitle {
+    font-size: 16px;
+  }
+
+  .offerDesc {
+    font-size: 12px;
+  }
+
+  /* — CTA section — */
+
+  .ctaTitle {
+    font-size: 22px;
+  }
+
+  .ctaDeck {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    padding: 12px 22px;
+    font-size: 10px;
+  }
+
+  .ctaMeta {
+    margin-top: 22px;
+    font-size: 9px;
+    gap: 12px;
+  }
+
+  /* — Social badges — */
+
+  .socialBadge {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .socialBadgeCount {
+    font-size: 10px;
+  }
+
+  /* — Contact strip — */
+
+  .contactInner {
+    padding: 0 16px;
+  }
+
+  .contactText {
+    font-size: 12px;
+  }
+
+  .contactRight {
+    font-size: 12px;
+  }
+}
+
 /* — Small phones (<=480px) — */
 @media (max-width: 480px) {
   .header {

@@ -11,6 +11,10 @@ export default function CGVPage() {
         title="Conditions Générales de Vente"
         description="Consultez les conditions générales de vente d'Origines Media. Modalités de commande, paiement, livraison et garanties."
         url="/cgv"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "CGV", url: "/cgv" },
+        ]}
       />
       <SiteHeader />
 

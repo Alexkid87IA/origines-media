@@ -37,6 +37,7 @@ export default function HomePageV2() {
       logo: { "@type": "ImageObject", url: "https://www.origines.media/logos/logo-black.png" },
       sameAs: [
         "https://www.youtube.com/@origines",
+        "https://twitter.com/originesmedia",
         "https://www.instagram.com/origines.media",
         "https://www.linkedin.com/company/origines-media",
       ],
@@ -52,7 +53,7 @@ export default function HomePageV2() {
     "@context": "https://schema.org",
     "@graph": [
       { "@type": "SiteNavigationElement", name: "Média", url: "https://www.origines.media/media", description: "Articles, récits, immersions et témoignages" },
-      { "@type": "SiteNavigationElement", name: "Prod", url: "https://www.origines.media/prod", description: "Documentaires, reportages, interviews et formats vidéo" },
+      { "@type": "SiteNavigationElement", name: "Programmes", url: "https://www.origines.media/programmes", description: "Documentaires, reportages, interviews et formats vidéo" },
       { "@type": "SiteNavigationElement", name: "Guides", url: "https://www.origines.media/guides", description: "Masterclass, ateliers, programmes et kits" },
       { "@type": "SiteNavigationElement", name: "Boutique", url: "https://www.origines.media/boutique", description: "Guides, kits et produits Origines" },
       { "@type": "SiteNavigationElement", name: "Newsletter", url: "https://www.origines.media/newsletter", description: "La Lettre du dimanche — le meilleur de la semaine" },
@@ -62,8 +63,8 @@ export default function HomePageV2() {
   return (
     <>
       <SEO
-        title="Origines Media — Psychologie, bien-être, relations, culture, avenir"
-        description="Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations pour ceux qui cherchent la profondeur."
+        title="Psychologie, bien-être, relations, culture"
+        description="Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations."
         url="/"
         jsonLd="organization"
       />
@@ -72,9 +73,6 @@ export default function HomePageV2() {
         <script type="application/ld+json">{JSON.stringify(navSchema)}</script>
       </Helmet>
       <IntroOverlay />
-      <a href="#main" className="skip-to-content">
-        Aller au contenu
-      </a>
       <Ticker />
       <SiteHeader />
       <main id="main" role="main">

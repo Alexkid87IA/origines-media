@@ -675,8 +675,9 @@ export default function BibliothequePage() {
   return (
     <>
       <SEO
-        title="Explorer - Origines Media"
+        title="Bibliothèque — Explorer nos contenus"
         description="Explorez tous nos contenus : articles, vidéos, recommandations et histoires inspirantes."
+        url="/bibliotheque"
       />
       <SiteHeader />
 

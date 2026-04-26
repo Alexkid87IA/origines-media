@@ -8,9 +8,13 @@ export default function ConfidentialitePage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Politique de confidentialit&eacute;"
-        description="Comment Origines Media collecte, utilise et prot&egrave;ge vos donn&eacute;es personnelles."
+        title="Politique de confidentialité"
+        description="Comment Origines Media collecte, utilise et protège vos données personnelles."
         url="/confidentialite"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Confidentialité", url: "/confidentialite" },
+        ]}
       />
       <SiteHeader />
 

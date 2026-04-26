@@ -1,5 +1,6 @@
 // src/components/SEO.tsx
 import { Helmet } from 'react-helmet-async';
+import { sanityOgImg } from '@/lib/sanityImage';
 
 interface SEOProps {
   title?: string;
@@ -13,6 +14,7 @@ interface SEOProps {
   section?: string;
   tags?: string[];
   noindex?: boolean;
+  twitterCreator?: string;
   // Structured Data props
   jsonLd?: 'organization' | 'article' | 'person' | 'breadcrumb' | 'video';
   breadcrumbs?: Array<{ name: string; url: string }>;
@@ -32,7 +34,7 @@ interface SEOProps {
 }
 
 const DEFAULT_TITLE = 'Origines Media';
-const DEFAULT_DESCRIPTION = 'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.';
+const DEFAULT_DESCRIPTION = 'Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations pour ceux qui cherchent la profondeur.';
 const DEFAULT_IMAGE = 'https://www.origines.media/og-image.png';
 const SITE_URL = 'https://www.origines.media';
 
@@ -45,9 +47,10 @@ const generateOrganizationSchema = () => ({
   logo: `${SITE_URL}/logos/logo-black.png`,
   description: DEFAULT_DESCRIPTION,
   sameAs: [
+    'https://www.youtube.com/@origines',
     'https://twitter.com/originesmedia',
-    'https://www.instagram.com/originesmedia',
-    'https://www.linkedin.com/company/originesmedia'
+    'https://www.instagram.com/origines.media',
+    'https://www.linkedin.com/company/origines-media'
   ],
   contactPoint: {
     '@type': 'ContactPoint',
@@ -136,7 +139,8 @@ const generateVideoSchema = (props: {
   uploadDate: props.publishedTime,
   contentUrl: props.videoUrl,
   embedUrl: props.videoUrl,
-  duration: props.duration
+  duration: props.duration,
+  url: props.url
 });
 
 const generateItemListSchema = (items: Array<{
@@ -151,7 +155,7 @@ const generateItemListSchema = (items: Array<{
     '@type': 'ListItem',
     position: index + 1,
     item: {
-      '@type': 'Product',
+      '@type': 'CreativeWork',
       name: item.name,
       description: item.description,
       image: item.image.startsWith('http') ? item.image : `${SITE_URL}${item.image}`,
@@ -185,6 +189,7 @@ const SEO: React.FC<SEOProps> = ({
   section,
   tags = [],
   noindex = false,
+  twitterCreator,
   jsonLd,
   breadcrumbs,
   videoUrl,
@@ -192,10 +197,11 @@ const SEO: React.FC<SEOProps> = ({
   itemListData,
   faqData,
 }) => {
-  const fullTitle = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE;
-  const canonicalUrl = url ? `${SITE_URL}${url}` : SITE_URL;
+  const fullTitle = title ? `${title} — ${DEFAULT_TITLE}` : DEFAULT_TITLE;
+  const canonicalUrl = url ? `${SITE_URL}${url}` : (typeof window !== 'undefined' ? `${SITE_URL}${window.location.pathname}` : SITE_URL);
   const safeImage = (typeof image === 'string' ? image : '') || DEFAULT_IMAGE;
-  const imageUrl = safeImage.startsWith('http') ? safeImage : `${SITE_URL}${safeImage}`;
+  const rawImageUrl = safeImage.startsWith('http') ? safeImage : `${SITE_URL}${safeImage}`;
+  const imageUrl = sanityOgImg(rawImageUrl) || rawImageUrl;
 
   // Generate JSON-LD based on type
   const getJsonLd = () => {
@@ -204,7 +210,7 @@ const SEO: React.FC<SEOProps> = ({
         return generateOrganizationSchema();
       case 'article':
         return generateArticleSchema({
-          title: fullTitle,
+          title: title || DEFAULT_TITLE,
           description,
           image: imageUrl,
           url: canonicalUrl,
@@ -222,7 +228,7 @@ const SEO: React.FC<SEOProps> = ({
         });
       case 'video':
         return generateVideoSchema({
-          title: fullTitle,
+          title: title || DEFAULT_TITLE,
           description,
           image: imageUrl,
           url: canonicalUrl,
@@ -257,6 +263,9 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:alt" content={title || DEFAULT_TITLE} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content={DEFAULT_TITLE} />
       <meta property="og:locale" content="fr_FR" />
 
@@ -282,10 +291,13 @@ const SEO: React.FC<SEOProps> = ({
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={canonicalUrl} />
-      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:title" content={title || DEFAULT_TITLE} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
       <meta name="twitter:site" content="@originesmedia" />
+      {twitterCreator && (
+        <meta name="twitter:creator" content={twitterCreator} />
+      )}
 
       {/* Additional SEO */}
       <meta name="author" content={author || DEFAULT_TITLE} />

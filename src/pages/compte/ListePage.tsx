@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedList } from "@/hooks/useSavedList";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
@@ -21,7 +21,7 @@ export default function ListePage() {
 
   return (
     <>
-      <Helmet><title>Ma liste — Origines Media</title></Helmet>
+      <SEO title="Ma liste" url="/compte/liste" noindex />
       <SiteHeader />
       <main className={s.page}>
         <div className={s.inner}>
@@ -59,7 +59,7 @@ export default function ListePage() {
             <div className={s.listGrid}>
               {items.map((item) => (
                 <div key={item.id} className={s.listCard}>
-                  {item.image && <img src={item.image} alt={item.title} className={s.listCardImage} />}
+                  {item.image && <img src={item.image} alt={item.title} className={s.listCardImage} loading="lazy" />}
                   <span className={s.listCardType}>{TYPE_LABELS[item.type] || item.type}</span>
                   <h3 className={s.listCardTitle}>{item.title}</h3>
                   <div className={s.listCardActions}>

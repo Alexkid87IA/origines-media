@@ -458,18 +458,19 @@
 
 @media (max-width: 880px) {
   .rowGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     margin-left: calc(-1 * var(--side));
     margin-right: calc(-1 * var(--side));
     padding: 0 var(--side);
+    gap: 14px;
     scrollbar-width: none;
   }
   .rowGrid::-webkit-scrollbar { display: none; }
   .rowGrid > .vid {
-    min-width: 240px;
+    flex: 0 0 260px;
     scroll-snap-align: start;
   }
   .row { margin-bottom: 36px; padding-top: 24px; }
@@ -479,30 +480,64 @@
 }
 
 @media (max-width: 640px) {
-  .vc { margin-top: 56px; }
-  .chapterMark { padding-top: 36px; }
-  .introTitle { font-size: clamp(24px, 6vw, 36px); }
-  .introDeck { font-size: 14px; }
-  .introRight { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .statNum { font-size: 24px; }
-  .chips { gap: 6px; padding: 24px 0 32px; }
-  .chip { padding: 7px 10px; font-size: 10px; }
-  .content { padding-bottom: 40px; }
-  .rowName { font-size: 17px; }
+  .vc { margin-top: 28px; }
+  .chapterMark { margin-bottom: 6px; font-size: 9px; gap: 6px; padding-top: 8px; }
+
+  .introTitle { font-size: 22px; }
+  .introDeck { font-size: 12px; margin-top: 6px; }
+  .introRight { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .statNum { font-size: 22px; }
+
+  /* Chips — horizontal scroll */
+  .chips {
+    gap: 6px;
+    padding: 14px 0 18px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { padding: 5px 10px; font-size: 9px; flex-shrink: 0; white-space: nowrap; }
+
+  .content { padding-bottom: 24px; }
+
+  /* Row head — stack vertically */
+  .rowHead { flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .rowAll { margin-top: 0; font-size: 9px; }
+  .rowName { font-size: 15px; }
   .rowCount { display: none; }
-  .rowTagline { font-size: 13px; }
-  .rowGrid > .vid { min-width: 220px; }
-  .vidPlay svg { width: 32px; height: 32px; }
-  .vidDuration { font-size: 10px; padding: 3px 7px; }
-  .vidTitle { font-size: 13px; }
+  .rowTagline { font-size: 12px; }
+  .rowAccent { width: 18px; height: 2px; }
+
+  /* Video grid — compact horizontal scroll */
+  .rowGrid { gap: 10px; }
+  .rowGrid > .vid { flex: 0 0 200px; gap: 8px; }
+  .vidThumb { aspect-ratio: 16 / 9; }
+  .vidPlay svg { width: 24px; height: 24px; }
+  .vidDuration { font-size: 8px; padding: 2px 5px; bottom: 6px; right: 6px; }
+  .vidTitle { font-size: 12px; line-height: 1.25; }
+  .vidProgramme { font-size: 8px; }
+
+  /* Scroll hint animation */
+  .rowGrid {
+    animation: vidPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+  }
+}
+
+@keyframes vidPeek {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
 }
 
 @media (max-width: 480px) {
-  .introTitle { font-size: clamp(22px, 6vw, 30px); }
-  .rowGrid > .vid { min-width: 200px; }
-  .vidTitle { font-size: 12px; }
+  .introTitle { font-size: 20px; }
+  .rowGrid > .vid { flex: 0 0 170px; }
+  .vidTitle { font-size: 11px; }
   .rowTagline { display: none; }
   .chipCount { display: none; }
+  .rowName { font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

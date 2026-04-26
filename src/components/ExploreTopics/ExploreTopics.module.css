@@ -254,6 +254,11 @@
   from { opacity: 0; transform: translateY(12px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+@keyframes pillsPeek {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-48px); }
+  100% { transform: translateX(0); }
+}
 
 .cardLink {
   display: flex;
@@ -617,29 +622,134 @@
   .ctaPill { font-size: 9px; padding: 4px 8px; }
 }
 
-/* ── Responsive — small phones (<=640px) ── */
+/* ── Responsive — mobile (<=640px) — reimagined ── */
 @media (max-width: 640px) {
-  .sectionHead { margin-bottom: 28px; }
-  .sectionTitle { font-size: clamp(26px, 6vw, 36px); }
-  .sectionDeck { font-size: 14px; }
-  .cardGrid { grid-template-columns: repeat(2, 1fr); }
-  .cardH { font-size: 14px; }
-  .cardExcerpt { -webkit-line-clamp: 2; font-size: 12px; }
-  .cardBody { padding: 12px 14px 16px; }
-  .ctaNum { font-size: 40px; }
+  .explore { margin-top: 28px; }
+
+  /* Chapter mark */
+  .chapterMark { margin-bottom: 6px; font-size: 9px; gap: 6px; padding-top: 8px; }
+
+  /* Section head */
+  .sectionHead { margin-bottom: 14px; padding-bottom: 10px; gap: 0; }
+  .sectionTitle { font-size: 22px; }
+  .sectionDeck { font-size: 12px; margin-top: 6px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .sectionAll { display: none; }
+  .sectionKicker { font-size: 9px; margin-bottom: 8px; }
+
+  /* Pills — horizontal scroll */
+  .pills {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: none;
+    animation: pillsPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+  }
+  .pills::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 9px;
+    padding: 5px 10px;
+    gap: 5px;
+    min-height: auto;
+  }
+  .pillDot { width: 5px; height: 5px; }
+  .pillCount { font-size: 8px; padding-left: 5px; }
+
+  /* Hide toolbar */
+  .toolbar { display: none; }
+
+  /* Card grid — single column list */
+  .cardGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: transparent;
+    border: none;
+  }
+
+  /* Cards — compact horizontal: thumbnail left, text right */
+  .card {
+    border-bottom: 1px solid rgba(10, 10, 10, 0.06);
+  }
+  .card::before { display: none; }
+
+  .cardLink {
+    flex-direction: row;
+    gap: 12px;
+    padding: 14px 0;
+  }
+
+  .cardImg {
+    width: 80px;
+    height: 80px;
+    aspect-ratio: auto;
+    flex-shrink: 0;
+    border: 1px solid rgba(10, 10, 10, 0.06);
+  }
+
+  .cardPlay {
+    width: 20px;
+    height: 20px;
+    right: 4px;
+    bottom: 4px;
+  }
+
+  .cardBody {
+    padding: 0;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .cardH {
+    font-size: 14px;
+    line-height: 1.2;
+    -webkit-line-clamp: 2;
+  }
+
+  .cardExcerpt { display: none; }
+
+  .cardFoot { font-size: 8px; padding-top: 4px; }
+
+  /* CTA — slim banner */
+  .cta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0;
+  }
+  .ctaLeft { display: none; }
+  .ctaRight {
+    flex-direction: row;
+    align-items: center;
+    padding: 18px 16px;
+    gap: 10px;
+    width: 100%;
+  }
+  .ctaUniversLabel { display: none; }
+  .ctaPills { display: none; }
+  .ctaRule { display: none; }
+  .ctaAction { width: 100%; justify-content: space-between; }
+  .ctaLabel { font-size: 10px; color: rgba(247, 245, 240, 0.7); }
+  .ctaArrow { width: 16px; height: 16px; color: rgba(247, 245, 240, 0.5); }
 }
 
 /* ── Responsive — petits mobiles (<=480px) ── */
 @media (max-width: 480px) {
-  .pills { gap: 5px; padding-bottom: 14px; margin-bottom: 16px; }
-  .pill { font-size: 11px; padding: 6px 12px; }
-  .pillCount { font-size: 9px; padding-left: 5px; margin-left: 1px; }
-  .cardGrid { grid-template-columns: 1fr 1fr; }
+  .sectionTitle { font-size: 20px; }
+  .cardImg { width: 64px; height: 64px; }
   .cardH { font-size: 13px; }
-  .cardExcerpt { font-size: 11.5px; }
+  .cardLink { padding: 12px 0; gap: 10px; }
 }
 
 /* ── Responsive — très petits mobiles (<=360px) ── */
 @media (max-width: 360px) {
-  .cardGrid { grid-template-columns: 1fr; }
+  .sectionTitle { font-size: 18px; }
+  .cardImg { width: 56px; height: 56px; }
+  .cardH { font-size: 12px; }
 }

@@ -733,8 +733,51 @@ function PilierItem({ p }: { p: Pilier }) {
 
 /* ---- Component ---- */
 
+const MOBILE_SECTIONS = [
+  {
+    title: "Univers",
+    links: [
+      { label: "L'Esprit", href: "/esprit", color: "#7B5CD6" },
+      { label: "Le Corps", href: "/corps", color: "#5AA352" },
+      { label: "Les Liens", href: "/liens", color: "#E67839" },
+      { label: "Le Monde", href: "/monde", color: "#2E9B74" },
+      { label: "L'Avenir", href: "/avenir", color: "#2E94B5" },
+    ],
+  },
+  {
+    title: "Origines",
+    links: [
+      { label: "Média" , href: "/media" },
+      { label: "Prod", href: "/programmes" },
+      { label: "Guides & Ateliers", href: "/guides" },
+      { label: "Boutique", href: "/boutique" },
+      { label: "Newsletter", href: "/newsletter" },
+    ],
+  },
+  {
+    title: "Formats",
+    links: [
+      { label: "Articles", href: "/articles" },
+      { label: "Vidéos", href: "/videos" },
+      { label: "Dossiers", href: "/dossiers" },
+      { label: "Témoignages", href: "/temoignages" },
+      { label: "Recommandations", href: "/recommandations" },
+    ],
+  },
+  {
+    title: "À propos",
+    links: [
+      { label: "Notre mission", href: "/a-propos" },
+      { label: "L'équipe", href: "/a-propos#equipe" },
+      { label: "Contact", href: "/contact" },
+      { label: "Partenariats", href: "/partenariats" },
+    ],
+  },
+];
+
 export default function Footer2() {
   const [activeTab, setActiveTab] = useState<TabId>("galaxie");
+  const [openSection, setOpenSection] = useState<number | null>(null);
 
   const panels: { id: TabId; gridClass: string; items: ItemData[]; allHref?: string; allLabel?: string }[] = [
     { id: "formats", gridClass: s.grid4, items: FORMATS.map((f) => ({ ...f, ctaLabel: "Tout voir" })) },
@@ -831,6 +874,61 @@ export default function Footer2() {
             </div>
           ))}
         </section>
+
+        {/* ── Mobile compact footer ── */}
+        <nav className={s.mobileNav} aria-label="Navigation mobile">
+          {MOBILE_SECTIONS.map((section, i) => (
+            <div key={section.title} className={s.mobileSection}>
+              <button
+                type="button"
+                className={`${s.mobileSectionBtn}${openSection === i ? ` ${s.mobileSectionOpen}` : ""}`}
+                onClick={() => setOpenSection(openSection === i ? null : i)}
+                aria-expanded={openSection === i}
+              >
+                {section.title}
+                <svg
+                  className={s.mobileSectionChevron}
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <path d="M4 6l4 4 4-4" />
+                </svg>
+              </button>
+              <div className={`${s.mobileSectionBody}${openSection === i ? ` ${s.mobileSectionBodyOpen}` : ""}`}>
+                {section.links.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className={s.mobileLink}
+                  >
+                    {"color" in link && (
+                      <span
+                        className={s.mobileLinkDot}
+                        style={{ background: (link as { color: string }).color }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div className={s.mobileSocial}>
+            <span className={s.mobileSocialLabel}>Suivez-nous</span>
+            <div className={s.mobileSocialRow}>
+              {SOCIAL_LINKS.map((social) => (
+                <a key={social.href} href={social.href} aria-label={social.label} rel="noopener" className={s.mobileSocialLink}>
+                  {social.icon}
+                </a>
+              ))}
+            </div>
+          </div>
+        </nav>
 
         {/* ── Bottom strip — DO NOT TOUCH ── */}
         <div className={s.footerStrip}>

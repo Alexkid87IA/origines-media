@@ -550,20 +550,19 @@
 }
 
 @media (max-width: 880px) {
-  .pillars { margin-top: 56px; }
+  .pillars { margin-top: 48px; }
+  .sectionHead { margin-bottom: 32px; padding-bottom: 20px; }
 
   .split {
     flex-direction: column;
     height: auto;
     min-height: unset;
     max-height: unset;
-    scroll-snap-type: y mandatory;
   }
 
   .col {
     flex: unset !important;
-    min-height: 100svh;
-    scroll-snap-align: start;
+    min-height: 70svh;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
@@ -591,25 +590,74 @@
   .meshOrb4 { opacity: 0.6; }
 
   .expTitle { font-size: clamp(32px, 8vw, 48px); }
+  .expTop { top: 20px; right: 24px; }
+  .colIndex { top: 20px; left: 20px; }
 }
 
 @media (max-width: 640px) {
-  .sectionTitle { font-size: clamp(26px, 6vw, 36px); }
-  .sectionDeck { font-size: 14px; }
+  .pillars { margin-top: 24px; }
+  .sectionHead { margin-bottom: 16px; padding-bottom: 12px; }
+  .sectionTitle { font-size: clamp(22px, 6vw, 32px); }
+  .sectionDeck { font-size: 12px; margin-top: 8px; }
+  .sectionKicker { font-size: 9px; margin-bottom: 10px; }
 
-  .col { min-height: 85svh; }
-  .expanded { padding: 24px 20px; }
-  .expTitle { font-size: clamp(28px, 7vw, 40px); }
-  .expTagline { font-size: 14px; }
-  .expPreviewText { font-size: 15px; }
-  .boutiqueRing { width: 140px; height: 140px; }
+  .split { gap: 8px; }
+
+  .col {
+    min-height: 160px;
+    border-bottom: none;
+    border-radius: 0;
+  }
+
+  .expanded {
+    padding: 20px 16px;
+    justify-content: center;
+  }
+
+  .expTop {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-bottom: 6px;
+  }
+
+  .expStats { gap: 12px; }
+  .expStat { font-size: 9px; letter-spacing: 0.1em; }
+  .expStat strong { font-size: 12px; }
+
+  .expMain { gap: 8px; }
+  .expTitle { font-size: 24px; }
+  .expTagline { font-size: 12px; max-width: 100%; line-height: 1.4; }
+
+  .expPreview { display: none; }
+
+  .expCta {
+    font-size: 9px;
+    margin-top: 4px;
+    letter-spacing: 0.14em;
+  }
+
+  .colIndex {
+    font-size: 18px;
+    top: 14px;
+    left: 14px;
+    color: rgba(247, 245, 240, 0.2);
+  }
+
+  .boutiqueRing { width: 80px; height: 80px; }
+
+  .meshOrb1, .meshOrb2 { filter: blur(50px); }
+  .meshOrb3, .meshOrb4 { filter: blur(40px); }
 }
 
 @media (max-width: 480px) {
-  .col { min-height: 75svh; }
-  .expanded { padding: 20px 16px; }
-  .expTitle { font-size: 28px; }
-  .expStats { gap: 12px; }
+  .col { min-height: 130px; }
+  .expanded { padding: 16px 14px; }
+  .expTitle { font-size: 20px; }
+  .expTagline { font-size: 11px; }
+  .expStat { font-size: 8px; }
+  .expStat strong { font-size: 11px; }
+  .colIndex { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -466,20 +466,22 @@ const PartnershipCarouselSection: React.FC = () => {
             <slide.icon className="w-12 h-12 md:w-20 md:h-20 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400 mb-4 md:mb-8" />
             <div className="flex items-center justify-center gap-2 md:gap-6 mb-4 md:mb-8">
               {/* Logo Wanted */}
-              <img 
-                src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png" 
-                alt="Wanted Community" 
+              <img
+                src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png"
+                alt="Wanted Community"
                 className="h-10 md:h-16 lg:h-20 object-contain"
+                loading="lazy"
               />
               
               {/* Symbole × */}
               <span className="font-bold text-2xl md:text-4xl lg:text-5xl text-gray-600">×</span>
               
               {/* Logo Origines */}
-              <img 
-                src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png" 
-                alt="Origines Media" 
+              <img
+                src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png"
+                alt="Origines Media"
                 className="h-10 md:h-16 lg:h-20 object-contain"
+                loading="lazy"
               />
             </div>
             

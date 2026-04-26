@@ -11,6 +11,10 @@ export default function LegalPage() {
         title="Mentions légales"
         description="Consultez les mentions légales d'Origines Media : éditeur, hébergeur, propriété intellectuelle et conditions d'utilisation."
         url="/mentions-legales"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Mentions légales", url: "/mentions-legales" },
+        ]}
       />
       <SiteHeader />
 

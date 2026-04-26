@@ -358,16 +358,18 @@ const PartnershipCTASection: React.FC = () => {
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
         }`}>
           <div className="flex items-center justify-center gap-8">
-            <img 
-              src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png" 
-              alt="Wanted Community" 
+            <img
+              src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png"
+              alt="Wanted Community"
               className="h-12 lg:h-16 object-contain opacity-60 hover:opacity-100 transition-opacity"
+              loading="lazy"
             />
             <span className="text-3xl text-gray-900/20">×</span>
-            <img 
-              src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png" 
-              alt="Origines Media" 
+            <img
+              src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png"
+              alt="Origines Media"
               className="h-12 lg:h-16 object-contain opacity-60 hover:opacity-100 transition-opacity"
+              loading="lazy"
             />
           </div>
           <p className="text-gray-900/40 text-sm mt-4">

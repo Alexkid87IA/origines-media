@@ -88,7 +88,7 @@ export default function IntroOverlay() {
       role="presentation"
     >
       <img
-        src="/visages-origines.png"
+        src="/visages-origines.webp"
         alt=""
         aria-hidden="true"
         className={styles.bgImage}

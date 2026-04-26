@@ -96,6 +96,10 @@ export default function ProdPage() {
         title="Programmes"
         description="Découvrez les programmes originaux d'Origines Prod : enquêtes, documentaires, portraits et formats courts. 10 programmes, 106 vidéos, 5 univers."
         url="/programmes"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Programmes", url: "/programmes" },
+        ]}
       />
       <Ticker />
       <SiteHeader />
@@ -105,7 +109,7 @@ export default function ProdPage() {
         <section className={s.hero} aria-labelledby="prod-hero-heading">
           <div className={s.heroBg}>
             <img
-              src="/visages-origines.png"
+              src="/visages-origines.webp"
               alt="Les visages d'Origines"
               decoding="async"
             />

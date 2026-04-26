@@ -700,7 +700,7 @@
 }
 
 @media (max-width: 640px) {
-  .interlude { margin: 40px 0; padding: 28px 0; }
+  .interlude { display: none; }
   .halfTitle { font-size: 20px; }
   .halfDesc { font-size: 13px; }
   .statNum { font-size: 26px; }

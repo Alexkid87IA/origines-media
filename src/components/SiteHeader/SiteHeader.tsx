@@ -248,6 +248,8 @@ export default function SiteHeader() {
   const [searching, setSearching] = useState(false);
   const [comingSoon, setComingSoon] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -257,6 +259,12 @@ export default function SiteHeader() {
     const t = setTimeout(() => setComingSoon(false), 2400);
     return () => clearTimeout(t);
   }, [comingSoon]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    if (!mobileOpen) setMobileSection(null);
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   const openMega = useCallback((target: MegaTarget) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -304,6 +312,10 @@ export default function SiteHeader() {
   }, []);
 
   return (
+    <>
+    <a href="#main" className="skip-to-content">
+      Aller au contenu
+    </a>
     <header
       className={`${styles.header}${scrolled ? ` ${styles.scrolled}` : ""}`}
     >
@@ -516,10 +528,14 @@ export default function SiteHeader() {
             <button
               className={styles.menuBtn}
               type="button"
-              aria-label="Ouvrir le menu"
+              aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+              onClick={() => setMobileOpen((o) => !o)}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                <path d="M4 7h16M4 12h16M4 17h16" />
+                {mobileOpen
+                  ? <path d="M6 6l12 12M6 18L18 6" />
+                  : <path d="M4 7h16M4 12h16M4 17h16" />
+                }
               </svg>
             </button>
           </div>
@@ -786,6 +802,128 @@ export default function SiteHeader() {
         </div>
       </div>
 
+      {/* ── Mobile navigation drawer ── */}
+      <nav
+        className={`${styles.mobileNav}${mobileOpen ? ` ${styles.mobileNavOpen}` : ""}`}
+        aria-label="Navigation mobile"
+        aria-hidden={!mobileOpen}
+      >
+        <div className={styles.mobileNavInner}>
+          {/* Close bar */}
+          <div className={styles.mobileCloseBar}>
+            <img
+              src="/logos/logo-black.png"
+              alt=""
+              className={styles.mobileCloseLogo}
+              aria-hidden="true"
+            />
+            <button
+              type="button"
+              className={styles.mobileCloseBtn}
+              onClick={() => setMobileOpen(false)}
+              aria-label="Fermer le menu"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+
+          {/* CTA — immediately visible */}
+          <a href="/racontez-votre-histoire" className={styles.mobileStoryCta} onClick={() => setMobileOpen(false)}>
+            Racontez votre histoire
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+
+          {/* Search */}
+          <div className={styles.mobileSearch}>
+            <svg className={styles.mobileSearchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M16 16l5 5" />
+            </svg>
+            <input
+              type="search"
+              className={styles.mobileSearchInput}
+              placeholder="Rechercher un article, un sujet…"
+              aria-label="Rechercher"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.target as HTMLInputElement).value.trim()) {
+                  setMobileOpen(false);
+                  window.location.href = `/recherche?q=${encodeURIComponent((e.target as HTMLInputElement).value)}`;
+                }
+              }}
+            />
+          </div>
+
+          {/* Nav sections — direct links */}
+          <div className={styles.mobileSections}>
+            {SECONDARY.map((sec) => (
+              <div
+                key={sec.num}
+                className={styles.mobileSection}
+                style={{ "--m-color": sec.hoverColor } as React.CSSProperties}
+              >
+                <a
+                  href={sec.href}
+                  className={styles.mobileSectionTitle}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <span className={styles.mobileSectionNum}>{sec.num}</span>
+                  <span className={styles.mobileSectionAccent} aria-hidden="true" />
+                  {sec.label}
+                  <svg
+                    className={styles.mobileSectionChevron}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom */}
+          <div className={styles.mobileCta}>
+            <a href="/compte" className={styles.mobileAccountLink} onClick={() => setMobileOpen(false)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
+              </svg>
+              {user ? (user.displayName || "Mon compte") : "Se connecter"}
+            </a>
+            <a href="/newsletter" className={styles.mobileCtaBtn} onClick={() => setMobileOpen(false)}>
+              S&rsquo;abonner &agrave; la newsletter
+            </a>
+
+            {/* Réseaux sociaux */}
+            <div className={styles.mobileSocials}>
+              <span className={styles.mobileSocialsLabel}>Suivez-nous</span>
+              <div className={styles.mobileSocialsRow}>
+                <a href="https://instagram.com/origines.media" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={styles.mobileSocialLink}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg>
+                </a>
+                <a href="https://youtube.com/@originesmedia" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className={styles.mobileSocialLink}>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.9 31.9 0 0 0 0 12a31.9 31.9 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.5 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg>
+                </a>
+                <a href="https://tiktok.com/@origines.media" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className={styles.mobileSocialLink}>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.3 7.1A4.5 4.5 0 0 1 16 5.6V2h-3.5v13.5a3 3 0 1 1-2-2.8V9a6.5 6.5 0 1 0 5.5 6.4V9.9a8 8 0 0 0 4.5 1.4V7.8a4.5 4.5 0 0 1-1.2-.7Z" /></svg>
+                </a>
+                <a href="https://linkedin.com/company/origines-media" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className={styles.mobileSocialLink}>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5v-9h3v9ZM6.5 8.5A1.75 1.75 0 1 1 8.3 6.8 1.75 1.75 0 0 1 6.5 8.5ZM20 19h-3v-4.7c0-1.1 0-2.6-1.6-2.6S13.5 13 13.5 14.2V19h-3v-9h2.9v1.2h0a3.2 3.2 0 0 1 2.8-1.5c3 0 3.6 2 3.6 4.5V19Z" /></svg>
+                </a>
+                <a href="https://x.com/originesmedia" target="_blank" rel="noopener noreferrer" aria-label="X" className={styles.mobileSocialLink}>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2.3h3.5l-7.7 8.8L23 21.7h-7.1l-5.5-7.2-6.3 7.2H.6l8.2-9.4L.3 2.3h7.3l5 6.6 5.6-6.6Zm-1.2 17.5h1.9L7.1 4.2H5l12 15.6Z" /></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {comingSoon && (
         <div className={styles.comingSoon} role="status">
           <span className={styles.comingSoonDot} aria-hidden="true" />
@@ -796,5 +934,6 @@ export default function SiteHeader() {
         </div>
       )}
     </header>
+    </>
   );
 }

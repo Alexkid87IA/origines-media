@@ -1,9 +1,8 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
-import SplashScreen from './components/SplashScreen';
-import CookieConsent from './components/CookieConsent';
-import ExitIntentPopup from './components/ExitIntentPopup';
-// import SkinWrapper from './components/SkinWrapper';
+const SplashScreen = lazy(() => import('./components/SplashScreen'));
+const CookieConsent = lazy(() => import('./components/CookieConsent'));
+const ExitIntentPopup = lazy(() => import('./components/ExitIntentPopup'));
 
 // Composant pour scroller en haut à chaque changement de page
 function ScrollToTop() {
@@ -89,7 +88,7 @@ const LoadingFallback = () => (
 function App() {
   return (
     <>
-      <SplashScreen />
+      <Suspense fallback={null}><SplashScreen /></Suspense>
       <ScrollToTop />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
@@ -123,9 +122,9 @@ function App() {
         <Route path="/recommandations/:slug" element={<RecommandationPage />} />
         <Route path="/boutique" element={<BoutiquePage />} />
         <Route path="/boutique/:guideSlug" element={<BoutiquePage />} />
-        <Route path="/academie" element={<BoutiquePage />} />
-        <Route path="/academy" element={<BoutiquePage />} />
-        <Route path="/communaute" element={<EnsemblePage />} />
+        <Route path="/academie" element={<Navigate to="/boutique" replace />} />
+        <Route path="/academy" element={<Navigate to="/boutique" replace />} />
+        <Route path="/communaute" element={<Navigate to="/ensemble" replace />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
         <Route path="/comprendre" element={<Navigate to="/articles" replace />} />
         <Route path="/comprendre/:slug" element={<ComprendreArticlePage />} />
@@ -156,8 +155,8 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
-      <CookieConsent />
-      <ExitIntentPopup />
+      <Suspense fallback={null}><CookieConsent /></Suspense>
+      <Suspense fallback={null}><ExitIntentPopup /></Suspense>
     </>
   );
 }

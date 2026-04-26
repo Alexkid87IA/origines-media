@@ -1,4 +1,5 @@
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
+import { sanityImg } from "@/lib/sanityImage";
 import s from "./HeroCarousel.module.css";
 
 function frTypo(text: string): string {
@@ -60,7 +61,7 @@ const MAIN_ARTICLE = {
   author: "Émilie Roux",
   readTime: "Lecture 24 min",
   href: "/article/pourquoi-on-ne-finit-jamais-rien",
-  image: "/covers/cover-01.jpg",
+  image: "/covers/cover-01.webp",
   coverFocusX: 70,
   coverFocusY: 38,
 };
@@ -73,13 +74,13 @@ const DOSSIER = {
   publishedCount: 3,
   totalCount: 7,
   href: "/dossiers/semaine-17-sommeil",
-  image: "/covers/cover-02.jpg",
+  image: "/covers/cover-02.webp",
 };
 
 const VIDEO = {
   title: "Ce que personne ne dit sur la fatigue chronique.",
   duration: "18:42",
-  thumbnail: "/covers/cover-03.jpg",
+  thumbnail: "/covers/cover-03.webp",
   href: "/video/fatigue-chronique",
   channel: "Origines · Documentaire",
 };
@@ -115,14 +116,18 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
           <a
             href={video.href}
             className={s.mainCol}
-            style={{
-              backgroundImage: `url('${video.thumbnail}')`,
-              backgroundPosition: "center",
-            }}
           >
+            <img
+              src={video.thumbnail}
+              alt={video.title}
+              className={s.mainColImg}
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
+            />
             <span className={s.mainGradient} />
             <span className={s.videoPlayLarge} aria-label="Lire la vidéo">
-              <img src="/icons/play-button.png" alt="" aria-hidden="true" />
+              <img src="/icons/play-button.webp" alt="" aria-hidden="true" loading="lazy" />
             </span>
             <div className={s.mainContent}>
               <div className={s.mainKicker}>
@@ -140,7 +145,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
             <a
               href={dossier.href}
               className={s.questionBlock}
-              style={dossier.image ? { backgroundImage: `url('${dossier.image}')` } : undefined}
+              style={dossier.image ? { backgroundImage: `url('${sanityImg(dossier.image, 600)}')` } : undefined}
             >
               <span className={s.questionOverlay} />
               <div className={s.questionContent}>
@@ -175,7 +180,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
             <a
               href={main.href}
               className={s.articleBlock}
-              style={{ backgroundImage: `url('${main.image}')` }}
+              style={{ backgroundImage: `url('${sanityImg(main.image, 800)}')` }}
             >
               <span className={s.articleOverlay} />
               <div className={s.articleInfo}>

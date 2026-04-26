@@ -59,6 +59,7 @@ export default function ConnexionPage() {
         title="Connexion"
         description="Connectez-vous à votre espace Origines Media."
         url="/connexion"
+        noindex
       />
 
       <SiteHeader />

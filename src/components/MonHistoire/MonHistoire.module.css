@@ -326,23 +326,82 @@
 }
 
 @media (max-width: 640px) {
-  .section { margin-top: 56px; }
-  .content { padding: 40px 0 48px; gap: 32px; }
-  .title { font-size: clamp(28px, 7vw, 40px); }
-  .titleItalic { font-size: clamp(26px, 6.5vw, 38px); }
-  .body { font-size: 14px; }
-  .steps { grid-template-columns: 1fr; gap: 20px; }
-  .actions { flex-direction: column; }
-  .ctaPrimary, .ctaSecondary { width: 100%; justify-content: center; }
-  .cardStats { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .cardStatNum { font-size: 22px; }
+  .section { margin-top: 28px; }
+
+  /* Mosaic strip — thinner */
+  .strip img { max-height: 60px; object-fit: cover; }
+
+  .content { padding: 24px 0 32px; gap: 20px; }
+
+  .kicker { font-size: 9px; margin-bottom: 14px; gap: 10px; }
+  .kickerLine { width: 24px; }
+
+  .title { font-size: 24px; }
+  .titleItalic { font-size: 22px; }
+  .body { font-size: 13px; margin-top: 14px; line-height: 1.55; }
+  .sep { margin: 20px 0; }
+
+  /* Steps — horizontal compact row */
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-bottom: 24px;
+  }
+  .step {
+    padding: 0 10px;
+    border-right: 1px solid var(--stone-border);
+  }
+  .step:first-child { padding-left: 0; }
+  .step:last-child { border-right: none; padding-right: 0; }
+  .stepNum { font-size: 9px; margin-bottom: 4px; }
+  .stepTitle { font-size: 13px; margin-bottom: 2px; }
+  .stepDesc { font-size: 11px; }
+
+  /* CTAs — stacked full width */
+  .actions { flex-direction: column; gap: 0; }
+  .ctaPrimary {
+    width: 100%;
+    justify-content: center;
+    padding: 16px 20px;
+    font-size: 10px;
+    gap: 8px;
+  }
+  .ctaSecondary {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 10px;
+    gap: 10px;
+  }
+  .ctaBadge { font-size: 9px; padding: 2px 7px; }
+
+  .trust { font-size: 8px; gap: 6px; }
+  .trust svg { width: 10px; height: 10px; }
+
+  /* Testimonial card — compact */
+  .card {
+    padding: 20px 16px;
+    border-left-width: 2px;
+  }
+  .cardQuote { font-size: 32px; margin-bottom: 4px; }
+  .cardText p { font-size: 14px; line-height: 1.5; }
+  .cardAttrib { font-size: 9px; margin-top: 14px; }
+  .cardStats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 14px;
+  }
+  .cardStatNum { font-size: 18px; }
+  .cardStatLabel { font-size: 7px; }
 }
 
 @media (max-width: 480px) {
-  .content { padding: 32px 0 40px; }
-  .kicker { margin-bottom: 20px; }
-  .body { font-size: 13px; }
-  .ctaPrimary, .ctaSecondary { padding: 16px 24px; font-size: 10px; }
-  .card { padding: 28px 24px; }
-  .cardText p { font-size: 16px; }
+  .title { font-size: 20px; }
+  .titleItalic { font-size: 19px; }
+  .body { font-size: 12px; }
+  .stepDesc { display: none; }
+  .ctaPrimary, .ctaSecondary { padding: 14px 16px; }
+  .cardText p { font-size: 13px; }
+  .cardStatNum { font-size: 16px; }
 }

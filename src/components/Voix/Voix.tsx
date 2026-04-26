@@ -56,7 +56,7 @@ const THEMES: Theme[] = [
 
 const FEATURED: Story = {
   href: "/histoire/la-lettre-que-j-ai-jamais-envoyee",
-  img: "/histoires/histoire_relations_famille.png",
+  img: "/histoires/histoire_relations_famille.webp",
   quote: "J'ai écrit cette lettre à 22 ans. Je ne l'ai postée qu'à 34. ",
   quoteEm: "Et ma mère ne l'a jamais lue.",
   quoteSuffix: "",
@@ -71,7 +71,7 @@ const FEATURED: Story = {
 const STORIES: Story[] = [
   {
     href: "/histoire/procrastination-honte",
-    img: "/histoires/histoire_emotions_bienetre.png",
+    img: "/histoires/histoire_emotions_bienetre.webp",
     quote: "Ce n'est pas la paresse. C'est la ",
     quoteEm: "honte",
     quoteSuffix: ". Et je ne l'ai compris qu'à 38 ans, en thérapie.",
@@ -84,7 +84,7 @@ const STORIES: Story[] = [
   },
   {
     href: "/histoire/partir-seul-a-50",
-    img: "/histoires/histoire_parcours_resilience.png",
+    img: "/histoires/histoire_parcours_resilience.webp",
     quote: "À 52 ans, après le divorce, j'ai vendu la maison. Je suis partie ",
     quoteEm: "seule",
     quoteSuffix: ". Et quelque chose s'est réparé.",
@@ -97,7 +97,7 @@ const STORIES: Story[] = [
   },
   {
     href: "/histoire/la-depression-de-mon-frere",
-    img: "/histoires/histoire_sante_mentale.png",
+    img: "/histoires/histoire_sante_mentale.webp",
     quote: "Mon frère ne parle presque plus. Je ne sais plus comment ",
     quoteEm: "entrer",
     quoteSuffix: " dans sa chambre — alors j'ai décidé d'écrire.",
@@ -274,7 +274,7 @@ export default function Voix({ cmsStories }: VoixProps) {
       {/* ═══ Submit — visual banner ═══ */}
       <div className={s.banner}>
         <img
-          src="/visages-origines.png"
+          src="/visages-origines.webp"
           alt="Visages de ceux qui ont raconté leur histoire sur Origines"
           className={s.bannerImg}
           loading="lazy"

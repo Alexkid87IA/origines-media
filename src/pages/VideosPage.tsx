@@ -237,9 +237,13 @@ export default function VideosPage() {
   return (
     <>
       <SEO
-        title="Vidéos"
+        title="Vidéos — Documentaires et reportages"
         description="Explorez notre collection de contenus vidéo inspirants. Documentaires, interviews et reportages sur des thématiques qui comptent."
         url="/videos"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Vidéos", url: "/videos" },
+        ]}
       />
       <SiteHeader />
 

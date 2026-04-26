@@ -80,10 +80,17 @@
 }
 
 @media (max-width: 880px) {
-  .tickerCenter { display: none; }
+  .tickerBar { display: none; }
+}
+
+@media (max-width: 640px) {
+  .tickerBar { padding: 8px 0; }
+  .row { gap: 12px; }
+  .tickerEdition { font-size: 10px !important; }
 }
 
 @media (max-width: 480px) {
   .tickerCenter { display: none; }
   .tickerEdition { display: none; }
+  .tickerBar { padding: 6px 0; }
 }

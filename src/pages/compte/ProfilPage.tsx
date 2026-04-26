@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { updateProfile } from "firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
@@ -31,7 +31,7 @@ export default function ProfilPage() {
 
   return (
     <>
-      <Helmet><title>Mon profil — Origines Media</title></Helmet>
+      <SEO title="Mon profil" url="/compte/profil" noindex />
       <SiteHeader />
       <main className={s.page}>
         <div className={s.inner}>

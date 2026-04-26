@@ -511,3 +511,273 @@
   width: 20px;
   height: 20px;
 }
+
+/* ══════════════════════════════════════════════════════════
+   Responsive — max-width: 640px (small screens)
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  /* ── Container ── */
+
+  .inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* ── Hero ── */
+
+  .hero {
+    min-height: 42vh;
+  }
+
+  .heroContent {
+    padding: 16px 16px 40px;
+  }
+
+  .backLink {
+    font-size: 10px;
+    margin-bottom: 16px;
+    gap: 6px;
+  }
+
+  .backLinkIcon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .heroGrid {
+    gap: 24px;
+  }
+
+  .heroKicker {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .heroKickerMark {
+    font-size: 12px;
+  }
+
+  .heroKickerLabel {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+
+  .heroTitle {
+    font-size: 28px;
+    margin: 0 0 10px;
+  }
+
+  .heroMeta {
+    gap: 10px;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .heroMetaBadge {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+
+  .heroDesc {
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0 0 20px;
+  }
+
+  .heroCta {
+    padding: 12px 22px;
+    font-size: 14px;
+    gap: 6px;
+  }
+
+  .heroCtaIcon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ── Episodes section ── */
+
+  .episodes {
+    padding: 32px 0;
+  }
+
+  .episodesTitle {
+    font-size: 20px;
+    margin: 0 0 20px;
+  }
+
+  .episodesList {
+    gap: 10px;
+  }
+
+  .episodeCard {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .episodeCard:hover {
+    transform: none;
+  }
+
+  .episodeNum {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .episodeInfo {
+    min-width: 0;
+  }
+
+  .episodeInfoTitle {
+    font-size: 13px;
+    margin: 0 0 2px;
+  }
+
+  .episodeInfoDesc {
+    font-size: 12px;
+  }
+
+  .episodeArrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .episodeArrowIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ── Loading / 404 ── */
+
+  .loadingText {
+    font-size: 14px;
+  }
+
+  .notFoundTitle {
+    font-size: 20px;
+  }
+
+  .notFoundLink {
+    font-size: 13px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Responsive — max-width: 480px (extra-small screens)
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  /* ── Container ── */
+
+  .inner {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  /* ── Hero ── */
+
+  .hero {
+    min-height: 36vh;
+  }
+
+  .heroContent {
+    padding: 14px 14px 32px;
+  }
+
+  .backLink {
+    font-size: 9px;
+    margin-bottom: 12px;
+  }
+
+  .heroKicker {
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .heroKickerMark {
+    font-size: 11px;
+  }
+
+  .heroTitle {
+    font-size: 22px;
+    margin: 0 0 8px;
+  }
+
+  .heroMeta {
+    gap: 8px;
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .heroMetaDot {
+    width: 3px;
+    height: 3px;
+  }
+
+  .heroMetaBadge {
+    font-size: 8px;
+  }
+
+  .heroDesc {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0 0 16px;
+  }
+
+  .heroCta {
+    padding: 10px 18px;
+    font-size: 13px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ── Episodes section ── */
+
+  .episodes {
+    padding: 24px 0;
+  }
+
+  .episodesTitle {
+    font-size: 18px;
+    margin: 0 0 16px;
+  }
+
+  .episodesList {
+    gap: 8px;
+  }
+
+  .episodeCard {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .episodeNum {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .episodeInfoTitle {
+    font-size: 12px;
+  }
+
+  .episodeInfoDesc {
+    font-size: 11px;
+  }
+
+  .episodeArrow {
+    width: 28px;
+    height: 28px;
+  }
+
+  .episodeArrowIcon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .notFoundTitle {
+    font-size: 18px;
+  }
+}

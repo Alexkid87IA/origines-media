@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function DeconnexionPage() {
@@ -10,5 +11,9 @@ export default function DeconnexionPage() {
     logout().then(() => navigate("/", { replace: true }));
   }, [logout, navigate]);
 
-  return null;
+  return (
+    <Helmet>
+      <meta name="robots" content="noindex, nofollow" />
+    </Helmet>
+  );
 }

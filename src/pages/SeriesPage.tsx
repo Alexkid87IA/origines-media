@@ -322,6 +322,10 @@ export default function SeriesPage() {
         title="Series"
         description="Decouvrez nos series documentaires originales. Des recits immersifs qui explorent des thematiques profondes a travers plusieurs episodes."
         url="/series"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Séries", url: "/series" },
+        ]}
       />
       <SiteHeader />
 

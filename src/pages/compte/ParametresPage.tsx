@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
 import { db } from "@/lib/firebase";
@@ -45,7 +45,7 @@ export default function ParametresPage() {
 
   return (
     <>
-      <Helmet><title>Paramètres — Origines Media</title></Helmet>
+      <SEO title="Paramètres" url="/compte/parametres" noindex />
       <SiteHeader />
       <main className={s.page}>
         <div className={s.inner}>

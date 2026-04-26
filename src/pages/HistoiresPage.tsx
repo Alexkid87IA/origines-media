@@ -692,9 +692,13 @@ export default function HistoiresPage() {
   return (
     <>
       <SEO
-        title="Histoires"
-        description="Des r&eacute;cits singuliers qui inspirent, transforment et &eacute;clairent. D&eacute;couvrez des parcours authentiques et des t&eacute;moignages qui r&eacute;sonnent."
+        title="Histoires — Récits de vie et témoignages"
+        description="Des récits singuliers qui inspirent, transforment et éclairent. Découvrez des parcours authentiques et des témoignages qui résonnent."
         url="/histoires"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Histoires", url: "/histoires" },
+        ]}
       />
 
       <SiteHeader />

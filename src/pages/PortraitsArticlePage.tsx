@@ -9,7 +9,7 @@ const MOCK = {
   slug: "fatou-diome",
   role: "Écrivaine, autrice de Le Ventre de l'Atlantique",
   chapeau: "Elle est partie du Sénégal à 22 ans avec un sac et un rêve. Trente ans plus tard, elle est l'une des voix les plus puissantes de la littérature francophone. Rencontre.",
-  image: "/covers/cover-01.jpg",
+  image: "/covers/cover-01.webp",
   author: "Camille Dufresne",
   date: "22 avril 2026",
   readTime: "28 min",
@@ -80,7 +80,7 @@ export default function PortraitsArticlePage() {
 
       {/* ── Hero image ── */}
       <div className={s.heroImg}>
-        <img src={p.image} alt={p.title} className={s.heroPhoto} />
+        <img src={p.image} alt={p.title} className={s.heroPhoto} loading="eager" fetchpriority="high" />
       </div>
 
       {/* ── Content ── */}

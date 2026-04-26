@@ -49,7 +49,7 @@ const GUIDES: Guide[] = [
   {
     id: "six-mois-famille-cisse",
     href: "/immersions/six-mois-famille-cisse",
-    cover: "/series/01_transmission_poster.jpg",
+    cover: "/series/01_transmission_poster.webp",
     num: "N° 128",
     date: "Avril 2026",
     category: "Société",
@@ -72,7 +72,7 @@ const GUIDES: Guide[] = [
   {
     id: "portrait-esther-mandelstam",
     href: "/immersions/portrait-esther-mandelstam",
-    cover: "/series/02_etat_esprit_poster.jpg",
+    cover: "/series/02_etat_esprit_poster.webp",
     num: "N° 127",
     date: "Avril 2026",
     category: "Psychologie",
@@ -90,7 +90,7 @@ const GUIDES: Guide[] = [
   {
     id: "essai-silence-moderne",
     href: "/immersions/essai-silence-moderne",
-    cover: "/series/03_il_etait_une_fois_poster.jpg",
+    cover: "/series/03_il_etait_une_fois_poster.webp",
     num: "N° 126",
     date: "Avril 2026",
     category: "Spiritualité",
@@ -108,7 +108,7 @@ const GUIDES: Guide[] = [
   {
     id: "homme-qui-marchait-a-rebours",
     href: "/immersions/homme-qui-marchait-a-rebours",
-    cover: "/series/04_secrets_professionnels_poster.jpg",
+    cover: "/series/04_secrets_professionnels_poster.webp",
     num: "N° 125",
     date: "Mars 2026",
     category: "Société",
@@ -126,7 +126,7 @@ const GUIDES: Guide[] = [
   {
     id: "quand-la-terre-ne-repond-plus",
     href: "/immersions/quand-la-terre-ne-repond-plus",
-    cover: "/series/05_la_lettre_poster.jpg",
+    cover: "/series/05_la_lettre_poster.webp",
     num: "N° 124",
     date: "Mars 2026",
     category: "Environnement",

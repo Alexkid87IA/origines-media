@@ -377,22 +377,63 @@
 }
 
 @media (max-width: 640px) {
-  .sectionHead { margin-bottom: 28px; }
-  .sectionTitle { font-size: clamp(26px, 6vw, 36px); }
-  .sectionDeck { font-size: 14px; }
-  .spotlight { margin-top: 44px; }
-  .leadText { padding: 24px 20px; }
-  .leadTitle { font-size: 24px !important; }
-  .leadDeck { font-size: 14px; }
-  .grid { grid-template-columns: 1fr; }
-  .cardThumb { aspect-ratio: 16 / 8; }
-  .cardTitle { font-size: 17px; }
+  .spotlight { margin-top: 28px; }
+  .chapterMark { margin-bottom: 6px; font-size: 9px; gap: 6px; padding-top: 8px; }
+
+  .sectionHead { grid-template-columns: 1fr; margin-bottom: 14px; padding-bottom: 10px; gap: 0; }
+  .sectionTitle { font-size: 22px; }
+  .sectionDeck { font-size: 12px; margin-top: 6px; }
+  .sectionAll { display: none; }
+  .sectionKicker { font-size: 9px; margin-bottom: 8px; }
+
+  /* Lead — vertical: image on top, text below */
+  .leadCard {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .leadImage { aspect-ratio: 16 / 9; }
+  .leadText { padding: 20px 16px; }
+  .leadMeta { margin-bottom: 10px; gap: 8px; }
+  .leadTag { font-size: 13px; }
+  .leadDate { font-size: 9px; }
+  .leadTitle { font-size: 20px; }
+  .leadDeck { font-size: 12px; margin-top: 10px; max-width: 100%; }
+  .leadByline { margin-top: 14px; padding-top: 10px; font-size: 9px; gap: 6px; }
+  .leadVideoBadge { top: 10px; left: 10px; padding: 4px 8px; font-size: 8px; gap: 4px; }
+
+  /* Grid — horizontal scroll of compact cards */
+  .grid {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border: none;
+    gap: 0;
+    margin-top: 12px;
+    padding-bottom: 4px;
+  }
+  .grid::-webkit-scrollbar { display: none; }
+  .card {
+    flex-shrink: 0;
+    width: 200px;
+    border: 1px solid rgba(10, 10, 10, 0.08);
+    border-left: none;
+  }
+  .card:first-child { border-left: 1px solid rgba(10, 10, 10, 0.08); }
+  .cardThumb { aspect-ratio: 16 / 10; }
+  .cardTitle { font-size: 13px; }
+  .cardBody { padding: 10px 12px 14px; }
+  .cardMeta { font-size: 8px; gap: 4px; }
+  .cardExcerpt { display: none; }
+  .cardFoot { font-size: 8px; padding-top: 6px; }
 }
 
 @media (max-width: 480px) {
-  .leadTitle { font-size: 22px !important; }
-  .leadText { padding: 20px 16px; }
-  .cardBody { padding: 12px 14px 16px; }
+  .leadTitle { font-size: 18px; }
+  .leadDeck { -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .leadText { padding: 16px 14px; }
+  .card { width: 170px; }
+  .cardTitle { font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -32,7 +32,7 @@
     --serif: 'Fraunces', Georgia, serif;
 
     --max: 1360px;
-    --side: 48px;
+    --side: clamp(16px, 4vw, 48px);
 
     /* Legacy theme variables (used by non-homepage pages) */
     --bg-primary: #000000;
@@ -844,7 +844,7 @@
   pointer-events: none;
 
   /* Image panoramique */
-  background-image: url('/skin/panoramic-skin.jpg');
+  background-image: url('/skin/panoramic-skin.webp');
   background-position: center top;
   background-repeat: no-repeat;
   background-size: cover;

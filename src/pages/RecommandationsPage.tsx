@@ -438,8 +438,12 @@ export default function RecommandationsPage() {
     <>
       <SEO
         title="Recommandations"
-        description="Nos coups de coeur : livres, films, podcasts et produits s&eacute;lectionn&eacute;s par l'&eacute;quipe Origines."
+        description="Nos coups de coeur : livres, films, podcasts et produits sélectionnés par l'équipe Origines."
         url="/recommandations"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Recommandations", url: "/recommandations" },
+        ]}
       />
       <SiteHeader />
 

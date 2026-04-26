@@ -76,6 +76,27 @@
   to   { transform: translateX(-50%); }
 }
 
+@media (max-width: 880px) {
+  .marquee { margin-top: 64px; }
+}
+
+@media (max-width: 640px) {
+  .marquee { margin-top: 32px; padding: 8px 0; }
+  .marqueeInner { gap: 24px; }
+  .marqueeUnivers { font-size: 8px; letter-spacing: 0.1em; }
+  .marqueeTitle { font-size: 9px; letter-spacing: 0.08em; }
+  .marqueeItem::before { width: 4px; height: 4px; }
+  .marqueeItem { gap: 6px; }
+}
+
+@media (max-width: 480px) {
+  .marquee { margin-top: 24px; padding: 6px 0; }
+  .marqueeInner { gap: 18px; }
+  .marqueeUnivers { display: none; }
+  .marqueeSep { display: none; }
+  .marqueeTitle { font-size: 9px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marqueeInner { animation: none; }
 }

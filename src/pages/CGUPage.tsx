@@ -11,6 +11,10 @@ export default function CGUPage() {
         title="Conditions Générales d'Utilisation"
         description="Consultez les conditions générales d'utilisation du site Origines Media. Règles d'accès, propriété intellectuelle et responsabilités."
         url="/cgu"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "CGU", url: "/cgu" },
+        ]}
       />
       <SiteHeader />
 

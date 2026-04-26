@@ -152,9 +152,13 @@ export default function TemoignagesPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="T&eacute;moignages &amp; Portraits &mdash; Origines Media"
-        description="Des histoires vraies, racont&eacute;es &agrave; la premi&egrave;re personne. T&eacute;moignages, portraits, r&eacute;cits de vie."
+        title="Témoignages et portraits — Récits de vie"
+        description="Des histoires vraies, racontées à la première personne. Témoignages, portraits, récits de vie."
         url="/temoignages"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Témoignages", url: "/temoignages" },
+        ]}
       />
       <SiteHeader />
 

@@ -4,15 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y8CL35ELYZ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-Y8CL35ELYZ');
-    </script>
-
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -21,17 +12,16 @@
     <link rel="manifest" href="/site.webmanifest" />
 
     <!-- SEO Meta Tags -->
-    <title>Origines Media — Psychologie, bien-être, relations, culture, avenir</title>
+    <title>Psychologie, bien-être, relations, culture — Origines Media</title>
     <meta name="description" content="Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations pour ceux qui cherchent la profondeur." />
-    <meta name="keywords" content="origines media, psychologie, bien-être, relations, culture, avenir, développement personnel, société, articles, vidéos, histoires" />
     <meta name="author" content="Origines Media" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <link rel="canonical" href="https://www.origines.media" />
+
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.origines.media" />
-    <meta property="og:title" content="Origines Media — Psychologie, bien-être, relations, culture, avenir" />
+    <meta property="og:title" content="Psychologie, bien-être, relations, culture — Origines Media" />
     <meta property="og:description" content="Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations." />
     <meta property="og:image" content="https://www.origines.media/og-image.png" />
     <meta property="og:image:width" content="1200" />
@@ -42,7 +32,7 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://www.origines.media" />
-    <meta name="twitter:title" content="Origines Media — Psychologie, bien-être, relations, culture, avenir" />
+    <meta name="twitter:title" content="Psychologie, bien-être, relations, culture — Origines Media" />
     <meta name="twitter:description" content="Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations." />
     <meta name="twitter:image" content="https://www.origines.media/og-image.png" />
     <meta name="twitter:site" content="@originesmedia" />
@@ -52,8 +42,7 @@
     <meta name="msapplication-TileColor" content="#0A0A0A" />
 
     <!-- Google Fonts: Archivo, Inter Tight, JetBrains Mono, Fraunces -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,800&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,wght@1,400;1,600&display=swap" as="style" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,800&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,wght@1,400;1,600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,800&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,wght@1,400;1,600&display=swap" media="print" onload="this.media='all'" />
 
     <!-- Critical CSS - Above the fold styles for faster FCP/LCP -->
     <style>
@@ -118,13 +107,21 @@
     <link rel="dns-prefetch" href="https://www.youtube.com" />
     <link rel="dns-prefetch" href="https://i.ytimg.com" />
 
-    <!-- Fonts loaded via CSS, no preload needed -->
+    <!-- Preload critical font files -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/archivo/v19/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82nJTaOjSCsGbMklEj.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="https://fonts.gstatic.com/s/intertight/v7/NGSnv5HMAFg6IuGlBNMjxJEL2VmU3NS7Z2mjDQ6qWA.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Modulepreload for critical JS chunks (will be injected by Vite in production) -->
     <!-- These improve Time to Interactive -->
 
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1236201752351510" crossorigin="anonymous"></script>
+    <!-- Google Analytics 4 — after preloads to avoid blocking critical resources -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y8CL35ELYZ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Y8CL35ELYZ');
+    </script>
   </head>
   <body>
     <div id="root" class="js-loading"></div>
@@ -138,6 +135,8 @@
       });
     </script>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Google AdSense — deferred to avoid blocking initial render -->
+    <script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1236201752351510" crossorigin="anonymous"></script>
     <!-- Fallback for no-JS users -->
     <noscript>
       <style>.js-loading { opacity: 1 !important; }</style>

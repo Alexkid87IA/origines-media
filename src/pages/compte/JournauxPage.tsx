@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { useJournals } from "@/hooks/useJournals";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
@@ -84,7 +84,7 @@ export default function JournauxPage() {
 
   return (
     <>
-      <Helmet><title>Mes journaux — Origines Media</title></Helmet>
+      <SEO title="Mes journaux" url="/compte/journaux" noindex />
       <SiteHeader />
       <main className={s.page}>
         <div className={s.inner}>

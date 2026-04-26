@@ -264,20 +264,62 @@
 }
 
 @media (max-width: 640px) {
-  .section { margin-top: 56px; }
-  .band { min-height: 320px; }
-  .bandContent { padding: 28px 24px; gap: 20px; }
-  .bandTitle { font-size: clamp(24px, 6vw, 34px); }
-  .bandDeck { font-size: 13px; }
-  .bandRight { flex-direction: column; gap: 16px; }
-  .statNum { font-size: 28px; }
+  .section { margin-top: 28px; }
+  .chapterMark { margin-bottom: 6px; font-size: 9px; gap: 6px; padding-top: 8px; }
+
+  .band { min-height: auto; }
+  .bandOverlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 10, 0.6) 0%,
+      rgba(10, 10, 10, 0.88) 100%
+    );
+  }
+  .band:hover .bandOverlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 10, 0.5) 0%,
+      rgba(10, 10, 10, 0.82) 100%
+    );
+  }
+
+  .bandContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 16px;
+    gap: 16px;
+  }
+  .bandKicker { font-size: 9px; margin-bottom: 8px; gap: 6px; }
+  .bandKickerDot { width: 5px; height: 5px; }
+  .bandTitle { font-size: 22px; }
+  .bandDeck { font-size: 12px; margin-top: 8px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .bandRight {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(247, 245, 240, 0.1);
+  }
+
+  .stats { gap: 14px; }
+  .statNum { font-size: 22px; }
+  .statLabel { font-size: 8px; }
+  .statSep { height: 20px; }
+
+  .bandPlay { width: 32px; height: 32px; }
+  .bandPlay svg { width: 10px; height: 10px; }
+  .bandActionLabel { font-size: 9px; letter-spacing: 0.12em; }
+  .bandArrow { width: 14px; height: 14px; }
+  .bandAction { gap: 8px; }
 }
 
 @media (max-width: 480px) {
-  .band { min-height: 280px; }
-  .bandContent { padding: 24px 20px; }
-  .bandTitle { font-size: 24px; }
+  .bandTitle { font-size: 20px; }
   .bandDeck { display: none; }
-  .bandPlay { width: 34px; height: 34px; }
-  .bandActionLabel { font-size: 10px; }
+  .bandContent { padding: 20px 14px; gap: 14px; }
+  .statNum { font-size: 20px; }
+  .bandActionLabel { font-size: 8px; }
 }

@@ -3,6 +3,7 @@ import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_EXPLORE_QUERY } from "@/lib/queries";
 import { smartExcerpt } from "@/lib/typography";
+import { sanityImg } from "@/lib/sanityImage";
 import { verticaleToUnivers } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./ExploreTopics.module.css";
@@ -106,7 +107,7 @@ function buildArticleItem(a: SanityExploreArticle): ArticleItem {
     date: a.datePublication || "",
     title,
     href: isVideo ? `/video/${a.slug}` : `/article/${a.slug}`,
-    imgSrc: a.imageUrl || "/placeholder.svg",
+    imgSrc: sanityImg(a.imageUrl, 400) || "/placeholder.svg",
     imgAlt: title,
     timeLabel: formatTimeLabel(a.datePublication),
     format: stLabel ? `${isVideo ? "Vidéo" : "Article"} · ${u.name}` : `${isVideo ? "Vidéo" : "Article"} · ${u.name}`,

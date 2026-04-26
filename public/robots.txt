@@ -5,45 +5,32 @@
 User-agent: *
 Allow: /
 
-# Pages de contenu à indexer en priorité
-Allow: /article/
-Allow: /video/
-Allow: /histoire/
-Allow: /series/
-Allow: /univers/
-Allow: /recommandation/
-
-# Pages statiques importantes
-Allow: /articles
-Allow: /videos
-Allow: /histoires
-Allow: /bibliotheque
-Allow: /recommandations
-Allow: /a-propos
-Allow: /contact
-
 # Bloquer les pages d'administration et API
 Disallow: /api/
 Disallow: /admin/
 Disallow: /studio/
 
 # Bloquer les fichiers techniques
-Disallow: /*.json$
-Disallow: /*.js.map$
-Disallow: /*.css.map$
+Disallow: /*.json
+Allow: /site.webmanifest
+Disallow: /*.js.map
+Disallow: /*.css.map
 
 # Bloquer les pages protégées/privées
-Disallow: /rejoindre-partenaire
+Disallow: /compte/
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /deconnexion
+Disallow: /join-partner
 Disallow: /join
 
 # Bloquer les paramètres de pagination et tri (évite le contenu dupliqué)
 Disallow: /*?*page=
 Disallow: /*?*tri=
 
-# Règles spécifiques pour Googlebot (crawl plus agressif autorisé)
+# Règles spécifiques pour Googlebot
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 0
 
 # Règles pour les robots d'images
 User-agent: Googlebot-Image

@@ -264,6 +264,11 @@
   from { opacity: 0; transform: translateY(8px) scale(0.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+@keyframes filterPeek {
+  0%   { scroll-padding-inline-start: 0; transform: translateX(0); }
+  35%  { transform: translateX(-48px); }
+  100% { transform: translateX(0); }
+}
 
 /* Message "aucun résultat" */
 .feedEmpty {
@@ -871,67 +876,230 @@
   .feedAllCount, .feedFilterCount { font-size: 10px; }
 }
 
-/* ── Responsive — small phones (<=640px) ── */
+/* ── Responsive — mobile (<=640px) — completely reimagined ── */
 @media (max-width: 640px) {
-  .sectionHead { margin-bottom: 28px; }
-  .sectionTitle { font-size: clamp(26px, 6vw, 36px); }
-  .sectionDeck { font-size: 14px; }
-  .feedGrid { grid-template-columns: 1fr; }
-  .feedItemCinematic { grid-column: span 1; }
-  .feedCineLink {
+  .feed { margin-top: 28px; }
+
+  /* Chapter mark — minimal */
+  .chapterMark {
+    margin-bottom: 6px;
+    font-size: 9px;
+    gap: 6px;
+    padding-top: 8px;
+  }
+
+  /* Section head — compact, no side link */
+  .sectionHead {
     grid-template-columns: 1fr;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    gap: 0;
+  }
+  .sectionTitle { font-size: 22px; }
+  .sectionDeck { font-size: 12px; margin-top: 6px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .sectionAll { display: none; }
+  .sectionKicker { font-size: 9px; margin-bottom: 8px; }
+
+  /* Filters — horizontal scroll strip with peek hint */
+  .feedFilters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: none;
+    animation: filterPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+  }
+  .feedFilters::-webkit-scrollbar { display: none; }
+  .feedFilter {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 9px;
+    padding: 5px 10px;
+    gap: 5px;
+  }
+  .feedFilterDot { width: 5px; height: 5px; }
+  .feedFilterCount { font-size: 8px; padding-left: 5px; }
+
+  /* Hide sort toolbar entirely */
+  .feedToolbar { display: none; }
+
+  /* Feed grid — vertical card stack with spacing */
+  .feedGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: transparent;
+    border: none;
+  }
+
+  /* ── Cinematic cards — vertical: image on top, text below ── */
+  .feedItemCinematic {
+    border: 1px solid rgba(10, 10, 10, 0.08);
+    margin-bottom: 12px;
+  }
+  .feedCineLink {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
     min-height: auto;
   }
   .feedCineFlipped .feedCineLink {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+  }
+
+  /* Image — full width, top of card */
+  .feedCineImgWrap {
+    position: relative;
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: none;
+    order: 1;
   }
   .feedCineFlipped .feedCineImgWrap {
-    grid-column: 1;
+    grid-column: auto;
+    order: 1;
+  }
+  .feedCineImg {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Hide horizontal gradient, add bottom fade into dark body */
+  .feedCineGrad {
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(10, 10, 10, 0.4) 75%,
+      var(--ink) 100%
+    );
   }
   .feedCineFlipped .feedCineGrad {
-    background: linear-gradient(to bottom, transparent 40%, var(--ink));
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(10, 10, 10, 0.4) 75%,
+      var(--ink) 100%
+    );
+  }
+
+  /* Text body — below image, on dark bg */
+  .feedCineBody {
+    grid-column: auto;
+    grid-row: auto;
+    order: 2;
+    padding: 16px 16px 18px;
+    gap: 6px;
+    justify-content: flex-start;
   }
   .feedCineFlipped .feedCineBody {
-    grid-column: 1;
+    grid-column: auto;
+    order: 2;
   }
-  .feedCineImgWrap {
-    aspect-ratio: 16/9;
-    max-height: 220px;
+  .feedCineH {
+    font-size: 18px;
+    line-height: 1.15;
   }
-  .feedCineGrad {
-    background: linear-gradient(to bottom, transparent 40%, var(--ink));
+  .feedCineExcerpt {
+    font-size: 12px;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.45;
   }
-  .feedCineBody { padding: 20px; }
-  .feedCineH { font-size: 18px; }
-  .feedCineExcerpt { display: block; -webkit-line-clamp: 2; }
-  .feedCinePlay { left: 16px; bottom: auto; top: 16px; width: 36px; height: 36px; }
-  .feedGridCta { grid-column: span 1; }
-  .feedGridCtaLink { padding: 14px 16px; gap: 12px; }
-  .feedGridCtaNum { font-size: 40px; }
-  .feedHead { grid-template-columns: 1fr; align-items: start; gap: 14px; }
-  .feedLink { padding: 14px 14px 14px 12px; }
-  .feedH { font-size: 14px; }
-  .feedChapter { margin-bottom: 14px; }
+  .feedCineFoot { font-size: 8px; margin-top: 2px; }
+
+  /* Play button — top-left of image */
+  .feedCinePlay {
+    left: 12px;
+    bottom: auto;
+    top: 12px;
+    width: 34px;
+    height: 34px;
+  }
+
+  /* ── Standard items — compact horizontal card ── */
+  .feedItem { margin-bottom: 0; }
+  .feedItem::before { display: none; }
+  .feedLink {
+    grid-template-columns: 72px 1fr;
+    gap: 12px;
+    padding: 14px 12px;
+  }
+  .feedThumb { width: 72px; height: 72px; }
+  .feedH { font-size: 13px; }
+  .feedExcerpt { font-size: 11px; -webkit-line-clamp: 1; }
+  .feedFoot { font-size: 8px; }
   .feedFootRead { display: none; }
+
+  /* ── CTA — slim inline bar ── */
+  .feedGridCta {
+    margin-top: 8px;
+    border: none;
+    background: var(--ink);
+  }
+  .feedGridCtaLink {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 16px;
+    gap: 12px;
+  }
+  /* Hide the left number block entirely */
+  .feedGridCtaLeft { display: none; }
+  /* Right becomes the sole content — horizontal */
+  .feedGridCtaRight {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0;
+    gap: 10px;
+    width: 100%;
+  }
+  .feedGridCtaUniversLabel { display: none; }
+  .feedGridCtaPills { display: none; }
+  .feedGridCtaRule { display: none; }
+  .feedGridCtaAction {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .feedGridCtaLabel {
+    font-size: 10px;
+    color: rgba(247, 245, 240, 0.7);
+    letter-spacing: 0.16em;
+  }
+  .feedGridCtaArrow { width: 16px; height: 16px; color: rgba(247, 245, 240, 0.5); }
 }
 
 /* ── Responsive — petits mobiles (<=480px) ── */
 @media (max-width: 480px) {
-  .feedFilters { gap: 5px; padding-bottom: 14px; margin-bottom: 16px; }
-  .feedFilter { font-size: 11px; padding: 6px 12px; }
-  .feedFilterCount { font-size: 9px; padding-left: 5px; margin-left: 1px; }
-  .feedTitle { font-size: 22px !important; }
-  .feedDeck { font-size: 13px; }
-  .feedLink { grid-template-columns: 64px 1fr; gap: 10px; padding: 12px; }
-  .feedThumb { width: 64px; height: 64px; }
-  .feedH { font-size: 13px; }
-  .feedExcerpt { font-size: 11.5px; -webkit-line-clamp: 2; }
-  .feedChapter { font-size: 12px; margin-bottom: 12px; }
-  .feedFilter { font-size: 11px; padding: 7px 10px; }
-  .feedGridCtaNum { font-size: 32px; }
+  .sectionTitle { font-size: 20px; }
+  .sectionDeck { font-size: 11px; }
+
+  .feedCineImgWrap { aspect-ratio: 16 / 10; }
+  .feedCineH { font-size: 16px; }
+  .feedCineExcerpt { -webkit-line-clamp: 1; font-size: 11px; }
+  .feedCineBody { padding: 14px 14px 16px; }
+
+  .feedLink { grid-template-columns: 60px 1fr; gap: 10px; padding: 12px 10px; }
+  .feedThumb { width: 60px; height: 60px; }
+  .feedH { font-size: 12px; }
+  .feedExcerpt { display: none; }
+
+  .feedGridCtaLink { padding: 14px 12px; }
+  .feedGridCtaLabel { font-size: 9px; }
 }
 
 /* ── Responsive — très petits mobiles (<=360px) ── */
 @media (max-width: 360px) {
-  .feedTitle { font-size: 20px !important; }
+  .sectionTitle { font-size: 18px; }
+  .feedCineH { font-size: 15px; }
+  .feedItemCinematic { margin-bottom: 10px; }
 }

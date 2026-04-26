@@ -244,7 +244,7 @@ const Navbar: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-5 h-14" style={{ borderBottom: '1px solid #E8E5DE' }}>
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
-                <img src="/logo-origines.png" alt="Origines Media" className="h-9 w-auto" />
+                <img src="/logo-origines.png" alt="Origines Media" className="h-9 w-auto" loading="eager" />
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}

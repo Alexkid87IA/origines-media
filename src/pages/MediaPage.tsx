@@ -154,7 +154,7 @@ function sanityToFeedItem(a: SanityFeedArticle, idx: number): CMSFeedItem {
     popularity: a.vues || 0,
     title,
     href: isVideo ? `/video/${a.slug}` : `/article/${a.slug}`,
-    imgSrc: a.imageUrl || "/covers/cover-01.jpg",
+    imgSrc: a.imageUrl || "/covers/cover-01.webp",
     imgAlt: title,
     timeLabel: formatTimeLabel(a.datePublication),
     format: vertLabel ? `${typeLabel} · ${vertLabel}` : typeLabel,
@@ -181,7 +181,7 @@ function sanityToReco(r: SanityReco) {
   const categoryLabel = r.type ? r.type.charAt(0).toUpperCase() + r.type.slice(1) : "Livre";
   return {
     href: `/recommandation/${r.slug}`,
-    img: r.imageUrl || "/recos/reco_livre.png",
+    img: r.imageUrl || "/recos/reco_livre.webp",
     category: categoryLabel,
     categoryColor: color,
     title: r.titre || "",
@@ -224,10 +224,15 @@ export default function MediaPage() {
         title="Média"
         description="Articles, récits, immersions et témoignages. Explorez les cinq univers d'Origines Media : Esprit, Corps, Liens, Culture et Futur."
         url="/media"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Media", url: "/media" },
+        ]}
       />
       <Ticker />
       <SiteHeader />
       <main id="main" role="main">
+        <h1 className="sr-only">Média — Articles, récits et témoignages</h1>
         <div className="v2-container">
           <MediaHero cmsSlides={cmsSlides} />
           <Interlude2 />

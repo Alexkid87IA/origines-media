@@ -8,6 +8,7 @@ import Footer2 from "@/components/Footer2/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { sanityFetch } from "../lib/sanity";
+import { sanityImg } from "../lib/sanityImage";
 import {
   VERTICALES_FOR_UNIVERS_PAGE_QUERY,
   VERTICALE_DETAIL_QUERY,
@@ -190,7 +191,7 @@ function UniversListPage() {
     <>
       <SEO
         title="Nos Univers"
-        description={`Explorez nos ${verticales.length} univers thématiques : ${verticales.map((v) => v.nom).join(", ")}.`}
+        description={`Explorez nos ${verticales.length} univers thématiques : ${verticales.map((v) => v.nom).join(", ")}.`.slice(0, 155)}
         url="/univers"
       />
 
@@ -246,7 +247,7 @@ function UniversListPage() {
                     >
                       <div className={s.universCardImgWrap}>
                         <img
-                          src={verticale.imageUrl}
+                          src={sanityImg(verticale.imageUrl, 600)}
                           alt={verticale.nom}
                           className={s.universCardImg}
                           loading="lazy"
@@ -411,9 +412,11 @@ function UniversDetailPage({ universId }: { universId: string }) {
         <section className={s.hero}>
           <div className={s.heroImgWrap}>
             <img
-              src={verticale.imageUrl}
+              src={sanityImg(verticale.imageUrl, 1200)}
               alt={verticale.nom}
               className={s.heroImg}
+              fetchPriority="high"
+              loading="eager"
             />
             <div className={s.heroOverlay} />
             <div
@@ -540,7 +543,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
               >
                 <div className={s.featuredImgWrap}>
                   <img
-                    src={featuredProduction.imageUrl}
+                    src={sanityImg(featuredProduction.imageUrl, 800)}
                     alt={featuredProduction.titre}
                     className={s.featuredImg}
                     loading="lazy"
@@ -630,7 +633,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
                     >
                       <div className={s.prodCardImgWrap}>
                         <img
-                          src={prod.imageUrl}
+                          src={sanityImg(prod.imageUrl, 400)}
                           alt={prod.titre}
                           className={s.prodCardImg}
                           loading="lazy"
@@ -762,7 +765,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
                       >
                         <div className={s.relatedCardImgWrap}>
                           <img
-                            src={uni.imageUrl}
+                            src={sanityImg(uni.imageUrl, 600)}
                             alt={uni.nom}
                             className={s.relatedCardImg}
                             loading="lazy"

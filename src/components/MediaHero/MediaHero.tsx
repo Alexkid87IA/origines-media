@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
+import { sanityImg } from "@/lib/sanityImage";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import s from "./MediaHero.module.css";
 
@@ -32,7 +33,7 @@ const SLIDES: Slide[] = [
     readTime: "Lecture 24 min",
     href: "/article/pourquoi-on-ne-finit-jamais-rien",
     caption: "Portrait · Émilie Roux pour Origines",
-    image: "/covers/cover-01.jpg",
+    image: "/covers/cover-01.webp",
     coverFocusX: 70,
     coverFocusY: 38,
     coverZoom: 115,
@@ -46,7 +47,7 @@ const SLIDES: Slide[] = [
     readTime: "Lecture 18 min",
     href: "/article/2200-kilometres",
     caption: "Photo · Camille Dufresne",
-    image: "/covers/cover-02.jpg",
+    image: "/covers/cover-02.webp",
     coverFocusX: 50,
     coverFocusY: 45,
     coverZoom: 115,
@@ -60,7 +61,7 @@ const SLIDES: Slide[] = [
     readTime: "Lecture 22 min",
     href: "/article/on-dort-mal",
     caption: "Illustration · Studio Origines",
-    image: "/covers/cover-03.jpg",
+    image: "/covers/cover-03.webp",
     coverFocusX: 55,
     coverFocusY: 40,
     coverZoom: 115,
@@ -74,7 +75,7 @@ const SLIDES: Slide[] = [
     readTime: "Lecture 14 min",
     href: "/article/silence-abbaye",
     caption: "Reportage · Abbaye de Cîteaux",
-    image: "/covers/cover-04.jpg",
+    image: "/covers/cover-04.webp",
     coverFocusX: 55,
     coverFocusY: 40,
     coverZoom: 115,
@@ -88,7 +89,7 @@ const SLIDES: Slide[] = [
     readTime: "Lecture 16 min",
     href: "/article/rupture-mere-fille",
     caption: "Portrait · Mathilde Aubry",
-    image: "/covers/cover-05.jpg",
+    image: "/covers/cover-05.webp",
     coverFocusX: 50,
     coverFocusY: 45,
     coverZoom: 115,
@@ -188,14 +189,19 @@ export default function MediaHero({ cmsSlides }: MediaHeroProps) {
       <div className={`${s.heroGrid} ${transitioning ? s.isTransitioning : ""}`}>
         <div
           className={s.heroCover}
-          role="img"
-          aria-label="Couverture"
           style={{
-            "--cover-src": `url('${slide.image}')`,
             "--cover-focus-x": `${slide.coverFocusX}%`,
             "--cover-focus-y": `${slide.coverFocusY}%`,
           } as React.CSSProperties}
         >
+          <img
+            src={sanityImg(slide.image, 1200)}
+            alt={slide.title}
+            className={s.heroCoverImg}
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+          />
           <span className={s.coverCaption}>{slide.caption}</span>
         </div>
 

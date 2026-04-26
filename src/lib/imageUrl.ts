@@ -13,7 +13,7 @@ interface ImageAsset {
 
 // Helper function pour obtenir l'URL d'une image
 export function urlFor(source: SanityImageSource) {
-  return builder.image(source);
+  return builder.image(source).format('webp').quality(80);
 }
 
 // Fonction spécifique pour les images dans PortableText

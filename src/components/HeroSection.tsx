@@ -296,6 +296,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
                 loading="eager"
+                fetchPriority="high"
                 decoding="async"
               />
             </AnimatePresence>
@@ -435,6 +436,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                               src={article.imageUrl || '/placeholder.svg'}
                               alt={article.titre}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                              loading="lazy"
                             />
                           </div>
                           <span
@@ -520,6 +522,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {
                           src={categoryImage}
                           alt={reco.type}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                          loading="lazy"
                         />
                       </div>
                       <div className="flex flex-col justify-center min-w-0">

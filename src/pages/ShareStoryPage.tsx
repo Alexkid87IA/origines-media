@@ -370,6 +370,10 @@ const ShareStoryPage: React.FC = () => {
         title="Racontez votre histoire"
         description="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalisé."
         url="/racontez-votre-histoire"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Racontez votre histoire", url: "/racontez-votre-histoire" },
+        ]}
       />
 
       <Ticker />

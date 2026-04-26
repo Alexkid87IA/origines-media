@@ -1,21 +1,6 @@
 // Vercel Serverless Function pour pre-rendering des métadonnées Open Graph
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-// Liste des user agents de crawlers de réseaux sociaux
-const CRAWLER_USER_AGENTS = [
-  'facebookexternalhit',
-  'Facebot',
-  'Twitterbot',
-  'LinkedInBot',
-  'WhatsApp',
-  'TelegramBot',
-  'Slackbot',
-  'Discordbot',
-  'SkypeUriPreview',
-  'pinterest',
-  'redditbot',
-]
-
 // Configuration Sanity
 const SANITY_PROJECT_ID = 'r941i081'
 const SANITY_DATASET = 'production'
@@ -31,13 +16,6 @@ const ARTICLE_META_QUERY = `
     "author": auteur->nom
   }
 `
-
-// Fonction pour détecter si c'est un crawler
-function isCrawler(userAgent: string): boolean {
-  if (!userAgent) return false
-  const lowerUA = userAgent.toLowerCase()
-  return CRAWLER_USER_AGENTS.some(crawler => lowerUA.includes(crawler.toLowerCase()))
-}
 
 // Fonction pour récupérer les données depuis Sanity
 async function fetchArticleMeta(slug: string) {
@@ -78,11 +56,11 @@ function escapeHtml(text: string): string {
 
 // Génère le HTML complet avec meta tags pour les crawlers
 function generateCrawlerHTML(article: any, slug: string): string {
-  const title = article?.title || 'Origines Media - La profondeur du récit'
+  const title = article?.title || 'Origines Media — La profondeur du récit'
   const description = article?.description || 'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.'
-  const image = article?.image || 'https://origines.media/og-image.png'
+  const image = article?.image || 'https://www.origines.media/og-image.png'
   const safeSlug = encodeURIComponent(slug).replace(/%2F/g, '/')
-  const url = `https://origines.media/article/${safeSlug}`
+  const url = `https://www.origines.media/article/${safeSlug}`
 
   return `<!doctype html>
 <html lang="fr">
@@ -95,7 +73,7 @@ function generateCrawlerHTML(article: any, slug: string): string {
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <!-- SEO -->
-    <title>${escapeHtml(title)} | Origines Media</title>
+    <title>${escapeHtml(title)} — Origines Media</title>
     <meta name="title" content="${escapeHtml(title)}" />
     <meta name="description" content="${escapeHtml(description)}" />
     <link rel="canonical" href="${url}" />
@@ -124,39 +102,28 @@ function generateCrawlerHTML(article: any, slug: string): string {
     <meta name="theme-color" content="#0A0A0A" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <h1>${escapeHtml(title)}</h1>
+      <p>${escapeHtml(description)}</p>
+    </div>
   </body>
 </html>`
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { slug } = req.query
-  const userAgent = req.headers['user-agent'] || ''
   const slugStr = Array.isArray(slug) ? slug.join('/') : (slug as string)
 
-  // Vérifier si c'est un crawler ou un vrai utilisateur
-  const isCrawlerRequest = isCrawler(userAgent)
-
-  // Pour les vrais utilisateurs, rediriger vers la même URL avec ?_rdr=1
-  // Ce paramètre permet de bypasser l'API et servir le SPA directement
-  if (!isCrawlerRequest) {
-    const redirectUrl = `/article/${slugStr}?_rdr=1`
-    res.setHeader('Cache-Control', 'no-cache')
-    return res.redirect(302, redirectUrl)
-  }
-
-  // Pour les crawlers: générer le HTML avec les meta tags
   try {
     const article = await fetchArticleMeta(slugStr)
-    console.log(`Crawler pre-render for slug "${slugStr}":`, article ? 'found' : 'not found')
-    console.log(`Crawler UA: ${userAgent.substring(0, 80)}`)
+    console.log(`[article] pre-render slug="${slugStr}":`, article ? 'found' : 'not found')
 
     const html = generateCrawlerHTML(article, slugStr)
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
     res.status(200).send(html)
   } catch (error) {
-    console.error('Error in crawler pre-render:', error)
+    console.error('[article] pre-render error:', error)
     const html = generateCrawlerHTML(null, slugStr)
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     res.status(200).send(html)

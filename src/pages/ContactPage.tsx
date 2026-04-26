@@ -147,9 +147,13 @@ const ContactPage: React.FC = () => {
   return (
     <div className={s.page}>
       <SEO
-        title="Contact"
+        title="Contactez-nous — Questions et suggestions"
         description="Contactez l'equipe Origines Media. Une question, une suggestion ou envie de partager votre histoire ? Nous sommes la pour vous ecouter."
         url="/contact"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Contact", url: "/contact" },
+        ]}
       />
       <SiteHeader />
 

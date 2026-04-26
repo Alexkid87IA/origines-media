@@ -610,6 +610,107 @@
   }
 }
 
+/* — Large phones (<=640px) — */
+@media (max-width: 640px) {
+  .header {
+    padding: 28px 0 22px;
+  }
+
+  .headerInner {
+    padding: 0 16px;
+  }
+
+  .kicker {
+    font-size: 10px;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .main {
+    padding: 32px 16px 56px;
+  }
+
+  .formCard {
+    padding: 20px 16px;
+  }
+
+  .formHeader {
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    gap: 10px;
+  }
+
+  .formIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .formTitle {
+    font-size: 16px;
+  }
+
+  .form {
+    gap: 16px;
+  }
+
+  .input {
+    font-size: 14px;
+    padding: 10px 12px 10px 36px;
+  }
+
+  .select {
+    font-size: 14px;
+    padding: 10px 34px 10px 12px;
+  }
+
+  .textarea {
+    font-size: 14px;
+    padding: 10px 12px;
+    min-height: 120px;
+  }
+
+  .label {
+    font-size: 9px;
+  }
+
+  .submitBtn {
+    padding: 12px 24px;
+    font-size: 10px;
+  }
+
+  .sidebar {
+    gap: 10px;
+  }
+
+  .infoCard,
+  .socialCard {
+    padding: 16px;
+  }
+
+  .infoIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .badge {
+    padding: 6px 12px;
+    font-size: 9px;
+  }
+
+  .successCard {
+    padding: 36px 24px;
+  }
+
+  .successTitle {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+}
+
 /* — Small phones (<=480px) — */
 @media (max-width: 480px) {
   .header {

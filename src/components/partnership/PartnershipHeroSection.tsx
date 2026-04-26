@@ -136,10 +136,11 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
           <div className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 transition-all duration-3000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="relative group">
               <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <img 
-                src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png" 
-                alt="Wanted Community" 
+              <img
+                src="https://wanted.community/wp-content/uploads/2019/12/logo-wanted-community-.png"
+                alt="Wanted Community"
                 className="h-12 sm:h-14 lg:h-20 w-auto relative z-10 filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                loading="lazy"
               />
             </div>
             
@@ -147,10 +148,11 @@ const PartnershipHeroSection: React.FC<PartnershipHeroSectionProps> = ({ onGoLiv
             
             <div className="relative group">
               <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-violet-600/20 to-purple-600/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <img 
-                src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png" 
-                alt="Origines Media" 
+              <img
+                src="https://res.cloudinary.com/diqco2njt/image/upload/v1751568726/LOGO_ORIGINES_WHITE_pzbo2m.png"
+                alt="Origines Media"
                 className="h-12 sm:h-14 lg:h-20 w-auto relative z-10 opacity-90 hover:opacity-100 transition-opacity"
+                loading="lazy"
               />
             </div>
           </div>

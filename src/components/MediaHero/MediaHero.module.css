@@ -291,17 +291,16 @@
   overflow: hidden;
   z-index: 1;
 }
-.heroCover::before {
-  content: "";
+.heroCoverImg {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 46%;
   right: 0;
-  background-image: var(--cover-src);
-  background-size: cover;
-  background-position: var(--cover-focus-x) var(--cover-focus-y);
-  background-repeat: no-repeat;
+  width: 54%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--cover-focus-x) var(--cover-focus-y);
   z-index: 0;
 }
 .heroCover::after {
@@ -346,27 +345,103 @@
   .heroGrid { min-height: 420px; }
   .heroTitle { font-size: clamp(32px, 5vw, 56px); }
   .heroDeck { font-size: 16px; }
-  .heroCover::before { left: 50%; }
+  .heroCoverImg { left: 50%; width: 50%; }
   .heroCover::after { left: 50%; }
 }
 
 @media (max-width: 640px) {
-  .hero { padding-top: 40px; }
-  .heroGrid { min-height: 360px; }
-  .heroTitleBlock { max-width: 100%; padding-bottom: 28px; }
-  .heroTitle { font-size: clamp(28px, 7vw, 40px); }
-  .heroDeck { font-size: 15px; max-width: 100%; }
-  .heroCover::before { left: 0; opacity: 0.15; }
-  .heroCover::after { display: none; }
-  .coverCaption { display: none; }
-  .heroRead { padding: 12px 16px; font-size: 10px; }
+  .hero { padding-top: 10px; }
+
+  .watermark { display: none; }
+
+  .chapterMark {
+    margin-bottom: 10px;
+    gap: 8px;
+    font-size: 9px;
+    padding-top: 8px;
+  }
+  .slideNav { gap: 8px; }
+  .slideBtn { width: 24px; height: 24px; }
+  .slideBtn svg { width: 10px; height: 10px; }
+  .slideNum, .slideSlash, .slideTot { font-size: 16px; }
   .slideDots { display: none; }
+
+  .heroGrid {
+    min-height: auto;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .heroCover {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    inset: auto;
+  }
+  .heroCoverImg {
+    left: 0;
+    width: 100%;
+    opacity: 1;
+  }
+  .heroCover::after {
+    display: none;
+  }
+  .coverCaption {
+    font-size: 8px;
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .heroTitleBlock {
+    max-width: 100%;
+    padding: 20px 0 0;
+  }
+
+  .heroKicker {
+    margin-bottom: 12px;
+    font-size: 9px;
+    gap: 8px;
+  }
+  .catTag { padding: 3px 8px; font-size: 8px; }
+
+  .heroTitle {
+    font-size: 24px;
+    line-height: 1.05;
+  }
+  .heroTitle::before {
+    width: 32px;
+    height: 2px;
+    margin-bottom: 10px;
+  }
+
+  .heroDeck {
+    font-size: 14px;
+    margin-top: 10px;
+    max-width: 100%;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .heroFooter {
+    margin-top: 16px;
+    padding-top: 12px;
+    gap: 12px;
+  }
+  .heroByline { font-size: 9px; gap: 8px; }
+  .heroRead {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 16px;
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 480px) {
-  .hero { padding-top: 28px; }
-  .chapterMark { font-size: 10px; gap: 8px; }
-  .heroGrid { min-height: 320px; }
-  .heroTitle { font-size: 26px; }
-  .heroDeck { font-size: 14px; }
+  .heroTitle { font-size: 20px; }
+  .heroDeck { font-size: 13px; -webkit-line-clamp: 2; }
+  .heroRead { padding: 12px 14px; }
+  .heroCover { aspect-ratio: 16 / 10; }
 }

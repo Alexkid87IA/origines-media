@@ -9,6 +9,7 @@ import SEO from "@/components/SEO";
 import EmailCapture from "@/components/EmailCapture";
 import { sanityFetch } from "@/lib/sanity";
 import { typo, estimateReadingTime } from "@/lib/typography";
+import { sanityImg } from "@/lib/sanityImage";
 import { AdPlaceholder } from "@/components/AdSense";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import {
@@ -428,6 +429,7 @@ export default function ArticlePageV2() {
         publishedTime={date}
         section={verticale?.nom}
         jsonLd="article"
+        twitterCreator={authorSocial.twitter ? `@${authorSocial.twitter.replace(/^@/, '')}` : undefined}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
           { name: "Articles", url: "/articles" },
@@ -528,10 +530,11 @@ export default function ArticlePageV2() {
         {imageUrl && (
           <figure className={s.heroFigure}>
             <img
-              src={imageUrl}
+              src={sanityImg(imageUrl, 1200)}
               alt={title}
               className={s.heroImg}
               loading="eager"
+              fetchPriority="high"
             />
             {article.imageCredit && (
               <figcaption className={s.heroCaption}>
@@ -639,7 +642,7 @@ export default function ArticlePageV2() {
                     </span>
                     {relatedArticles[0].imageUrl && (
                       <img
-                        src={relatedArticles[0].imageUrl}
+                        src={sanityImg(relatedArticles[0].imageUrl, 600)}
                         alt={relatedArticles[0].titre || relatedArticles[0].title || ""}
                         className={s.nextReadImg}
                         loading="lazy"
@@ -845,7 +848,7 @@ export default function ArticlePageV2() {
                   >
                     <div className={s.videoThumb}>
                       <img
-                        src={imageUrl || "/placeholder.svg"}
+                        src={sanityImg(imageUrl, 600) || "/placeholder.svg"}
                         alt={`Vidéo : ${title}`}
                         className={s.videoThumbImg}
                       />
@@ -1100,7 +1103,7 @@ export default function ArticlePageV2() {
                       >
                         <div className={s.relCardImgWrap}>
                           <img
-                            src={related.imageUrl || "/placeholder.svg"}
+                            src={sanityImg(related.imageUrl, 400) || "/placeholder.svg"}
                             alt={relTitle}
                             className={s.relCardImg}
                             loading="lazy"

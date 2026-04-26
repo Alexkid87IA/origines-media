@@ -407,63 +407,118 @@
 
 @media (max-width: 640px) {
   .welcome {
-    padding: 28px 0 0;
+    padding: 12px 0 0;
+  }
+
+  .kicker {
+    margin: 0 0 6px;
+    font-size: 9px;
   }
 
   .masthead {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    margin: 0 0 8px;
+  }
+
+  .mastheadWord {
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .social {
+    margin-left: auto;
+    gap: 4px;
   }
 
   .socialLabel { display: none; }
 
-  .mastheadWord {
-    font-size: clamp(48px, 14vw, 72px);
+  .socialIcons { gap: 2px; }
+
+  .socialLink {
+    width: 24px;
+    height: 24px;
+    border: none;
+    opacity: 0.5;
+  }
+
+  .socialLink svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .rule {
+    margin-bottom: 8px;
+  }
+
+  .tagline {
+    font-size: 14px;
+    line-height: 1.35;
+    margin: 0 0 10px;
+    max-width: 100%;
   }
 
   .pillars {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    justify-content: center;
   }
 
-  .pillarWrap {
-    flex: none;
-  }
-
-  .pillar {
-    padding: 12px 16px 16px;
-  }
-
-  .pillarBar {
-    left: 0;
-    top: auto;
-    bottom: 0;
-    width: auto;
-    height: 2px;
-    transform-origin: left;
-    transform: scaleX(0);
-    animation-name: expandLine;
-  }
-
-  .pillarWrap:first-child .pillarBar { display: block; }
-
-  .spectrumLine {
+  .pillars::-webkit-scrollbar {
     display: none;
   }
 
-  .card {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 100%;
-    transform: translateY(-8px);
-    box-shadow: none;
-    border-left: none;
-    border-right: none;
+  .pillarWrap {
+    width: auto;
+    flex: none;
+    flex-shrink: 0;
   }
 
-  .cardOpen {
-    transform: translateY(0);
+  .pillar {
+    padding: 8px 14px 10px;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .pillarDot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .pillarLabel {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  .pillarChevron { display: none; }
+  .pillarBar { display: none; }
+  .spectrumLine { display: none; }
+
+  .card { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  .mastheadWord {
+    font-size: 28px;
+  }
+
+  .tagline {
+    font-size: 13px;
+    margin: 0 0 8px;
+  }
+
+  .kicker {
+    font-size: 8px;
+    margin: 0 0 4px;
+  }
+
+  .pillar {
+    padding: 6px 12px 8px;
   }
 }
 

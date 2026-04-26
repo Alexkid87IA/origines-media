@@ -26,7 +26,7 @@ const MASTERCLASSES = [
     duration: "6 modules · 4h30",
     price: "49 €",
     badge: "Bestseller",
-    image: "/histoires/histoire_emotions_bienetre.png",
+    image: "/histoires/histoire_emotions_bienetre.webp",
     color: "#D64C90",
     students: "2 340",
   },
@@ -37,7 +37,7 @@ const MASTERCLASSES = [
     duration: "8 modules · 5h",
     price: "59 €",
     badge: "Nouveau",
-    image: "/histoires/histoire_parcours_resilience.png",
+    image: "/histoires/histoire_parcours_resilience.webp",
     color: "#7B5CD6",
     students: "890",
   },
@@ -47,7 +47,7 @@ const MASTERCLASSES = [
     author: "Émilie Roux",
     duration: "5 modules · 3h",
     price: "39 €",
-    image: "/histoires/histoire_relations_famille.png",
+    image: "/histoires/histoire_relations_famille.webp",
     color: "#2E94B5",
     students: "1 150",
   },
@@ -130,9 +130,13 @@ export default function GuidesPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Guides &mdash; Masterclass, programmes et kits gratuits"
-        description="Apprenez &agrave; votre rythme. Masterclass vid&eacute;o, programmes structur&eacute;s, ateliers pratiques et kits gratuits pour avancer dans votre vie."
+        title="Guides — Masterclass, programmes et kits gratuits"
+        description="Apprenez à votre rythme. Masterclass vidéo, programmes structurés, ateliers pratiques et kits gratuits pour avancer dans votre vie."
         url="/guides"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Guides", url: "/guides" },
+        ]}
       />
       <SiteHeader />
 

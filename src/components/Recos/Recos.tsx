@@ -1,3 +1,4 @@
+import { sanityImg } from "@/lib/sanityImage";
 import s from "./Recos.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -60,7 +61,7 @@ interface Reco {
 
 const FEATURED: Reco = {
   href: "/recommandations/lettre-a-drancy",
-  img: "/recos/reco_livre.png",
+  img: "/recos/reco_livre.webp",
   category: "Livre",
   categoryColor: "#D64C90",
   title: "Les lettres de Drancy, ",
@@ -74,7 +75,7 @@ const FEATURED: Reco = {
 const SECONDARY: Reco[] = [
   {
     href: "/recommandations/podcast-le-code-a-change",
-    img: "/recos/reco_podcast.png",
+    img: "/recos/reco_podcast.webp",
     category: "Podcast",
     categoryColor: "#2E94B5",
     title: "Quand l'IA écrit ",
@@ -86,7 +87,7 @@ const SECONDARY: Reco[] = [
   },
   {
     href: "/recommandations/film-perfect-days",
-    img: "/recos/reco_film_serie.png",
+    img: "/recos/reco_film_serie.webp",
     category: "Film",
     categoryColor: "#7B5CD6",
     title: "L'éloge de la ",
@@ -98,7 +99,7 @@ const SECONDARY: Reco[] = [
   },
   {
     href: "/recommandations/destination-lofoten",
-    img: "/recos/reco_destination.png",
+    img: "/recos/reco_destination.webp",
     category: "Destination",
     categoryColor: "#2E9B74",
     title: "Là où la mer ",
@@ -183,7 +184,7 @@ export default function Recos({ cmsRecos }: RecosProps) {
         <a href={featuredReco.href} className={s.featLink}>
           <div className={s.featImgWrap}>
             <img
-              src={featuredReco.img}
+              src={sanityImg(featuredReco.img, 600)}
               alt={`${featuredReco.title}${featuredReco.titleEm}`}
               className={s.featImg}
               loading="lazy"
@@ -228,7 +229,7 @@ export default function Recos({ cmsRecos }: RecosProps) {
             <a href={reco.href} className={s.cardLink}>
               <div className={s.cardImgWrap}>
                 <img
-                  src={reco.img}
+                  src={sanityImg(reco.img, 400)}
                   alt={`${reco.title}${reco.titleEm}`}
                   className={s.cardImg}
                   loading="lazy"
