@@ -989,10 +989,16 @@
   gap: 12px;
 }
 
+@media (max-width: 1440px) {
+  .navLink { padding: 8px 10px; }
+  .megaBtn { padding: 8px 12px; }
+  .row { gap: 14px; }
+}
+
 @media (max-width: 1280px) {
   .logo { width: 100px; }
-  .row { gap: 16px; }
-  .navLink { padding: 8px 10px; font-size: 12px; }
+  .row { gap: 12px; }
+  .navLink { padding: 8px 8px; font-size: 12px; }
   .num { margin-right: 5px; }
   .megaBtn { font-size: 12px; padding: 7px 10px; }
   .accountLabel { display: none; }
