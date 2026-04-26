@@ -408,6 +408,7 @@ export default function SiteHeader() {
               </svg>
             </button>
 
+            {/* Mon compte — masqué tant que les routes /compte/* n'existent pas
             <div className={styles.accountWrap}>
               <a href="/compte" className={styles.accountBtn}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -428,6 +429,7 @@ export default function SiteHeader() {
                 <a href="/deconnexion" className={styles.accountLogout}>Se d&eacute;connecter</a>
               </div>
             </div>
+            */}
 
             <button
               className={styles.menuBtn}
