@@ -428,7 +428,7 @@
     scrollbar-width: none;
     gap: 6px;
     margin-bottom: 20px;
-    animation: catsPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+    animation: catsPeek 2.5s cubic-bezier(0.4, 0, 0.2, 1) 0.8s infinite;
   }
   .cats::-webkit-scrollbar { display: none; }
   .cat {
@@ -494,7 +494,8 @@
 
 @keyframes catsPeek {
   0%   { transform: translateX(0); }
-  35%  { transform: translateX(-48px); }
+  15%  { transform: translateX(-48px); }
+  30%  { transform: translateX(0); }
   100% { transform: translateX(0); }
 }
 

@@ -256,7 +256,8 @@
 }
 @keyframes pillsPeek {
   0%   { transform: translateX(0); }
-  35%  { transform: translateX(-48px); }
+  15%  { transform: translateX(-48px); }
+  30%  { transform: translateX(0); }
   100% { transform: translateX(0); }
 }
 
@@ -646,7 +647,7 @@
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom: none;
-    animation: pillsPeek 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+    animation: pillsPeek 2.5s cubic-bezier(0.4, 0, 0.2, 1) 0.8s infinite;
   }
   .pills::-webkit-scrollbar { display: none; }
   .pill {
