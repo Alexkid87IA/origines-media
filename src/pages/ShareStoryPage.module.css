@@ -185,6 +185,27 @@
 
 /* -- Featured video card -- */
 
+.heroMosaic {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--stone100);
+  box-shadow: 8px 8px 0 var(--stone100);
+}
+
+.heroMosaic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.15);
+  transition: filter 0.5s ease, transform 0.5s ease;
+}
+
+.heroMosaic:hover img {
+  filter: grayscale(0);
+  transform: scale(1.02);
+}
+
 .featuredCard {
   display: block;
   text-decoration: none;
@@ -1779,6 +1800,11 @@
     gap: 24px;
   }
 
+  .heroMosaic {
+    box-shadow: 6px 6px 0 var(--stone100);
+    max-height: 280px;
+  }
+
   .hero {
     padding: 36px 20px 28px;
   }
@@ -1956,7 +1982,8 @@
   }
 
   .featuredThumb img,
-  .storyThumb img {
+  .storyThumb img,
+  .heroMosaic img {
     transition: none !important;
   }
 

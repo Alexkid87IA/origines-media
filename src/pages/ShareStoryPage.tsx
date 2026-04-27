@@ -324,7 +324,6 @@ const ShareStoryPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const [featuredVideo, setFeaturedVideo] = useState<SanityVideo | null>(null);
   const [randomVideos, setRandomVideos] = useState<SanityVideo[]>([]);
   const [isLoadingVideos, setIsLoadingVideos] = useState(true);
 
@@ -343,11 +342,6 @@ const ShareStoryPage: React.FC = () => {
         const videos = await sanityFetch(VIDEOS_SECTION_QUERY) as SanityVideo[];
 
         if (videos && videos.length > 0) {
-          const featured = videos.find(v => v.slug === FEATURED_VIDEO_SLUG);
-          if (featured) {
-            setFeaturedVideo(featured);
-          }
-
           const otherVideos = videos.filter(v => v.slug !== FEATURED_VIDEO_SLUG);
           const shuffled = shuffleArray(otherVideos).slice(0, 6);
           setRandomVideos(shuffled);
@@ -439,54 +433,14 @@ const ShareStoryPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right - Featured video card */}
-              <div>
-                {featuredVideo ? (
-                  <Link
-                    to={`/video/${featuredVideo.slug}`}
-                    className={s.featuredCard}
-                  >
-                    <div className={s.featuredThumb}>
-                      <img
-                        src={featuredVideo.imageUrl || '/placeholder.svg'}
-                        alt={featuredVideo.titre}
-                      />
-                      <div className={s.featuredOverlay} />
-
-                      {/* Play button */}
-                      <div className={s.featuredPlay}>
-                        <div className={s.featuredPlayBtn}>
-                          <PlayIcon />
-                        </div>
-                      </div>
-
-                      {/* Duration */}
-                      {featuredVideo.duree && (
-                        <div className={s.featuredDuration}>
-                          {featuredVideo.duree}
-                        </div>
-                      )}
-
-                      {/* Meta */}
-                      <div className={s.featuredMeta}>
-                        {featuredVideo.verticale && (
-                          <div
-                            className={s.featuredBadge}
-                            style={{ backgroundColor: featuredVideo.verticale.couleurDominante || '#8B5CF6' }}
-                          >
-                            <span className={s.featuredBadgeDot} />
-                            {featuredVideo.verticale.nom}
-                          </div>
-                        )}
-                        <h2 className={s.featuredTitle}>
-                          {featuredVideo.titre}
-                        </h2>
-                      </div>
-                    </div>
-                  </Link>
-                ) : (
-                  <div className={s.featuredSkeleton} />
-                )}
+              {/* Right - Mosaic */}
+              <div className={s.heroMosaic}>
+                <img
+                  src="/images/mosaic-origines.webp"
+                  alt="Les visages d'Origines Media"
+                  loading="eager"
+                  decoding="async"
+                />
               </div>
             </div>
           </div>
