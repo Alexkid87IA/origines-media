@@ -478,6 +478,7 @@ export default function EcrireHistoirePage() {
   })();
   const guidedTextareaRef = useRef<HTMLTextAreaElement>(null);
   const aiCallsRef = useRef(new Set<string>());
+  const redirectCountRef = useRef(new Map<string, number>());
 
   // Fetch featured video for hero
   useEffect(() => {
@@ -687,7 +688,7 @@ export default function EcrireHistoirePage() {
 
   const callLya = useCallback(async (currentQ: GuidedQuestion, currentAnswer: string): Promise<"redirect" | "followup" | "skip"> => {
     if (currentAnswer.trim().length < 20) return "skip";
-    if (dynamicQuestions.length >= 18) return "skip";
+    if (dynamicQuestions.length >= 10) return "skip";
 
     const alreadyCalled = aiCallsRef.current.has(currentQ.id);
     aiCallsRef.current.add(currentQ.id);
@@ -719,9 +720,13 @@ export default function EcrireHistoirePage() {
         const data = await res.json();
 
         if (data.redirect && data.message) {
-          setLyaMessage({ type: "redirect", text: data.message });
-          aiCallsRef.current.delete(currentQ.id);
-          return "redirect";
+          const count = (redirectCountRef.current.get(currentQ.id) || 0) + 1;
+          redirectCountRef.current.set(currentQ.id, count);
+          if (count <= 2) {
+            setLyaMessage({ type: "redirect", text: data.message });
+            aiCallsRef.current.delete(currentQ.id);
+            return "redirect";
+          }
         }
 
         if (data.encouragement) {

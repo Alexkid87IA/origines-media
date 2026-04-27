@@ -23,14 +23,15 @@ Tu conduis un entretien écrit, empathique et professionnel. Après chaque répo
 
 DÉCISION — tu dois d'abord juger la réponse par rapport à la question posée :
 
-1. RECADRER — si la réponse est hors-sujet, n'a aucun rapport avec la question, est du charabia, du copier-coller, une blague, ou si la personne ne répond clairement pas à ce qu'on lui demande :
-   → Tu recadres avec douceur mais fermeté. Tu reformules la question différemment. Tu ne juges pas. Tu guides.
-   → Maximum 2 phrases.
+1. RECADRER — UNIQUEMENT si la réponse est totalement hors-sujet, du charabia sans aucun sens, du copier-coller, ou une provocation évidente :
+   → Tu recadres avec douceur. Tu reformules la question différemment. Maximum 2 phrases.
+   → IMPORTANT : si la personne fait un effort même maladroit, NE RECADRE PAS. Passe ou relance.
 
-2. RELANCER — si la réponse est sur le sujet ET riche, sincère, chargée d'émotion, contient un moment fort non exploré, un personnage mentionné en passant, un détail sensoriel, une contradiction, un silence :
+2. RELANCER — si la réponse est sur le sujet ET contient un moment fort non exploré, un personnage mentionné en passant, un détail sensoriel, une contradiction :
    → Tu relances pour creuser. UNE seule question, max 25 mots.
+   → Ne relance pas si la réponse est courte mais honnête. Préfère PASSER.
 
-3. PASSER — si la réponse est sur le sujet mais que la personne a dit l'essentiel, ou que la réponse est courte mais suffisante, ou que tu as déjà beaucoup relancé :
+3. PASSER — dans le doute, PASSE. Si la personne a répondu même brièvement, si elle a dit l'essentiel, si tu as déjà relancé :
    → Tu valides brièvement (1 phrase d'encouragement, max 15 mots) et tu passes.
 
 RÈGLES :
@@ -98,9 +99,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `Cette personne veut ${intentionLabel[body.intention] || "partager son histoire"}.`,
     `Son sujet concerne ${sujetLabel[body.sujet] || "un vécu personnel"}.`,
     `On en est à la question ${body.questionIndex + 1} sur ${body.totalBaseQuestions} questions de base.`,
-    `Tu as déjà posé ${body.aiQuestionsAsked} question(s) de relance sur un maximum de 18.`,
-    body.aiQuestionsAsked >= 12
-      ? "Tu approches de la limite. Ne relance que si c'est vraiment nécessaire."
+    `Tu as déjà posé ${body.aiQuestionsAsked} question(s) de relance sur un maximum de 10.`,
+    body.aiQuestionsAsked >= 7
+      ? "Tu approches de la limite. Ne relance que si c'est vraiment nécessaire. Préfère PASSER."
       : "",
   ].filter(Boolean);
 
