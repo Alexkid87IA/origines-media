@@ -23,7 +23,76 @@ interface VideoRecorderProps {
   onAfterRecord?: (blob: Blob, questionLabel: string) => Promise<AiNextResult>;
 }
 
-type Phase = "permission" | "ready" | "countdown" | "recording" | "review" | "processing";
+type Phase = "permission" | "preflight" | "ready" | "countdown" | "recording" | "review" | "processing";
+
+/* ================================================================
+   PREFLIGHT CHECKLIST
+   ================================================================ */
+
+interface PreflightItem {
+  id: string;
+  question: string;
+  options: { label: string; ok: boolean }[];
+  tip: string;
+}
+
+const PREFLIGHT_CHECKS: PreflightItem[] = [
+  {
+    id: "light",
+    question: "Est-ce que votre visage est bien éclairé ?",
+    options: [
+      { label: "Oui, c'est bon", ok: true },
+      { label: "C'est un peu sombre", ok: false },
+    ],
+    tip: "Placez-vous face à une fenêtre ou une lampe. Évitez les contre-jours (lumière derrière vous).",
+  },
+  {
+    id: "frame",
+    question: "Vous voyez bien votre visage et vos épaules à l'écran ?",
+    options: [
+      { label: "Oui, c'est cadré", ok: true },
+      { label: "Pas vraiment", ok: false },
+    ],
+    tip: "Posez votre téléphone ou ordinateur à hauteur de vos yeux. Laissez un peu d'espace au-dessus de votre tête.",
+  },
+  {
+    id: "sound",
+    question: "Êtes-vous dans un endroit calme ?",
+    options: [
+      { label: "Oui, c'est calme", ok: true },
+      { label: "Il y a du bruit", ok: false },
+    ],
+    tip: "Fermez les fenêtres, éloignez-vous des sources de bruit. Si possible, utilisez des écouteurs avec micro.",
+  },
+  {
+    id: "ready",
+    question: "Vous êtes prêt·e à commencer ?",
+    options: [
+      { label: "C'est parti !", ok: true },
+      { label: "J'ai besoin d'un instant", ok: false },
+    ],
+    tip: "Prenez une grande respiration. Il n'y a pas de bonne ou mauvaise réponse — parlez avec votre cœur.",
+  },
+];
+
+const LYA_PREFLIGHT_MESSAGES: Record<string, { ok: string; notOk: string }> = {
+  light: {
+    ok: "Parfait, la lumière a l'air bonne. On continue.",
+    notOk: "Pas de souci ! Essayez de vous rapprocher d'une source de lumière. Regardez le rendu à l'écran.",
+  },
+  frame: {
+    ok: "Super cadrage. On y est presque.",
+    notOk: "Ajustez la position de votre caméra — idéalement à hauteur de vos yeux, pas trop près, pas trop loin.",
+  },
+  sound: {
+    ok: "Très bien. Le son est important pour la qualité de votre témoignage.",
+    notOk: "Si possible, trouvez un coin plus calme. Sinon, ce n'est pas grave — on fera avec.",
+  },
+  ready: {
+    ok: "Alors allons-y. Je suis là avec vous.",
+    notOk: "Prenez votre temps. Quand vous êtes prêt·e, appuyez sur « C'est parti ».",
+  },
+};
 
 /* ================================================================
    HELPERS
@@ -66,6 +135,9 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   const [error, setError] = useState<string | null>(null);
   const [aiDone, setAiDone] = useState(false);
   const [aiMessage, setAiMessage] = useState<string | null>(null);
+  const [preflightIdx, setPreflightIdx] = useState(0);
+  const [preflightMsg, setPreflightMsg] = useState<string | null>(null);
+  const [preflightAnswered, setPreflightAnswered] = useState(false);
 
   const currentQ = questions[questionIdx];
   const isAiMode = !!onAfterRecord;
@@ -83,7 +155,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-      setPhase("ready");
+      setPhase("preflight");
       setError(null);
     } catch {
       setError("Impossible d'accéder à la caméra. Vérifiez les autorisations de votre navigateur.");
@@ -101,7 +173,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
   // ── Attach stream to video element when phase changes ──
   useEffect(() => {
-    if ((phase === "ready" || phase === "countdown" || phase === "recording") && videoRef.current && streamRef.current) {
+    if ((phase === "preflight" || phase === "ready" || phase === "countdown" || phase === "recording") && videoRef.current && streamRef.current) {
       videoRef.current.srcObject = streamRef.current;
     }
   }, [phase]);
@@ -325,6 +397,106 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           <div className={s.permissionLoader}>
             <div className={s.permissionLoaderDot} />
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Preflight checklist (Lya) ──
+  if (phase === "preflight") {
+    const check = PREFLIGHT_CHECKS[preflightIdx];
+    const isLastCheck = preflightIdx >= PREFLIGHT_CHECKS.length - 1;
+
+    const handlePreflightAnswer = (ok: boolean) => {
+      const msgs = LYA_PREFLIGHT_MESSAGES[check.id];
+      setPreflightMsg(ok ? msgs.ok : msgs.notOk);
+      setPreflightAnswered(true);
+
+      if (ok && isLastCheck) {
+        setTimeout(() => setPhase("ready"), 1200);
+        return;
+      }
+
+      if (ok) {
+        setTimeout(() => {
+          setPreflightIdx((i) => i + 1);
+          setPreflightMsg(null);
+          setPreflightAnswered(false);
+        }, 1200);
+      }
+    };
+
+    return (
+      <div className={s.recorder}>
+        {/* Live camera preview */}
+        <div className={s.viewport}>
+          <video ref={videoRef} className={s.video} autoPlay muted playsInline />
+          <div className={s.preflightOverlay} />
+        </div>
+
+        {/* Lya card */}
+        <div className={s.preflightCard}>
+          <div className={s.processingAvatar}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+          </div>
+          <div className={s.preflightContent}>
+            <p className={s.processingName}>Lya — Préparation</p>
+            <p className={s.preflightQuestion}>{check.question}</p>
+
+            {preflightMsg ? (
+              <p className={s.preflightResponse}>{preflightMsg}</p>
+            ) : (
+              <div className={s.preflightOptions}>
+                {check.options.map((opt) => (
+                  <button
+                    key={opt.label}
+                    className={`${s.preflightOption} ${opt.ok ? s.preflightOptionOk : s.preflightOptionWarn}`}
+                    onClick={() => handlePreflightAnswer(opt.ok)}
+                  >
+                    {opt.ok ? (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                    )}
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {!preflightAnswered && (
+              <p className={s.preflightTip}>{check.tip}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Progress */}
+        <div className={s.preflightProgress}>
+          {PREFLIGHT_CHECKS.map((_, i) => (
+            <div
+              key={i}
+              className={`${s.preflightDot} ${i === preflightIdx ? s.preflightDotActive : ""} ${i < preflightIdx ? s.preflightDotDone : ""}`}
+            />
+          ))}
+          <span className={s.questionNavLabel}>{preflightIdx + 1} / {PREFLIGHT_CHECKS.length}</span>
+        </div>
+
+        <div className={s.controls}>
+          <button className={s.controlBtn} onClick={onCancel}>Annuler</button>
+          <button
+            className={s.controlBtn}
+            onClick={() => setPhase("ready")}
+          >
+            Passer la préparation
+          </button>
         </div>
       </div>
     );
