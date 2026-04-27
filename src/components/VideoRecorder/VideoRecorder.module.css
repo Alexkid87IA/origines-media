@@ -468,6 +468,38 @@
   animation: bubbleIn 0.35s ease;
 }
 
+.preflightThread {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 42px;
+  animation: fadeIn 0.3s ease;
+}
+
+.preflightThreadItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.preflightThreadAnswer {
+  font-family: var(--body);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  align-self: flex-end;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 5px 12px;
+  border-radius: 12px 12px 2px 12px;
+  max-width: 260px;
+}
+
+.preflightThreadResponse {
+  font-family: var(--body);
+  font-size: 12px;
+  color: #C4B5FD;
+  opacity: 0.7;
+}
+
 .preflightBubble {
   display: flex;
   gap: 10px;

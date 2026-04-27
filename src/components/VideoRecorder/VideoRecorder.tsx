@@ -185,6 +185,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   const [preflightIdx, setPreflightIdx] = useState(0);
   const [preflightMsg, setPreflightMsg] = useState<string | null>(null);
   const [preflightAnswered, setPreflightAnswered] = useState(false);
+  const [preflightHistory, setPreflightHistory] = useState<{ question: string; answer: string; response: string }[]>([]);
   const preflightCtxRef = useRef<Record<string, string>>({});
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
 
@@ -459,23 +460,26 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     const check = PREFLIGHT_CHECKS[preflightIdx];
     const isLastCheck = preflightIdx >= PREFLIGHT_CHECKS.length - 1;
 
-    const handlePreflightAnswer = (value: string, ok: boolean) => {
+    const handlePreflightAnswer = (value: string, label: string, ok: boolean) => {
       preflightCtxRef.current[check.id] = value;
       const responses = LYA_PREFLIGHT_RESPONSES[check.id];
-      setPreflightMsg(responses?.[value] || "");
+      const lyaResponse = responses?.[value] || "";
+      setPreflightMsg(lyaResponse);
       setPreflightAnswered(true);
 
       if (ok && isLastCheck) {
+        setPreflightHistory((h) => [...h, { question: check.question, answer: label, response: lyaResponse }]);
         setTimeout(() => setPhase("ready"), 1500);
         return;
       }
 
       if (ok) {
         setTimeout(() => {
+          setPreflightHistory((h) => [...h, { question: check.question, answer: label, response: lyaResponse }]);
           setPreflightIdx((i) => i + 1);
           setPreflightMsg(null);
           setPreflightAnswered(false);
-        }, 1500);
+        }, 1200);
       }
     };
 
@@ -485,36 +489,48 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           <video ref={videoRef} className={s.video} autoPlay muted playsInline />
           <div className={s.preflightOverlay} />
 
-          <div className={s.preflightConversation} key={preflightIdx}>
-            <div className={s.preflightBubble}>
+          <div className={s.preflightConversation}>
+            {/* History — previous exchanges */}
+            {preflightHistory.length > 0 && (
+              <div className={s.preflightThread}>
+                {preflightHistory.slice(-2).map((entry, i) => (
+                  <div key={i} className={s.preflightThreadItem}>
+                    <span className={s.preflightThreadAnswer}>{entry.answer}</span>
+                    <span className={s.preflightThreadResponse}>{entry.response}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Current question */}
+            <div className={s.preflightBubble} key={preflightIdx}>
               {lyaIcon(s.lyaAvatarSmall)}
               <div className={s.preflightBubbleBody}>
-                <p className={s.preflightBubbleName}>Lya</p>
-
                 {check.lyaIntro && !preflightAnswered && (
                   <p className={s.preflightIntro}>{check.lyaIntro}</p>
                 )}
 
                 <p className={s.preflightQuestion}>{check.question}</p>
 
-                {preflightMsg ? (
+                {preflightMsg && (
                   <p className={s.preflightResponse}>{preflightMsg}</p>
-                ) : (
-                  <div className={s.preflightOptions}>
-                    {check.options.map((opt) => (
-                      <button
-                        key={opt.value}
-                        className={`${s.preflightOption} ${opt.ok ? s.preflightOptionOk : s.preflightOptionWarn}`}
-                        onClick={() => handlePreflightAnswer(opt.value, opt.ok)}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
                 )}
 
                 {!preflightAnswered && (
-                  <p className={s.preflightTip}>{check.tip}</p>
+                  <>
+                    <div className={s.preflightOptions}>
+                      {check.options.map((opt) => (
+                        <button
+                          key={opt.value}
+                          className={`${s.preflightOption} ${opt.ok ? s.preflightOptionOk : s.preflightOptionWarn}`}
+                          onClick={() => handlePreflightAnswer(opt.value, opt.label, opt.ok)}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                    <p className={s.preflightTip}>{check.tip}</p>
+                  </>
                 )}
               </div>
             </div>
