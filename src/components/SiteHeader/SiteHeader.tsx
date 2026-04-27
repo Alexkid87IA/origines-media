@@ -57,9 +57,10 @@ const GALAXIE = [
     href: "/media",
     items: [
       { label: "Articles", href: "/articles" },
+      { label: "Comprendre", href: "/comprendre" },
       { label: "Réflexions", href: "/reflexions" },
+      { label: "Actualités", href: "/actu" },
       { label: "Témoignages", href: "/temoignages" },
-      { label: "Portraits", href: "/portraits" },
       { label: "Dossiers", href: "/dossiers" },
       { label: "Newsletter", href: "/newsletter" },
       { label: "Recommandations", href: "/recommandations" },
@@ -145,10 +146,12 @@ const SECONDARY: SecondaryNav[] = [
     ],
     secondaryLabel: "Par type",
     secondaryItems: [
-      { href: "/media", label: "Articles", color: "#7B5CD6" },
-      { href: "/histoires", label: "Histoires", color: "#D64C90" },
+      { href: "/articles", label: "Tous les articles", color: "#7B5CD6" },
+      { href: "/comprendre", label: "Comprendre", color: "#2E94B5" },
+      { href: "/reflexions", label: "Réflexions", color: "#D64C90" },
+      { href: "/actu", label: "Actualités", color: "#E67839" },
+      { href: "/temoignages", label: "Témoignages", color: "#5AA352" },
       { href: "/dossiers", label: "Dossiers", color: "#2E9B74" },
-      { href: "/temoignages", label: "Témoignages", color: "#E67839" },
     ],
   },
   {
