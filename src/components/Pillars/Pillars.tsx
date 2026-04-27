@@ -78,6 +78,19 @@ const PILLARS: Pillar[] = [
     preview: "Coffret nouveau départ",
     previewLabel: "Nouveauté",
   },
+  {
+    id: "story",
+    name: "Origines",
+    subtitle: "Story",
+    shortLabel: "Story",
+    tagline: "Vos histoires, vos voix — les témoignages qui font Origines.",
+    href: "/histoires",
+    stats: [{ label: "Histoires", value: "50+" }],
+    accent: "#0284C7",
+    mesh: { a: "#7DD3FC", b: "#082F49", c: "#38BDF8", d: "#0EA5E9" },
+    preview: "Chaque histoire mérite d'être entendue.",
+    previewLabel: "Témoignage",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -146,11 +159,23 @@ function BoutiqueOverlay() {
   );
 }
 
+function StoryOverlay() {
+  return (
+    <div className={s.personality} aria-hidden="true">
+      <div className={s.storyQuotes}>
+        <span className={s.storyQuoteL}>&ldquo;</span>
+        <span className={s.storyQuoteR}>&rdquo;</span>
+      </div>
+    </div>
+  );
+}
+
 const OVERLAYS: Record<string, () => JSX.Element> = {
   media: MediaOverlay,
   prod: ProdOverlay,
   guides: GuidesOverlay,
   boutique: BoutiqueOverlay,
+  story: StoryOverlay,
 };
 
 /* ------------------------------------------------------------------ */
@@ -260,7 +285,7 @@ export default function Pillars() {
             Choisissez votre entr&eacute;e
           </span>
           <h2 id="pillars-title" className={s.sectionTitle}>
-            Quatre mani&egrave;res <em>d&rsquo;explorer.</em>
+            Cinq mani&egrave;res <em>d&rsquo;explorer.</em>
           </h2>
           <p className={s.sectionDeck}>
             Lire, regarder, apprendre ou se faire plaisir.

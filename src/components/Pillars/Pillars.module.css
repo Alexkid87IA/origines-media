@@ -413,6 +413,40 @@
   50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.2; }
 }
 
+/* ── Story: quote marks ── */
+.storyQuotes {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.storyQuoteL,
+.storyQuoteR {
+  font-family: var(--serif);
+  font-size: 180px;
+  line-height: 1;
+  color: rgba(247, 245, 240, 0.04);
+  user-select: none;
+}
+.storyQuoteL {
+  position: absolute;
+  top: 12%;
+  left: 10%;
+  animation: quoteFloat 5s ease-in-out infinite;
+}
+.storyQuoteR {
+  position: absolute;
+  bottom: 12%;
+  right: 10%;
+  animation: quoteFloat 5s ease-in-out infinite 2.5s;
+}
+
+@keyframes quoteFloat {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(-8px); opacity: 1; }
+}
+
 /* ══════════════════════════════════════════════════════════════
    Animated mesh background
    ══════════════════════════════════════════════════════════════ */
