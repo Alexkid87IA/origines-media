@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
@@ -82,11 +82,47 @@ const PARTICIPATE = [
    PAGE
    ================================================================ */
 
+function useReveal() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { el.classList.add(s.visible); obs.disconnect(); } },
+      { threshold: 0.12 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
+
 export default function EnsemblePage() {
+  const { hash } = useLocation();
   const [votedQuestion, setVotedQuestion] = useState<number | null>(null);
   const [votedSondage, setVotedSondage] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!hash) return;
+    const id = hash.replace("#", "");
+    const t = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => clearTimeout(t);
+  }, [hash]);
+
   const questionResults = [34, 28, 22, 16];
+
+  const refHistoires = useReveal();
+  const refRecos = useReveal();
+  const refLettre = useReveal();
+  const refQuestion = useReveal();
+  const refSondages = useReveal();
+  const refCalendrier = useReveal();
+  const refParticipate = useReveal();
+  const refVerbatim1 = useReveal();
+  const refVerbatim2 = useReveal();
 
   return (
     <div className={s.page}>
@@ -181,7 +217,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ HISTOIRES ═══ */}
-        <section id="histoires" className={s.sectionPaper}>
+        <section id="histoires" ref={refHistoires} className={`${s.sectionPaper} ${s.reveal}`}>
           <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
@@ -202,11 +238,12 @@ export default function EnsemblePage() {
             </header>
             <div className={s.histoiresGrid}>
               {HISTOIRES.map((h, i) => (
-                <Link key={i} to="/histoires" className={s.histoireCard}>
+                <Link key={i} to="/histoires" className={s.histoireCard} style={{ animationDelay: `${0.15 * i}s` }}>
                   <img src={h.image} alt={h.title} loading="lazy" className={s.histoireImg} />
                   <span className={s.histoireOverlay} />
                   <span className={s.histoireBadge}>{h.cat}</span>
                   <div className={s.histoireContent}>
+                    <span className={s.histoireRule} aria-hidden="true" />
                     <h3 className={s.histoireTitle}>{typo(h.title)}</h3>
                     <div className={s.histoireMeta}>
                       <span>Par <strong>{h.author}</strong></span>
@@ -221,7 +258,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ VERBATIM #1 ═══ */}
-        <section className={s.verbatim}>
+        <section ref={refVerbatim1} className={`${s.verbatim} ${s.reveal}`}>
           <div className="v2-container">
             <div className={s.verbatimInner}>
               <span className={s.verbatimMark} aria-hidden="true">&ldquo;</span>
@@ -236,7 +273,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ RECOMMANDATIONS ═══ */}
-        <section id="recommandations" className={s.sectionGray}>
+        <section id="recommandations" ref={refRecos} className={`${s.sectionGray} ${s.reveal}`}>
           <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
@@ -257,14 +294,19 @@ export default function EnsemblePage() {
             </header>
             <div className={s.recosGrid}>
               {RECOS.map((r, i) => (
-                <Link key={i} to="/recommandations" className={s.recoCard}>
+                <Link key={i} to="/recommandations" className={s.recoCard} style={{ animationDelay: `${0.1 * i}s` }}>
                   <div className={s.recoImgWrap}>
                     <img src={r.image} alt={r.title} loading="lazy" className={s.recoImg} />
+                    <span className={s.recoOverlay} />
                     <span className={s.recoTypeBadge} style={{ background: r.color }}>{r.type}</span>
                   </div>
                   <div className={s.recoBody}>
                     <h3 className={s.recoTitle}>{typo(r.title)}</h3>
                     <span className={s.recoAuthor}>{r.author}</span>
+                    <span className={s.recoCta}>
+                      D&eacute;couvrir
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                    </span>
                   </div>
                 </Link>
               ))}
@@ -273,7 +315,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ LA LETTRE DU DIMANCHE ═══ */}
-        <section id="lettre" className={s.lettre}>
+        <section id="lettre" ref={refLettre} className={`${s.lettre} ${s.reveal}`}>
           <div className="v2-container">
             <div className={s.chapterMarkLight}>
               <span className={s.cNum}>Chaque dimanche</span>
@@ -316,7 +358,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ QUESTION DE LA SEMAINE ═══ */}
-        <section id="question" className={s.questionSection}>
+        <section id="question" ref={refQuestion} className={`${s.questionSection} ${s.reveal}`}>
           <div className="v2-container">
             <span className={s.questionKicker}>
               <span className={s.questionKickerDot} />
@@ -358,7 +400,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ VERBATIM #2 ═══ */}
-        <section className={s.verbatim2}>
+        <section ref={refVerbatim2} className={`${s.verbatim2} ${s.reveal}`}>
           <div className="v2-container">
             <div className={s.verbatimInner}>
               <span className={s.verbatimMark} aria-hidden="true">&ldquo;</span>
@@ -372,7 +414,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ SONDAGES ═══ */}
-        <section id="sondages" className={s.sectionPaper}>
+        <section id="sondages" ref={refSondages} className={`${s.sectionPaper} ${s.reveal}`}>
           <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
@@ -414,7 +456,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ CALENDRIER ═══ */}
-        <section id="calendrier" className={s.sectionGray}>
+        <section id="calendrier" ref={refCalendrier} className={`${s.sectionGray} ${s.reveal}`}>
           <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
@@ -447,7 +489,7 @@ export default function EnsemblePage() {
         </section>
 
         {/* ═══ PARTICIPEZ ═══ */}
-        <section className={s.sectionPaper}>
+        <section id="participez" ref={refParticipate} className={`${s.sectionPaper} ${s.reveal}`}>
           <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>

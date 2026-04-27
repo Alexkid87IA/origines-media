@@ -334,10 +334,12 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), filter 0.7s ease;
+  filter: brightness(1);
 }
 .histoireCard:hover .histoireImg {
-  transform: scale(1.05);
+  transform: scale(1.06);
+  filter: brightness(0.9);
 }
 
 .histoireOverlay {
@@ -345,16 +347,22 @@
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(10, 10, 10, 0.85) 0%,
-    rgba(10, 10, 10, 0.4) 35%,
-    rgba(10, 10, 10, 0.05) 65%,
-    transparent 100%
+    rgba(10, 10, 10, 0.92) 0%,
+    rgba(10, 10, 10, 0.6) 30%,
+    rgba(10, 10, 10, 0.15) 60%,
+    rgba(10, 10, 10, 0.08) 100%
   );
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: background 0.4s ease;
 }
 .histoireCard:hover .histoireOverlay {
-  opacity: 0.9;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.95) 0%,
+    rgba(10, 10, 10, 0.7) 30%,
+    rgba(10, 10, 10, 0.2) 60%,
+    rgba(10, 10, 10, 0.12) 100%
+  );
 }
 
 .histoireBadge {
@@ -362,8 +370,9 @@
   top: 16px;
   left: 16px;
   padding: 5px 12px;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
@@ -378,8 +387,23 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 28px 24px;
+  padding: 32px 28px;
   z-index: 2;
+}
+
+.histoireRule {
+  display: block;
+  width: 36px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  margin-bottom: 16px;
+  transform-origin: left;
+  transform: scaleX(0.6);
+  transition: transform 0.4s ease, background 0.4s ease;
+}
+.histoireCard:hover .histoireRule {
+  transform: scaleX(1);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .histoireTitle {
@@ -389,14 +413,14 @@
   line-height: 1.2;
   letter-spacing: -0.02em;
   color: #fff;
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   transition: text-decoration-color 0.3s ease;
 }
 .histoireCard:hover .histoireTitle {
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  text-decoration-color: rgba(255, 255, 255, 0.6);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(255, 255, 255, 0.5);
 }
 
 .histoireMeta {
@@ -407,7 +431,7 @@
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.6);
 }
 .histoireMeta strong {
   font-weight: 600;
@@ -490,13 +514,16 @@
   background: var(--paper);
   border-right: 1px solid rgba(10, 10, 10, 0.1);
   border-bottom: 1px solid rgba(10, 10, 10, 0.1);
-  transition: background 0.2s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
-.recoCard:hover { background: rgba(10, 10, 10, 0.015); }
+.recoCard:hover {
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(10, 10, 10, 0.08);
+}
 
 .recoImgWrap {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   background: rgba(10, 10, 10, 0.04);
 }
@@ -505,41 +532,64 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s ease;
 }
-.recoCard:hover .recoImg { transform: scale(1.04); }
+.recoCard:hover .recoImg {
+  transform: scale(1.06);
+  filter: brightness(0.92);
+}
+
+.recoOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.3) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.recoCard:hover .recoOverlay { opacity: 1; }
 
 .recoTypeBadge {
   position: absolute;
   top: 12px;
   left: 12px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #fff;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .recoBody {
   display: flex;
   flex-direction: column;
-  padding: 18px 20px 22px;
+  padding: 20px 22px 24px;
+  flex: 1;
 }
 .recoTitle {
   font-family: var(--display);
   font-weight: 800;
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.2;
   letter-spacing: -0.02em;
   color: var(--ink);
   margin: 0 0 6px;
+  transition: text-decoration-color 0.3s ease;
 }
 .recoCard:hover .recoTitle {
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(10, 10, 10, 0.3);
 }
 .recoAuthor {
   font-family: var(--mono);
@@ -547,6 +597,33 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--stone400);
+}
+
+.recoCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  transition: color 0.3s ease, gap 0.3s ease;
+}
+.recoCta svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.3s ease;
+}
+.recoCard:hover .recoCta {
+  color: var(--ink);
+  gap: 12px;
+}
+.recoCard:hover .recoCta svg {
+  transform: translateX(3px);
 }
 
 /* =====================================================================
@@ -1234,8 +1311,9 @@
   .verbatimQuote { font-size: 19px; }
 
   .recosGrid { grid-template-columns: repeat(2, 1fr); }
+  .recoImgWrap { aspect-ratio: 1; }
   .recoTitle { font-size: 15px; }
-  .recoBody { padding: 14px 16px 18px; }
+  .recoBody { padding: 16px 18px 20px; }
 
   .lettre { padding: 48px 0 56px; }
   .lettreDate { display: none; }
@@ -1269,7 +1347,7 @@
   .histoireTitle { font-size: 17px; }
 
   .recosGrid { grid-template-columns: 1fr; }
-  .recoImgWrap { aspect-ratio: 4 / 3; }
+  .recoImgWrap { aspect-ratio: 16 / 10; }
 
   .sectionTitle { font-size: clamp(22px, 6vw, 30px); }
   .lettreDeck { font-size: 14px; }
@@ -1300,6 +1378,29 @@
 }
 
 /* =====================================================================
+   REVEAL ANIMATION SYSTEM
+   ===================================================================== */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.visible .histoireCard {
+  opacity: 0;
+  animation: cardUp 0.6s ease forwards;
+}
+.visible .recoCard {
+  opacity: 0;
+  animation: cardUp 0.5s ease forwards;
+}
+
+/* =====================================================================
    ANIMATIONS
    ===================================================================== */
 
@@ -1310,7 +1411,27 @@
   100% { transform: translateX(0); }
 }
 
+@keyframes cardUp {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none !important;
+  }
+  .visible .histoireCard,
+  .visible .recoCard {
+    opacity: 1;
+    animation: none !important;
+  }
   .histoireImg,
   .recoImg,
   .lettreBtn svg,
