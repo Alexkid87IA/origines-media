@@ -6,6 +6,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { Link } from "react-router-dom";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./AboutPage.module.css";
 
 /* ── Data ── */
@@ -178,6 +179,12 @@ export default function AboutPage() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "À propos", url: "/a-propos" },
+          ]} />
+        </div>
         {/* ── Hero header ── */}
         <header className={s.hero}>
           <div className={s.inner}>

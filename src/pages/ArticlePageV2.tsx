@@ -31,6 +31,7 @@ import {
   RELATED_ARTICLES_QUERY,
   POPULAR_ARTICLES_QUERY,
 } from "@/lib/queries";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./ArticlePageV2.module.css";
 
 const SOUSTOPIC_LABELS: Record<string, string> = {
@@ -454,6 +455,21 @@ export default function ArticlePageV2() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Articles", url: "/articles" },
+            ...(verticale?.nom
+              ? [
+                  {
+                    name: verticale.nom,
+                    url: `/articles?verticale=${(verticale as any).slug?.current || verticale.nom.toLowerCase()}`,
+                  },
+                ]
+              : []),
+            { name: title, url: `/article/${slug}` },
+          ]} />
+        </div>
         {/* ═══ Header — centered editorial ═══ */}
         <header className={s.header}>
           <div className={s.headerInner}>

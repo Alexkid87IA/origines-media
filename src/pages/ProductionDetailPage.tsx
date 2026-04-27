@@ -18,6 +18,7 @@ import { AdPlaceholder } from "@/components/AdSense";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import { shareButtons } from "@/components/article/SocialIcons";
 import type { Heading } from "@/components/article/types";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./ProductionDetailPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -616,6 +617,24 @@ export default function ProductionDetailPage() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Bibliothèque", url: "/bibliotheque" },
+            ...(production.verticale?.nom
+              ? [
+                  {
+                    name: production.verticale.nom,
+                    url: `/univers/${production.verticale.slug?.current || production.verticale.nom.toLowerCase()}`,
+                  },
+                ]
+              : []),
+            {
+              name: production.titre,
+              url: `/article/${production.slug.current}`,
+            },
+          ]} />
+        </div>
         {/* ═══ Hero — Split layout ═══ */}
         <div className={s.hero}>
           {/* Floating nav */}

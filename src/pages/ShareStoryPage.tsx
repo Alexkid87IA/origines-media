@@ -11,6 +11,7 @@ import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import { sanityFetch } from '../lib/sanity';
 import { VIDEOS_SECTION_QUERY } from '../lib/queries';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from './ShareStoryPage.module.css';
 
 // ============ TYPES ============
@@ -387,6 +388,12 @@ const ShareStoryPage: React.FC = () => {
       <SiteHeader />
 
       <main className={s.page}>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Racontez votre histoire", url: "/ecrire-mon-histoire" },
+          ]} />
+        </div>
 
         {/* ============ 1. HERO ============ */}
         <section className={s.hero}>

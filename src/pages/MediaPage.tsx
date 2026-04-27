@@ -19,6 +19,7 @@ import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { MEDIA_HERO_SLIDES_QUERY, V2_FEED_QUERY, V2_RECOS_QUERY } from "@/lib/queries";
 import { UNIVERS_MAP, type UniversId, verticaleToUnivers, getUniversColor, getUniversDark } from "@/data/univers";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 interface SanityFeedArticle {
   _id: string;
@@ -234,6 +235,10 @@ export default function MediaPage() {
       <main id="main" role="main">
         <h1 className="sr-only">Média — Articles, récits et témoignages</h1>
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Media", url: "/media" },
+          ]} />
           <MediaHero cmsSlides={cmsSlides} />
           <Interlude2 />
           <Feed cmsItems={cmsFeed} />

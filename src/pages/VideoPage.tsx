@@ -19,6 +19,7 @@ import type {
   PopularArticle,
   RelatedArticle,
 } from "@/components/article/types";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./VideoPage.module.css";
 
 /* ── Sanity queries ── */
@@ -372,6 +373,14 @@ export default function VideoPage() {
 
       <div className={s.progressBar} style={{ width: `${scrollProgress}%` }} />
       <SiteHeader />
+
+      <div className="v2-container">
+        <Breadcrumb items={[
+          { name: "Accueil", url: "/" },
+          { name: "Vidéos", url: "/videos" },
+          { name: title, url: `/video/${slug}` },
+        ]} />
+      </div>
 
       {/* YouTube hero */}
       {hasYT && (

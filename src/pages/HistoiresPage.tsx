@@ -19,6 +19,7 @@ import {
   TagCategory,
   getTagCategory,
 } from "../lib/tagCategories";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./HistoiresPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -705,6 +706,10 @@ export default function HistoiresPage() {
 
       <main id="main" role="main">
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Histoires", url: "/histoires" },
+          ]} />
           <section className={s.page}>
 
             {/* ── Chapter mark ── */}
@@ -997,10 +1002,11 @@ export default function HistoiresPage() {
 
                 {/* Sidebar CTA */}
                 <div className={s.sidebarCta}>
+                  <IconQuote className={s.sidebarCtaDecor} />
                   <div className={s.sidebarCtaHead}>
                     <IconPen className={s.sidebarCtaIcon} />
                     <h4 className={s.sidebarCtaTitle}>
-                      Vous avez une histoire&nbsp;?
+                      Votre histoire m&eacute;rite d&rsquo;&ecirc;tre racont&eacute;e
                     </h4>
                   </div>
                   <p className={s.sidebarCtaText}>
@@ -1009,7 +1015,8 @@ export default function HistoiresPage() {
                     )}
                   </p>
                   <Link to="/ecrire-mon-histoire" className={s.sidebarCtaLink}>
-                    Racontez la v&ocirc;tre
+                    <IconPen />
+                    Raconter mon histoire
                     <IconArrowRight />
                   </Link>
                 </div>
@@ -1114,10 +1121,11 @@ export default function HistoiresPage() {
 
                 {/* Mobile CTA */}
                 <div className={s.mobileCta}>
+                  <IconQuote className={s.sidebarCtaDecor} />
                   <div className={s.sidebarCtaHead}>
                     <IconPen className={s.sidebarCtaIcon} />
                     <h4 className={s.sidebarCtaTitle}>
-                      Vous avez une histoire&nbsp;?
+                      Votre histoire m&eacute;rite d&rsquo;&ecirc;tre racont&eacute;e
                     </h4>
                   </div>
                   <p className={s.sidebarCtaText}>
@@ -1126,7 +1134,8 @@ export default function HistoiresPage() {
                     )}
                   </p>
                   <Link to="/ecrire-mon-histoire" className={s.sidebarCtaLink}>
-                    Racontez la v&ocirc;tre
+                    <IconPen />
+                    Raconter mon histoire
                     <IconArrowRight />
                   </Link>
                 </div>

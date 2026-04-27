@@ -11,6 +11,7 @@ import { sanityFetch } from "../lib/sanity";
 import { EXPLORER_RECOS_QUERY } from "../lib/queries";
 import { typo } from "../lib/typography";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./RecommandationsPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -455,6 +456,10 @@ export default function RecommandationsPage() {
 
       <main id="main" role="main">
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Recommandations", url: "/recommandations" },
+          ]} />
           <section className={s.page}>
             {/* ── Chapter mark ── */}
             <div className={`${s.chapterMark} mono`}>

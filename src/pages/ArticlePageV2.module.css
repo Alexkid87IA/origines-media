@@ -777,19 +777,35 @@
 /* — CTA widget — */
 
 .ctaWidget {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px;
-  border: 1px solid var(--stone100);
-  background: var(--pure, #fff);
+  padding: 20px 16px 16px;
+  border: none;
+  background: #0A0A0A;
   text-decoration: none;
-  color: inherit;
-  transition: border-color 0.2s ease;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(214, 76, 144, 0.15), 0 2px 8px rgba(123, 92, 214, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ctaWidget::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #D64C90, #7B5CD6, #E67839, #D64C90);
+  background-size: 200% 100%;
+  animation: ctaShift 4s ease infinite;
 }
 
 .ctaWidget:hover {
-  border-color: var(--ink);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(214, 76, 144, 0.25), 0 4px 12px rgba(123, 92, 214, 0.2);
 }
 
 .ctaWidgetIcon {
@@ -798,14 +814,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--stone50);
+  background: rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
-  transition: background 0.2s ease;
+  color: rgba(255, 255, 255, 0.7);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .ctaWidget:hover .ctaWidgetIcon {
-  background: var(--ink);
-  color: var(--paper);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 .ctaWidgetIcon svg {
@@ -823,7 +840,7 @@
   font-weight: 800;
   font-size: 13px;
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: #fff;
   margin: 0;
 }
 
@@ -832,21 +849,27 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--stone400);
+  color: rgba(255, 255, 255, 0.45);
   margin: 2px 0 0;
 }
 
 .ctaWidgetArrow {
   width: 14px;
   height: 14px;
-  color: var(--stone400);
+  color: rgba(255, 255, 255, 0.45);
   flex-shrink: 0;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .ctaWidget:hover .ctaWidgetArrow {
   transform: translateX(3px);
-  color: var(--ink);
+  color: #fff;
+}
+
+@keyframes ctaShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* — Video widget — */

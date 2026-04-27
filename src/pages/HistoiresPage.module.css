@@ -515,11 +515,57 @@
 
 /* — Sidebar CTA — */
 
+@keyframes ctaShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes ctaGlow {
+  0%   { box-shadow: 0 0 12px rgba(214, 76, 144, 0.25), 0 0 24px rgba(123, 92, 214, 0.12); }
+  50%  { box-shadow: 0 0 20px rgba(214, 76, 144, 0.4), 0 0 40px rgba(123, 92, 214, 0.2); }
+  100% { box-shadow: 0 0 12px rgba(214, 76, 144, 0.25), 0 0 24px rgba(123, 92, 214, 0.12); }
+}
+
+@keyframes ctaShine {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(300%) skewX(-15deg); }
+}
+
+@keyframes ctaBarShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .sidebarCta {
   margin-top: 28px;
-  padding: 20px;
-  border: 1px solid var(--stone100);
-  background: var(--pure);
+  padding: 28px;
+  background: #0A0A0A;
+  position: relative;
+  overflow: hidden;
+  animation: ctaGlow 4s ease-in-out infinite;
+}
+
+.sidebarCta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #D64C90, #7B5CD6, #E67839, #D64C90);
+  background-size: 250% 100%;
+  animation: ctaBarShift 4s ease infinite;
+}
+
+.sidebarCtaDecor {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  color: rgba(123, 92, 214, 0.18);
 }
 
 .sidebarCtaHead {
@@ -530,52 +576,78 @@
 }
 
 .sidebarCtaIcon {
-  width: 16px;
-  height: 16px;
-  color: var(--stone500);
+  width: 24px;
+  height: 24px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .sidebarCtaTitle {
   font-family: var(--display);
   font-weight: 800;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: #fff;
   margin: 0;
 }
 
 .sidebarCtaText {
   font-family: var(--body);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.55;
-  color: var(--stone500);
-  margin: 0 0 14px;
+  color: #a8a8a8;
+  margin: 0 0 18px;
 }
 
 .sidebarCtaLink {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 8px 18px;
+  width: 100%;
+  padding: 14px 24px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--pure);
-  background: linear-gradient(135deg, #D64C90, #7B5CD6);
+  color: #fff;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6, #E67839, #2E94B5);
+  background-size: 300% 100%;
+  animation: ctaShift 6s ease infinite;
   border: none;
   text-decoration: none;
-  transition: opacity 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.sidebarCtaLink::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  animation: ctaShine 4s ease-in-out infinite;
+  animation-delay: 1.5s;
+  pointer-events: none;
 }
 
 .sidebarCtaLink:hover {
-  opacity: 0.88;
+  box-shadow: 0 0 18px rgba(214, 76, 144, 0.45), 0 0 36px rgba(123, 92, 214, 0.25);
+  transform: translateY(-1px);
 }
 
 .sidebarCtaLink svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   transition: transform 0.25s ease;
 }
 
@@ -1190,9 +1262,23 @@
 .mobileCta {
   display: none;
   margin-top: 40px;
-  padding: 20px;
-  border: 1px solid var(--stone100);
-  background: var(--pure);
+  padding: 28px;
+  background: #0A0A0A;
+  position: relative;
+  overflow: hidden;
+  animation: ctaGlow 4s ease-in-out infinite;
+}
+
+.mobileCta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #D64C90, #7B5CD6, #E67839, #D64C90);
+  background-size: 250% 100%;
+  animation: ctaBarShift 4s ease infinite;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1276,8 +1362,18 @@
   .featuredCta,
   .featuredCta svg,
   .sidebarCtaLink,
-  .sidebarCtaLink svg {
+  .sidebarCtaLink svg,
+  .sidebarCtaLink::after {
     transition: none !important;
+  }
+
+  .sidebarCta,
+  .sidebarCta::before,
+  .sidebarCtaLink,
+  .sidebarCtaLink::after,
+  .mobileCta,
+  .mobileCta::before {
+    animation: none !important;
   }
 
   .skelPulse {

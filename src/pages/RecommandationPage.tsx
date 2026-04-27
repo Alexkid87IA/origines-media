@@ -12,6 +12,7 @@ import { sanityFetch } from "@/lib/sanity";
 import { RECOMMENDATION_BY_SLUG_QUERY, RELATED_RECOS_QUERY } from "@/lib/queries";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import SaveButton from "@/components/SaveButton/SaveButton";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./RecommandationPage.module.css";
 
 // ============ INLINE SVG ICONS ============
@@ -558,6 +559,13 @@ export default function RecommandationPage() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Recommandations", url: "/recommandations" },
+            { name: reco.titre, url: `/recommandations/${reco.slug}` },
+          ]} />
+        </div>
         {/* Back button */}
         <div className={s.backWrap}>
           <button onClick={() => navigate(-1)} className={s.backBtn}>

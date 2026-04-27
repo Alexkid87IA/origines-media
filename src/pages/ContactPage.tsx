@@ -6,6 +6,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./ContactPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -156,6 +157,13 @@ const ContactPage: React.FC = () => {
         ]}
       />
       <SiteHeader />
+
+      <div className="v2-container">
+        <Breadcrumb items={[
+          { name: "Accueil", url: "/" },
+          { name: "Contact", url: "/contact" },
+        ]} />
+      </div>
 
       {/* ── Page header ── */}
       <header className={s.header}>

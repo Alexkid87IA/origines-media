@@ -7,6 +7,7 @@ import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
 import EmailCapture from '../components/EmailCapture';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from './NewsletterPage.module.css';
 
 /* ── Inline SVG icons ── */
@@ -147,6 +148,12 @@ const NewsletterPage: React.FC = () => {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Newsletter", url: "/newsletter" },
+          ]} />
+        </div>
         {/* ── Page header ── */}
         <section className={s.header}>
           <div className={s.container}>

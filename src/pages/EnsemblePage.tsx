@@ -5,6 +5,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { typo } from "../lib/typography";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./EnsemblePage.module.css";
 
 /* ================================================================
@@ -103,6 +104,10 @@ export default function EnsemblePage() {
 
       <main>
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Ensemble", url: "/ensemble" },
+          ]} />
           {/* ═══ HERO ═══ */}
           <section className={s.hero}>
             <div className={`${s.chapterMark} mono`}>

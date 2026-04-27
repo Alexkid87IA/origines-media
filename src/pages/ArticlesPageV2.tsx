@@ -8,6 +8,7 @@ import { sanityFetch } from "@/lib/sanity";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./ArticlesPageV2.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -320,6 +321,10 @@ export default function ArticlesPageV2() {
       <SiteHeader />
       <main id="main" role="main">
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Articles", url: "/articles" },
+          ]} />
           <section className={s.page}>
             <div className={`${s.chapterMark} mono`}>
               <span className={s.cNum}>Biblioth&egrave;que</span>

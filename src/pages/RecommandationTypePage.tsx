@@ -6,6 +6,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./RecommandationTypePage.module.css";
 
 interface Recommendation {
@@ -232,18 +233,16 @@ export default function RecommandationTypePage() {
 
       <main id="main" role="main">
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Recommandations", url: "/recommandations" },
+            { name: typeConfig.label, url: `/recommandations/${typeId}` },
+          ]} />
           {/* Hero */}
           <header
             className={s.hero}
             style={{ "--type-color": color } as React.CSSProperties}
           >
-            <nav className={s.breadcrumb} aria-label="Fil d'Ariane">
-              <Link to="/recommandations" className={s.breadcrumbLink}>
-                Recommandations
-              </Link>
-              <span className={s.breadcrumbSep}>/</span>
-              <span className={s.breadcrumbCurrent}>{typeConfig.label}</span>
-            </nav>
 
             <div className={s.heroContent}>
               <span className={s.heroKicker}>

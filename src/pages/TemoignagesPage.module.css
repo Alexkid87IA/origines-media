@@ -570,16 +570,23 @@
   align-items: center;
   gap: 10px;
   padding: 14px 28px;
-  background: var(--paper);
-  color: var(--ink);
+  background: linear-gradient(90deg, #D64C90, #7B5CD6, #E67839, #D64C90);
+  background-size: 200% 100%;
+  animation: ctaShift 4s ease infinite;
+  color: #fff;
   font-family: var(--display);
   font-weight: 700;
   font-size: 14px;
   text-decoration: none;
-  transition: opacity 0.25s ease;
+  border: none;
+  box-shadow: 0 4px 24px rgba(214, 76, 144, 0.25), 0 2px 8px rgba(123, 92, 214, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.calloutBtn:hover { opacity: 0.85; }
+.calloutBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(214, 76, 144, 0.35), 0 4px 12px rgba(123, 92, 214, 0.25);
+}
 
 .calloutBtn svg {
   width: 14px;
@@ -588,6 +595,12 @@
 }
 
 .calloutBtn:hover svg { transform: translateX(4px); }
+
+@keyframes ctaShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
 .calloutCount {
   text-align: center;

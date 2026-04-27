@@ -8,6 +8,7 @@ import { typo, estimateReadingTimeFromText } from "../lib/typography";
 import { sanityFetch } from "@/lib/sanity";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { TAG_CATEGORIES, CATEGORY_ORDER, getTagCategory, countStoriesByCategory, filterStoriesByCategory } from "@/lib/tagCategories";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./TemoignagesPage.module.css";
 
 /* ================================================================
@@ -172,6 +173,10 @@ export default function TemoignagesPage() {
 
       <main>
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Témoignages", url: "/temoignages" },
+          ]} />
           {/* ═══ HERO ═══ */}
           <section className={s.hero}>
             <div className={`${s.chapterMark} mono`}>

@@ -7,6 +7,7 @@ import SiteHeader from '@/components/SiteHeader/SiteHeader';
 import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from './SeriesDetailPage.module.css';
 
 /* ── Types ── */
@@ -239,6 +240,13 @@ export default function SeriesDetailPage() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: 'Accueil', url: '/' },
+            { name: 'Séries', url: '/series' },
+            { name: serie.titre, url: `/series/${serie.slug}` },
+          ]} />
+        </div>
         {/* ══ Hero — cinematic ══ */}
         <section className={s.hero}>
           {/* Background image */}

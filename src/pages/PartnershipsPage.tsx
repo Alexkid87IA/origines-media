@@ -7,6 +7,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./PartnershipsPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -248,6 +249,12 @@ const PartnershipsPage: React.FC = () => {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: 'Accueil', url: '/' },
+            { name: 'Partenariats', url: '/partenariats' },
+          ]} />
+        </div>
         {/* ── Hero / Header ── */}
         <section className={s.header}>
           <div className={s.headerInner}>

@@ -472,26 +472,37 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 32px;
+  padding: 18px 36px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink);
-  background: var(--paper);
+  color: #fff;
+  background: linear-gradient(135deg, #D64C90, #7B5CD6, #E67839, #2E94B5);
+  background-size: 300% 100%;
+  animation: ctaShift 6s ease infinite;
+  box-shadow: 0 4px 24px -4px rgba(214, 76, 144, 0.4);
   text-decoration: none;
-  transition: background 0.2s ease, gap 0.2s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, gap 0.2s ease, filter 0.3s ease;
 }
 
 .bannerCta:hover {
-  background: #E8E5DE;
+  box-shadow: 0 6px 32px -2px rgba(214, 76, 144, 0.6);
+  transform: translateY(-2px);
+  filter: brightness(1.1);
   gap: 12px;
 }
 
 .bannerCta svg {
   width: 14px;
   height: 14px;
+}
+
+@keyframes ctaShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -560,5 +571,5 @@
   .featQuoteText { font-size: 18px; }
   .cardBody { padding: 16px; }
   .cardQuoteText { font-size: 15px; }
-  .bannerCta { padding: 12px 24px; }
+  .bannerCta { padding: 14px 28px; font-size: 11px; }
 }

@@ -6,6 +6,7 @@ import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_DOSSIER_DETAIL_QUERY } from "@/lib/queries";
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./DossierDetailPage.module.css";
 
 interface SanityArticle {
@@ -94,6 +95,14 @@ export default function DossierDetailPage() {
         ]}
       />
       <SiteHeader />
+
+      <div className="v2-container">
+        <Breadcrumb items={[
+          { name: "Accueil", url: "/" },
+          { name: "Dossiers", url: "/dossiers" },
+          { name: dossier.question, url: `/dossiers/${dossier.slug || slug}` },
+        ]} />
+      </div>
 
       <header className={s.hero} style={{ "--dossier-color": u.color } as React.CSSProperties}>
         <div className={s.heroInner}>

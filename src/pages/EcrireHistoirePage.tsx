@@ -13,6 +13,7 @@ import { sanityFetch } from "@/lib/sanity";
 import { VIDEOS_SECTION_QUERY } from "@/lib/queries";
 import { doc, setDoc, getDoc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./EcrireHistoirePage.module.css";
 
 /* ================================================================
@@ -967,6 +968,12 @@ export default function EcrireHistoirePage() {
       <SiteHeader />
 
       <main className={s.page}>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Racontez votre histoire", url: "/ecrire-mon-histoire" },
+          ]} />
+        </div>
 
         {/* ════════════════════════════════════════════════
            HERO

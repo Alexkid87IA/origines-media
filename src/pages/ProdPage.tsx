@@ -10,6 +10,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { PROD_PROGRAMMES_QUERY } from "@/lib/queries";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./ProdPage.module.css";
 
 /* ── Programme definitions ── */
@@ -105,6 +106,12 @@ export default function ProdPage() {
       <SiteHeader />
 
       <main id="main" role="main">
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Programmes", url: "/programmes" },
+          ]} />
+        </div>
         {/* ── Ch.01 — Hero ── */}
         <section className={s.hero} aria-labelledby="prod-hero-heading">
           <div className={s.heroBg}>

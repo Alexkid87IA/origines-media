@@ -16,6 +16,7 @@ import {
 import { typo } from "../lib/typography";
 import { getUniversColors } from "../lib/universColors";
 import { UNIVERS_MAP, verticaleToUnivers } from "../data/univers";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./UniversPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -204,6 +205,10 @@ function UniversListPage() {
 
       <main id="main" role="main">
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: 'Accueil', url: '/' },
+            { name: 'Univers', url: '/univers' },
+          ]} />
           <section className={s.page}>
             {/* Chapter mark */}
             <div className={`${s.chapterMark} mono`}>
@@ -418,6 +423,13 @@ function UniversDetailPage({ universId }: { universId: string }) {
       <SiteHeader />
 
       <main id="main" role="main">
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: 'Accueil', url: '/' },
+            { name: 'Univers', url: '/univers' },
+            { name: verticale.nom, url: `/univers/${verticale.slug}` },
+          ]} />
+        </div>
         {/* ── Hero ── */}
         <section className={s.hero}>
           <div className={s.heroImgWrap}>

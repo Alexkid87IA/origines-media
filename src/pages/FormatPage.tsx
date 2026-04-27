@@ -8,6 +8,7 @@ import SiteHeader from '@/components/SiteHeader/SiteHeader';
 import Footer2 from '@/components/Footer2';
 import ScrollToTopV2 from '@/components/ScrollToTop/ScrollToTopV2';
 import SEO from '../components/SEO';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from './FormatPage.module.css';
 
 /* ══════════════════════════════════════════════════════════
@@ -449,6 +450,13 @@ export default function FormatPage() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: 'Accueil', url: '/' },
+            { name: 'Formats', url: '/formats' },
+            { name: format.name, url: `/format/${slug}` },
+          ]} />
+        </div>
         {/* ── Hero ── */}
         <section className={s.hero}>
           <div className={s.heroInner}>

@@ -7,6 +7,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { typo } from "../lib/typography";
 import { useSubscribe } from "../hooks/useSubscribe";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./BoutiquePage.module.css";
 
 /* ================================================================
@@ -356,6 +357,10 @@ export default function BoutiquePage() {
 
       <main>
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Boutique", url: "/boutique" },
+          ]} />
           {/* ═══ HERO ═══ */}
           <section className={s.hero}>
             <div className={`${s.chapterMark} mono`}>

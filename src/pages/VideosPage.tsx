@@ -8,6 +8,7 @@ import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
 import { typo } from "@/lib/typography";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./VideosPage.module.css";
 
 const VIDEOS_QUERY = `
@@ -254,6 +255,12 @@ export default function VideosPage() {
       <SiteHeader />
 
       <main className={s.page}>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Vidéos", url: "/videos" },
+          ]} />
+        </div>
         {/* Header */}
         <header className={s.header}>
           <div className={s.headerInner}>

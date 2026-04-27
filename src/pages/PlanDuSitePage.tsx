@@ -3,6 +3,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./LegalPage.module.css";
 
 const SITE_SECTIONS = [
@@ -100,6 +101,12 @@ export default function PlanDuSitePage() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Plan du site", url: "/plan-du-site" },
+          ]} />
+        </div>
         <header className={s.header}>
           <div className={s.headerInner}>
             <span className={s.headerKicker}>Navigation</span>

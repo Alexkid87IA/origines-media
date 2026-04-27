@@ -2,6 +2,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./LegalPage.module.css";
 
 export default function ConfidentialitePage() {
@@ -19,6 +20,12 @@ export default function ConfidentialitePage() {
       <SiteHeader />
 
       <main>
+        <div className="v2-container">
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Confidentialité", url: "/confidentialite" },
+          ]} />
+        </div>
         <header className={s.header}>
           <div className={s.headerInner}>
             <span className={s.headerKicker}>Protection des donn&eacute;es</span>

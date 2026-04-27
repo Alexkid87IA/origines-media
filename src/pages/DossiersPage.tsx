@@ -6,6 +6,7 @@ import Footer2 from "@/components/Footer2";
 import { useSanityQuery } from "@/hooks/useSanityQuery";
 import { V2_DOSSIERS_QUERY } from "@/lib/queries";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./DossiersPage.module.css";
 
 interface SanityDossier {
@@ -126,6 +127,10 @@ export default function DossiersPage() {
       <SiteHeader />
 
       <div className={s.container}>
+        <Breadcrumb items={[
+          { name: 'Accueil', url: '/' },
+          { name: 'Dossiers', url: '/dossiers' },
+        ]} />
         <header className={s.header}>
           <div className={`${s.chapterMark} mono`}>
             <span className={s.cNum}>Dossiers</span>

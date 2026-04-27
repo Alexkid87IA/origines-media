@@ -22,6 +22,7 @@ import type {
   ExplorerHistoire,
   ExplorerVerticale,
 } from "../types/sanity";
+import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./BibliothequePage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -687,6 +688,10 @@ export default function BibliothequePage() {
 
       <main id="main" role="main">
         <div className="v2-container">
+          <Breadcrumb items={[
+            { name: 'Accueil', url: '/' },
+            { name: 'Bibliothèque', url: '/bibliotheque' },
+          ]} />
           <section className={s.page}>
             {/* Chapter mark */}
             <div className={`${s.chapterMark} mono`}>
