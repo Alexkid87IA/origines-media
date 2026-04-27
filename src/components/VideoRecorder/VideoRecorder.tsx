@@ -420,13 +420,47 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
   // ── Next question or finish ──
   const [processingError, setProcessingError] = useState(false);
+  const [processingReady, setProcessingReady] = useState(false);
+  const pendingQuestionRef = useRef<Question | null>(null);
+
+  const acceptAndContinue = useCallback(() => {
+    const nextQ = pendingQuestionRef.current;
+    pendingQuestionRef.current = null;
+    setProcessingTranscript(null);
+    setAiMessage(null);
+    setProcessingReady(false);
+    setProcessingError(false);
+    if (nextQ) {
+      setQuestionIdx((i) => i + 1);
+    }
+    setPhase("ready");
+  }, []);
+
+  const retryQuestion = useCallback(() => {
+    if (reviewUrl) URL.revokeObjectURL(reviewUrl);
+    setReviewUrl(null);
+    setRecordings((prev) => {
+      const next = [...prev];
+      next[questionIdx] = null;
+      return next;
+    });
+    audioBlobsRef.current.delete(questionIdx);
+    pendingQuestionRef.current = null;
+    setProcessingTranscript(null);
+    setAiMessage(null);
+    setProcessingReady(false);
+    setProcessingError(false);
+    setPhase("ready");
+  }, [reviewUrl, questionIdx]);
 
   const skipToFallback = useCallback(() => {
     const fallback = { label: "Continuez votre recit — qu'est-ce qui s'est passe ensuite ?", hint: "Prenez votre temps." };
     setQuestions((prev) => [...prev, fallback]);
     setRecordings((prev) => [...prev, null]);
+    pendingQuestionRef.current = null;
     setProcessingTranscript(null);
     setAiMessage(null);
+    setProcessingReady(false);
     setProcessingError(false);
     setQuestionIdx((i) => i + 1);
     setPhase("ready");
@@ -447,6 +481,8 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       setAiMessage(null);
       setProcessingTranscript(null);
       setProcessingError(false);
+      setProcessingReady(false);
+      pendingQuestionRef.current = null;
 
       try {
         const ctx: PreflightContext = {
@@ -479,22 +515,14 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         if (result.question) {
           setQuestions((prev) => [...prev, result.question!]);
           setRecordings((prev) => [...prev, null]);
-          setTimeout(() => {
-            setProcessingTranscript(null);
-            setAiMessage(null);
-            setQuestionIdx((i) => i + 1);
-            setPhase("ready");
-          }, 3500);
-        } else {
-          setTimeout(() => {
-            setProcessingTranscript(null);
-            setPhase("ready");
-          }, 2000);
+          pendingQuestionRef.current = result.question;
         }
+        setProcessingReady(true);
       } catch (err) {
         console.error("[VideoRec] advance error:", err);
         setAiMessage("Un probleme est survenu.");
         setProcessingError(true);
+        setProcessingReady(true);
       }
       return;
     }
@@ -721,7 +749,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                       </svg>
                     </div>
                     <div className={s.processingUserBody}>
-                      <p className={s.processingUserLabel}>Vous</p>
+                      <p className={s.processingUserLabel}>Vous avez dit</p>
                       <p className={s.processingUserText}>{processingTranscript}</p>
                     </div>
                   </div>
@@ -739,17 +767,32 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                   </div>
                 </div>
 
-                {processingError && (
+                {processingReady && !aiDone && (
                   <div className={s.processingActions}>
-                    <button className={`${s.controlBtn} ${s.nextBtn}`} onClick={skipToFallback}>
-                      Continuer sans l'IA
+                    <button className={s.controlBtn} onClick={retryQuestion}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                        <polyline points="1 4 1 10 7 10" />
+                        <path d="M3.51 15a9 9 0 105.64-11.36L1 10" />
+                      </svg>
+                      Reposer la question
+                    </button>
+                    <button className={`${s.controlBtn} ${s.nextBtn}`} onClick={acceptAndContinue}>
+                      Continuer
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                         <line x1="5" y1="12" x2="19" y2="12" />
                         <polyline points="12 5 19 12 12 19" />
                       </svg>
                     </button>
-                    <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={requestFinish}>
-                      Terminer
+                  </div>
+                )}
+
+                {processingError && (
+                  <div className={s.processingActions}>
+                    <button className={s.controlBtn} onClick={retryQuestion}>
+                      Reposer la question
+                    </button>
+                    <button className={`${s.controlBtn} ${s.nextBtn}`} onClick={skipToFallback}>
+                      Continuer sans l'IA
                     </button>
                   </div>
                 )}
