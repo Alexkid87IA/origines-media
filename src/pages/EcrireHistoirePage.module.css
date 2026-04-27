@@ -1954,7 +1954,7 @@
   align-items: center;
   gap: 6px;
   padding: 3px 10px;
-  background: rgba(139, 92, 246, 0.08);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.08));
   font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
@@ -2224,108 +2224,163 @@
    Lya feedback (redirect / encouragement / loading)
    ══════════════════════════════════════════════════════════ */
 
-.lyaFeedback {
-  display: flex;
-  gap: 12px;
-  padding: 16px 20px;
+/* ── Lya bubble (new design) ── */
+.lyaBubble {
+  position: relative;
+  margin-bottom: 20px;
   border: 1px solid var(--stone200);
   background: var(--paper);
-  margin-bottom: 16px;
-  animation: lyaFadeIn 0.3s ease;
+  overflow: hidden;
+  animation: lyaSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@keyframes lyaFadeIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+.lyaBubbleBar {
+  height: 3px;
+  background: linear-gradient(90deg, #8B5CF6, #EC4899);
+  animation: lyaBarPulse 2s ease-in-out infinite;
 }
 
-.lyaFeedbackRedirect {
-  border-color: #F59E0B;
-  background: #FFFBEB;
+.lyaBubbleRedirect .lyaBubbleBar {
+  background: linear-gradient(90deg, #F59E0B, #EF4444);
 }
 
-.lyaFeedbackOk {
-  border-color: #10B981;
-  background: #ECFDF5;
+.lyaBubbleOk .lyaBubbleBar {
+  background: linear-gradient(90deg, #10B981, #06B6D4);
 }
 
-.lyaFeedbackAvatar {
-  width: 32px;
-  height: 32px;
-  background: var(--ink);
-  color: #fff;
+.lyaBubbleInner {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 14px;
+  padding: 18px 20px;
+  align-items: flex-start;
+}
+
+.lyaAvatarWrap {
+  position: relative;
   flex-shrink: 0;
 }
 
-.lyaFeedbackRedirect .lyaFeedbackAvatar {
-  background: #F59E0B;
+.lyaAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  border-radius: 50%;
 }
 
-.lyaFeedbackOk .lyaFeedbackAvatar {
+.lyaOnline {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
   background: #10B981;
+  border: 2px solid var(--paper);
+  border-radius: 50%;
 }
 
-.lyaFeedbackBody {
+.lyaBubbleContent {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
+  flex: 1;
 }
 
-.lyaFeedbackName {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--stone500);
-}
-
-.lyaFeedbackText {
-  font-family: var(--body);
+.lyaBubbleName {
+  font-family: var(--display);
+  font-weight: 800;
   font-size: 14px;
-  line-height: 1.55;
   color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.lyaBubbleRole {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.lyaBubbleText {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--stone700);
   margin: 0;
 }
 
-.lyaFeedbackRedirect .lyaFeedbackText {
-  color: #92400E;
+.lyaBubbleRedirect .lyaBubbleText { color: #92400E; }
+.lyaBubbleOk .lyaBubbleText { color: #065F46; }
+
+.lyaBubbleRedirect { border-color: rgba(245, 158, 11, 0.3); background: #FFFBEB; }
+.lyaBubbleOk { border-color: rgba(16, 185, 129, 0.3); background: #ECFDF5; }
+
+/* Typewriter cursor */
+.lyaTypewriter { display: inline; }
+
+.lyaCursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--ink);
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: lyaCursorBlink 0.6s step-end infinite;
 }
 
-.lyaFeedbackOk .lyaFeedbackText {
-  color: #065F46;
-}
+.lyaBubbleOk .lyaCursor { background: #065F46; }
+.lyaBubbleRedirect .lyaCursor { background: #92400E; }
 
-.lyaFeedbackTyping {
+/* Thinking dots */
+.lyaDotsWrap {
   display: flex;
-  gap: 4px;
+  gap: 5px;
   align-items: center;
-  padding: 6px 0;
+  padding: 8px 0 4px;
 }
 
-.lyaFeedbackTyping span {
-  width: 6px;
-  height: 6px;
-  background: var(--stone400);
+.lyaDot {
+  width: 7px;
+  height: 7px;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
   border-radius: 50%;
-  animation: lyaTyping 1.2s ease-in-out infinite;
+  animation: lyaDotPulse 1.4s ease-in-out infinite;
 }
 
-.lyaFeedbackTyping span:nth-child(2) {
-  animation-delay: 0.2s;
+.lyaDot:nth-child(2) { animation-delay: 0.2s; }
+.lyaDot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes lyaSlideIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.lyaFeedbackTyping span:nth-child(3) {
-  animation-delay: 0.4s;
+@keyframes lyaBarPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
-@keyframes lyaTyping {
-  0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
-  30% { opacity: 1; transform: scale(1); }
+@keyframes lyaDotPulse {
+  0%, 60%, 100% { opacity: 0.25; transform: scale(0.8); }
+  30% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes lyaCursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2336,8 +2391,10 @@
   .loadingDot { animation: none; }
   .spinner { animation: none; }
   .pageHeroCta { transition: none; }
-  .lyaFeedback { animation: none; }
-  .lyaFeedbackTyping span { animation: none; opacity: 0.5; }
+  .lyaBubble { animation: none; }
+  .lyaBubbleBar { animation: none; }
+  .lyaDot { animation: none; opacity: 0.5; }
+  .lyaCursor { animation: none; }
 }
 
 /* ══════════════════════════════════════════════════════════

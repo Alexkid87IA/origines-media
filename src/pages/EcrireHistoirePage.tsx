@@ -16,6 +16,37 @@ import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebas
 import s from "./EcrireHistoirePage.module.css";
 
 /* ================================================================
+   LYA TYPEWRITER
+   ================================================================ */
+
+function LyaTypewriter({ text, speed = 22 }: { text: string; speed?: number }) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    setDisplayed("");
+    setDone(false);
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      if (i >= text.length) {
+        setDisplayed(text);
+        setDone(true);
+        clearInterval(id);
+      } else {
+        setDisplayed(text.slice(0, i));
+      }
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, speed]);
+  return (
+    <span className={s.lyaTypewriter}>
+      {displayed}
+      {!done && <span className={s.lyaCursor} />}
+    </span>
+  );
+}
+
+/* ================================================================
    TYPES
    ================================================================ */
 
@@ -741,7 +772,7 @@ export default function EcrireHistoirePage() {
             placeholder: data.placeholder,
             minRows: 4,
             isAi: true,
-            encouragement: "Lya, notre journaliste IA, a une question pour vous.",
+            encouragement: "Lya, votre assistante de rédaction, a une question pour vous.",
           };
           setDynamicQuestions((prev) => [...prev, aiQuestion]);
           return "followup";
@@ -1394,45 +1425,57 @@ export default function EcrireHistoirePage() {
                       </span>
                     </div>
 
-                    {/* Lya feedback — redirect, encouragement, or loading */}
+                    {/* Lya feedback — loading, redirect, encouragement */}
                     {lyaLoading && (
-                      <div className={s.lyaFeedback}>
-                        <div className={s.lyaFeedbackAvatar}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                          </svg>
-                        </div>
-                        <div className={s.lyaFeedbackBody}>
-                          <span className={s.lyaFeedbackName}>Lya</span>
-                          <div className={s.lyaFeedbackTyping}>
-                            <span /><span /><span />
+                      <div className={s.lyaBubble}>
+                        <div className={s.lyaBubbleBar} />
+                        <div className={s.lyaBubbleInner}>
+                          <div className={s.lyaAvatarWrap}>
+                            <span className={s.lyaAvatar}>L</span>
+                            <span className={s.lyaOnline} />
+                          </div>
+                          <div className={s.lyaBubbleContent}>
+                            <span className={s.lyaBubbleName}>Lya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
+                            <div className={s.lyaDotsWrap}>
+                              <span className={s.lyaDot} />
+                              <span className={s.lyaDot} />
+                              <span className={s.lyaDot} />
+                            </div>
                           </div>
                         </div>
                       </div>
                     )}
                     {!lyaLoading && lyaMessage?.type === "redirect" && (
-                      <div className={`${s.lyaFeedback} ${s.lyaFeedbackRedirect}`}>
-                        <div className={s.lyaFeedbackAvatar}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                          </svg>
-                        </div>
-                        <div className={s.lyaFeedbackBody}>
-                          <span className={s.lyaFeedbackName}>Lya</span>
-                          <p className={s.lyaFeedbackText}>{lyaMessage.text}</p>
+                      <div className={`${s.lyaBubble} ${s.lyaBubbleRedirect}`}>
+                        <div className={s.lyaBubbleBar} />
+                        <div className={s.lyaBubbleInner}>
+                          <div className={s.lyaAvatarWrap}>
+                            <span className={s.lyaAvatar}>L</span>
+                            <span className={s.lyaOnline} />
+                          </div>
+                          <div className={s.lyaBubbleContent}>
+                            <span className={s.lyaBubbleName}>Lya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
+                            <p className={s.lyaBubbleText}>
+                              <LyaTypewriter text={lyaMessage.text} speed={18} />
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
                     {!lyaLoading && lyaMessage?.type === "encouragement" && (
-                      <div className={`${s.lyaFeedback} ${s.lyaFeedbackOk}`}>
-                        <div className={s.lyaFeedbackAvatar}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                            <path d="M20 6L9 17l-5-5" />
-                          </svg>
-                        </div>
-                        <div className={s.lyaFeedbackBody}>
-                          <span className={s.lyaFeedbackName}>Lya</span>
-                          <p className={s.lyaFeedbackText}>{lyaMessage.text}</p>
+                      <div className={`${s.lyaBubble} ${s.lyaBubbleOk}`}>
+                        <div className={s.lyaBubbleBar} />
+                        <div className={s.lyaBubbleInner}>
+                          <div className={s.lyaAvatarWrap}>
+                            <span className={s.lyaAvatar}>L</span>
+                            <span className={s.lyaOnline} />
+                          </div>
+                          <div className={s.lyaBubbleContent}>
+                            <span className={s.lyaBubbleName}>Lya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
+                            <p className={s.lyaBubbleText}>
+                              <LyaTypewriter text={lyaMessage.text} speed={18} />
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1456,7 +1499,7 @@ export default function EcrireHistoirePage() {
                           ) : guidedIdx + 1}
                         </span>
                         <div>
-                          {q.isAi && <span className={s.lyaBadge}>Lya - Journaliste IA</span>}
+                          {q.isAi && <span className={s.lyaBadge}>Lya - Assistante de rédaction</span>}
                           <h3 className={s.guidedCardQuestion}>{q.question}</h3>
                           <p className={s.guidedCardHint}>{q.hint}</p>
                         </div>
