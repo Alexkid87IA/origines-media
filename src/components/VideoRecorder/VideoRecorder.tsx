@@ -14,6 +14,7 @@ interface AiNextResult {
   done: boolean;
   question?: Question;
   encouragement?: string;
+  transcript?: string;
 }
 
 interface PreflightContext {
@@ -195,6 +196,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   const analyserRef = useRef<AnalyserNode | null>(null);
   const micIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [micLevel, setMicLevel] = useState(0);
+  const [processingTranscript, setProcessingTranscript] = useState<string | null>(null);
   const lastAnswerLabelRef = useRef("");
 
   const currentQ = questions[questionIdx];
@@ -416,6 +418,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
       setPhase("processing");
       setAiMessage(null);
+      setProcessingTranscript(null);
 
       try {
         const ctx: PreflightContext = {
@@ -425,6 +428,8 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         };
         const audioBlob = audioBlobsRef.current.get(questionIdx) || currentBlob;
         const result = await onAfterRecord!(audioBlob, currentQ.label, ctx);
+
+        if (result.transcript) setProcessingTranscript(result.transcript);
         if (result.encouragement) setAiMessage(result.encouragement);
 
         if (result.done) {
@@ -434,7 +439,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
             if (currentBlob && !blobs.includes(currentBlob)) blobs.push(currentBlob);
             streamRef.current?.getTracks().forEach((t) => t.stop());
             onComplete(blobs);
-          }, 2000);
+          }, 3500);
           return;
         }
 
@@ -442,16 +447,21 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           setQuestions((prev) => [...prev, result.question!]);
           setRecordings((prev) => [...prev, null]);
           setTimeout(() => {
+            setProcessingTranscript(null);
+            setAiMessage(null);
             setQuestionIdx((i) => i + 1);
             setPhase("ready");
-          }, 1500);
+          }, 3500);
         } else {
-          setPhase("ready");
+          setTimeout(() => {
+            setProcessingTranscript(null);
+            setPhase("ready");
+          }, 2000);
         }
       } catch (err) {
         console.error("[VideoRecorder] advance error:", err);
         setAiMessage("Un problème est survenu. Vous pouvez continuer ou terminer.");
-        setTimeout(() => setPhase("ready"), 2000);
+        setTimeout(() => setPhase("ready"), 2500);
       }
       return;
     }
@@ -647,34 +657,56 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
   // ── AI Processing state ──
   if (phase === "processing") {
+    const hasResult = !!processingTranscript || !!aiMessage;
+
     return (
       <div className={s.recorder}>
         {dots}
         <div className={s.viewport}>
           <video ref={videoRef} className={s.video} autoPlay muted playsInline />
           <div className={s.processingOverlay}>
-            <div className={s.processingBubble}>
-              {lyaIcon(s.lyaAvatarPulse)}
-              <div className={s.processingBody}>
-                <p className={s.processingName}>Lya</p>
-                {aiDone ? (
-                  <p className={s.processingText}>
-                    {aiMessage || "Merci, j'ai tout ce qu'il faut pour raconter votre histoire."}
-                  </p>
-                ) : (
-                  <>
-                    <p className={s.processingText}>
-                      {aiMessage || "J'écoute votre réponse…"}
-                    </p>
-                    <div className={s.processingDots}>
-                      <span className={s.processingDot} />
-                      <span className={s.processingDot} />
-                      <span className={s.processingDot} />
-                    </div>
-                  </>
-                )}
+            {!hasResult ? (
+              <div className={s.processingBubble}>
+                {lyaIcon(s.lyaAvatarPulse)}
+                <div className={s.processingBody}>
+                  <p className={s.processingName}>Lya</p>
+                  <p className={s.processingText}>J'ecoute votre reponse...</p>
+                  <div className={s.processingDots}>
+                    <span className={s.processingDot} />
+                    <span className={s.processingDot} />
+                    <span className={s.processingDot} />
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={s.processingConversation}>
+                {processingTranscript && (
+                  <div className={s.processingUserBubble}>
+                    <div className={s.processingUserIcon}>
+                      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z" />
+                      </svg>
+                    </div>
+                    <div className={s.processingUserBody}>
+                      <p className={s.processingUserLabel}>Vous</p>
+                      <p className={s.processingUserText}>{processingTranscript}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className={s.processingBubble}>
+                  {lyaIcon(s.lyaAvatarSmall)}
+                  <div className={s.processingBody}>
+                    <p className={s.processingName}>Lya</p>
+                    <p className={s.processingText}>
+                      {aiDone
+                        ? (aiMessage || "Merci, j'ai tout ce qu'il faut pour raconter votre histoire.")
+                        : (aiMessage || "Bien recu. Question suivante...")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

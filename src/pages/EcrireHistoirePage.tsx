@@ -749,7 +749,7 @@ export default function EcrireHistoirePage() {
   const videoHistoryRef = useRef<{ question: string; answer: string }[]>([]);
   const videoExchangeCount = useRef(0);
 
-  const handleVideoAiRecord = useCallback(async (blob: Blob, questionLabel: string, preflightCtx?: { firstTime: string; availableTime: string; mood: string }): Promise<{ done: boolean; question?: { label: string; hint?: string }; encouragement?: string }> => {
+  const handleVideoAiRecord = useCallback(async (blob: Blob, questionLabel: string, preflightCtx?: { firstTime: string; availableTime: string; mood: string }): Promise<{ done: boolean; question?: { label: string; hint?: string }; encouragement?: string; transcript?: string }> => {
     const FALLBACK_QUESTION = { label: "Continuez — qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps, racontez la suite." };
 
     try {
@@ -777,7 +777,7 @@ export default function EcrireHistoirePage() {
       const { text } = await transcribeRes.json();
       console.log("[VideoAI] Transcription:", text?.slice(0, 80));
 
-      if (!text || text.trim().length < 10) return { done: false, question: { label: "Pouvez-vous développer un peu plus ?", hint: "N'hésitez pas à prendre votre temps." } };
+      if (!text || text.trim().length < 10) return { done: false, question: { label: "Pouvez-vous développer un peu plus ?", hint: "N'hésitez pas à prendre votre temps." }, transcript: text || "" };
 
       videoHistoryRef.current.push({ question: questionLabel, answer: text });
       videoExchangeCount.current++;
@@ -808,18 +808,18 @@ export default function EcrireHistoirePage() {
       console.log("[VideoAI] Lya response:", JSON.stringify(data).slice(0, 200));
 
       if (data.done) {
-        return { done: true, encouragement: data.encouragement || "Merci, j'ai tout ce qu'il faut." };
+        return { done: true, encouragement: data.encouragement || "Merci, j'ai tout ce qu'il faut.", transcript: text };
       }
 
       if (data.redirect && data.message) {
-        return { done: false, question: { label: data.message, hint: "Essayez de répondre autrement." } };
+        return { done: false, question: { label: data.message, hint: "Essayez de répondre autrement." }, transcript: text };
       }
 
       if (data.question) {
-        return { done: false, question: { label: data.question, hint: data.hint || "" }, encouragement: data.encouragement };
+        return { done: false, question: { label: data.question, hint: data.hint || "" }, encouragement: data.encouragement, transcript: text };
       }
 
-      return { done: false, question: FALLBACK_QUESTION };
+      return { done: false, question: FALLBACK_QUESTION, transcript: text };
     } catch (err) {
       console.error("[VideoAI] Error:", err);
       return { done: false, question: FALLBACK_QUESTION, encouragement: "Problème technique — continuez votre récit." };

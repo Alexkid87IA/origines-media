@@ -710,10 +710,11 @@
 .processingOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.5));
+  background: rgba(10, 10, 10, 0.92);
   z-index: 4;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   padding: 24px 20px;
 }
 
@@ -768,6 +769,66 @@
 @keyframes processDot {
   0%, 100% { opacity: 0.3; transform: scale(0.8); }
   50% { opacity: 1; transform: scale(1.2); }
+}
+
+.processingConversation {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 520px;
+  animation: bubbleIn 0.35s ease;
+}
+
+.processingUserBubble {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  align-self: flex-end;
+  animation: bubbleIn 0.3s ease;
+}
+
+.processingUserIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  order: 2;
+}
+
+.processingUserBody {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px 2px 14px 14px;
+  padding: 12px 16px;
+  max-width: 380px;
+}
+
+.processingUserLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 6px;
+}
+
+.processingUserText {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ══════════════════════════════════════════════════════════
