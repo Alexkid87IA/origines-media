@@ -394,10 +394,30 @@ const SUJETS = [
 ];
 
 const VIDEO_QUESTIONS = [
-  { label: "Présentez-vous en quelques mots.", hint: "Votre prénom, d'où vous venez, ce qui vous amène ici." },
-  { label: "Qu'est-ce qui a changé dans votre vie ?", hint: "Racontez le moment, l'événement, le déclic." },
-  { label: "Que diriez-vous à quelqu'un qui vit la même chose ?", hint: "Un conseil, un encouragement, ce que vous auriez aimé entendre." },
-  { label: "Quel mot résume votre parcours ?", hint: "Un seul mot — et pourquoi celui-là." },
+  {
+    label: "Présentez-vous et racontez-nous ce qui vous amène ici aujourd'hui.",
+    hint: "Dites votre prénom, votre âge si vous le souhaitez, d'où vous venez. Expliquez pourquoi vous avez décidé de témoigner — qu'est-ce qui vous pousse à prendre la parole maintenant ? Prenez votre temps, il n'y a pas de mauvaise réponse.",
+  },
+  {
+    label: "Racontez le moment précis où tout a basculé — le jour, la scène, ce que vous avez ressenti.",
+    hint: "Fermez les yeux et replongez dans ce moment. Où étiez-vous ? Avec qui ? Qu'avez-vous vu, entendu, ressenti dans votre corps ? Essayez de décrire la scène comme si vous y étiez encore. Les détails comptent : une odeur, un son, un regard, une phrase.",
+  },
+  {
+    label: "Comment avez-vous traversé cette épreuve ? Qu'est-ce qui vous a aidé — ou au contraire, qu'est-ce qui a manqué ?",
+    hint: "Parlez des personnes qui vous ont soutenu, ou de celles qui n'ont pas compris. Racontez les jours difficiles, les doutes, mais aussi les petites victoires. Comment avez-vous trouvé la force de continuer ? Y a-t-il eu un déclic, un tournant ?",
+  },
+  {
+    label: "Qu'est-ce que cette expérience a changé en vous ? Comment êtes-vous différent aujourd'hui ?",
+    hint: "Réfléchissez à la personne que vous étiez avant et celle que vous êtes maintenant. Qu'avez-vous appris sur vous-même ? Sur les autres ? Y a-t-il quelque chose que vous voyez différemment aujourd'hui — une valeur, une priorité, une relation ?",
+  },
+  {
+    label: "Quel message aimeriez-vous transmettre à quelqu'un qui traverse la même chose en ce moment ?",
+    hint: "Imaginez que cette personne est en face de vous. Qu'auriez-vous aimé entendre quand vous étiez à sa place ? Parlez-lui avec vos mots, avec votre cœur. Un conseil, un encouragement, une vérité que personne ne vous a dite.",
+  },
+  {
+    label: "Y a-t-il quelque chose que vous n'avez jamais dit à voix haute et que vous aimeriez dire maintenant ?",
+    hint: "C'est le moment de dire ce qui n'a jamais été dit — à quelqu'un, à vous-même, au monde. Vous pouvez remercier, pardonner, dénoncer, ou simplement poser les mots. Cette vidéo est votre espace. Personne ne vous jugera.",
+  },
 ];
 
 const TRANCHES_AGE = [
@@ -1453,17 +1473,48 @@ export default function EcrireHistoirePage() {
             <section className={s.videoStep}>
               <div className={s.stepHeader}>
                 <span className={s.stepKicker}>Étape 3 sur 5</span>
-                <h2 className={s.stepTitle}>Enregistrez votre <em>témoignage.</em></h2>
+                <h2 className={s.stepTitle}>
+                  {draft.writeMode === "guide"
+                    ? <>Lya vous <em>guide.</em></>
+                    : <>Enregistrez votre <em>témoignage.</em></>
+                  }
+                </h2>
                 <p className={s.stepDeck}>
-                  Les questions s'affichent à l'écran. Répondez naturellement,
-                  comme si vous parliez à un ami. 2 minutes max par question.
-                  Votre vidéo est stockée de façon sécurisée — elle ne sera jamais
-                  diffusée sans votre accord.
+                  {draft.writeMode === "guide"
+                    ? "Notre journaliste IA Lya vous pose des questions en temps réel, adaptées à votre récit. Répondez face caméra — elle s'occupe du reste."
+                    : "6 questions s'affichent à l'écran, une par une. Répondez naturellement, comme si vous parliez à un ami. 2 minutes max par question. Prenez votre temps — les indications sous chaque question sont là pour vous aider."
+                  }
                 </p>
+              </div>
+
+              <div className={s.modeToggle}>
+                <button
+                  className={`${s.modeBtn} ${draft.writeMode === "guide" ? s.modeBtnActive : ""}`}
+                  onClick={() => updateDraft({ writeMode: "guide" })}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                  </svg>
+                  Guidé par Lya
+                  <span className={s.modeBadge}>IA</span>
+                </button>
+                <button
+                  className={`${s.modeBtn} ${draft.writeMode === "simple" ? s.modeBtnActive : ""}`}
+                  onClick={() => updateDraft({ writeMode: "simple" })}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="8" y1="8" x2="16" y2="8" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="8" y1="16" x2="12" y2="16" />
+                  </svg>
+                  Questions classiques
+                </button>
               </div>
 
               <div className={s.videoRecorderWrap}>
                 <VideoRecorder
+                  key={draft.writeMode}
                   questions={draft.writeMode === "guide"
                     ? [{ label: (LYA_OPENERS[draft.sujet || "autre"] || LYA_OPENERS.autre).question, hint: (LYA_OPENERS[draft.sujet || "autre"] || LYA_OPENERS.autre).hint }]
                     : VIDEO_QUESTIONS}
