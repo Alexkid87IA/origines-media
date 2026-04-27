@@ -195,6 +195,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   const analyserRef = useRef<AnalyserNode | null>(null);
   const micIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [micLevel, setMicLevel] = useState(0);
+  const lastAnswerLabelRef = useRef("");
 
   const currentQ = questions[questionIdx];
   const isAiMode = !!onAfterRecord;
@@ -524,28 +525,28 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
     const handlePreflightAnswer = (value: string, label: string, ok: boolean) => {
       preflightCtxRef.current[check.id] = value;
+      lastAnswerLabelRef.current = label;
       const responses = LYA_PREFLIGHT_RESPONSES[check.id];
       const lyaResponse = responses?.[value] || "";
       setPreflightMsg(lyaResponse);
       setPreflightAnswered(true);
 
-      if (ok && isLastCheck) {
-        setPreflightHistory((h) => [...h, { question: check.question, answer: label, response: lyaResponse }]);
-        setTimeout(() => setPhase("ready"), 1500);
-        return;
+      if (!ok) {
+        setTimeout(() => setPreflightAnswered(false), 2500);
       }
+    };
 
-      if (ok) {
-        setTimeout(() => {
-          setPreflightHistory((h) => [...h, { question: check.question, answer: label, response: lyaResponse }]);
-          setPreflightIdx((i) => i + 1);
-          setPreflightMsg(null);
-          setPreflightAnswered(false);
-        }, 1200);
+    const advancePreflight = () => {
+      const lyaResponse = preflightMsg || "";
+      const check = PREFLIGHT_CHECKS[preflightIdx];
+      setPreflightHistory((h) => [...h, { question: check.question, answer: lastAnswerLabelRef.current, response: lyaResponse }]);
+
+      if (preflightIdx >= PREFLIGHT_CHECKS.length - 1) {
+        setPhase("ready");
       } else {
-        setTimeout(() => {
-          setPreflightAnswered(false);
-        }, 2000);
+        setPreflightIdx((i) => i + 1);
+        setPreflightMsg(null);
+        setPreflightAnswered(false);
       }
     };
 
@@ -580,6 +581,16 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
                 {preflightMsg && (
                   <p className={s.preflightResponse}>{preflightMsg}</p>
+                )}
+
+                {preflightAnswered && preflightMsg && (
+                  <button className={s.preflightNextBtn} onClick={advancePreflight}>
+                    {isLastCheck ? "C'est parti" : "Suivant"}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </button>
                 )}
 
                 {!preflightAnswered && (
