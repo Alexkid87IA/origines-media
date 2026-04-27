@@ -2907,6 +2907,143 @@
   margin: 2px 0 0;
 }
 
+/* -- Video grid (replaces testimonials quotes) -- */
+
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.videoCard {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--stone100);
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.videoCard:hover {
+  border-color: var(--stone300);
+  transform: translateY(-3px);
+}
+
+.videoThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--stone100);
+}
+
+.videoThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.videoCard:hover .videoThumb img {
+  transform: scale(1.05);
+}
+
+.videoOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.videoPlayBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.videoCard:hover .videoPlayBtn {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.videoDuration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 3px 7px;
+}
+
+.videoMeta {
+  padding: 12px 14px 14px;
+}
+
+.videoBadge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.videoTitle {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.videoGridCta {
+  text-align: center;
+  margin-top: 28px;
+}
+
+.videoGridCtaLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 12px 28px;
+  border: 1px solid var(--stone200);
+  transition: background 0.2s ease, border-color 0.2s ease, gap 0.2s ease;
+}
+
+.videoGridCtaLink:hover {
+  background: var(--stone50, #FAFAF9);
+  border-color: var(--stone400);
+  gap: 12px;
+}
+
 /* ══════════════════════════════════════════════════════════
    FAQ
    ══════════════════════════════════════════════════════════ */
@@ -2987,6 +3124,10 @@
   .testimonialsGrid {
     grid-template-columns: 1fr;
   }
+
+  .videoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
@@ -3010,5 +3151,14 @@
 
   .reasons, .testimonials, .faq {
     padding: 40px 0;
+  }
+
+  .videoGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .videoTitle {
+    font-size: 12px;
   }
 }

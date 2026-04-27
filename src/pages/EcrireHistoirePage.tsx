@@ -7,6 +7,8 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import VideoRecorder from "@/components/VideoRecorder/VideoRecorder";
+import { sanityFetch } from "@/lib/sanity";
+import { VIDEOS_SECTION_QUERY } from "@/lib/queries";
 import { useAuth } from "@/contexts/AuthContext";
 import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp, collection, addDoc } from "firebase/firestore";
@@ -525,6 +527,16 @@ export default function EcrireHistoirePage() {
   const guidedTextareaRef = useRef<HTMLTextAreaElement>(null);
   const aiCallsRef = useRef(new Set<string>());
   const redirectCountRef = useRef(new Map<string, number>());
+  const [sectionVideos, setSectionVideos] = useState<{ _id: string; titre: string; imageUrl?: string; slug: string; duree?: string; verticale?: { nom: string; couleurDominante?: string } }[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const videos = (await sanityFetch(VIDEOS_SECTION_QUERY)) as typeof sectionVideos;
+        if (videos?.length) setSectionVideos(videos);
+      } catch { /* non-blocking */ }
+    })();
+  }, []);
 
   // Load draft from Firestore
   useEffect(() => {
@@ -2146,38 +2158,64 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
         </section>
 
         {/* ════════════════════════════════════════════════
-           REASSURANCE — Témoignages de participants
+           REASSURANCE — Vidéos témoignages
            ════════════════════════════════════════════════ */}
-        <section className={s.testimonials}>
-          <div className={s.testimonialsInner}>
-            <div className={s.chapterMark}>
-              <span className={s.cNum}>Ch.03</span>
-              <span className={s.cSep}>/</span>
-              <span className={s.cLabel}>Témoignages</span>
-            </div>
-            <h2 className={s.testimonialsTitle}>Ils ont partagé leur <em>histoire.</em></h2>
-            <p className={s.testimonialsDeck}>Ce qu'ils disent de l'expérience</p>
+        {sectionVideos.length > 0 && (
+          <section className={s.testimonials}>
+            <div className={s.testimonialsInner}>
+              <div className={s.chapterMark}>
+                <span className={s.cNum}>Ch.03</span>
+                <span className={s.cSep}>/</span>
+                <span className={s.cLabel}>Témoignages vidéo</span>
+              </div>
+              <h2 className={s.testimonialsTitle}>Ils ont partagé leur <em>histoire.</em></h2>
+              <p className={s.testimonialsDeck}>
+                Voici ce qui se passe quand vous osez raconter.
+              </p>
 
-            <div className={s.testimonialsGrid}>
-              {REASSURANCE_TESTIMONIALS.map((t, i) => (
-                <div key={i} className={s.testimonialCard}>
-                  <div className={s.testimonialAccent} style={{ backgroundColor: t.color }} />
-                  <div className={s.testimonialQuoteMark}>"</div>
-                  <p className={s.testimonialText}>{t.quote}</p>
-                  <div className={s.testimonialAuthor}>
-                    <div className={s.testimonialAvatar} style={{ borderColor: t.color }}>
-                      {t.author.charAt(0)}
+              <div className={s.videoGrid}>
+                {sectionVideos.map((v) => (
+                  <Link key={v._id} to={`/video/${v.slug}`} className={s.videoCard}>
+                    <div className={s.videoThumb}>
+                      <img
+                        src={v.imageUrl || "/placeholder.svg"}
+                        alt={v.titre}
+                        loading="lazy"
+                      />
+                      <div className={s.videoOverlay} />
+                      <div className={s.videoPlayBtn}>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28A1 1 0 008 5.14z" />
+                        </svg>
+                      </div>
+                      {v.duree && <span className={s.videoDuration}>{v.duree}</span>}
                     </div>
-                    <div>
-                      <p className={s.testimonialName}>{t.author}</p>
-                      <p className={s.testimonialRole}>{t.role}</p>
+                    <div className={s.videoMeta}>
+                      {v.verticale && (
+                        <span
+                          className={s.videoBadge}
+                          style={{ color: v.verticale.couleurDominante || "#8B5CF6" }}
+                        >
+                          {v.verticale.nom}
+                        </span>
+                      )}
+                      <h3 className={s.videoTitle}>{v.titre}</h3>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </Link>
+                ))}
+              </div>
+
+              <div className={s.videoGridCta}>
+                <Link to="/videos" className={s.videoGridCtaLink}>
+                  Voir toutes les vidéos
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14">
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ════════════════════════════════════════════════
            REASSURANCE — FAQ

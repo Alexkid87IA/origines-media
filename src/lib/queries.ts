@@ -449,7 +449,7 @@ export const VERTICALES_WITH_PRODUCTIONS_QUERY = `
 
 // Vidéos pour la section homepage (productions avec typeArticle == "video")
 export const VIDEOS_SECTION_QUERY = `
-  *[_type == "production" && typeArticle == "video"] | order(datePublication desc) [0...12] {
+  *[_type == "production" && typeArticle == "video"] | order(datePublication desc) [0...16] {
     _id,
     titre,
     description,
