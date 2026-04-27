@@ -24,11 +24,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 3px;
-  padding: 6px 130px 6px 0;
-  border-top: 1px solid rgba(10,10,10,0.06);
-  background: var(--stone50, #F5F3EE);
-  max-height: 32px;
+  gap: 2px;
+  padding: 10px 130px 10px 0;
+  max-height: 38px;
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -39,26 +37,24 @@
 
 .tag {
   font-family: var(--body);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 11px;
+  font-weight: 450;
+  letter-spacing: 0;
   text-transform: none;
-  color: var(--stone500);
+  color: var(--stone400);
   text-decoration: none;
-  padding: 3px 10px;
-  border-radius: 100px;
+  padding: 4px 10px;
   white-space: nowrap;
-  transition: color 0.2s ease, background 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .tag:hover {
-  color: var(--tag-color);
-  background: rgba(10,10,10,0.04);
+  color: var(--tag-color, var(--ink));
 }
 
 .tagSep {
   color: var(--stone200);
-  font-size: 6px;
+  font-size: 3px;
   line-height: 1;
   user-select: none;
 }
@@ -72,16 +68,16 @@
   align-items: center;
   gap: 12px;
   padding-left: 28px;
-  background: linear-gradient(to right, transparent, var(--stone50, #F5F3EE) 16px);
+  background: linear-gradient(to right, transparent, var(--paper) 16px);
 }
 
 .tagToggle {
   font-family: var(--body);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
   text-transform: none;
-  color: var(--stone500);
+  color: var(--stone400);
   background: none;
   border: none;
   cursor: pointer;
