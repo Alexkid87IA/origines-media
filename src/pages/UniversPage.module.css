@@ -613,63 +613,88 @@
 
 .featuredCard {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.15fr 1fr;
   gap: 0;
   text-decoration: none;
   color: var(--ink);
-  border: 1px solid var(--stone100);
+  border: 1px solid rgba(10, 10, 10, 0.1);
   overflow: hidden;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.4s ease;
 }
 .featuredCard:hover {
-  box-shadow: 0 8px 32px rgba(10, 10, 10, 0.08);
+  box-shadow: 0 12px 48px rgba(10, 10, 10, 0.1);
 }
 
 .featuredImgWrap {
-  aspect-ratio: 4/3;
+  position: relative;
   overflow: hidden;
+  background: rgba(10, 10, 10, 0.04);
+}
+.featuredImgWrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.08), transparent 60%);
+  pointer-events: none;
+  z-index: 1;
 }
 .featuredImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.3, 0, 0.2, 1);
 }
 .featuredCard:hover .featuredImg {
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
 
 .featuredBody {
-  padding: 40px;
+  padding: 48px 44px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .featuredCat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+}
+.featuredCatDot {
+  width: 6px;
+  height: 6px;
 }
 
 .featuredTitle {
   font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(22px, 3vw, 32px);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  margin: 0 0 16px;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  margin: 0 0 20px;
+  transition: text-decoration-color 0.3s ease;
+}
+.featuredCard:hover .featuredTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(10, 10, 10, 0.25);
 }
 
 .featuredDesc {
-  font-family: var(--body);
-  font-size: 15px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--stone500);
-  margin: 0 0 24px;
+  margin: 0 0 28px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -680,8 +705,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 16px;
-  border-top: 1px solid var(--stone100);
+  padding-top: 20px;
+  border-top: 1px solid rgba(10, 10, 10, 0.08);
 }
 .featuredMeta {
   font-family: var(--mono);
@@ -691,12 +716,17 @@
   color: var(--stone400);
 }
 .featuredCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  transition: gap 0.3s ease;
 }
+.featuredCard:hover .featuredCta { gap: 12px; }
 
 /* =====================================================================
    DETAIL — ARTICLES GRID
@@ -712,7 +742,7 @@
   align-items: baseline;
   justify-content: space-between;
   padding-bottom: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 0;
   border-bottom: 1px solid var(--ink);
 }
 .gridHeadTitle {
@@ -733,9 +763,7 @@
 .articlesGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--stone100);
-  border: 1px solid var(--stone100);
+  border-left: 1px solid rgba(10, 10, 10, 0.1);
 }
 
 .articleCard {
@@ -744,9 +772,11 @@
   background: var(--paper);
   text-decoration: none;
   color: var(--ink);
+  border-right: 1px solid rgba(10, 10, 10, 0.1);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
   transition: background 0.2s ease;
 }
-.articleCard:hover { background: rgba(10, 10, 10, 0.015); }
+.articleCard:hover { background: rgba(10, 10, 10, 0.02); }
 
 .visible .articleCard {
   animation: fadeUp 0.4s ease both;
@@ -755,14 +785,16 @@
 
 .articleImgWrap {
   position: relative;
-  aspect-ratio: 3/2;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
+  background: rgba(10, 10, 10, 0.04);
 }
 .articleImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.3, 0, 0.2, 1);
 }
 .articleCard:hover .articleImg {
   transform: scale(1.04);
@@ -774,15 +806,27 @@
 .articleOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 10, 10, 0.1), transparent 50%);
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.06), transparent 40%);
   pointer-events: none;
 }
 
 .articleBody {
-  padding: 20px;
   display: flex;
   flex-direction: column;
+  padding: 16px 20px 20px;
+  flex: 1;
+}
+
+.articleMeta {
+  display: flex;
+  align-items: center;
   gap: 8px;
+  margin-bottom: 10px;
+}
+.articleCatDot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
 }
 .articleCat {
   font-family: var(--mono);
@@ -790,26 +834,43 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  color: var(--stone500);
 }
+.articleTime {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--stone400);
+  margin-left: auto;
+}
+
 .articleTitle {
   font-family: var(--display);
   font-weight: 800;
   font-size: 16px;
-  line-height: 1.25;
+  line-height: 1.2;
   letter-spacing: -0.02em;
+  color: var(--ink);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.articleMeta {
+.articleCard:hover .articleTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.articleAuthor {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--stone400);
-  margin-top: 4px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 /* ── Pagination ── */
@@ -984,8 +1045,11 @@
   .featuredCard {
     grid-template-columns: 1fr;
   }
+  .featuredImgWrap {
+    aspect-ratio: 16 / 10;
+  }
   .featuredBody {
-    padding: 24px;
+    padding: 28px 24px;
   }
 
   .articlesGrid {

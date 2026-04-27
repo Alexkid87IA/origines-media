@@ -483,6 +483,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
                 <div className={s.featuredBody}>
                   {featuredArticle.soustopic && (
                     <span className={s.featuredCat} style={{ color: univers.color }}>
+                      <span className={s.featuredCatDot} style={{ backgroundColor: univers.color }} />
                       {featuredArticle.soustopic.replace(/-/g, " ")}
                     </span>
                   )}
@@ -495,7 +496,8 @@ function UniversDetailPage({ universId }: { universId: string }) {
                       {featuredArticle.tempsLecture || 5} min &middot; {featuredArticle.authorName || "Origines"}
                     </span>
                     <span className={s.featuredCta} style={{ color: univers.color }}>
-                      Lire &rarr;
+                      Lire l&rsquo;article
+                      <ArrowIcon size={12} />
                     </span>
                   </div>
                 </div>
@@ -536,15 +538,19 @@ function UniversDetailPage({ universId }: { universId: string }) {
                       <span className={s.articleOverlay} />
                     </div>
                     <div className={s.articleBody}>
-                      {art.soustopic && (
-                        <span className={s.articleCat} style={{ color: univers.color }}>
-                          {art.soustopic.replace(/-/g, " ")}
-                        </span>
-                      )}
+                      <div className={s.articleMeta}>
+                        <span className={s.articleCatDot} style={{ backgroundColor: univers.color }} />
+                        {art.soustopic && (
+                          <span className={s.articleCat}>
+                            {art.soustopic.replace(/-/g, " ")}
+                          </span>
+                        )}
+                        <span className={s.articleTime}>{art.tempsLecture || 5} min</span>
+                      </div>
                       <h3 className={s.articleTitle}>{typo(art.titre)}</h3>
-                      <span className={s.articleMeta}>
-                        {art.tempsLecture || 5} min
-                      </span>
+                      {art.authorName && (
+                        <span className={s.articleAuthor}>{art.authorName}</span>
+                      )}
                     </div>
                   </Link>
                 ))}
