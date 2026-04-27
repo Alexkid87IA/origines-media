@@ -2063,6 +2063,13 @@
   border-color: var(--ink);
 }
 
+.guidedHint {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--stone500);
+  margin-top: 8px;
+}
+
 /* "See all" accordion */
 .guidedAllWrap {
   padding: 12px 0 48px;
