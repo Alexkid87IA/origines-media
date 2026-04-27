@@ -381,6 +381,7 @@ export default function VideoPage() {
               <LiteYouTube
                 videoId={extractYouTubeId(article.videoUrl!)!}
                 title={title}
+                poster={imageUrl ? sanityImg(imageUrl, 1280) : undefined}
               />
             </div>
           </div>

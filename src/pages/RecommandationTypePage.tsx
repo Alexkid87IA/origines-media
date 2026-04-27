@@ -21,32 +21,26 @@ interface Recommendation {
   datePublication?: string;
 }
 
-const RECO_TYPES: Record<
-  string,
-  { label: string; color: string; plural: string }
-> = {
-  livres: { label: "Livres", color: "#E11D48", plural: "livres" },
-  "films-series": {
-    label: "Films & Séries",
-    color: "#7C3AED",
-    plural: "films & séries",
-  },
-  musique: { label: "Musique", color: "#2563EB", plural: "musiques" },
-  podcasts: { label: "Podcasts", color: "#0D9488", plural: "podcasts" },
-  youtube: { label: "YouTube", color: "#DC2626", plural: "chaînes YouTube" },
-  "reseaux-sociaux": {
-    label: "Réseaux sociaux",
-    color: "#0891B2",
-    plural: "comptes sociaux",
-  },
-  activite: { label: "Activités", color: "#16A34A", plural: "activités" },
-  destination: {
-    label: "Destinations",
-    color: "#EA580C",
-    plural: "destinations",
-  },
-  culture: { label: "Culture", color: "#9333EA", plural: "recommandations culture" },
-  produit: { label: "Produits", color: "#CA8A04", plural: "produits" },
+interface RecoTypeConfig {
+  label: string;
+  color: string;
+  plural: string;
+  description: string;
+  faq: Array<{ question: string; answer: string }>;
+  related: string[];
+}
+
+const RECO_TYPES: Record<string, RecoTypeConfig> = {
+  livres: { label: "Livres", color: "#E11D48", plural: "livres", description: "Romans, essais, récits : les livres qui ont marqué notre rédaction. Des lectures choisies pour leur capacité à transformer le regard, nourrir la réflexion ou simplement offrir un moment d'évasion.", faq: [{ question: "Comment choisissez-vous les livres recommandés ?", answer: "Chaque livre est lu par au moins un membre de la rédaction. Nous privilégions les ouvrages qui ouvrent une perspective nouvelle, qu'ils soient récents ou classiques." }, { question: "Recommandez-vous uniquement des livres récents ?", answer: "Non. Un bon livre n'a pas de date de péremption. Nos sélections mêlent nouveautés et classiques intemporels." }], related: ["podcasts", "culture", "films-series"] },
+  "films-series": { label: "Films & Séries", color: "#7C3AED", plural: "films & séries", description: "Les films et séries qui méritent votre temps. Drames, documentaires, thrillers psychologiques : des œuvres qui font réfléchir autant qu'elles divertissent.", faq: [{ question: "Recommandez-vous uniquement des films d'auteur ?", answer: "Non. Nous recommandons tout ce qui est bien fait et qui fait penser, du blockbuster intelligent au film indépendant. Le critère est l'impact, pas le genre." }, { question: "Où peut-on regarder les films recommandés ?", answer: "Nous indiquons la plateforme de disponibilité quand c'est possible (Netflix, Arte, Prime Video, cinéma). Certaines œuvres sont disponibles gratuitement en replay." }], related: ["livres", "culture", "musique"] },
+  musique: { label: "Musique", color: "#2563EB", plural: "musiques", description: "Albums, artistes, playlists : nos découvertes musicales à travers tous les genres. De la musique qui accompagne les moments de vie, de la concentration à la contemplation.", faq: [{ question: "Quels genres musicaux recommandez-vous ?", answer: "Tous, sans hiérarchie. Jazz, électro, classique, hip-hop, world music : le seul critère est l'authenticité et la qualité de la proposition artistique." }, { question: "Proposez-vous des playlists ?", answer: "Oui. Chaque recommandation musicale est accompagnée de suggestions d'écoute et parfois de playlists thématiques sur les plateformes de streaming." }], related: ["culture", "films-series", "podcasts"] },
+  podcasts: { label: "Podcasts", color: "#0D9488", plural: "podcasts", description: "Les podcasts qui valent le détour. Interviews de fond, récits immersifs, analyses : du contenu audio pour apprendre en marchant, en cuisinant ou en méditant.", faq: [{ question: "Recommandez-vous des podcasts francophones et anglophones ?", answer: "Les deux. La majorité de nos sélections sont francophones, mais certains podcasts anglophones incontournables sont inclus avec une note sur le niveau de langue requis." }, { question: "Combien de temps durent les podcasts recommandés ?", answer: "De 15 minutes à 2 heures selon les formats. Nous précisons toujours la durée et le format (interview, narratif, solo) pour vous aider à choisir." }], related: ["youtube", "livres", "musique"] },
+  youtube: { label: "YouTube", color: "#DC2626", plural: "chaînes YouTube", description: "Les chaînes YouTube qui élèvent le débat. Vulgarisation, documentaires indépendants, créateurs de contenu : le meilleur de la plateforme, trié pour vous.", faq: [{ question: "Comment sélectionnez-vous les chaînes YouTube ?", answer: "Nous évaluons la rigueur du contenu, la qualité de la production et la régularité. Une bonne chaîne YouTube allie divertissement et substance." }, { question: "Recommandez-vous des chaînes pour enfants ?", answer: "Pas pour l'instant, mais c'est une demande fréquente. Nos recommandations ciblent un public adulte curieux." }], related: ["podcasts", "films-series", "culture"] },
+  "reseaux-sociaux": { label: "Réseaux sociaux", color: "#0891B2", plural: "comptes sociaux", description: "Les comptes qui valent le follow. Instagram, TikTok, LinkedIn : des créateurs qui informent, inspirent et questionnent — loin du bruit ambiant.", faq: [{ question: "Sur quels réseaux sociaux recommandez-vous des comptes ?", answer: "Principalement Instagram, TikTok et LinkedIn. Nous sélectionnons des créateurs qui apportent de la valeur, pas du bruit." }, { question: "Comment éviter le contenu toxique sur les réseaux sociaux ?", answer: "Curez votre feed intentionnellement : désabonnez-vous des comptes qui vous font du mal, et suivez ceux qui vous apprennent quelque chose. La qualité de votre expérience dépend de vos choix de suivi." }], related: ["youtube", "podcasts", "culture"] },
+  activite: { label: "Activités", color: "#16A34A", plural: "activités", description: "Les expériences à vivre. Ateliers, retraites, événements, pratiques : des activités testées et recommandées pour enrichir votre quotidien.", faq: [{ question: "Les activités recommandées sont-elles accessibles à tous ?", answer: "Nous essayons de proposer des activités à différents niveaux de prix et d'accessibilité. Chaque fiche précise le coût, le lieu et le niveau requis." }, { question: "Recommandez-vous des activités partout en France ?", answer: "Principalement en Île-de-France et dans les grandes villes, mais de plus en plus d'activités en ligne ou en régions sont incluses dans nos sélections." }], related: ["destination", "culture", "produit"] },
+  destination: { label: "Destinations", color: "#EA580C", plural: "destinations", description: "Les lieux qui méritent le voyage. Villes, régions, pays : des destinations choisies pour leur authenticité, leur beauté ou leur capacité à transformer ceux qui les visitent.", faq: [{ question: "Vos destinations sont-elles toutes lointaines ?", answer: "Non. Certaines de nos meilleures recommandations sont à moins de 2 heures de Paris. Le dépaysement n'est pas une question de distance mais de regard." }, { question: "Prenez-vous en compte l'impact écologique des voyages ?", answer: "Oui. Nous favorisons le slow travel, les destinations accessibles en train, et mentionnons systématiquement les alternatives bas-carbone quand elles existent." }], related: ["activite", "culture", "produit"] },
+  culture: { label: "Culture", color: "#9333EA", plural: "recommandations culture", description: "Expositions, spectacles, festivals, lieux : la culture sous toutes ses formes. Des sorties et des découvertes pour nourrir la curiosité et élargir les horizons.", faq: [{ question: "Vos recommandations culturelles sont-elles uniquement parisiennes ?", answer: "Non. Nous couvrons des événements et lieux dans toute la France, et incluons des ressources culturelles en ligne accessibles de partout." }, { question: "Recommandez-vous des activités culturelles gratuites ?", answer: "Oui. De nombreux musées sont gratuits le premier dimanche du mois, et les événements en plein air, bibliothèques et galeries offrent un accès libre à la culture." }], related: ["films-series", "livres", "musique"] },
+  produit: { label: "Produits", color: "#CA8A04", plural: "produits", description: "Les objets qui améliorent le quotidien. Livres, accessoires, outils : des produits testés et sélectionnés par la rédaction, sans placement ni partenariat.", faq: [{ question: "Êtes-vous rémunérés pour vos recommandations produits ?", answer: "Non. Toutes nos recommandations sont indépendantes. Nous ne faisons pas de placement de produit et n'acceptons pas de rémunération des marques." }, { question: "Comment testez-vous les produits ?", answer: "Chaque produit recommandé a été utilisé par un membre de la rédaction pendant au moins deux semaines. Nous ne recommandons que ce que nous utiliserions nous-mêmes." }], related: ["activite", "livres", "destination"] },
 };
 
 const TYPE_ALIASES: Record<string, string[]> = {
@@ -213,7 +207,7 @@ export default function RecommandationTypePage() {
     <>
       <SEO
         title={`${typeConfig.label} — Recommandations · Origines Media`}
-        description={`Nos ${typeConfig.plural} recommandés par la rédaction. ${recos.length} sélections à découvrir.`}
+        description={typeConfig.description}
         url={`/recommandations/${typeId}`}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
@@ -223,6 +217,7 @@ export default function RecommandationTypePage() {
             url: `/recommandations/${typeId}`,
           },
         ]}
+        faqData={typeConfig.faq}
         itemListData={recos
           .filter((r) => r.imageUrl)
           .slice(0, 10)
@@ -266,6 +261,7 @@ export default function RecommandationTypePage() {
                   {recos.length !== 1 ? "s" : ""} par la r&eacute;daction.
                 </p>
               )}
+              <p className={s.heroDescription}>{typeConfig.description}</p>
             </div>
 
             <div className={s.heroAccent} style={{ background: color }} />
@@ -507,6 +503,49 @@ export default function RecommandationTypePage() {
                 Toutes les recommandations &rarr;
               </Link>
             </div>
+          )}
+
+          {/* FAQ */}
+          {typeConfig.faq && typeConfig.faq.length > 0 && (
+            <section className={s.faqSection}>
+              <h2 className={s.faqTitle}>Questions fr&eacute;quentes</h2>
+              <div className={s.faqList}>
+                {typeConfig.faq.map((item, i) => (
+                  <details key={i} className={s.faqItem}>
+                    <summary className={s.faqQuestion}>{item.question}</summary>
+                    <p className={s.faqAnswer}>{item.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Related types */}
+          {typeConfig.related && typeConfig.related.length > 0 && (
+            <section className={s.relatedSection}>
+              <h2 className={s.relatedTitle}>Cat&eacute;gories proches</h2>
+              <div className={s.relatedGrid}>
+                {typeConfig.related.map((key) => {
+                  const rel = RECO_TYPES[key];
+                  if (!rel) return null;
+                  return (
+                    <Link
+                      key={key}
+                      to={`/recommandations/${key}`}
+                      className={s.relatedCard}
+                      style={{ "--rel-color": rel.color } as React.CSSProperties}
+                    >
+                      <span className={s.relatedCardDot} style={{ background: rel.color }} />
+                      <div>
+                        <span className={s.relatedCardLabel}>{rel.label}</span>
+                        <span className={s.relatedCardUnivers}>Recommandations</span>
+                      </div>
+                      <span className={s.relatedCardArrow}>&rarr;</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
           )}
         </div>
       </main>

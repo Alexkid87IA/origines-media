@@ -668,6 +668,177 @@
   100% { background-position: -200% 0; }
 }
 
+/* ──────────────────────────────────────────────────────────
+   Hero description (SEO intro text)
+   ────────────────────────────────────────────────────────── */
+
+.heroDescription {
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--stone500);
+  margin: 12px 0 0;
+  max-width: 60ch;
+}
+
+/* ──────────────────────────────────────────────────────────
+   FAQ Section
+   ────────────────────────────────────────────────────────── */
+
+.faqSection {
+  margin-top: 64px;
+  padding-top: 48px;
+  border-top: 1px solid var(--stone100);
+}
+
+.faqTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 24px;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.faqItem {
+  background: var(--pure);
+  padding: 0;
+}
+
+.faqQuestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.2s ease;
+}
+
+.faqQuestion::-webkit-details-marker { display: none; }
+
+.faqQuestion::after {
+  content: '+';
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--stone400);
+  flex-shrink: 0;
+  margin-left: 16px;
+  transition: transform 0.2s ease;
+}
+
+.faqItem[open] .faqQuestion::after {
+  content: '−';
+}
+
+.faqQuestion:hover {
+  background: var(--stone50);
+}
+
+.faqAnswer {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--stone600);
+  padding: 0 20px 20px;
+  margin: 0;
+  max-width: 70ch;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Related types
+   ────────────────────────────────────────────────────────── */
+
+.relatedSection {
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 1px solid var(--stone100);
+}
+
+.relatedTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 20px;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--stone100);
+  border: 1px solid var(--stone100);
+}
+
+.relatedCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  background: var(--pure);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s ease;
+}
+
+.relatedCard:hover {
+  background: var(--stone50);
+}
+
+.relatedCardDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.relatedCardLabel {
+  display: block;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.relatedCardUnivers {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  margin-top: 2px;
+}
+
+.relatedCardArrow {
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--stone300);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.relatedCard:hover .relatedCardArrow {
+  color: var(--ink);
+  transform: translateX(2px);
+}
+
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
@@ -707,6 +878,14 @@
   .toolbar { flex-wrap: wrap; }
   .pagination { gap: 2px; margin-top: 28px; padding-top: 20px; }
   .pageBtn { min-width: 32px; height: 32px; font-size: 10px; }
+  .heroDescription { font-size: 14px; }
+  .faqSection { margin-top: 40px; padding-top: 32px; }
+  .faqTitle { font-size: 19px; }
+  .faqQuestion { font-size: 14px; padding: 14px 16px; }
+  .faqAnswer { font-size: 13px; padding: 0 16px 16px; }
+  .relatedSection { margin-top: 32px; padding-top: 28px; }
+  .relatedTitle { font-size: 19px; }
+  .relatedGrid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

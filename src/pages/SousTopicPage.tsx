@@ -188,7 +188,7 @@ export default function SousTopicPage() {
     <>
       <SEO
         title={`${subtopic.label} — ${univers.name} · Origines Media`}
-        description={`Tous nos articles sur ${subtopic.label.toLowerCase()} dans l'univers ${univers.name}. ${articles.length} publications pour explorer le sujet en profondeur.`}
+        description={subtopic.description || `Tous nos articles sur ${subtopic.label.toLowerCase()} dans l'univers ${univers.name}. ${articles.length} publications pour explorer le sujet en profondeur.`}
         url={`/univers/${univers.id}/${subtopic.slug}`}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
@@ -202,6 +202,7 @@ export default function SousTopicPage() {
           image: a.imageUrl,
           url: `/article/${a.slug}`,
         }))}
+        faqData={subtopic.faq}
       />
       <SiteHeader />
 
@@ -243,6 +244,9 @@ export default function SousTopicPage() {
                   {articles.length} article{articles.length !== 1 ? "s" : ""}
                   {" "}sur ce th&egrave;me.
                 </p>
+              )}
+              {subtopic.description && (
+                <p className={s.heroDescription}>{subtopic.description}</p>
               )}
             </div>
 
@@ -470,6 +474,51 @@ export default function SousTopicPage() {
                 Retour &agrave; {univers.name} &rarr;
               </Link>
             </div>
+          )}
+
+          {/* FAQ */}
+          {subtopic.faq && subtopic.faq.length > 0 && (
+            <section className={s.faqSection}>
+              <h2 className={s.faqTitle}>Questions fr&eacute;quentes</h2>
+              <div className={s.faqList}>
+                {subtopic.faq.map((item, i) => (
+                  <details key={i} className={s.faqItem}>
+                    <summary className={s.faqQuestion}>{item.question}</summary>
+                    <p className={s.faqAnswer}>{item.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Related topics */}
+          {subtopic.related && subtopic.related.length > 0 && (
+            <section className={s.relatedSection}>
+              <h2 className={s.relatedTitle}>Th&egrave;mes proches</h2>
+              <div className={s.relatedGrid}>
+                {subtopic.related.map((slug) => {
+                  const rel = UNIVERS.flatMap((u) =>
+                    u.subtopics.map((st) => ({ ...st, univers: u }))
+                  ).find((st) => st.slug === slug);
+                  if (!rel) return null;
+                  return (
+                    <Link
+                      key={slug}
+                      to={`/univers/${rel.univers.id}/${slug}`}
+                      className={s.relatedCard}
+                      style={{ "--rel-color": rel.univers.color } as React.CSSProperties}
+                    >
+                      <span className={s.relatedCardDot} style={{ background: rel.univers.color }} />
+                      <div>
+                        <span className={s.relatedCardLabel}>{rel.label}</span>
+                        <span className={s.relatedCardUnivers}>{rel.univers.name}</span>
+                      </div>
+                      <span className={s.relatedCardArrow}>&rarr;</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
           )}
         </div>
       </main>

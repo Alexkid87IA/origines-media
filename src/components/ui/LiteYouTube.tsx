@@ -4,9 +4,10 @@ interface LiteYouTubeProps {
   videoId: string;
   title: string;
   className?: string;
+  poster?: string;
 }
 
-export default function LiteYouTube({ videoId, title, className }: LiteYouTubeProps) {
+export default function LiteYouTube({ videoId, title, className, poster }: LiteYouTubeProps) {
   const [activated, setActivated] = useState(false);
   const activate = useCallback(() => setActivated(true), []);
 
@@ -40,7 +41,7 @@ export default function LiteYouTube({ videoId, title, className }: LiteYouTubePr
       }}
     >
       <img
-        src={`https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
+        src={poster || `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`}
         alt={title}
         loading="lazy"
         width={1280}
