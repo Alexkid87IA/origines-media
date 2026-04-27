@@ -737,7 +737,7 @@ export default function EcrireHistoirePage() {
   const videoHistoryRef = useRef<{ question: string; answer: string }[]>([]);
   const videoExchangeCount = useRef(0);
 
-  const handleVideoAiRecord = useCallback(async (blob: Blob, questionLabel: string): Promise<{ done: boolean; question?: { label: string; hint?: string }; encouragement?: string }> => {
+  const handleVideoAiRecord = useCallback(async (blob: Blob, questionLabel: string, preflightCtx?: { firstTime: string; availableTime: string; mood: string }): Promise<{ done: boolean; question?: { label: string; hint?: string }; encouragement?: string }> => {
     const FALLBACK_QUESTION = { label: "Continuez — qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps, racontez la suite." };
 
     try {
@@ -784,6 +784,7 @@ export default function EcrireHistoirePage() {
           aiQuestionsAsked: videoExchangeCount.current,
           fullGuide: true,
           videoMode: true,
+          preflightContext: preflightCtx || undefined,
         }),
       });
 

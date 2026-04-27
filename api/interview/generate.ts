@@ -6,6 +6,12 @@ interface QAPair {
   answer: string;
 }
 
+interface PreflightContext {
+  firstTime?: string;
+  availableTime?: string;
+  mood?: string;
+}
+
 interface RequestBody {
   intention: string;
   sujet: string;
@@ -17,6 +23,7 @@ interface RequestBody {
   aiQuestionsAsked: number;
   fullGuide?: boolean;
   videoMode?: boolean;
+  preflightContext?: PreflightContext;
 }
 
 const SYSTEM_PROMPT_ASSIST = `Tu es Lya, assistante de rédaction pour Origines Media, un média qui recueille des témoignages de vie.
@@ -175,6 +182,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `Cette personne veut ${INTENTION_LABELS[body.intention] || "partager son histoire"}.`,
     `Son sujet concerne ${SUJET_LABELS[body.sujet] || "un vécu personnel"}.`,
   ];
+
+  if (isVideo && body.preflightContext) {
+    const pf = body.preflightContext;
+    const timeLabels: Record<string, string> = { short: "5-10 minutes", medium: "15-20 minutes", long: "30 minutes ou plus" };
+    const moodLabels: Record<string, string> = { calm: "sereine et prête", emotional: "un peu émue", motivated: "motivée et enthousiaste", hesitant: "hésitante mais courageuse" };
+    const firstLabels: Record<string, string> = { "first-time": "C'est sa première fois face caméra", experienced: "Elle a déjà témoigné", nervous: "Elle a le trac" };
+    if (pf.firstTime) contextLines.push(firstLabels[pf.firstTime] || "");
+    if (pf.availableTime) contextLines.push(`Temps disponible : ${timeLabels[pf.availableTime] || pf.availableTime}.`);
+    if (pf.mood) contextLines.push(`État d'esprit : ${moodLabels[pf.mood] || pf.mood}.`);
+    contextLines.push("Adapte ton rythme et ton ton en fonction de ces informations.");
+  }
 
   if (isFullGuide || isVideo) {
     contextLines.push(`Nombre d'échanges jusqu'ici : ${body.history.length}.`);

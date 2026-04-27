@@ -16,11 +16,17 @@ interface AiNextResult {
   encouragement?: string;
 }
 
+interface PreflightContext {
+  firstTime: string;
+  availableTime: string;
+  mood: string;
+}
+
 interface VideoRecorderProps {
   questions: Question[];
   onComplete: (recordings: Blob[]) => void;
   onCancel: () => void;
-  onAfterRecord?: (blob: Blob, questionLabel: string) => Promise<AiNextResult>;
+  onAfterRecord?: (blob: Blob, questionLabel: string, preflightCtx?: PreflightContext) => Promise<AiNextResult>;
 }
 
 type Phase = "permission" | "preflight" | "ready" | "countdown" | "recording" | "review" | "processing";
@@ -31,66 +37,107 @@ type Phase = "permission" | "preflight" | "ready" | "countdown" | "recording" | 
 
 interface PreflightItem {
   id: string;
+  lyaIntro: string;
   question: string;
-  options: { label: string; ok: boolean }[];
+  options: { label: string; value: string; ok: boolean }[];
   tip: string;
 }
 
 const PREFLIGHT_CHECKS: PreflightItem[] = [
   {
+    id: "welcome",
+    lyaIntro: "Bonjour ! Je suis Lya, votre guide pour cet entretien. Avant de commencer, on va prendre quelques minutes pour bien se préparer ensemble.",
+    question: "C'est la première fois que vous racontez votre histoire face caméra ?",
+    options: [
+      { label: "Oui, c'est la première fois", value: "first-time", ok: true },
+      { label: "Non, j'ai déjà témoigné", value: "experienced", ok: true },
+      { label: "J'ai un peu le trac…", value: "nervous", ok: true },
+    ],
+    tip: "Quelle que soit votre réponse, c'est parfait. Chaque témoignage est unique.",
+  },
+  {
+    id: "time",
+    lyaIntro: "",
+    question: "De combien de temps disposez-vous pour cet entretien ?",
+    options: [
+      { label: "5 à 10 minutes", value: "short", ok: true },
+      { label: "15 à 20 minutes", value: "medium", ok: true },
+      { label: "30 minutes ou plus", value: "long", ok: true },
+    ],
+    tip: "Pas de pression — je m'adapterai à votre rythme. Même 5 minutes peuvent suffire pour un beau témoignage.",
+  },
+  {
+    id: "mood",
+    lyaIntro: "",
+    question: "Comment vous sentez-vous en ce moment ?",
+    options: [
+      { label: "Serein·e, prêt·e à parler", value: "calm", ok: true },
+      { label: "Un peu ému·e", value: "emotional", ok: true },
+      { label: "Motivé·e, j'ai envie de raconter", value: "motivated", ok: true },
+      { label: "Hésitant·e, mais j'y vais", value: "hesitant", ok: true },
+    ],
+    tip: "Il n'y a pas de mauvais état d'esprit. Si c'est difficile, on ira doucement.",
+  },
+  {
     id: "light",
+    lyaIntro: "Très bien. Maintenant, vérifions quelques points techniques pour que votre vidéo soit belle.",
     question: "Est-ce que votre visage est bien éclairé ?",
     options: [
-      { label: "Oui, c'est bon", ok: true },
-      { label: "C'est un peu sombre", ok: false },
+      { label: "Oui, c'est bon", value: "yes", ok: true },
+      { label: "C'est un peu sombre", value: "no", ok: false },
     ],
     tip: "Placez-vous face à une fenêtre ou une lampe. Évitez les contre-jours (lumière derrière vous).",
   },
   {
-    id: "frame",
-    question: "Vous voyez bien votre visage et vos épaules à l'écran ?",
-    options: [
-      { label: "Oui, c'est cadré", ok: true },
-      { label: "Pas vraiment", ok: false },
-    ],
-    tip: "Posez votre téléphone ou ordinateur à hauteur de vos yeux. Laissez un peu d'espace au-dessus de votre tête.",
-  },
-  {
     id: "sound",
+    lyaIntro: "",
     question: "Êtes-vous dans un endroit calme ?",
     options: [
-      { label: "Oui, c'est calme", ok: true },
-      { label: "Il y a du bruit", ok: false },
+      { label: "Oui, c'est calme", value: "yes", ok: true },
+      { label: "Il y a du bruit", value: "no", ok: false },
     ],
     tip: "Fermez les fenêtres, éloignez-vous des sources de bruit. Si possible, utilisez des écouteurs avec micro.",
   },
   {
-    id: "ready",
-    question: "Vous êtes prêt·e à commencer ?",
+    id: "go",
+    lyaIntro: "Parfait, tout est prêt. La première question va s'afficher à l'écran — répondez comme si vous parliez à un ami. Pas de bonne ou mauvaise réponse.",
+    question: "On y va ?",
     options: [
-      { label: "C'est parti !", ok: true },
-      { label: "J'ai besoin d'un instant", ok: false },
+      { label: "C'est parti !", value: "go", ok: true },
+      { label: "J'ai besoin d'un instant", value: "wait", ok: false },
     ],
-    tip: "Prenez une grande respiration. Il n'y a pas de bonne ou mauvaise réponse — parlez avec votre cœur.",
+    tip: "Prenez une grande respiration. Je suis là avec vous du début à la fin.",
   },
 ];
 
-const LYA_PREFLIGHT_MESSAGES: Record<string, { ok: string; notOk: string }> = {
-  light: {
-    ok: "Parfait, la lumière a l'air bonne. On continue.",
-    notOk: "Pas de souci ! Essayez de vous rapprocher d'une source de lumière. Regardez le rendu à l'écran.",
+const LYA_PREFLIGHT_RESPONSES: Record<string, Record<string, string>> = {
+  welcome: {
+    "first-time": "Bienvenue ! Ne vous inquiétez pas, je serai là pour vous guider pas à pas. Il n'y a rien à préparer — juste être vous-même.",
+    "experienced": "Super, vous connaissez déjà l'exercice. On va quand même prendre un moment pour bien se préparer.",
+    "nervous": "C'est tout à fait normal ! Le trac disparaît dès les premières secondes. Et si besoin, vous pourrez refaire n'importe quelle réponse.",
   },
-  frame: {
-    ok: "Super cadrage. On y est presque.",
-    notOk: "Ajustez la position de votre caméra — idéalement à hauteur de vos yeux, pas trop près, pas trop loin.",
+  time: {
+    "short": "Compris. Je poserai des questions courtes et ciblées pour aller à l'essentiel.",
+    "medium": "Très bien, c'est le format idéal. On aura le temps de bien développer votre histoire.",
+    "long": "Parfait, on va pouvoir prendre le temps de creuser en profondeur. Votre histoire le mérite.",
+  },
+  mood: {
+    "calm": "C'est l'idéal. Cette sérénité va se ressentir dans votre témoignage.",
+    "emotional": "C'est normal et c'est précieux. L'émotion donne de la force à un témoignage. On ira à votre rythme.",
+    "motivated": "J'adore cette énergie ! On va faire quelque chose de beau ensemble.",
+    "hesitant": "Le courage, c'est justement d'y aller malgré l'hésitation. On avance ensemble, un pas à la fois.",
+  },
+  light: {
+    "yes": "Parfait, la lumière a l'air bonne.",
+    "no": "Essayez de vous rapprocher d'une source de lumière. Regardez le rendu à l'écran et réessayez.",
   },
   sound: {
-    ok: "Très bien. Le son est important pour la qualité de votre témoignage.",
-    notOk: "Si possible, trouvez un coin plus calme. Sinon, ce n'est pas grave — on fera avec.",
+    "yes": "Très bien. Le son est important pour la qualité de votre témoignage.",
+    "no": "Si possible, trouvez un coin plus calme. Sinon, ce n'est pas grave — on fera avec.",
   },
-  ready: {
-    ok: "Alors allons-y. Je suis là avec vous.",
-    notOk: "Prenez votre temps. Quand vous êtes prêt·e, appuyez sur « C'est parti ».",
+  go: {
+    "go": "Alors allons-y. Je suis là avec vous. 💜",
+    "wait": "Prenez votre temps. Quand vous êtes prêt·e, appuyez sur « C'est parti ».",
   },
 };
 
@@ -138,6 +185,8 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   const [preflightIdx, setPreflightIdx] = useState(0);
   const [preflightMsg, setPreflightMsg] = useState<string | null>(null);
   const [preflightAnswered, setPreflightAnswered] = useState(false);
+  const preflightCtxRef = useRef<Record<string, string>>({});
+  const [showFinishConfirm, setShowFinishConfirm] = useState(false);
 
   const currentQ = questions[questionIdx];
   const isAiMode = !!onAfterRecord;
@@ -269,7 +318,16 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   }, [reviewUrl, questionIdx]);
 
   // ── User chooses to stop early (AI mode) ──
-  const finishEarly = useCallback(() => {
+  const requestFinish = useCallback(() => {
+    setShowFinishConfirm(true);
+  }, []);
+
+  const cancelFinish = useCallback(() => {
+    setShowFinishConfirm(false);
+  }, []);
+
+  const confirmFinish = useCallback(() => {
+    setShowFinishConfirm(false);
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -297,7 +355,12 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       setAiMessage(null);
 
       try {
-        const result = await onAfterRecord!(currentBlob, currentQ.label);
+        const ctx: PreflightContext = {
+          firstTime: preflightCtxRef.current.welcome || "",
+          availableTime: preflightCtxRef.current.time || "",
+          mood: preflightCtxRef.current.mood || "",
+        };
+        const result = await onAfterRecord!(currentBlob, currentQ.label, ctx);
         if (result.encouragement) setAiMessage(result.encouragement);
 
         if (result.done) {
@@ -407,13 +470,14 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     const check = PREFLIGHT_CHECKS[preflightIdx];
     const isLastCheck = preflightIdx >= PREFLIGHT_CHECKS.length - 1;
 
-    const handlePreflightAnswer = (ok: boolean) => {
-      const msgs = LYA_PREFLIGHT_MESSAGES[check.id];
-      setPreflightMsg(ok ? msgs.ok : msgs.notOk);
+    const handlePreflightAnswer = (value: string, ok: boolean) => {
+      preflightCtxRef.current[check.id] = value;
+      const responses = LYA_PREFLIGHT_RESPONSES[check.id];
+      setPreflightMsg(responses?.[value] || "");
       setPreflightAnswered(true);
 
       if (ok && isLastCheck) {
-        setTimeout(() => setPhase("ready"), 1200);
+        setTimeout(() => setPhase("ready"), 1500);
         return;
       }
 
@@ -422,19 +486,17 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           setPreflightIdx((i) => i + 1);
           setPreflightMsg(null);
           setPreflightAnswered(false);
-        }, 1200);
+        }, 1500);
       }
     };
 
     return (
       <div className={s.recorder}>
-        {/* Live camera preview */}
         <div className={s.viewport}>
           <video ref={videoRef} className={s.video} autoPlay muted playsInline />
           <div className={s.preflightOverlay} />
         </div>
 
-        {/* Lya card */}
         <div className={s.preflightCard}>
           <div className={s.processingAvatar}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
@@ -443,6 +505,11 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           </div>
           <div className={s.preflightContent}>
             <p className={s.processingName}>Lya — Préparation</p>
+
+            {check.lyaIntro && !preflightAnswered && (
+              <p className={s.preflightIntro}>{check.lyaIntro}</p>
+            )}
+
             <p className={s.preflightQuestion}>{check.question}</p>
 
             {preflightMsg ? (
@@ -451,21 +518,10 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
               <div className={s.preflightOptions}>
                 {check.options.map((opt) => (
                   <button
-                    key={opt.label}
+                    key={opt.value}
                     className={`${s.preflightOption} ${opt.ok ? s.preflightOptionOk : s.preflightOptionWarn}`}
-                    onClick={() => handlePreflightAnswer(opt.ok)}
+                    onClick={() => handlePreflightAnswer(opt.value, opt.ok)}
                   >
-                    {opt.ok ? (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    ) : (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="8" x2="12" y2="12" />
-                        <line x1="12" y1="16" x2="12.01" y2="16" />
-                      </svg>
-                    )}
                     {opt.label}
                   </button>
                 ))}
@@ -478,7 +534,6 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           </div>
         </div>
 
-        {/* Progress */}
         <div className={s.preflightProgress}>
           {PREFLIGHT_CHECKS.map((_, i) => (
             <div
@@ -491,10 +546,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
         <div className={s.controls}>
           <button className={s.controlBtn} onClick={onCancel}>Annuler</button>
-          <button
-            className={s.controlBtn}
-            onClick={() => setPhase("ready")}
-          >
+          <button className={s.controlBtn} onClick={() => setPhase("ready")}>
             Passer la préparation
           </button>
         </div>
@@ -588,7 +640,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
               Refaire cette réponse
             </button>
             {isAiMode && doneCount >= 2 && !isLastQuestion && (
-              <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={finishEarly}>
+              <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={requestFinish}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
@@ -743,7 +795,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         )}
 
         {isAiMode && doneCount >= 1 && (phase === "ready" || phase === "recording") && (
-          <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={finishEarly}>
+          <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={requestFinish}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 6L9 17l-5-5" />
             </svg>
@@ -751,6 +803,37 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           </button>
         )}
       </div>
+
+      {/* Confirmation modal */}
+      {showFinishConfirm && (
+        <div className={s.confirmOverlay}>
+          <div className={s.confirmCard}>
+            <div className={s.processingAvatar}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+              </svg>
+            </div>
+            <div className={s.confirmContent}>
+              <p className={s.processingName}>Lya</p>
+              <p className={s.confirmText}>
+                Vous avez enregistré {doneCount} vidéo{doneCount > 1 ? "s" : ""}. Si vous terminez maintenant, {doneCount > 1 ? "elles seront envoyées" : "elle sera envoyée"} à notre équipe.
+              </p>
+              <p className={s.confirmSubtext}>Êtes-vous sûr·e de vouloir terminer ?</p>
+              <div className={s.confirmActions}>
+                <button className={s.controlBtn} onClick={cancelFinish}>
+                  Non, je continue
+                </button>
+                <button className={`${s.controlBtn} ${s.confirmFinishBtn}`} onClick={confirmFinish}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                  Oui, terminer et envoyer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
