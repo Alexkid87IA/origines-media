@@ -142,9 +142,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Assets statiques (JS, CSS, fonts) - Cache First
+  // Assets statiques (JS, CSS, fonts) - Network First
+  // Les hash Vite changent à chaque deploy, Cache-First causerait des 404
   if (CACHE_PATTERNS.static.test(url.pathname)) {
-    event.respondWith(cacheFirstStrategy(request, STATIC_CACHE));
+    event.respondWith(networkFirstStrategy(request, STATIC_CACHE));
     return;
   }
 

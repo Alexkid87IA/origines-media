@@ -1,8 +1,23 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import PageTransition from './components/PageTransition/PageTransition';
-const CookieConsent = lazy(() => import('./components/CookieConsent'));
-const ExitIntentPopup = lazy(() => import('./components/ExitIntentPopup'));
+
+function lazyRetry(factory: () => Promise<{ default: React.ComponentType<any> }>) {
+  return lazy(() =>
+    factory().catch(() => {
+      const reloaded = sessionStorage.getItem('chunk-retry');
+      if (!reloaded) {
+        sessionStorage.setItem('chunk-retry', '1');
+        window.location.reload();
+      }
+      sessionStorage.removeItem('chunk-retry');
+      return factory();
+    })
+  );
+}
+
+const CookieConsent = lazyRetry(() => import('./components/CookieConsent'));
+const ExitIntentPopup = lazyRetry(() => import('./components/ExitIntentPopup'));
 
 // Composant pour scroller en haut à chaque changement de page
 function ScrollToTop() {
@@ -25,7 +40,7 @@ function RedirectToRecommandation() {
   return <Navigate to={`/recommandations/${slug}`} replace />;
 }
 
-const RecommandationTypePage = lazy(() => import('./pages/RecommandationTypePage'));
+const RecommandationTypePage = lazyRetry(() => import('./pages/RecommandationTypePage'));
 
 const RECO_TYPE_KEYS = new Set([
   "livres", "films-series", "musique", "podcasts", "youtube",
@@ -41,60 +56,60 @@ function RecommandationResolver() {
 }
 
 // Lazy loading des pages
-const HomePage = lazy(() => import('./pages/HomePageV2'));
-const UniversPage = lazy(() => import('./pages/UniversPage'));
-const SeriesPage = lazy(() => import('./pages/SeriesPage'));
-const SeriesDetailPage = lazy(() => import('./pages/SeriesDetailPage'));
-const FormatPage = lazy(() => import('./pages/FormatPage'));
-const BibliothequePage = lazy(() => import('./pages/BibliothequePage'));
-const ArticlePage = lazy(() => import('./pages/ArticlePageV2'));
-const VideoPage = lazy(() => import('./pages/VideoPage'));
-const VideosPage = lazy(() => import('./pages/VideosPage'));
-const ProductionDetailPage = lazy(() => import('./pages/ProductionDetailPage'));
-const PortraitDetailPage = lazy(() => import('./pages/PortraitDetailPage'));
-const HistoiresPage = lazy(() => import('./pages/HistoiresPage'));
-const ArticlesPage = lazy(() => import('./pages/ArticlesPageV2'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const LegalPage = lazy(() => import('./pages/LegalPage'));
-const CGUPage = lazy(() => import('./pages/CGUPage'));
-const CGVPage = lazy(() => import('./pages/CGVPage'));
-const PartnershipsPage = lazy(() => import('./pages/PartnershipsPage'));
-const JoinPage = lazy(() => import('./pages/JoinPage'));
-const ShareStoryPage = lazy(() => import('./pages/ShareStoryPage'));
-const RecommandationsPage = lazy(() => import('./pages/RecommandationsPage'));
-const RecommandationPage = lazy(() => import('./pages/RecommandationPage'));
-const ProposerRecoPage = lazy(() => import('./pages/ProposerRecoPage'));
-const BoutiquePage = lazy(() => import('./pages/BoutiquePage'));
-const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
-const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
-const JoinPartnerPage = lazy(() => import('./pages/JoinPartnerPage'));
-const GuidesPage = lazy(() => import('./pages/GuidesPage'));
-const MediaPage = lazy(() => import('./pages/MediaPage'));
-const ProdPage = lazy(() => import('./pages/ProdPage'));
-const TypePage = lazy(() => import('./pages/TypePage'));
-const ComprendreArticlePage = lazy(() => import('./pages/ComprendreArticlePage'));
-const ReflexionsArticlePage = lazy(() => import('./pages/ReflexionsArticlePage'));
-const TemoignagesPage = lazy(() => import('./pages/TemoignagesPage'));
-const EcrireHistoirePage = lazy(() => import('./pages/EcrireHistoirePage'));
-const TemoignagesArticlePage = lazy(() => import('./pages/TemoignagesArticlePage'));
-const PortraitsArticlePage = lazy(() => import('./pages/PortraitsArticlePage'));
-const DossiersPage = lazy(() => import('./pages/DossiersPage'));
-const DossierDetailPage = lazy(() => import('./pages/DossierDetailPage'));
-const ComptePage = lazy(() => import('./pages/ComptePage'));
-const ProfilPage = lazy(() => import('./pages/compte/ProfilPage'));
-const ListePage = lazy(() => import('./pages/compte/ListePage'));
-const JournauxPage = lazy(() => import('./pages/compte/JournauxPage'));
-const ParametresPage = lazy(() => import('./pages/compte/ParametresPage'));
-const InscriptionPage = lazy(() => import('./pages/InscriptionPage'));
-const ConnexionPage = lazy(() => import('./pages/ConnexionPage'));
-const DeconnexionPage = lazy(() => import('./pages/DeconnexionPage'));
-const RecherchePage = lazy(() => import('./pages/RecherchePage'));
-const ConfidentialitePage = lazy(() => import('./pages/ConfidentialitePage'));
-const CookiesPage = lazy(() => import('./pages/CookiesPage'));
-const PlanDuSitePage = lazy(() => import('./pages/PlanDuSitePage'));
-const SousTopicPage = lazy(() => import('./pages/SousTopicPage'));
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const HomePage = lazyRetry(() => import('./pages/HomePageV2'));
+const UniversPage = lazyRetry(() => import('./pages/UniversPage'));
+const SeriesPage = lazyRetry(() => import('./pages/SeriesPage'));
+const SeriesDetailPage = lazyRetry(() => import('./pages/SeriesDetailPage'));
+const FormatPage = lazyRetry(() => import('./pages/FormatPage'));
+const BibliothequePage = lazyRetry(() => import('./pages/BibliothequePage'));
+const ArticlePage = lazyRetry(() => import('./pages/ArticlePageV2'));
+const VideoPage = lazyRetry(() => import('./pages/VideoPage'));
+const VideosPage = lazyRetry(() => import('./pages/VideosPage'));
+const ProductionDetailPage = lazyRetry(() => import('./pages/ProductionDetailPage'));
+const PortraitDetailPage = lazyRetry(() => import('./pages/PortraitDetailPage'));
+const HistoiresPage = lazyRetry(() => import('./pages/HistoiresPage'));
+const ArticlesPage = lazyRetry(() => import('./pages/ArticlesPageV2'));
+const AboutPage = lazyRetry(() => import('./pages/AboutPage'));
+const ContactPage = lazyRetry(() => import('./pages/ContactPage'));
+const LegalPage = lazyRetry(() => import('./pages/LegalPage'));
+const CGUPage = lazyRetry(() => import('./pages/CGUPage'));
+const CGVPage = lazyRetry(() => import('./pages/CGVPage'));
+const PartnershipsPage = lazyRetry(() => import('./pages/PartnershipsPage'));
+const JoinPage = lazyRetry(() => import('./pages/JoinPage'));
+const ShareStoryPage = lazyRetry(() => import('./pages/ShareStoryPage'));
+const RecommandationsPage = lazyRetry(() => import('./pages/RecommandationsPage'));
+const RecommandationPage = lazyRetry(() => import('./pages/RecommandationPage'));
+const ProposerRecoPage = lazyRetry(() => import('./pages/ProposerRecoPage'));
+const BoutiquePage = lazyRetry(() => import('./pages/BoutiquePage'));
+const EnsemblePage = lazyRetry(() => import('./pages/EnsemblePage'));
+const NewsletterPage = lazyRetry(() => import('./pages/NewsletterPage'));
+const JoinPartnerPage = lazyRetry(() => import('./pages/JoinPartnerPage'));
+const GuidesPage = lazyRetry(() => import('./pages/GuidesPage'));
+const MediaPage = lazyRetry(() => import('./pages/MediaPage'));
+const ProdPage = lazyRetry(() => import('./pages/ProdPage'));
+const TypePage = lazyRetry(() => import('./pages/TypePage'));
+const ComprendreArticlePage = lazyRetry(() => import('./pages/ComprendreArticlePage'));
+const ReflexionsArticlePage = lazyRetry(() => import('./pages/ReflexionsArticlePage'));
+const TemoignagesPage = lazyRetry(() => import('./pages/TemoignagesPage'));
+const EcrireHistoirePage = lazyRetry(() => import('./pages/EcrireHistoirePage'));
+const TemoignagesArticlePage = lazyRetry(() => import('./pages/TemoignagesArticlePage'));
+const PortraitsArticlePage = lazyRetry(() => import('./pages/PortraitsArticlePage'));
+const DossiersPage = lazyRetry(() => import('./pages/DossiersPage'));
+const DossierDetailPage = lazyRetry(() => import('./pages/DossierDetailPage'));
+const ComptePage = lazyRetry(() => import('./pages/ComptePage'));
+const ProfilPage = lazyRetry(() => import('./pages/compte/ProfilPage'));
+const ListePage = lazyRetry(() => import('./pages/compte/ListePage'));
+const JournauxPage = lazyRetry(() => import('./pages/compte/JournauxPage'));
+const ParametresPage = lazyRetry(() => import('./pages/compte/ParametresPage'));
+const InscriptionPage = lazyRetry(() => import('./pages/InscriptionPage'));
+const ConnexionPage = lazyRetry(() => import('./pages/ConnexionPage'));
+const DeconnexionPage = lazyRetry(() => import('./pages/DeconnexionPage'));
+const RecherchePage = lazyRetry(() => import('./pages/RecherchePage'));
+const ConfidentialitePage = lazyRetry(() => import('./pages/ConfidentialitePage'));
+const CookiesPage = lazyRetry(() => import('./pages/CookiesPage'));
+const PlanDuSitePage = lazyRetry(() => import('./pages/PlanDuSitePage'));
+const SousTopicPage = lazyRetry(() => import('./pages/SousTopicPage'));
+const NotFoundPage = lazyRetry(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
   <div className="min-h-screen bg-white flex items-center justify-center">
