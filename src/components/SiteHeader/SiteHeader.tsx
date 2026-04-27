@@ -193,9 +193,9 @@ const SECONDARY: SecondaryNav[] = [
     dropdownLabel: "Vie du média",
     allLabel: "Voir tout",
     items: [
-      { href: "/histoires", label: "Histoires", color: "#D64C90" },
-      { href: "/recommandations", label: "Recommandations", color: "#7B5CD6" },
-      { href: "/newsletter", label: "La Lettre du dimanche", color: "#C99B1E" },
+      { href: "/ensemble#histoires", label: "Histoires", color: "#D64C90" },
+      { href: "/ensemble#recommandations", label: "Recommandations", color: "#7B5CD6" },
+      { href: "/ensemble#lettre", label: "La Lettre du dimanche", color: "#C99B1E" },
       { href: "/ensemble#question", label: "Question de la semaine", color: "#2E94B5" },
       { href: "/ensemble#sondages", label: "Sondages", color: "#E67839" },
       { href: "/ensemble#calendrier", label: "Calendrier des parutions", color: "#5AA352" },
@@ -658,7 +658,7 @@ export default function SiteHeader() {
                 <span className={styles.megaNum} aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <a href={`/${u.id}`} className={styles.megaTitle}>
+                <a href={`/univers/${u.id}`} className={styles.megaTitle}>
                   <span
                     className={styles.megaDot}
                     style={{ background: u.color }}
@@ -678,7 +678,7 @@ export default function SiteHeader() {
                     </a>
                   ))}
                 </div>
-                <a href={`/${u.id}`} className={styles.megaAll}>
+                <a href={`/univers/${u.id}`} className={styles.megaAll}>
                   Explorer {u.name.toLowerCase()}
                   <span aria-hidden="true">&rarr;</span>
                 </a>

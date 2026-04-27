@@ -1,19 +1,17 @@
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--stone400);
-  padding-top: 32px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .link {
-  color: var(--stone400);
+  color: var(--stone500);
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -24,10 +22,9 @@
 
 .sep {
   color: var(--stone300);
-  font-size: 8px;
 }
 
 .current {
-  color: var(--stone600);
+  color: var(--ink);
   font-weight: 600;
 }

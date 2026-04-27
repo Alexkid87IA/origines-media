@@ -128,6 +128,11 @@ function App() {
         <Route path="/media" element={<MediaPage />} />
         <Route path="/univers" element={<UniversPage />} />
         <Route path="/univers/:universId" element={<UniversPage />} />
+        <Route path="/esprit" element={<Navigate to="/univers/esprit" replace />} />
+        <Route path="/corps" element={<Navigate to="/univers/corps" replace />} />
+        <Route path="/liens" element={<Navigate to="/univers/liens" replace />} />
+        <Route path="/monde" element={<Navigate to="/univers/monde" replace />} />
+        <Route path="/avenir" element={<Navigate to="/univers/avenir" replace />} />
         <Route path="/univers/:universId/:soustopic" element={<SousTopicPage />} />
         <Route path="/series" element={<SeriesPage />} />
         <Route path="/series/:slug" element={<SeriesDetailPage />} />
