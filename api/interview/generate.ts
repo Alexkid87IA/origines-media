@@ -177,6 +177,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const maxExchanges = isVideo ? 30 : 14;
   const wrapUpThreshold = isVideo ? 20 : 10;
+  const minExchanges = isVideo ? 5 : 4;
 
   const contextLines = [
     `Cette personne veut ${INTENTION_LABELS[body.intention] || "partager son histoire"}.`,
@@ -228,7 +229,6 @@ Réponse :
 
 ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou terminer ?" : "Décide : recadrer, relancer ou passer ?"}`;
 
-  const minExchanges = isVideo ? 5 : 4;
   const hasEnoughExchanges = body.history.length >= minExchanges;
 
   const FALLBACK_QUESTIONS = [

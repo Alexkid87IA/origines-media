@@ -153,6 +153,8 @@ function formatTime(sec: number): string {
 }
 
 const MAX_DURATION = 120;
+const AUDIO_BITS_PER_SECOND = 32000;
+const AUDIO_READY_TIMEOUT_MS = 2500;
 
 const ENCOURAGEMENTS = [
   "Bravo, c'est dans la boîte.",
@@ -189,9 +191,9 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   const [preflightHistory, setPreflightHistory] = useState<{ question: string; answer: string; response: string }[]>([]);
   const preflightCtxRef = useRef<Record<string, string>>({});
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
-  const audioChunksRef = useRef<Blob[]>([]);
   const audioRecorderRef = useRef<MediaRecorder | null>(null);
   const audioBlobsRef = useRef<Map<number, Blob>>(new Map());
+  const audioReadyResolversRef = useRef<Map<number, (blob: Blob | null) => void>>(new Map());
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const micIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -272,11 +274,41 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     return () => clearTimeout(t);
   }, [phase, countdown]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const resolveAudioBlob = useCallback((questionNumber: number, blob: Blob | null) => {
+    if (blob && blob.size > 0) {
+      audioBlobsRef.current.set(questionNumber, blob);
+    }
+
+    const resolver = audioReadyResolversRef.current.get(questionNumber);
+    if (resolver) {
+      resolver(blob && blob.size > 0 ? blob : null);
+      audioReadyResolversRef.current.delete(questionNumber);
+    }
+  }, []);
+
+  const waitForAudioBlob = useCallback((questionNumber: number): Promise<Blob | null> => {
+    const existing = audioBlobsRef.current.get(questionNumber);
+    if (existing && existing.size > 0) return Promise.resolve(existing);
+
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        audioReadyResolversRef.current.delete(questionNumber);
+        resolve(null);
+      }, AUDIO_READY_TIMEOUT_MS);
+
+      audioReadyResolversRef.current.set(questionNumber, (blob) => {
+        clearTimeout(timeout);
+        resolve(blob && blob.size > 0 ? blob : null);
+      });
+    });
+  }, []);
+
   // ── Start recording ──
   const doStartRecording = useCallback(() => {
     if (!streamRef.current) return;
 
     chunksRef.current = [];
+    audioBlobsRef.current.delete(questionIdx);
     const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")
       ? "video/webm;codecs=vp9,opus"
       : MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")
@@ -315,35 +347,54 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     recorder.start(1000);
 
     const audioTracks = streamRef.current.getAudioTracks();
+    const qIdx = questionIdx;
     console.log("[VideoRec] Audio tracks:", audioTracks.length, audioTracks.map(t => t.label));
     if (audioTracks.length > 0) {
+      const audioTrackClones = audioTracks.map((track) => track.clone());
       try {
-        const audioStream = new MediaStream(audioTracks);
-        const audioMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-          ? "audio/webm;codecs=opus"
-          : MediaRecorder.isTypeSupported("audio/webm")
-            ? "audio/webm"
-            : MediaRecorder.isTypeSupported("audio/mp4")
-              ? "audio/mp4"
-              : "";
+        const audioStream = new MediaStream(audioTrackClones);
+        const audioMime = [
+          "audio/webm;codecs=opus",
+          "audio/webm",
+          "audio/mp4;codecs=mp4a.40.2",
+          "audio/mp4",
+        ].find((type) => MediaRecorder.isTypeSupported(type)) || "";
         console.log("[VideoRec] Audio mime:", audioMime || "NONE SUPPORTED");
         if (audioMime) {
-          audioChunksRef.current = [];
-          const audioRec = new MediaRecorder(audioStream, { mimeType: audioMime });
-          audioRec.ondataavailable = (e) => {
-            if (e.data.size > 0) audioChunksRef.current.push(e.data);
+          const audioChunks: Blob[] = [];
+          let audioSettled = false;
+          const finishAudio = (blob: Blob | null) => {
+            if (audioSettled) return;
+            audioSettled = true;
+            audioTrackClones.forEach((track) => track.stop());
+            resolveAudioBlob(qIdx, blob);
           };
-          const qIdx = questionIdx;
+          const audioRec = new MediaRecorder(audioStream, {
+            mimeType: audioMime,
+            audioBitsPerSecond: AUDIO_BITS_PER_SECOND,
+          });
+          audioRec.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunks.push(e.data);
+          };
           audioRec.onstop = () => {
-            const audioBlob = new Blob(audioChunksRef.current, { type: audioMime });
-            audioBlobsRef.current.set(qIdx, audioBlob);
+            const audioBlob = new Blob(audioChunks, { type: audioMime });
+            finishAudio(audioBlob);
             console.log("[VideoRec] Audio blob ready:", audioBlob.size, "bytes, type:", audioBlob.type);
+          };
+          audioRec.onerror = (e) => {
+            console.error("[VideoRec] Audio recorder error:", e);
+            finishAudio(null);
           };
           audioRec.start(1000);
           audioRecorderRef.current = audioRec;
+        } else {
+          audioTrackClones.forEach((track) => track.stop());
+          resolveAudioBlob(qIdx, null);
         }
       } catch (e) {
         console.error("[VideoRec] Audio recorder failed:", e);
+        audioTrackClones.forEach((track) => track.stop());
+        resolveAudioBlob(qIdx, null);
       }
     }
 
@@ -360,7 +411,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         return prev + 1;
       });
     }, 1000);
-  }, [questionIdx]);
+  }, [questionIdx, resolveAudioBlob]);
 
   // ── Stop recording ──
   const stopRecording = useCallback(() => {
@@ -490,7 +541,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           availableTime: preflightCtxRef.current.time || "",
           mood: preflightCtxRef.current.mood || "",
         };
-        const audioBlob = audioBlobsRef.current.get(questionIdx);
+        const audioBlob = await waitForAudioBlob(questionIdx);
         const blobToSend = audioBlob || currentBlob;
         console.log("[VideoRec] Sending blob:", blobToSend.type, blobToSend.size, "bytes",
           audioBlob ? "(audio-only)" : "(video fallback)");
@@ -535,7 +586,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       streamRef.current?.getTracks().forEach((t) => t.stop());
       onComplete(blobs);
     }
-  }, [reviewUrl, questionIdx, questions.length, recordings, onComplete, isAiMode, aiDone, onAfterRecord, currentQ]);
+  }, [reviewUrl, questionIdx, questions.length, recordings, onComplete, isAiMode, aiDone, onAfterRecord, currentQ, waitForAudioBlob]);
 
   /* ── Lya avatar (shared) ── */
   const lyaIcon = (cls?: string) => (
