@@ -359,11 +359,19 @@ export default function VideoPage() {
     { name: "Accueil", url: "/" },
     { name: "Vidéos", url: "/videos" },
   ];
+  const univId = article.univpilar;
+  const stSlug = article.soustopic;
   if (verticale?.nom) {
-    const univId = article.univpilar;
-    const stSlug = article.soustopic;
     const catUrl = univId && stSlug ? `/univers/${univId}/${stSlug}` : "/videos";
     breadcrumbItems.push({ name: verticale.nom, url: catUrl });
+  } else if (univId && stSlug) {
+    const univ = UNIVERS.find((u) => u.id === univId);
+    const st = univ?.subtopics.find((s) => s.slug === stSlug);
+    if (st) {
+      breadcrumbItems.push({ name: st.label, url: `/univers/${univId}/${stSlug}` });
+    } else if (univ) {
+      breadcrumbItems.push({ name: univ.name, url: `/univers/${univId}` });
+    }
   }
   breadcrumbItems.push({ name: title, url: `/video/${slug}` });
 
