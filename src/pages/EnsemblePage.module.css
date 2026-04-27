@@ -116,46 +116,122 @@
   flex-shrink: 0;
 }
 
-/* Navigation pills */
-.pills {
+/* Navigation — Pillar style (matches homepage Welcome) */
+.pillars {
+  position: relative;
+  display: flex;
+  gap: 0;
+  margin-top: 8px;
+}
+
+.spectrumLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    #D64C90 0%,
+    #D64C90 16.66%,
+    #7B5CD6 16.66%,
+    #7B5CD6 33.33%,
+    #C99B1E 33.33%,
+    #C99B1E 50%,
+    #2E94B5 50%,
+    #2E94B5 66.66%,
+    #E67839 66.66%,
+    #E67839 83.33%,
+    #5AA352 83.33%,
+    #5AA352 100%
+  );
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: expandLine 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.6s;
+}
+
+.pillarWrap {
+  position: relative;
+  flex: 1;
+}
+
+.pillar {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 20px 0 24px;
-  flex-wrap: wrap;
-}
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: 1px solid var(--stone100);
-  background: var(--paper);
-  text-decoration: none;
+  gap: 12px;
+  width: 100%;
+  padding: 20px 20px 24px;
   color: var(--ink);
-  transition: border-color 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  overflow: hidden;
+  text-decoration: none;
 }
-.pill:hover {
-  border-color: var(--pill-color);
-  background: rgba(10, 10, 10, 0.02);
+.pillarWrap:first-child .pillar { padding-left: 0; }
+.pillarWrap:last-child .pillar { padding-right: 0; }
+
+.pillar:hover {
+  background: rgba(0, 0, 0, 0.03);
 }
-.pillDot {
-  width: 6px;
-  height: 6px;
+
+.pillarBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--pillar-color);
+  transform-origin: top;
+  transform: scaleY(0);
+  animation: barGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(0.5s + var(--pillar-i) * 0.1s);
+}
+.pillarWrap:first-child .pillarBar { display: none; }
+.pillar:hover .pillarBar { width: 3px; }
+
+.pillarDot {
+  position: relative;
+  width: 10px;
+  height: 10px;
   flex-shrink: 0;
-  background: var(--pill-color);
+  border-radius: 50%;
+  background: var(--pillar-color);
+  opacity: 0;
+  transform: scale(0);
+  animation: dotAppear 0.4s ease forwards;
+  animation-delay: calc(0.6s + var(--pillar-i) * 0.12s);
+  transition: box-shadow 0.3s ease;
 }
-.pillLabel {
+.pillar:hover .pillarDot {
+  box-shadow: 0 0 12px 3px var(--pillar-color);
+}
+
+.pillarLabel {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--stone500);
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
   white-space: nowrap;
 }
-.pill:hover .pillLabel { color: var(--ink); }
+.pillar:hover .pillarLabel { color: var(--ink); }
+
+.pillarChevron {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  margin-left: auto;
+  opacity: 0.25;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  color: var(--stone400);
+}
+.pillar:hover .pillarChevron {
+  opacity: 0.5;
+  transform: translateY(2px);
+}
 
 /* =====================================================================
    EDITO — Mot de la rédaction
@@ -1279,18 +1355,22 @@
   .statNum { font-size: 20px; }
   .statDivider { display: none; }
 
-  .pills {
+  .pillars {
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 6px;
-    padding: 16px 0 20px;
+    gap: 0;
     animation: pillarPeek 1.6s ease 0.8s 1;
   }
-  .pills::-webkit-scrollbar { display: none; }
-  .pill { flex-shrink: 0; padding: 6px 12px; }
-  .pillLabel { font-size: 9px; letter-spacing: 0.1em; }
+  .pillars::-webkit-scrollbar { display: none; }
+  .pillarWrap { flex: none; flex-shrink: 0; }
+  .pillar { padding: 10px 14px 14px; gap: 6px; white-space: nowrap; }
+  .pillarDot { width: 7px; height: 7px; }
+  .pillarLabel { font-size: 9px; letter-spacing: 0.1em; }
+  .pillarChevron { display: none; }
+  .pillarBar { display: none; }
+  .spectrumLine { display: none; }
 
   .edito { padding: 48px 0; }
   .editoInner { padding-left: 20px; }
@@ -1404,6 +1484,21 @@
    ANIMATIONS
    ===================================================================== */
 
+@keyframes expandLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes barGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes dotAppear {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
 @keyframes pillarPeek {
   0%   { transform: translateX(0); }
   35%  { transform: translateX(-40px); }
@@ -1443,7 +1538,23 @@
   .pollFill {
     transition: none !important;
   }
-  .pills {
+  .pillars {
     animation: none !important;
+  }
+  .spectrumLine {
+    transform: scaleX(1);
+    animation: none !important;
+  }
+  .pillarBar {
+    transform: scaleY(1);
+    animation: none !important;
+  }
+  .pillarDot {
+    opacity: 1;
+    transform: scale(1);
+    animation: none !important;
+  }
+  .pillarChevron {
+    transition: none !important;
   }
 }

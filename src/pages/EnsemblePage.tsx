@@ -174,18 +174,35 @@ export default function EnsemblePage() {
               </div>
             </div>
 
-            {/* Navigation pills */}
-            <nav className={s.pills} aria-label="Sections">
-              {NAV_SECTIONS.map((sec) => (
-                <a
-                  key={sec.id}
-                  href={`#${sec.id}`}
-                  className={s.pill}
-                  style={{ "--pill-color": sec.color } as React.CSSProperties}
-                >
-                  <span className={s.pillDot} aria-hidden="true" />
-                  <span className={s.pillLabel}>{sec.label}</span>
-                </a>
+            {/* Navigation — pillar style (like homepage Welcome) */}
+            <nav className={s.pillars} aria-label="Sections">
+              <span className={s.spectrumLine} aria-hidden="true" />
+              {NAV_SECTIONS.map((sec, i) => (
+                <div key={sec.id} className={s.pillarWrap}>
+                  <a
+                    href={`#${sec.id}`}
+                    className={s.pillar}
+                    style={{ "--pillar-color": sec.color, "--pillar-i": i } as React.CSSProperties}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById(sec.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                  >
+                    <span className={s.pillarBar} aria-hidden="true" />
+                    <span className={s.pillarDot} aria-hidden="true" />
+                    <span className={s.pillarLabel}>{sec.label}</span>
+                    <svg
+                      className={s.pillarChevron}
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 6l4 4 4-4" />
+                    </svg>
+                  </a>
+                </div>
               ))}
             </nav>
           </div>
