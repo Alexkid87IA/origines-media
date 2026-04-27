@@ -32,8 +32,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const buffer = Buffer.from(base64Data, "base64");
     console.log(`Buffer size: ${buffer.length} bytes`);
 
-    const ext = (mimeType || "").includes("mp4") ? "mp4" : "webm";
-    const contentType = (mimeType || "").includes("mp4") ? "video/mp4" : "video/webm";
+    const isMp4 = (mimeType || "").includes("mp4");
+    const isAudio = (mimeType || "").startsWith("audio/");
+    const ext = isMp4 ? "mp4" : "webm";
+    const contentType = isAudio
+      ? (isMp4 ? "audio/mp4" : "audio/webm")
+      : (isMp4 ? "video/mp4" : "video/webm");
 
     const formData = new FormData();
     const blob = new Blob([buffer], { type: contentType });

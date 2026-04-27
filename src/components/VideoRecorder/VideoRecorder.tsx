@@ -188,6 +188,13 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   const [preflightHistory, setPreflightHistory] = useState<{ question: string; answer: string; response: string }[]>([]);
   const preflightCtxRef = useRef<Record<string, string>>({});
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const audioRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioBlobsRef = useRef<Map<number, Blob>>(new Map());
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const micIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [micLevel, setMicLevel] = useState(0);
 
   const currentQ = questions[questionIdx];
   const isAiMode = !!onAfterRecord;
@@ -205,6 +212,22 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
+      try {
+        const audioCtx = new AudioContext();
+        const source = audioCtx.createMediaStreamSource(stream);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        audioCtxRef.current = audioCtx;
+        analyserRef.current = analyser;
+        const dataArr = new Uint8Array(analyser.frequencyBinCount);
+        micIntervalRef.current = setInterval(() => {
+          if (!analyserRef.current) return;
+          analyserRef.current.getByteFrequencyData(dataArr);
+          const avg = dataArr.reduce((a, b) => a + b, 0) / dataArr.length;
+          setMicLevel(avg / 128);
+        }, 100);
+      } catch { /* audio monitoring non-critical */ }
       setPhase("preflight");
       setError(null);
     } catch {
@@ -218,6 +241,8 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     return () => {
       streamRef.current?.getTracks().forEach((t) => t.stop());
       if (timerRef.current) clearInterval(timerRef.current);
+      if (micIntervalRef.current) clearInterval(micIntervalRef.current);
+      audioCtxRef.current?.close().catch(() => {});
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -285,6 +310,29 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     };
 
     recorder.start(1000);
+
+    const audioTracks = streamRef.current.getAudioTracks();
+    if (audioTracks.length > 0) {
+      const audioStream = new MediaStream(audioTracks);
+      const audioMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/webm")
+          ? "audio/webm"
+          : "audio/mp4";
+      audioChunksRef.current = [];
+      const audioRec = new MediaRecorder(audioStream, { mimeType: audioMime });
+      audioRec.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      const qIdx = questionIdx;
+      audioRec.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: audioMime });
+        audioBlobsRef.current.set(qIdx, audioBlob);
+      };
+      audioRec.start(1000);
+      audioRecorderRef.current = audioRec;
+    }
+
     setElapsed(0);
     setPhase("recording");
 
@@ -292,6 +340,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       setElapsed((prev) => {
         if (prev + 1 >= MAX_DURATION) {
           recorderRef.current?.stop();
+          audioRecorderRef.current?.stop();
           return prev + 1;
         }
         return prev + 1;
@@ -304,6 +353,9 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     if (recorderRef.current?.state === "recording") {
       recorderRef.current.stop();
     }
+    if (audioRecorderRef.current?.state === "recording") {
+      audioRecorderRef.current.stop();
+    }
   }, []);
 
   // ── Retake current question ──
@@ -315,6 +367,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       next[questionIdx] = null;
       return next;
     });
+    audioBlobsRef.current.delete(questionIdx);
     setPhase("ready");
   }, [reviewUrl, questionIdx]);
 
@@ -336,6 +389,14 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     if (recorderRef.current?.state === "recording") {
       recorderRef.current.stop();
     }
+    if (audioRecorderRef.current?.state === "recording") {
+      audioRecorderRef.current.stop();
+    }
+    if (micIntervalRef.current) {
+      clearInterval(micIntervalRef.current);
+      micIntervalRef.current = null;
+    }
+    audioCtxRef.current?.close().catch(() => {});
     if (reviewUrl) URL.revokeObjectURL(reviewUrl);
     setAiDone(true);
     const blobs = recordings.filter((b): b is Blob => b !== null);
@@ -361,7 +422,8 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           availableTime: preflightCtxRef.current.time || "",
           mood: preflightCtxRef.current.mood || "",
         };
-        const result = await onAfterRecord!(currentBlob, currentQ.label, ctx);
+        const audioBlob = audioBlobsRef.current.get(questionIdx) || currentBlob;
+        const result = await onAfterRecord!(audioBlob, currentQ.label, ctx);
         if (result.encouragement) setAiMessage(result.encouragement);
 
         if (result.done) {
@@ -480,6 +542,10 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           setPreflightMsg(null);
           setPreflightAnswered(false);
         }, 1200);
+      } else {
+        setTimeout(() => {
+          setPreflightAnswered(false);
+        }, 2000);
       }
     };
 
@@ -518,6 +584,19 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
                 {!preflightAnswered && (
                   <>
+                    {check.id === "sound" && (
+                      <div className={s.micMeter}>
+                        <div className={s.micMeterTrack}>
+                          <div
+                            className={`${s.micMeterBar} ${micLevel > 0.05 ? s.micMeterBarActive : ""}`}
+                            style={{ width: `${Math.min(micLevel * 100, 100)}%` }}
+                          />
+                        </div>
+                        <span className={s.micMeterLabel}>
+                          {micLevel > 0.05 ? "Micro OK" : "Parlez pour tester votre micro..."}
+                        </span>
+                      </div>
+                    )}
                     <div className={s.preflightOptions}>
                       {check.options.map((opt) => (
                         <button
