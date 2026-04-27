@@ -225,6 +225,16 @@ Réponse :
 
 ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou terminer ?" : "Décide : recadrer, relancer ou passer ?"}`;
 
+  const minExchanges = isVideo ? 5 : 4;
+  const hasEnoughExchanges = body.history.length >= minExchanges;
+
+  const fallbackQuestion = {
+    skip: false,
+    question: "Continuez — qu'est-ce qui s'est passé ensuite ?",
+    hint: "Prenez votre temps, racontez la suite.",
+    placeholder: "Ce qui s'est passé ensuite...",
+  };
+
   try {
     const client = new Anthropic({ apiKey });
     const message = await client.messages.create({
@@ -235,6 +245,7 @@ ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou t
     });
 
     const text = message.content[0].type === "text" ? message.content[0].text : "";
+    console.log("AI raw response:", text.slice(0, 300));
     const parsed = JSON.parse(text.trim());
 
     res.setHeader("Cache-Control", "no-store");
@@ -244,6 +255,10 @@ ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou t
     }
 
     if (parsed.done) {
+      if (!hasEnoughExchanges) {
+        console.log(`AI wants to finish after ${body.history.length} exchanges, forcing continuation (min: ${minExchanges})`);
+        return res.status(200).json(fallbackQuestion);
+      }
       return res.status(200).json({ done: true, encouragement: parsed.encouragement || "" });
     }
 
@@ -252,12 +267,12 @@ ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou t
     }
 
     if (!parsed.question || (!parsed.hint && !isVideo) || (!parsed.placeholder && !isVideo)) {
-      return res.status(200).json((isFullGuide || isVideo) ? { done: true, encouragement: "" } : { skip: true, encouragement: "" });
+      return res.status(200).json(fallbackQuestion);
     }
 
     return res.status(200).json({ skip: false, ...parsed });
   } catch (err) {
     console.error("Interview AI error:", err);
-    return res.status(200).json((isFullGuide || isVideo) ? { done: true } : { skip: true });
+    return res.status(200).json(fallbackQuestion);
   }
 }
