@@ -349,6 +349,18 @@ const LYA_OPENERS: Record<string, { question: string; hint: string; placeholder:
   "autre": { question: "Raconte-moi le moment qui a tout changé dans ton histoire.", hint: "Ferme les yeux et replonge dans ce jour précis. Décris ce que tu vois.", placeholder: "Tout a commencé quand..." },
 };
 
+const VIDEO_LYA_OPENERS: Record<string, { question: string; hint: string }> = {
+  "sante-corps": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Pourquoi as-tu décidé de parler de ta santé ou de ton corps ?" },
+  "emotions-mental": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Pourquoi as-tu décidé de parler de tes émotions ?" },
+  "famille-relations": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Pourquoi as-tu décidé de parler de ta famille ou de tes relations ?" },
+  "travail-vocation": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Pourquoi as-tu décidé de parler de ton travail ?" },
+  "identite-origines": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Pourquoi as-tu décidé de parler de ton identité ou de tes origines ?" },
+  "deuil-perte": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Prends ton temps, il n'y a pas d'urgence." },
+  "renaissance": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Pourquoi as-tu décidé de parler de ce nouveau départ ?" },
+  "engagement": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Pourquoi as-tu décidé de parler de ton engagement ?" },
+  "autre": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Qu'est-ce qui t'a donné envie de prendre la parole ?" },
+};
+
 function buildLyaOpening(sujet: string | null): GuidedQuestion {
   const opener = LYA_OPENERS[sujet || "autre"] || LYA_OPENERS.autre;
   return {
@@ -1517,7 +1529,7 @@ export default function EcrireHistoirePage() {
                 <VideoRecorder
                   key={draft.writeMode}
                   questions={draft.writeMode === "guide"
-                    ? [{ label: (LYA_OPENERS[draft.sujet || "autre"] || LYA_OPENERS.autre).question, hint: (LYA_OPENERS[draft.sujet || "autre"] || LYA_OPENERS.autre).hint }]
+                    ? [{ label: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).question, hint: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).hint }]
                     : VIDEO_QUESTIONS}
                   onComplete={handleVideoComplete}
                   onCancel={handleVideoCancel}
