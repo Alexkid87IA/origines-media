@@ -5,7 +5,6 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { typo } from "../lib/typography";
-import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./EnsemblePage.module.css";
 
 /* ================================================================
@@ -22,13 +21,13 @@ const NAV_SECTIONS = [
 ];
 
 const HISTOIRES = [
-  { title: "J’ai quitté mon CDI pour traverser l’Atlantique à la voile", cat: "Parcours", author: "Camille Dufresne", time: "18 min", image: "/histoires/histoire_parcours_resilience.webp" },
-  { title: "Comment j’ai appris à vivre avec mon TDAH à 35 ans", cat: "Épreuves", author: "Mathilde Aubry", time: "22 min", image: "/histoires/histoire_sante_mentale.webp" },
-  { title: "Ma mère m’a donné un prénom que je n’ai jamais porté", cat: "Relations", author: "Émilie Roux", time: "14 min", image: "/histoires/histoire_relations_famille.webp" },
+  { title: "J'ai quitté mon CDI pour traverser l'Atlantique à la voile", cat: "Parcours", author: "Camille Dufresne", time: "18 min", image: "/histoires/histoire_parcours_resilience.webp" },
+  { title: "Comment j'ai appris à vivre avec mon TDAH à 35 ans", cat: "Épreuves", author: "Mathilde Aubry", time: "22 min", image: "/histoires/histoire_sante_mentale.webp" },
+  { title: "Ma mère m'a donné un prénom que je n'ai jamais porté", cat: "Relations", author: "Émilie Roux", time: "14 min", image: "/histoires/histoire_relations_famille.webp" },
 ];
 
 const RECOS = [
-  { type: "Livre", title: "L’Art de la joie", author: "Goliarda Sapienza", color: "#8B5CF6", image: "/recos/reco_livre.webp" },
+  { type: "Livre", title: "L'Art de la joie", author: "Goliarda Sapienza", color: "#8B5CF6", image: "/recos/reco_livre.webp" },
   { type: "Podcast", title: "Les Chemins de la philosophie", author: "France Culture", color: "#EC4899", image: "/recos/reco_podcast.webp" },
   { type: "Film", title: "Perfect Days", author: "Wim Wenders", color: "#F59E0B", image: "/recos/reco_film_serie.webp" },
   { type: "Musique", title: "Multitude", author: "Stromae", color: "#0891B2", image: "/recos/reco_musique.webp" },
@@ -37,13 +36,13 @@ const RECOS = [
 const LETTRES = [
   { num: "N°47", title: "Sur le besoin de ralentir", date: "20 avril 2026" },
   { num: "N°46", title: "Ce que la colère essaie de nous dire", date: "13 avril 2026" },
-  { num: "N°45", title: "Pourquoi on s’attache aux lieux", date: "6 avril 2026" },
-  { num: "N°44", title: "Le droit de changer d’avis", date: "30 mars 2026" },
+  { num: "N°45", title: "Pourquoi on s'attache aux lieux", date: "6 avril 2026" },
+  { num: "N°44", title: "Le droit de changer d'avis", date: "30 mars 2026" },
 ];
 
 const QUESTION_OPTIONS = [
   "La peur du regard des autres",
-  "Le manque d’argent",
+  "Le manque d'argent",
   "Le manque de temps",
   "Je ne sais pas ce que je veux",
 ];
@@ -57,7 +56,7 @@ const SONDAGE_OPTIONS = [
 const SONDAGE_RESULTS = [62, 24, 14];
 
 const CALENDRIER = [
-  { period: "Aujourd’hui", accent: "#D64C90", items: [
+  { period: "Aujourd'hui", accent: "#D64C90", items: [
     { label: "Article de fond", type: "Écriture" },
     { label: "Recommandation", type: "Partage" },
   ]},
@@ -69,14 +68,14 @@ const CALENDRIER = [
   ]},
   { period: "Dimanche", accent: "#C99B1E", items: [
     { label: "La Lettre du dimanche", type: "Newsletter" },
-    { label: "Récap’ de la semaine", type: "Bilan" },
+    { label: "Récap' de la semaine", type: "Bilan" },
   ]},
 ];
 
 const PARTICIPATE = [
-  { title: "Racontez votre histoire", desc: "Vous avez un parcours, une expérience à partager ? On veut vous entendre.", href: "/ecrire-mon-histoire", color: "#D64C90" },
-  { title: "Suggérez un sujet", desc: "Un thème qu’on devrait explorer ? Un angle qu’on a manqué ?", href: "/contact?sujet=idee", color: "#7B5CD6" },
-  { title: "Proposez une amélioration", desc: "Une idée pour améliorer Origines ? Vos retours nous font avancer.", href: "/contact?sujet=suggestion", color: "#5AA352" },
+  { title: "Racontez votre histoire", desc: "Vous avez un parcours, une expérience à partager ? On veut vous entendre.", href: "/ecrire-mon-histoire", color: "#D64C90" },
+  { title: "Suggérez un sujet", desc: "Un thème qu'on devrait explorer ? Un angle qu'on a manqué ?", href: "/contact?sujet=idee", color: "#7B5CD6" },
+  { title: "Proposez une amélioration", desc: "Une idée pour améliorer Origines ? Vos retours nous font avancer.", href: "/contact?sujet=suggestion", color: "#5AA352" },
 ];
 
 /* ================================================================
@@ -103,14 +102,10 @@ export default function EnsemblePage() {
       <SiteHeader />
 
       <main>
-        <div className="v2-container">
-          <Breadcrumb items={[
-            { name: "Accueil", url: "/" },
-            { name: "Ensemble", url: "/ensemble" },
-          ]} />
-          {/* ═══ HERO ═══ */}
-          <section className={s.hero}>
-            <div className={`${s.chapterMark} mono`}>
+        {/* ═══ HERO ═══ */}
+        <section className={s.hero}>
+          <div className="v2-container">
+            <div className={s.chapterMark}>
               <span className={s.cNum}>Ch.04</span>
               <span className={s.cSep}>/</span>
               <span className={s.cLabel}>Ensemble</span>
@@ -125,26 +120,44 @@ export default function EnsemblePage() {
               les questions qu&rsquo;on se pose ensemble.
             </p>
 
-            <nav className={s.pillars} aria-label="Sections">
-              <span className={s.spectrumLine} aria-hidden="true" />
-              {NAV_SECTIONS.map((sec, i) => (
-                <div key={sec.id} className={s.pillarWrap}>
-                  <a
-                    href={`#${sec.id}`}
-                    className={s.pillar}
-                    style={{ "--pillar-color": sec.color, "--pillar-i": i } as React.CSSProperties}
-                  >
-                    {i > 0 && <span className={s.pillarBar} aria-hidden="true" />}
-                    <span className={s.pillarDot} aria-hidden="true" />
-                    <span className={s.pillarLabel}>{sec.label}</span>
-                  </a>
-                </div>
+            {/* Stats bar */}
+            <div className={s.statsBar}>
+              <div className={s.stat}>
+                <span className={s.statNum}>3&nbsp;400</span>
+                <span className={s.statLabel}>lecteurs cette semaine</span>
+              </div>
+              <span className={s.statDivider} aria-hidden="true" />
+              <div className={s.stat}>
+                <span className={s.statNum}>47</span>
+                <span className={s.statLabel}>histoires publi&eacute;es</span>
+              </div>
+              <span className={s.statDivider} aria-hidden="true" />
+              <div className={s.stat}>
+                <span className={s.statNum}>12</span>
+                <span className={s.statLabel}>dossiers en cours</span>
+              </div>
+            </div>
+
+            {/* Navigation pills */}
+            <nav className={s.pills} aria-label="Sections">
+              {NAV_SECTIONS.map((sec) => (
+                <a
+                  key={sec.id}
+                  href={`#${sec.id}`}
+                  className={s.pill}
+                  style={{ "--pill-color": sec.color } as React.CSSProperties}
+                >
+                  <span className={s.pillDot} aria-hidden="true" />
+                  <span className={s.pillLabel}>{sec.label}</span>
+                </a>
               ))}
             </nav>
-          </section>
+          </div>
+        </section>
 
-          {/* ═══ MOT DE LA RÉDAC' ═══ */}
-          <section className={s.edito}>
+        {/* ═══ MOT DE LA RÉDAC' ═══ */}
+        <section className={s.edito}>
+          <div className="v2-container">
             <div className={s.editoInner}>
               <span className={s.editoKicker}>Mot de la r&eacute;daction &middot; Semaine 17</span>
               <blockquote className={s.editoQuote}>
@@ -164,10 +177,12 @@ export default function EnsemblePage() {
                 <span className={s.editoDate}>26 avril 2026</span>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ═══ HISTOIRES ═══ */}
-          <section id="histoires" className={s.section}>
+        {/* ═══ HISTOIRES ═══ */}
+        <section id="histoires" className={s.sectionPaper}>
+          <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
@@ -185,33 +200,31 @@ export default function EnsemblePage() {
                 <span className={s.sectionAllArrow}>&rarr;</span>
               </Link>
             </header>
-            <div className={s.grid3}>
+            <div className={s.histoiresGrid}>
               {HISTOIRES.map((h, i) => (
-                <Link key={i} to="/histoires" className={s.card}>
-                  <div className={s.cardImg}>
-                    <img src={h.image} alt={h.title} loading="lazy" />
-                    <span className={s.cardGrad} />
-                    <span className={s.cardBadge}>{h.cat}</span>
-                  </div>
-                  <div className={s.cardBody}>
-                    <h3 className={s.cardTitle}>{typo(h.title)}</h3>
-                    <div className={s.cardFoot}>
+                <Link key={i} to="/histoires" className={s.histoireCard}>
+                  <img src={h.image} alt={h.title} loading="lazy" className={s.histoireImg} />
+                  <span className={s.histoireOverlay} />
+                  <span className={s.histoireBadge}>{h.cat}</span>
+                  <div className={s.histoireContent}>
+                    <h3 className={s.histoireTitle}>{typo(h.title)}</h3>
+                    <div className={s.histoireMeta}>
                       <span>Par <strong>{h.author}</strong></span>
-                      <span className={s.dot} />
+                      <span className={s.metaDot} />
                       <span>{h.time}</span>
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
 
         {/* ═══ VERBATIM #1 ═══ */}
         <section className={s.verbatim}>
           <div className="v2-container">
             <div className={s.verbatimInner}>
-              <span className={s.verbatimMark}>&ldquo;</span>
+              <span className={s.verbatimMark} aria-hidden="true">&ldquo;</span>
               <blockquote className={s.verbatimQuote}>
                 J&rsquo;ai lu l&rsquo;histoire de Camille un dimanche matin.
                 &Agrave; la fin, j&rsquo;ai appel&eacute; mon fr&egrave;re. On ne s&rsquo;&eacute;tait
@@ -222,9 +235,9 @@ export default function EnsemblePage() {
           </div>
         </section>
 
-        <div className="v2-container">
-          {/* ═══ RECOMMANDATIONS ═══ */}
-          <section id="recommandations" className={s.section}>
+        {/* ═══ RECOMMANDATIONS ═══ */}
+        <section id="recommandations" className={s.sectionGray}>
+          <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
@@ -242,28 +255,27 @@ export default function EnsemblePage() {
                 <span className={s.sectionAllArrow}>&rarr;</span>
               </Link>
             </header>
-            <div className={s.grid4}>
+            <div className={s.recosGrid}>
               {RECOS.map((r, i) => (
-                <Link key={i} to="/recommandations" className={s.card}>
-                  <div className={s.cardImg} style={{ aspectRatio: "1" }}>
-                    <img src={r.image} alt={r.title} loading="lazy" />
-                    <span className={s.cardGrad} />
-                    <span className={s.cardBadge} style={{ background: r.color }}>{r.type}</span>
+                <Link key={i} to="/recommandations" className={s.recoCard}>
+                  <div className={s.recoImgWrap}>
+                    <img src={r.image} alt={r.title} loading="lazy" className={s.recoImg} />
+                    <span className={s.recoTypeBadge} style={{ background: r.color }}>{r.type}</span>
                   </div>
-                  <div className={s.cardBody}>
-                    <h3 className={s.cardTitle}>{typo(r.title)}</h3>
-                    <span className={s.cardAuthor}>{r.author}</span>
+                  <div className={s.recoBody}>
+                    <h3 className={s.recoTitle}>{typo(r.title)}</h3>
+                    <span className={s.recoAuthor}>{r.author}</span>
                   </div>
                 </Link>
               ))}
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
 
         {/* ═══ LA LETTRE DU DIMANCHE ═══ */}
         <section id="lettre" className={s.lettre}>
           <div className="v2-container">
-            <div className={`${s.chapterMark} ${s.chapterMarkLight} mono`}>
+            <div className={s.chapterMarkLight}>
               <span className={s.cNum}>Chaque dimanche</span>
               <span className={s.cSep}>/</span>
               <span className={s.cLabel}>La Lettre</span>
@@ -303,7 +315,7 @@ export default function EnsemblePage() {
           </div>
         </section>
 
-        {/* ═══ QUESTION DE LA SEMAINE — full width ═══ */}
+        {/* ═══ QUESTION DE LA SEMAINE ═══ */}
         <section id="question" className={s.questionSection}>
           <div className="v2-container">
             <span className={s.questionKicker}>
@@ -340,16 +352,16 @@ export default function EnsemblePage() {
             </div>
 
             <p className={s.questionMeta}>
-              {votedQuestion !== null ? "Merci pour votre vote ! — 2 340 réponses" : "Cliquez pour voter — 2 340 réponses cette semaine"}
+              {votedQuestion !== null ? "Merci pour votre vote ! — 2 340 réponses" : "Cliquez pour voter — 2 340 réponses cette semaine"}
             </p>
           </div>
         </section>
 
         {/* ═══ VERBATIM #2 ═══ */}
-        <section className={s.verbatim}>
+        <section className={s.verbatim2}>
           <div className="v2-container">
             <div className={s.verbatimInner}>
-              <span className={s.verbatimMark}>&ldquo;</span>
+              <span className={s.verbatimMark} aria-hidden="true">&ldquo;</span>
               <blockquote className={s.verbatimQuote}>
                 Ce n&rsquo;est pas un m&eacute;dia qui me dit quoi penser.
                 C&rsquo;est un m&eacute;dia qui me pose les bonnes questions.
@@ -359,9 +371,9 @@ export default function EnsemblePage() {
           </div>
         </section>
 
-        <div className="v2-container">
-          {/* ═══ SONDAGES ═══ */}
-          <section id="sondages" className={s.section}>
+        {/* ═══ SONDAGES ═══ */}
+        <section id="sondages" className={s.sectionPaper}>
+          <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
@@ -372,7 +384,7 @@ export default function EnsemblePage() {
               </div>
             </header>
             <div className={s.pollCard}>
-              <h3 className={s.pollTitle}>{typo("Origines devrait-il lancer un podcast hebdomadaire ?")}</h3>
+              <h3 className={s.pollTitle}>{typo("Origines devrait-il lancer un podcast hebdomadaire ?")}</h3>
               <p className={s.pollSub}>Votre avis nous aide &agrave; construire le m&eacute;dia de demain.</p>
               <div className={s.pollOptions}>
                 {SONDAGE_OPTIONS.map((opt, i) => {
@@ -395,13 +407,15 @@ export default function EnsemblePage() {
                 })}
               </div>
               <p className={s.pollMeta}>
-                {votedSondage !== null ? "Merci ! — 1 870 votes" : "Votez — 1 870 participants"}
+                {votedSondage !== null ? "Merci ! — 1 870 votes" : "Votez — 1 870 participants"}
               </p>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ═══ CALENDRIER — timeline ═══ */}
-          <section id="calendrier" className={s.section}>
+        {/* ═══ CALENDRIER ═══ */}
+        <section id="calendrier" className={s.sectionGray}>
+          <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
@@ -429,10 +443,12 @@ export default function EnsemblePage() {
                 </div>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ═══ PARTICIPEZ ═══ */}
-          <section className={s.section}>
+        {/* ═══ PARTICIPEZ ═══ */}
+        <section className={s.sectionPaper}>
+          <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
@@ -445,7 +461,7 @@ export default function EnsemblePage() {
                 </p>
               </div>
             </header>
-            <div className={s.grid3}>
+            <div className={s.participateGrid}>
               {PARTICIPATE.map((act, i) => (
                 <Link key={i} to={act.href} className={s.actCard}>
                   <span className={s.actDot} style={{ background: act.color }} />
@@ -458,10 +474,12 @@ export default function EnsemblePage() {
                 </Link>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* ═══ CONTACT ═══ */}
-          <section className={s.section}>
+        {/* ═══ CONTACT ═══ */}
+        <section className={s.sectionGray}>
+          <div className="v2-container">
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
@@ -473,23 +491,29 @@ export default function EnsemblePage() {
             </header>
             <div className={s.contactGrid}>
               <Link to="/rejoindre" className={s.contactCard}>
-                <h3 className={s.contactTitle}>Rejoindre l&rsquo;&eacute;quipe</h3>
-                <p className={s.contactDesc}>Contributeur, cr&eacute;ateur ou partenaire</p>
+                <div className={s.contactCardInner}>
+                  <h3 className={s.contactTitle}>Rejoindre l&rsquo;&eacute;quipe</h3>
+                  <p className={s.contactDesc}>Contributeur, cr&eacute;ateur ou partenaire</p>
+                </div>
                 <svg className={s.contactArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
               </Link>
               <Link to="/contact" className={s.contactCard}>
-                <h3 className={s.contactTitle}>Nous contacter</h3>
-                <p className={s.contactDesc}>Une question, une id&eacute;e&nbsp;?</p>
+                <div className={s.contactCardInner}>
+                  <h3 className={s.contactTitle}>Nous contacter</h3>
+                  <p className={s.contactDesc}>Une question, une id&eacute;e&nbsp;?</p>
+                </div>
                 <svg className={s.contactArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
               </Link>
               <Link to="/partenariats" className={s.contactCard}>
-                <h3 className={s.contactTitle}>Partenariats</h3>
-                <p className={s.contactDesc}>Collaborons ensemble</p>
+                <div className={s.contactCardInner}>
+                  <h3 className={s.contactTitle}>Partenariats</h3>
+                  <p className={s.contactDesc}>Collaborons ensemble</p>
+                </div>
                 <svg className={s.contactArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
               </Link>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
 
         {/* ═══ CLOSING ═══ */}
         <section className={s.closing}>

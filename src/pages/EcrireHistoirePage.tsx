@@ -706,6 +706,10 @@ export default function EcrireHistoirePage() {
       case 2:
         if (draft.format === "video") return videoBlobs.length > 0;
         if (draft.writeMode === "guide") {
+          if (isFullGuide && lyaDone) {
+            const answered = draft.guidedAnswers.filter((a) => a.answer.trim().length >= 20);
+            return answered.length >= 1;
+          }
           const answered = draft.guidedAnswers.filter((a) => a.answer.trim().length >= 20);
           return answered.length >= 3;
         }
@@ -826,10 +830,32 @@ export default function EcrireHistoirePage() {
   }, [draft.guidedAnswers, draft.intention, draft.sujet, guidedIdx, baseQuestions.length, dynamicQuestions.length, isFullGuide]);
 
   const guidedGoNext = useCallback(async () => {
-    if (guidedIdx >= guidedQuestions.length - 1) return;
-
     const currentQ = guidedQuestions[guidedIdx];
     const currentAnswer = getGuidedAnswer(currentQ.id);
+
+    if (isFullGuide) {
+      if (currentAnswer.trim().length < 20) return;
+      const result = await callLya(currentQ, currentAnswer);
+      if (result === "redirect") {
+        setTimeout(() => guidedTextareaRef.current?.focus(), 100);
+        return;
+      }
+      if (result === "done") {
+        return;
+      }
+      if (guidedIdx < guidedQuestions.length) {
+        setTimeout(() => {
+          setGuidedIdx((i) => Math.min(i + 1, guidedQuestions.length));
+          setTimeout(() => {
+            guidedTextareaRef.current?.focus();
+            setTimeout(() => setLyaMessage(null), 4000);
+          }, 100);
+        }, 50);
+      }
+      return;
+    }
+
+    if (guidedIdx >= guidedQuestions.length - 1) return;
 
     if (currentAnswer.trim().length >= 20) {
       const result = await callLya(currentQ, currentAnswer);
@@ -844,7 +870,7 @@ export default function EcrireHistoirePage() {
       guidedTextareaRef.current?.focus();
       setTimeout(() => setLyaMessage(null), 4000);
     }, 100);
-  }, [guidedIdx, guidedQuestions, getGuidedAnswer, callLya]);
+  }, [guidedIdx, guidedQuestions, getGuidedAnswer, callLya, isFullGuide]);
 
   const guidedGoPrev = useCallback(() => {
     if (guidedIdx > 0) {
