@@ -762,12 +762,16 @@ export default function EcrireHistoirePage() {
         reader.readAsDataURL(blob);
       });
 
-      console.log("[VideoAI] Base64 ready, length:", base64.length);
+      const payloadSize = base64.length;
+      console.log("[VideoAI] Base64 ready, length:", payloadSize, "≈", Math.round(payloadSize / 1024), "KB");
+
+      const jsonBody = JSON.stringify({ audio: base64, mimeType: blob.type });
+      console.log("[VideoAI] Sending to /api/interview/transcribe, payload:", Math.round(jsonBody.length / 1024), "KB");
 
       const transcribeRes = await fetch("/api/interview/transcribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ audio: base64, mimeType: blob.type }),
+        body: jsonBody,
       });
 
       if (!transcribeRes.ok) {

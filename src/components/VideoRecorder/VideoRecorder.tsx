@@ -315,25 +315,36 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     recorder.start(1000);
 
     const audioTracks = streamRef.current.getAudioTracks();
+    console.log("[VideoRec] Audio tracks:", audioTracks.length, audioTracks.map(t => t.label));
     if (audioTracks.length > 0) {
-      const audioStream = new MediaStream(audioTracks);
-      const audioMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-        ? "audio/webm;codecs=opus"
-        : MediaRecorder.isTypeSupported("audio/webm")
-          ? "audio/webm"
-          : "audio/mp4";
-      audioChunksRef.current = [];
-      const audioRec = new MediaRecorder(audioStream, { mimeType: audioMime });
-      audioRec.ondataavailable = (e) => {
-        if (e.data.size > 0) audioChunksRef.current.push(e.data);
-      };
-      const qIdx = questionIdx;
-      audioRec.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: audioMime });
-        audioBlobsRef.current.set(qIdx, audioBlob);
-      };
-      audioRec.start(1000);
-      audioRecorderRef.current = audioRec;
+      try {
+        const audioStream = new MediaStream(audioTracks);
+        const audioMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+          ? "audio/webm;codecs=opus"
+          : MediaRecorder.isTypeSupported("audio/webm")
+            ? "audio/webm"
+            : MediaRecorder.isTypeSupported("audio/mp4")
+              ? "audio/mp4"
+              : "";
+        console.log("[VideoRec] Audio mime:", audioMime || "NONE SUPPORTED");
+        if (audioMime) {
+          audioChunksRef.current = [];
+          const audioRec = new MediaRecorder(audioStream, { mimeType: audioMime });
+          audioRec.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunksRef.current.push(e.data);
+          };
+          const qIdx = questionIdx;
+          audioRec.onstop = () => {
+            const audioBlob = new Blob(audioChunksRef.current, { type: audioMime });
+            audioBlobsRef.current.set(qIdx, audioBlob);
+            console.log("[VideoRec] Audio blob ready:", audioBlob.size, "bytes, type:", audioBlob.type);
+          };
+          audioRec.start(1000);
+          audioRecorderRef.current = audioRec;
+        }
+      } catch (e) {
+        console.error("[VideoRec] Audio recorder failed:", e);
+      }
     }
 
     setElapsed(0);
@@ -408,17 +419,34 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   }, [recordings, onComplete, reviewUrl]);
 
   // ── Next question or finish ──
+  const [processingError, setProcessingError] = useState(false);
+
+  const skipToFallback = useCallback(() => {
+    const fallback = { label: "Continuez votre recit — qu'est-ce qui s'est passe ensuite ?", hint: "Prenez votre temps." };
+    setQuestions((prev) => [...prev, fallback]);
+    setRecordings((prev) => [...prev, null]);
+    setProcessingTranscript(null);
+    setAiMessage(null);
+    setProcessingError(false);
+    setQuestionIdx((i) => i + 1);
+    setPhase("ready");
+  }, []);
+
   const advance = useCallback(async () => {
     if (reviewUrl) URL.revokeObjectURL(reviewUrl);
     setReviewUrl(null);
 
     if (isAiMode && !aiDone) {
       const currentBlob = recordings[questionIdx];
-      if (!currentBlob) return;
+      if (!currentBlob) {
+        console.error("[VideoRec] No blob for question", questionIdx);
+        return;
+      }
 
       setPhase("processing");
       setAiMessage(null);
       setProcessingTranscript(null);
+      setProcessingError(false);
 
       try {
         const ctx: PreflightContext = {
@@ -426,8 +454,13 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           availableTime: preflightCtxRef.current.time || "",
           mood: preflightCtxRef.current.mood || "",
         };
-        const audioBlob = audioBlobsRef.current.get(questionIdx) || currentBlob;
-        const result = await onAfterRecord!(audioBlob, currentQ.label, ctx);
+        const audioBlob = audioBlobsRef.current.get(questionIdx);
+        const blobToSend = audioBlob || currentBlob;
+        console.log("[VideoRec] Sending blob:", blobToSend.type, blobToSend.size, "bytes",
+          audioBlob ? "(audio-only)" : "(video fallback)");
+
+        const result = await onAfterRecord!(blobToSend, currentQ.label, ctx);
+        console.log("[VideoRec] AI result:", JSON.stringify(result).slice(0, 200));
 
         if (result.transcript) setProcessingTranscript(result.transcript);
         if (result.encouragement) setAiMessage(result.encouragement);
@@ -459,9 +492,9 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           }, 2000);
         }
       } catch (err) {
-        console.error("[VideoRecorder] advance error:", err);
-        setAiMessage("Un problème est survenu. Vous pouvez continuer ou terminer.");
-        setTimeout(() => setPhase("ready"), 2500);
+        console.error("[VideoRec] advance error:", err);
+        setAiMessage("Un probleme est survenu.");
+        setProcessingError(true);
       }
       return;
     }
@@ -705,6 +738,21 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                     </p>
                   </div>
                 </div>
+
+                {processingError && (
+                  <div className={s.processingActions}>
+                    <button className={`${s.controlBtn} ${s.nextBtn}`} onClick={skipToFallback}>
+                      Continuer sans l'IA
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                    <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={requestFinish}>
+                      Terminer
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

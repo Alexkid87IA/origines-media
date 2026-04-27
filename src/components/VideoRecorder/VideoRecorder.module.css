@@ -831,6 +831,13 @@
   overflow: hidden;
 }
 
+.processingActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  animation: bubbleIn 0.3s ease;
+}
+
 /* ══════════════════════════════════════════════════════════
    Review card
    ══════════════════════════════════════════════════════════ */
