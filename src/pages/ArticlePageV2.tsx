@@ -1104,46 +1104,60 @@ export default function ArticlePageV2() {
           </div>
         </section>
 
-        {/* ═══ Related content — gradient section + CTA ═══ */}
+        {/* ═══ Related content — editorial section + CTA ═══ */}
         {relatedArticles.length > 0 && (
           <section className={s.relatedSection}>
             <div className={s.relatedInner}>
-              <span className={s.relatedKicker}>
-                Continuez l&rsquo;exploration
-              </span>
-              <h2 className={s.relatedHeading}>
-                Articles <em>recommand&eacute;s.</em>
-              </h2>
+              <div className={s.relatedHeader}>
+                <div className={s.relatedHeaderLeft}>
+                  <span className={s.relatedKicker}>
+                    <span className={s.relatedKickerDot} aria-hidden="true" />
+                    Continuez l&rsquo;exploration
+                  </span>
+                  <h2 className={s.relatedHeading}>
+                    Articles <em>recommand&eacute;s.</em>
+                  </h2>
+                </div>
+                <Link to="/articles" className={s.relatedAllLink}>
+                  Tous les articles
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                </Link>
+              </div>
+
               <div className={s.relatedGrid}>
-                {relatedArticles.slice(0, 4).map((related) => {
+                {relatedArticles.slice(0, 4).map((related, i) => {
                   const relSlug = related.slug.current;
                   const relTitle = related.titre || related.title || "";
+                  const vertColor = related.verticale?.couleurDominante || "var(--ink)";
                   return (
-                    <div key={related._id} className={s.relCard}>
-                      <Link
-                        to={`/article/${relSlug}`}
-                        className={s.relCardLink}
-                      >
+                    <article key={related._id} className={s.relCard} style={{ "--i": i, "--vert": vertColor } as React.CSSProperties}>
+                      <Link to={`/article/${relSlug}`} className={s.relCardLink}>
                         <div className={s.relCardImgWrap}>
                           <img
-                            src={sanityImg(related.imageUrl, 400) || "/placeholder.svg"}
+                            src={sanityImg(related.imageUrl, 480) || "/placeholder.svg"}
                             alt={relTitle}
                             className={s.relCardImg}
                             loading="lazy"
                             decoding="async"
                           />
+                          <div className={s.relCardImgOverlay} />
                           {related.readingTime && (
-                            <span className={s.relCardTime}>
-                              {related.readingTime} min
-                            </span>
+                            <span className={s.relCardTime}>{related.readingTime}&nbsp;min</span>
                           )}
                         </div>
                         <div className={s.relCardBody}>
-                          {related.verticale && (
-                            <span className={s.relCardVert}>
-                              {related.verticale.nom}
-                            </span>
-                          )}
+                          <div className={s.relCardMeta}>
+                            <span className={s.relCardDot} aria-hidden="true" />
+                            {related.verticale && (
+                              <span className={s.relCardVert}>{related.verticale.nom}</span>
+                            )}
+                            {related.readingTime && (
+                              <>
+                                <span className={s.relCardMetaSep} aria-hidden="true" />
+                                <span className={s.relCardReadTime}>{related.readingTime} min</span>
+                              </>
+                            )}
+                          </div>
                           <h3 className={s.relCardTitle}>{relTitle}</h3>
                           {related.excerpt && (
                             <p className={s.relCardExcerpt}>{related.excerpt}</p>
@@ -1151,9 +1165,9 @@ export default function ArticlePageV2() {
                         </div>
                       </Link>
                       <div className={s.relCardFooter}>
-                        {related.author && (
-                          <span className={s.relCardAuthor}>Par {related.author}</span>
-                        )}
+                        <span className={s.relCardAuthor}>
+                          {related.author ? `Par ${related.author}` : " "}
+                        </span>
                         <SaveButton
                           type="article"
                           slug={relSlug}
@@ -1162,19 +1176,15 @@ export default function ArticlePageV2() {
                           univers={related.verticale?.nom}
                         />
                       </div>
-                    </div>
+                    </article>
                   );
                 })}
               </div>
+
               <div className={s.relatedCtaWrap}>
                 <Link to="/articles" className={s.relatedCta}>
                   Voir tous les articles
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M5 12h14M13 5l7 7-7 7" />
                   </svg>
                 </Link>
