@@ -336,6 +336,31 @@ function buildGuidedQuestions(intention: string | null, sujet: string | null): G
   return questions;
 }
 
+const LYA_OPENERS: Record<string, { question: string; hint: string; placeholder: string }> = {
+  "sante-corps": { question: "Raconte-moi le moment où tu as pris conscience que quelque chose avait changé dans ton corps ou ta santé.", hint: "Replonge dans ce jour précis : où étais-tu, avec qui, qu'as-tu ressenti ?", placeholder: "C'était le jour où..." },
+  "emotions-mental": { question: "Il y a un moment précis où tu as senti que tes émotions prenaient le dessus. Raconte-moi ce jour-là.", hint: "Pas besoin de tout expliquer. Décris la scène, ce que tu as ressenti.", placeholder: "Ce jour-là, j'ai senti que..." },
+  "famille-relations": { question: "Quel est le souvenir de famille ou de relation qui te revient le plus souvent ?", hint: "Un moment fort, heureux ou douloureux, avec quelqu'un qui compte pour toi.", placeholder: "Je me souviens de..." },
+  "travail-vocation": { question: "Quel est le moment où tu as su que c'était ça que tu voulais faire — ou au contraire, que tu devais tout changer ?", hint: "Le déclic, la révélation, ou le ras-le-bol. Raconte la scène.", placeholder: "J'ai compris le jour où..." },
+  "identite-origines": { question: "Quel moment de ta vie t'a fait prendre conscience de qui tu es vraiment — de tes origines, de ton identité ?", hint: "Un regard, une parole, un voyage, une découverte. Replonge dans ce moment.", placeholder: "J'ai réalisé que..." },
+  "deuil-perte": { question: "Comment as-tu appris la nouvelle ? Raconte-moi ce moment, même si c'est difficile.", hint: "Prends ton temps. Décris ce que tu as vu, entendu, ressenti à cet instant.", placeholder: "Quand j'ai appris..." },
+  "renaissance": { question: "Quel est le premier jour où tu as senti que quelque chose de nouveau commençait ?", hint: "Le moment exact où tu as senti le changement. Le lieu, l'heure, ce que tu faisais.", placeholder: "Le premier jour, c'était..." },
+  "engagement": { question: "Qu'est-ce qui t'a poussé à t'engager ? Raconte le déclic.", hint: "L'événement, la rencontre ou l'injustice qui t'a fait dire : assez.", placeholder: "J'ai décidé d'agir quand..." },
+  "autre": { question: "Raconte-moi le moment qui a tout changé dans ton histoire.", hint: "Ferme les yeux et replonge dans ce jour précis. Décris ce que tu vois.", placeholder: "Tout a commencé quand..." },
+};
+
+function buildLyaOpening(sujet: string | null): GuidedQuestion {
+  const opener = LYA_OPENERS[sujet || "autre"] || LYA_OPENERS.autre;
+  return {
+    id: "lya-opening",
+    question: opener.question,
+    hint: opener.hint,
+    placeholder: opener.placeholder,
+    minRows: 5,
+    isAi: true,
+    encouragement: "Lya vous accompagne tout au long de ce récit.",
+  };
+}
+
 const GUIDED_ENCOURAGEMENTS = [
   "Très bien. Continuez, vous êtes sur la bonne voie.",
   "Merci pour cette honnêteté. La suite va vous plaire.",
@@ -491,8 +516,12 @@ export default function EcrireHistoirePage() {
   const [dynamicQuestions, setDynamicQuestions] = useState<GuidedQuestion[]>([]);
   const [lyaLoading, setLyaLoading] = useState(false);
   const [lyaMessage, setLyaMessage] = useState<{ type: "redirect" | "encouragement"; text: string } | null>(null);
+  const [lyaDone, setLyaDone] = useState(false);
+  const [generatedArticle, setGeneratedArticle] = useState<{ titre: string; chapeau: string; article: string } | null>(null);
+  const [articleLoading, setArticleLoading] = useState(false);
   const [featuredVideo, setFeaturedVideo] = useState<SanityVideo | null>(null);
-  const baseQuestions = buildGuidedQuestions(draft.intention, draft.sujet);
+  const isFullGuide = draft.writeMode === "guide";
+  const baseQuestions = isFullGuide ? [buildLyaOpening(draft.sujet)] : buildGuidedQuestions(draft.intention, draft.sujet);
   const guidedQuestions = (() => {
     const merged: GuidedQuestion[] = [...baseQuestions];
     for (const dq of dynamicQuestions) {
@@ -717,9 +746,9 @@ export default function EcrireHistoirePage() {
     });
   }, [saveDraft]);
 
-  const callLya = useCallback(async (currentQ: GuidedQuestion, currentAnswer: string): Promise<"redirect" | "followup" | "skip"> => {
-    if (currentAnswer.trim().length < 20) return "skip";
-    if (dynamicQuestions.length >= 10) return "skip";
+  const callLya = useCallback(async (currentQ: GuidedQuestion, currentAnswer: string): Promise<"redirect" | "followup" | "skip" | "done"> => {
+    if (currentAnswer.trim().length < 20) return isFullGuide ? "done" : "skip";
+    if (!isFullGuide && dynamicQuestions.length >= 10) return "skip";
 
     const alreadyCalled = aiCallsRef.current.has(currentQ.id);
     aiCallsRef.current.add(currentQ.id);
@@ -744,6 +773,7 @@ export default function EcrireHistoirePage() {
           questionIndex: guidedIdx,
           totalBaseQuestions: baseQuestions.length,
           aiQuestionsAsked: dynamicQuestions.length,
+          fullGuide: isFullGuide,
         }),
       });
 
@@ -758,6 +788,14 @@ export default function EcrireHistoirePage() {
             aiCallsRef.current.delete(currentQ.id);
             return "redirect";
           }
+        }
+
+        if (data.done) {
+          if (data.encouragement) {
+            setLyaMessage({ type: "encouragement", text: data.encouragement });
+          }
+          setLyaDone(true);
+          return "done";
         }
 
         if (data.encouragement) {
@@ -778,13 +816,13 @@ export default function EcrireHistoirePage() {
           return "followup";
         }
       }
-      return "skip";
+      return isFullGuide ? "done" : "skip";
     } catch {
-      return "skip";
+      return isFullGuide ? "done" : "skip";
     } finally {
       setLyaLoading(false);
     }
-  }, [draft.guidedAnswers, draft.intention, draft.sujet, guidedIdx, baseQuestions.length, dynamicQuestions.length]);
+  }, [draft.guidedAnswers, draft.intention, draft.sujet, guidedIdx, baseQuestions.length, dynamicQuestions.length, isFullGuide]);
 
   const guidedGoNext = useCallback(async () => {
     if (guidedIdx >= guidedQuestions.length - 1) return;

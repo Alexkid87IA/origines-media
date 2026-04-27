@@ -146,6 +146,7 @@ const SECONDARY: SecondaryNav[] = [
     secondaryLabel: "Par type",
     secondaryItems: [
       { href: "/media", label: "Articles", color: "#7B5CD6" },
+      { href: "/histoires", label: "Histoires", color: "#D64C90" },
       { href: "/dossiers", label: "Dossiers", color: "#2E9B74" },
       { href: "/temoignages", label: "Témoignages", color: "#E67839" },
     ],
