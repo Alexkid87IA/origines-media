@@ -4,6 +4,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import EmailCapture from "../components/EmailCapture";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import { typo } from "../lib/typography";
 import s from "./LettreDuDimanchePage.module.css";
 
@@ -41,6 +42,11 @@ export default function LettreDuDimanchePage() {
         {/* ═══ HERO ═══ */}
         <section className={s.hero}>
           <div className="v2-container">
+            <Breadcrumb items={[
+              { name: "Accueil", url: "/" },
+              { name: "Ensemble", url: "/ensemble" },
+              { name: "La Lettre du dimanche", url: "/lettre-du-dimanche" },
+            ]} />
             <div className={s.chapterMark}>
               <span className={s.cNum}>Chaque dimanche</span>
               <span className={s.cSep}>/</span>
