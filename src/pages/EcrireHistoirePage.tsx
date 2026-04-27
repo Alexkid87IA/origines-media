@@ -809,7 +809,8 @@ export default function EcrireHistoirePage() {
         return { done: false, question: FALLBACK_QUESTION, encouragement: "Lya a eu un souci — continuez votre récit." };
       }
       const data = await lyaRes.json();
-      console.log("[VideoAI] Lya response:", JSON.stringify(data).slice(0, 200));
+      console.log("[VideoAI] Lya response:", JSON.stringify(data).slice(0, 300));
+      if (data._fallback) console.warn("[VideoAI] FALLBACK used, reason:", data._reason || data._error || "unknown");
 
       if (data.done) {
         return { done: true, encouragement: data.encouragement || "Merci, j'ai tout ce qu'il faut.", transcript: text };

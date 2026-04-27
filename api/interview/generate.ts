@@ -196,6 +196,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (isFullGuide || isVideo) {
     contextLines.push(`Nombre d'échanges jusqu'ici : ${body.history.length}.`);
+    if (body.history.length < minExchanges) {
+      contextLines.push(`INTERDIT d'utiliser done:true. Tu n'as que ${body.history.length} échange(s), le minimum est ${minExchanges}. Tu DOIS poser une question suivante.`);
+    }
     if (body.history.length >= wrapUpThreshold) {
       contextLines.push("Tu as beaucoup de matière. Termine bientôt si le récit est complet.");
     }
@@ -228,11 +231,18 @@ ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou t
   const minExchanges = isVideo ? 5 : 4;
   const hasEnoughExchanges = body.history.length >= minExchanges;
 
+  const FALLBACK_QUESTIONS = [
+    { question: "Racontez-moi ce moment plus en detail.", hint: "Les images, les sons, ce que vous avez ressenti." },
+    { question: "Qu'est-ce que ca a change dans votre vie ?", hint: "Meme les petits changements comptent." },
+    { question: "Comment vous sentiez-vous a ce moment-la ?", hint: "Prenez le temps de retrouver cette emotion." },
+    { question: "Y a-t-il quelqu'un qui a joue un role important dans cette histoire ?", hint: "Un proche, un inconnu, quelqu'un qui vous a marque." },
+    { question: "Qu'est-ce que vous aimeriez que les gens comprennent de cette experience ?", hint: "Le message qui compte pour vous." },
+    { question: "Si vous pouviez revenir a ce moment, que feriez-vous differemment ?", hint: "Ou peut-etre rien du tout — et c'est une reponse aussi." },
+  ];
   const fallbackQuestion = {
     skip: false,
-    question: "Continuez — qu'est-ce qui s'est passé ensuite ?",
-    hint: "Prenez votre temps, racontez la suite.",
-    placeholder: "Ce qui s'est passé ensuite...",
+    ...FALLBACK_QUESTIONS[body.history.length % FALLBACK_QUESTIONS.length],
+    placeholder: "Ce qui s'est passe...",
   };
 
   try {
@@ -257,7 +267,7 @@ ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou t
     if (parsed.done) {
       if (!hasEnoughExchanges) {
         console.log(`AI wants to finish after ${body.history.length} exchanges, forcing continuation (min: ${minExchanges})`);
-        return res.status(200).json(fallbackQuestion);
+        return res.status(200).json({ ...fallbackQuestion, _fallback: true, _reason: "done_too_early" });
       }
       return res.status(200).json({ done: true, encouragement: parsed.encouragement || "" });
     }
@@ -267,12 +277,13 @@ ${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou t
     }
 
     if (!parsed.question || (!parsed.hint && !isVideo) || (!parsed.placeholder && !isVideo)) {
-      return res.status(200).json(fallbackQuestion);
+      return res.status(200).json({ ...fallbackQuestion, _fallback: true, _reason: "malformed_response" });
     }
 
     return res.status(200).json({ skip: false, ...parsed });
   } catch (err) {
-    console.error("Interview AI error:", err);
-    return res.status(200).json(fallbackQuestion);
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.error("Interview AI error:", errMsg);
+    return res.status(200).json({ ...fallbackQuestion, _fallback: true, _error: errMsg.slice(0, 100) });
   }
 }

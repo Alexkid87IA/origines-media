@@ -1008,14 +1008,6 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           </button>
         )}
 
-        {isAiMode && doneCount >= 1 && (phase === "ready" || phase === "recording") && (
-          <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={requestFinish}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 6L9 17l-5-5" />
-            </svg>
-            J'ai terminé
-          </button>
-        )}
       </div>
       </div>
 
