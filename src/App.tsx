@@ -44,7 +44,7 @@ const RecommandationTypePage = lazyRetry(() => import('./pages/RecommandationTyp
 
 const RECO_TYPE_KEYS = new Set([
   "livres", "films-series", "musique", "podcasts", "youtube",
-  "reseaux-sociaux", "activite", "destination", "culture", "produit",
+  "reseaux-sociaux", "activite", "destination", "culture", "produit", "produits",
 ]);
 
 function RecommandationResolver() {
@@ -78,6 +78,8 @@ const PartnershipsPage = lazyRetry(() => import('./pages/PartnershipsPage'));
 const JoinPage = lazyRetry(() => import('./pages/JoinPage'));
 const ShareStoryPage = lazyRetry(() => import('./pages/ShareStoryPage'));
 const RecommandationsPage = lazyRetry(() => import('./pages/RecommandationsPage'));
+const AffiliateProductsPage = lazyRetry(() => import('./pages/AffiliateProductsPage'));
+const AffiliateProductDetailPage = lazyRetry(() => import('./pages/AffiliateProductDetailPage'));
 const RecommandationPage = lazyRetry(() => import('./pages/RecommandationPage'));
 const ProposerRecoPage = lazyRetry(() => import('./pages/ProposerRecoPage'));
 const BoutiquePage = lazyRetry(() => import('./pages/BoutiquePage'));
@@ -158,6 +160,8 @@ function App() {
         <Route path="/join-partner" element={<JoinPartnerPage />} />
         <Route path="/racontez-votre-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />
         <Route path="/partager-son-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />
+        <Route path="/recommandations/produits" element={<AffiliateProductsPage />} />
+        <Route path="/recommandations/produits/:slug" element={<AffiliateProductDetailPage />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
         <Route path="/proposer-une-reco" element={<ProposerRecoPage />} />
         <Route path="/recommandation/:slug" element={<RedirectToRecommandation />} />

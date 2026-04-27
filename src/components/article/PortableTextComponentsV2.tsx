@@ -7,6 +7,7 @@ import { sanityImg } from "../../lib/sanityImage";
 import { extractText } from "./Accordion";
 import SafeHTML from "../ui/SafeHTML";
 import LiteYouTube from "../ui/LiteYouTube";
+import { AffiliateBlockRenderer } from "./AffiliateProductCard";
 import s from "./PortableTextV2.module.css";
 
 function parseInlineMarkdown(text: string): React.ReactNode[] {
@@ -1271,6 +1272,8 @@ export const createPortableTextComponentsV2 = ({
           )}
         </div>
       ),
+
+      affiliateBlock: ({ value }: any) => <AffiliateBlockRenderer value={value} />,
 
       divider: () => <hr className={s.divider} />,
       break: () => <hr className={s.divider} />,
