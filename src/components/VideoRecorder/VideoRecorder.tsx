@@ -402,6 +402,11 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     }
   }, [reviewUrl, questionIdx, questions.length, recordings, onComplete, isAiMode, aiDone, onAfterRecord, currentQ]);
 
+  /* ── Lya avatar (shared) ── */
+  const lyaIcon = (cls?: string) => (
+    <div className={`${s.lyaAvatar} ${cls || ""}`}>L</div>
+  );
+
   /* ── Question dots (shared) ── */
   const dots = (
     <div className={s.questionNav}>
@@ -422,21 +427,12 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     return (
       <div className={s.recorder}>
         <div className={s.permissionGate}>
-          <div className={s.permissionIconWrap}>
-            <svg className={s.permissionIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M23 7l-7 5 7 5V7z" />
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-            </svg>
-          </div>
+          {lyaIcon()}
           <h3 className={s.permissionTitle}>Caméra requise</h3>
           <p className={s.permissionText}>{error}</p>
           <div className={s.permissionActions}>
-            <button className={`${s.controlBtn} ${s.recordBtn}`} onClick={requestCamera}>
-              Réessayer
-            </button>
-            <button className={s.controlBtn} onClick={onCancel}>
-              Revenir au texte
-            </button>
+            <button className={`${s.controlBtn} ${s.recordBtn}`} onClick={requestCamera}>Réessayer</button>
+            <button className={s.controlBtn} onClick={onCancel}>Revenir au texte</button>
           </div>
         </div>
       </div>
@@ -447,16 +443,9 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     return (
       <div className={s.recorder}>
         <div className={s.permissionGate}>
-          <div className={s.permissionIconWrap}>
-            <svg className={s.permissionIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M23 7l-7 5 7 5V7z" />
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-            </svg>
-          </div>
+          {lyaIcon(s.lyaAvatarPulse)}
           <h3 className={s.permissionTitle}>Accès à la caméra</h3>
-          <p className={s.permissionText}>
-            Autorisez l'accès à votre caméra et micro pour enregistrer votre témoignage vidéo.
-          </p>
+          <p className={s.permissionText}>Autorisez l'accès à votre caméra et micro pour enregistrer votre témoignage.</p>
           <div className={s.permissionLoader}>
             <div className={s.permissionLoaderDot} />
           </div>
@@ -495,59 +484,55 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         <div className={s.viewport}>
           <video ref={videoRef} className={s.video} autoPlay muted playsInline />
           <div className={s.preflightOverlay} />
-        </div>
 
-        <div className={s.preflightCard}>
-          <div className={s.processingAvatar}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-            </svg>
-          </div>
-          <div className={s.preflightContent}>
-            <p className={s.processingName}>Lya — Préparation</p>
+          <div className={s.preflightConversation} key={preflightIdx}>
+            <div className={s.preflightBubble}>
+              {lyaIcon(s.lyaAvatarSmall)}
+              <div className={s.preflightBubbleBody}>
+                <p className={s.preflightBubbleName}>Lya</p>
 
-            {check.lyaIntro && !preflightAnswered && (
-              <p className={s.preflightIntro}>{check.lyaIntro}</p>
-            )}
+                {check.lyaIntro && !preflightAnswered && (
+                  <p className={s.preflightIntro}>{check.lyaIntro}</p>
+                )}
 
-            <p className={s.preflightQuestion}>{check.question}</p>
+                <p className={s.preflightQuestion}>{check.question}</p>
 
-            {preflightMsg ? (
-              <p className={s.preflightResponse}>{preflightMsg}</p>
-            ) : (
-              <div className={s.preflightOptions}>
-                {check.options.map((opt) => (
-                  <button
-                    key={opt.value}
-                    className={`${s.preflightOption} ${opt.ok ? s.preflightOptionOk : s.preflightOptionWarn}`}
-                    onClick={() => handlePreflightAnswer(opt.value, opt.ok)}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+                {preflightMsg ? (
+                  <p className={s.preflightResponse}>{preflightMsg}</p>
+                ) : (
+                  <div className={s.preflightOptions}>
+                    {check.options.map((opt) => (
+                      <button
+                        key={opt.value}
+                        className={`${s.preflightOption} ${opt.ok ? s.preflightOptionOk : s.preflightOptionWarn}`}
+                        onClick={() => handlePreflightAnswer(opt.value, opt.ok)}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {!preflightAnswered && (
+                  <p className={s.preflightTip}>{check.tip}</p>
+                )}
               </div>
-            )}
-
-            {!preflightAnswered && (
-              <p className={s.preflightTip}>{check.tip}</p>
-            )}
+            </div>
           </div>
         </div>
 
-        <div className={s.preflightProgress}>
-          {PREFLIGHT_CHECKS.map((_, i) => (
-            <div
-              key={i}
-              className={`${s.preflightDot} ${i === preflightIdx ? s.preflightDotActive : ""} ${i < preflightIdx ? s.preflightDotDone : ""}`}
-            />
-          ))}
-          <span className={s.questionNavLabel}>{preflightIdx + 1} / {PREFLIGHT_CHECKS.length}</span>
-        </div>
-
-        <div className={s.controls}>
-          <button className={s.controlBtn} onClick={onCancel}>Annuler</button>
-          <button className={s.controlBtn} onClick={() => setPhase("ready")}>
-            Passer la préparation
+        <div className={s.preflightBottom}>
+          <div className={s.preflightProgress}>
+            {PREFLIGHT_CHECKS.map((_, i) => (
+              <div
+                key={i}
+                className={`${s.preflightDot} ${i === preflightIdx ? s.preflightDotActive : ""} ${i < preflightIdx ? s.preflightDotDone : ""}`}
+              />
+            ))}
+            <span className={s.questionNavLabel}>{preflightIdx + 1} / {PREFLIGHT_CHECKS.length}</span>
+          </div>
+          <button className={s.preflightSkip} onClick={() => setPhase("ready")}>
+            Passer →
           </button>
         </div>
       </div>
@@ -559,30 +544,31 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     return (
       <div className={s.recorder}>
         {dots}
-        <div className={s.processingCard}>
-          <div className={s.processingAvatar}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-            </svg>
-          </div>
-          <div className={s.processingContent}>
-            <p className={s.processingName}>Lya — Assistante de rédaction</p>
-            {aiDone ? (
-              <p className={s.processingText}>
-                {aiMessage || "Merci, j'ai tout ce qu'il faut pour raconter votre histoire."}
-              </p>
-            ) : (
-              <>
-                <p className={s.processingText}>
-                  {aiMessage || "J'écoute votre réponse et je prépare la suite..."}
-                </p>
-                <div className={s.processingDots}>
-                  <span className={s.processingDot} />
-                  <span className={s.processingDot} />
-                  <span className={s.processingDot} />
-                </div>
-              </>
-            )}
+        <div className={s.viewport}>
+          <video ref={videoRef} className={s.video} autoPlay muted playsInline />
+          <div className={s.processingOverlay}>
+            <div className={s.processingBubble}>
+              {lyaIcon(s.lyaAvatarPulse)}
+              <div className={s.processingBody}>
+                <p className={s.processingName}>Lya</p>
+                {aiDone ? (
+                  <p className={s.processingText}>
+                    {aiMessage || "Merci, j'ai tout ce qu'il faut pour raconter votre histoire."}
+                  </p>
+                ) : (
+                  <>
+                    <p className={s.processingText}>
+                      {aiMessage || "J'écoute votre réponse…"}
+                    </p>
+                    <div className={s.processingDots}>
+                      <span className={s.processingDot} />
+                      <span className={s.processingDot} />
+                      <span className={s.processingDot} />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -719,19 +705,24 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           </div>
         )}
 
-        {/* Teleprompter */}
+        {/* Teleprompter — Lya bubble */}
         <div className={s.prompter}>
-          <span className={s.prompterKicker}>
-            {isAiMode ? (
-              <>Lya — Question {questionIdx + 1}{aiDone ? " (dernière)" : ""}</>
-            ) : (
-              <>Question {questionIdx + 1} / {questions.length}</>
-            )}
-          </span>
-          <p className={s.prompterQuestion}>{currentQ.label}</p>
-          {currentQ.hint && (
-            <span className={s.prompterHint}>{currentQ.hint}</span>
-          )}
+          <div className={s.prompterBubble} key={questionIdx}>
+            {isAiMode && lyaIcon(s.lyaAvatarSmall)}
+            <div className={s.prompterBody}>
+              <span className={s.prompterName}>
+                {isAiMode ? (
+                  <><span className={s.prompterNameAccent}>Lya</span> · question {questionIdx + 1}</>
+                ) : (
+                  <>Question {questionIdx + 1} / {questions.length}</>
+                )}
+              </span>
+              <p className={s.prompterQuestion}>{currentQ.label}</p>
+              {currentQ.hint && (
+                <span className={s.prompterHint}>{currentQ.hint}</span>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Recording indicator */}
@@ -746,27 +737,21 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         )}
       </div>
 
-      {/* Instruction hint */}
+      <div className={s.bottomBar}>
       {phase === "ready" && (
         <div className={s.readyHint}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="16" x2="12" y2="12" />
-            <line x1="12" y1="8" x2="12.01" y2="8" />
-          </svg>
           {isAiMode
-            ? "Lya vous guide. Répondez à la question, puis appuyez sur le bouton rouge."
-            : "Lisez la question à l'écran, puis appuyez sur le bouton rouge pour lancer l'enregistrement."}
+            ? "Lisez la question de Lya, puis appuyez sur le bouton rouge."
+            : "Lisez la question à l'écran, puis lancez l'enregistrement."}
         </div>
       )}
 
       {phase === "recording" && (
         <div className={s.recordingHint}>
-          Parlez naturellement. Appuyez sur « Arrêter » quand vous avez terminé votre réponse.
+          Parlez naturellement · Appuyez sur « Stop » quand vous avez fini
         </div>
       )}
 
-      {/* Controls */}
       <div className={s.controls}>
         <button className={s.controlBtn} onClick={onCancel}>
           Annuler
@@ -803,16 +788,13 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           </button>
         )}
       </div>
+      </div>
 
       {/* Confirmation modal */}
       {showFinishConfirm && (
         <div className={s.confirmOverlay}>
           <div className={s.confirmCard}>
-            <div className={s.processingAvatar}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-              </svg>
-            </div>
+            {lyaIcon()}
             <div className={s.confirmContent}>
               <p className={s.processingName}>Lya</p>
               <p className={s.confirmText}>
