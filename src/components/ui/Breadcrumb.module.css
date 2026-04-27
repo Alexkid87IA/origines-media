@@ -1,30 +1,32 @@
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-top: 24px;
+  margin-bottom: 8px;
 }
 
 .link {
-  color: var(--stone500);
+  color: var(--stone400);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .link:hover {
-  color: var(--ink);
+  color: var(--stone700);
 }
 
 .sep {
   color: var(--stone300);
+  font-size: 8px;
 }
 
 .current {
-  color: var(--ink);
+  color: var(--stone600);
   font-weight: 600;
 }
