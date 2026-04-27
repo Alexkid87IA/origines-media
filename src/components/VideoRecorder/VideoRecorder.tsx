@@ -10,13 +10,20 @@ interface Question {
   hint?: string;
 }
 
+interface AiNextResult {
+  done: boolean;
+  question?: Question;
+  encouragement?: string;
+}
+
 interface VideoRecorderProps {
   questions: Question[];
   onComplete: (recordings: Blob[]) => void;
   onCancel: () => void;
+  onAfterRecord?: (blob: Blob, questionLabel: string) => Promise<AiNextResult>;
 }
 
-type Phase = "permission" | "ready" | "countdown" | "recording" | "review";
+type Phase = "permission" | "ready" | "countdown" | "recording" | "review" | "processing";
 
 /* ================================================================
    HELPERS
@@ -41,7 +48,7 @@ const ENCOURAGEMENTS = [
    COMPONENT
    ================================================================ */
 
-export default function VideoRecorder({ questions, onComplete, onCancel }: VideoRecorderProps) {
+export default function VideoRecorder({ questions: initialQuestions, onComplete, onCancel, onAfterRecord }: VideoRecorderProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const reviewRef = useRef<HTMLVideoElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -53,12 +60,16 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
   const [questionIdx, setQuestionIdx] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [countdown, setCountdown] = useState(3);
-  const [recordings, setRecordings] = useState<(Blob | null)[]>(() => questions.map(() => null));
+  const [questions, setQuestions] = useState<Question[]>(initialQuestions);
+  const [recordings, setRecordings] = useState<(Blob | null)[]>(() => initialQuestions.map(() => null));
   const [reviewUrl, setReviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [aiDone, setAiDone] = useState(false);
+  const [aiMessage, setAiMessage] = useState<string | null>(null);
 
   const currentQ = questions[questionIdx];
-  const isLastQuestion = questionIdx >= questions.length - 1;
+  const isAiMode = !!onAfterRecord;
+  const isLastQuestion = isAiMode ? aiDone : questionIdx >= questions.length - 1;
   const doneCount = recordings.filter(Boolean).length;
 
   // ── Request camera ──
@@ -135,7 +146,11 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
 
       setRecordings((prev) => {
         const next = [...prev];
-        next[questionIdx] = blob;
+        if (questionIdx < next.length) {
+          next[questionIdx] = blob;
+        } else {
+          next.push(blob);
+        }
         return next;
       });
       setReviewUrl(url);
@@ -182,9 +197,48 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
   }, [reviewUrl, questionIdx]);
 
   // ── Next question or finish ──
-  const advance = useCallback(() => {
+  const advance = useCallback(async () => {
     if (reviewUrl) URL.revokeObjectURL(reviewUrl);
     setReviewUrl(null);
+
+    if (isAiMode && !aiDone) {
+      const currentBlob = recordings[questionIdx];
+      if (!currentBlob) return;
+
+      setPhase("processing");
+      setAiMessage(null);
+
+      try {
+        const result = await onAfterRecord!(currentBlob, currentQ.label);
+        if (result.encouragement) setAiMessage(result.encouragement);
+
+        if (result.done) {
+          setAiDone(true);
+          setTimeout(() => {
+            const blobs = recordings.filter((b): b is Blob => b !== null);
+            if (currentBlob && !blobs.includes(currentBlob)) blobs.push(currentBlob);
+            streamRef.current?.getTracks().forEach((t) => t.stop());
+            onComplete(blobs);
+          }, 2000);
+          return;
+        }
+
+        if (result.question) {
+          setQuestions((prev) => [...prev, result.question!]);
+          setRecordings((prev) => [...prev, null]);
+          setTimeout(() => {
+            setQuestionIdx((i) => i + 1);
+            setPhase("ready");
+          }, 1500);
+        }
+      } catch {
+        setAiDone(true);
+        const blobs = recordings.filter((b): b is Blob => b !== null);
+        streamRef.current?.getTracks().forEach((t) => t.stop());
+        onComplete(blobs);
+      }
+      return;
+    }
 
     if (questionIdx < questions.length - 1) {
       setQuestionIdx((i) => i + 1);
@@ -194,7 +248,7 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
       streamRef.current?.getTracks().forEach((t) => t.stop());
       onComplete(blobs);
     }
-  }, [reviewUrl, questionIdx, questions.length, recordings, onComplete]);
+  }, [reviewUrl, questionIdx, questions.length, recordings, onComplete, isAiMode, aiDone, onAfterRecord, currentQ]);
 
   /* ── Question dots (shared) ── */
   const dots = (
@@ -259,6 +313,41 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
     );
   }
 
+  // ── AI Processing state ──
+  if (phase === "processing") {
+    return (
+      <div className={s.recorder}>
+        {dots}
+        <div className={s.processingCard}>
+          <div className={s.processingAvatar}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+          </div>
+          <div className={s.processingContent}>
+            <p className={s.processingName}>Lya — Assistante de rédaction</p>
+            {aiDone ? (
+              <p className={s.processingText}>
+                {aiMessage || "Merci, j'ai tout ce qu'il faut pour raconter votre histoire."}
+              </p>
+            ) : (
+              <>
+                <p className={s.processingText}>
+                  {aiMessage || "J'écoute votre réponse et je prépare la suite..."}
+                </p>
+                <div className={s.processingDots}>
+                  <span className={s.processingDot} />
+                  <span className={s.processingDot} />
+                  <span className={s.processingDot} />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ── Review state ──
   if (phase === "review" && reviewUrl) {
     return (
@@ -317,6 +406,14 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                 </>
+              ) : isAiMode ? (
+                <>
+                  Envoyer à Lya
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </>
               ) : (
                 <>
                   Question suivante
@@ -329,11 +426,19 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
             </button>
           </div>
 
-          {/* Next question preview */}
-          {!isLastQuestion && (
+          {/* Next question preview (non-AI mode only) */}
+          {!isAiMode && !isLastQuestion && (
             <div className={s.reviewNextPreview}>
               <span className={s.reviewNextLabel}>Prochaine question</span>
               <p className={s.reviewNextQuestion}>{questions[questionIdx + 1].label}</p>
+            </div>
+          )}
+
+          {/* AI mode hint */}
+          {isAiMode && !isLastQuestion && (
+            <div className={s.reviewNextPreview}>
+              <span className={s.reviewNextLabel}>Mode IA</span>
+              <p className={s.reviewNextQuestion}>Lya analysera votre réponse et posera la question suivante.</p>
             </div>
           )}
         </div>
@@ -368,7 +473,11 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
         {/* Teleprompter */}
         <div className={s.prompter}>
           <span className={s.prompterKicker}>
-            Question {questionIdx + 1} / {questions.length}
+            {isAiMode ? (
+              <>Lya — Question {questionIdx + 1}</>
+            ) : (
+              <>Question {questionIdx + 1} / {questions.length}</>
+            )}
           </span>
           <p className={s.prompterQuestion}>{currentQ.label}</p>
           {currentQ.hint && (
@@ -396,7 +505,9 @@ export default function VideoRecorder({ questions, onComplete, onCancel }: Video
             <line x1="12" y1="16" x2="12" y2="12" />
             <line x1="12" y1="8" x2="12.01" y2="8" />
           </svg>
-          Lisez la question à l'écran, puis appuyez sur le bouton rouge pour lancer l'enregistrement.
+          {isAiMode
+            ? "Lya vous guide. Répondez à la question, puis appuyez sur le bouton rouge."
+            : "Lisez la question à l'écran, puis appuyez sur le bouton rouge pour lancer l'enregistrement."}
         </div>
       )}
 

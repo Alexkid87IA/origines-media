@@ -27,6 +27,9 @@
     "api/interview/article.ts": {
       "maxDuration": 30
     },
+    "api/interview/transcribe.ts": {
+      "maxDuration": 30
+    },
     "api/interview/notify.ts": {
       "maxDuration": 10
     },

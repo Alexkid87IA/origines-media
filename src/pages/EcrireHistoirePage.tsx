@@ -714,6 +714,68 @@ export default function EcrireHistoirePage() {
     setStep(0);
   }, [updateDraft]);
 
+  const videoHistoryRef = useRef<{ question: string; answer: string }[]>([]);
+  const videoExchangeCount = useRef(0);
+
+  const handleVideoAiRecord = useCallback(async (blob: Blob, questionLabel: string): Promise<{ done: boolean; question?: { label: string; hint?: string }; encouragement?: string }> => {
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      const transcribeRes = await fetch("/api/interview/transcribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ audio: base64 }),
+      });
+
+      if (!transcribeRes.ok) return { done: true, encouragement: "Merci pour votre témoignage." };
+      const { text } = await transcribeRes.json();
+      if (!text || text.trim().length < 10) return { done: false, question: { label: "Pouvez-vous développer un peu plus ?", hint: "N'hésitez pas à prendre votre temps." } };
+
+      videoHistoryRef.current.push({ question: questionLabel, answer: text });
+      videoExchangeCount.current++;
+
+      const lyaRes = await fetch("/api/interview/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          intention: draft.intention || "temoigner",
+          sujet: draft.sujet || "autre",
+          history: videoHistoryRef.current,
+          currentAnswer: text,
+          currentQuestion: questionLabel,
+          questionIndex: videoExchangeCount.current - 1,
+          totalBaseQuestions: 1,
+          aiQuestionsAsked: videoExchangeCount.current,
+          fullGuide: true,
+        }),
+      });
+
+      if (!lyaRes.ok) return { done: true, encouragement: "Merci pour ce beau témoignage." };
+      const data = await lyaRes.json();
+
+      if (data.done) {
+        return { done: true, encouragement: data.encouragement || "Merci, j'ai tout ce qu'il faut." };
+      }
+
+      if (data.redirect && data.message) {
+        return { done: false, question: { label: data.message, hint: "Essayez de répondre autrement." } };
+      }
+
+      if (data.question) {
+        return { done: false, question: { label: data.question, hint: data.hint || "" }, encouragement: data.encouragement };
+      }
+
+      return { done: true, encouragement: "Merci pour votre témoignage." };
+    } catch {
+      return { done: true, encouragement: "Merci pour votre témoignage." };
+    }
+  }, [draft.intention, draft.sujet]);
+
   // ── Guided mode helpers ──
   const getGuidedAnswer = useCallback((questionId: string): string => {
     return draft.guidedAnswers.find((a) => a.questionId === questionId)?.answer || "";
@@ -1385,9 +1447,12 @@ export default function EcrireHistoirePage() {
 
               <div className={s.videoRecorderWrap}>
                 <VideoRecorder
-                  questions={VIDEO_QUESTIONS}
+                  questions={draft.writeMode === "guide"
+                    ? [{ label: (LYA_OPENERS[draft.sujet || "autre"] || LYA_OPENERS.autre).question, hint: (LYA_OPENERS[draft.sujet || "autre"] || LYA_OPENERS.autre).hint }]
+                    : VIDEO_QUESTIONS}
                   onComplete={handleVideoComplete}
                   onCancel={handleVideoCancel}
+                  onAfterRecord={draft.writeMode === "guide" ? handleVideoAiRecord : undefined}
                 />
               </div>
             </section>
