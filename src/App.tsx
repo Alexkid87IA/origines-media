@@ -83,6 +83,7 @@ const ProposerRecoPage = lazyRetry(() => import('./pages/ProposerRecoPage'));
 const BoutiquePage = lazyRetry(() => import('./pages/BoutiquePage'));
 const EnsemblePage = lazyRetry(() => import('./pages/EnsemblePage'));
 const NewsletterPage = lazyRetry(() => import('./pages/NewsletterPage'));
+const LettreDuDimanchePage = lazyRetry(() => import('./pages/LettreDuDimanchePage'));
 const JoinPartnerPage = lazyRetry(() => import('./pages/JoinPartnerPage'));
 const GuidesPage = lazyRetry(() => import('./pages/GuidesPage'));
 const MediaPage = lazyRetry(() => import('./pages/MediaPage'));
@@ -153,6 +154,7 @@ function App() {
         <Route path="/partenariats" element={<PartnershipsPage />} />
         <Route path="/rejoindre" element={<JoinPage />} />
         <Route path="/newsletter" element={<NewsletterPage />} />
+        <Route path="/lettre-du-dimanche" element={<LettreDuDimanchePage />} />
         <Route path="/join-partner" element={<JoinPartnerPage />} />
         <Route path="/racontez-votre-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />
         <Route path="/partager-son-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />

@@ -351,19 +351,19 @@ export default function EnsemblePage() {
                   pour bien commencer la semaine.
                 </p>
                 <div className={s.lettreCtas}>
-                  <Link to="/newsletter" className={s.lettreBtn}>
-                    S&rsquo;inscrire
+                  <Link to="/lettre-du-dimanche" className={s.lettreBtn}>
+                    Toutes les &eacute;ditions
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                   </Link>
                   <Link to="/newsletter" className={s.lettreBtnGhost}>
-                    Lire les &eacute;ditions
+                    S&rsquo;inscrire
                   </Link>
                 </div>
               </div>
               <div className={s.lettreArchive}>
                 <span className={s.lettreArchiveLabel}>Derni&egrave;res &eacute;ditions</span>
                 {LETTRES.map((l, i) => (
-                  <Link key={i} to="/newsletter" className={s.lettreItem}>
+                  <Link key={i} to="/lettre-du-dimanche" className={s.lettreItem}>
                     <span className={s.lettreNum}>{l.num}</span>
                     <span className={s.lettreItemTitle}>{typo(l.title)}</span>
                     <span className={s.lettreDate}>{l.date}</span>
