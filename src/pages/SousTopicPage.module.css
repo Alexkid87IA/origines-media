@@ -166,6 +166,50 @@
   padding-top: 16px;
 }
 
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.contentFilters {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contentFilterBtn {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  background: transparent;
+  border: 1px solid var(--stone200);
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.contentFilterBtn:hover {
+  border-color: var(--stone400);
+  color: var(--stone600);
+}
+
+.contentFilterBtnActive {
+  color: var(--ink);
+  border-color: var(--ink);
+  background: var(--stone50);
+  font-weight: 700;
+}
+
+.contentFilterCount {
+  font-weight: 400;
+  color: var(--stone400);
+  margin-left: 4px;
+}
+
 .resultCount {
   font-family: var(--mono);
   font-size: 10px;
@@ -294,6 +338,20 @@
 
 .card:hover .cardImg {
   transform: scale(1.04);
+}
+
+.cardPlayBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  backdrop-filter: blur(4px);
 }
 
 .cardBody {
@@ -659,6 +717,8 @@
   .cardExcerpt { -webkit-line-clamp: 2; }
   .cardBody { padding: 14px 14px 16px; }
   .toolbar { flex-wrap: wrap; }
+  .contentFilters { flex-wrap: wrap; }
+  .contentFilterBtn { font-size: 9px; padding: 5px 10px; }
   .pagination { gap: 2px; margin-top: 28px; padding-top: 20px; }
   .pageBtn { min-width: 32px; height: 32px; font-size: 10px; }
 }

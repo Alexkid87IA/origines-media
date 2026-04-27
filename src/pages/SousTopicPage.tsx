@@ -24,8 +24,13 @@ interface Article {
   univpilar?: string;
   soustopic?: string;
   category?: string;
+  typeArticle?: string;
+  rubrique?: string;
+  videoUrl?: string;
   authorName?: string;
 }
+
+type ContentFilter = "all" | "articles" | "videos";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -66,9 +71,18 @@ function buildQuery(soustopic: string): string {
       datePublication, tempsLecture,
       "vues": coalesce(vues, 0),
       univpilar, soustopic, category,
+      typeArticle, rubrique, videoUrl,
       "authorName": author->name
     }
   `;
+}
+
+function isVideo(a: Article): boolean {
+  return a.typeArticle === "video" || a.rubrique === "videos" || !!a.videoUrl;
+}
+
+function contentUrl(a: Article): string {
+  return isVideo(a) ? `/video/${a.slug}` : `/article/${a.slug}`;
 }
 
 export default function SousTopicPage() {
@@ -82,6 +96,7 @@ export default function SousTopicPage() {
 
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const [sortBy, setSortBy] = useState(searchParams.get("tri") || "recent");
+  const [contentFilter, setContentFilter] = useState<ContentFilter>("all");
 
   const univers = universId && universId in UNIVERS_MAP
     ? UNIVERS_MAP[universId as UniversId]
@@ -115,8 +130,17 @@ export default function SousTopicPage() {
     fetchData();
   }, [soustopic]);
 
+  const videoCount = useMemo(() => articles.filter(isVideo).length, [articles]);
+  const articleCount = useMemo(() => articles.filter((a) => !isVideo(a)).length, [articles]);
+
+  const filteredArticles = useMemo(() => {
+    if (contentFilter === "videos") return articles.filter(isVideo);
+    if (contentFilter === "articles") return articles.filter((a) => !isVideo(a));
+    return articles;
+  }, [articles, contentFilter]);
+
   const sortedArticles = useMemo(() => {
-    const result = [...articles];
+    const result = [...filteredArticles];
     if (sortBy === "recent") {
       result.sort(
         (a, b) =>
@@ -129,13 +153,23 @@ export default function SousTopicPage() {
       result.sort((a, b) => (b.vues || 0) - (a.vues || 0));
     }
     return result;
-  }, [articles, sortBy]);
+  }, [filteredArticles, sortBy]);
 
   const totalPages = Math.ceil(sortedArticles.length / ITEMS_PER_PAGE);
   const paginatedArticles = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return sortedArticles.slice(start, start + ITEMS_PER_PAGE);
   }, [sortedArticles, currentPage]);
+
+  const handleContentFilterChange = useCallback(
+    (filter: ContentFilter) => {
+      setContentFilter(filter);
+      const p = new URLSearchParams(searchParams);
+      p.delete("page");
+      setSearchParams(p);
+    },
+    [searchParams, setSearchParams]
+  );
 
   const handleSortChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -241,8 +275,8 @@ export default function SousTopicPage() {
               <h1 className={s.heroTitle}>{subtopic.label}</h1>
               {!loading && (
                 <p className={s.heroDeck}>
-                  {articles.length} article{articles.length !== 1 ? "s" : ""}
-                  {" "}sur ce th&egrave;me.
+                  {articleCount} article{articleCount !== 1 ? "s" : ""}
+                  {videoCount > 0 && <> &middot; {videoCount} vid&eacute;o{videoCount !== 1 ? "s" : ""}</>}
                 </p>
               )}
               {subtopic.description && (
@@ -273,10 +307,30 @@ export default function SousTopicPage() {
 
           {/* Toolbar */}
           <div className={s.toolbar}>
-            <span className={`${s.resultCount} mono`}>
-              {sortedArticles.length} article
-              {sortedArticles.length !== 1 ? "s" : ""}
-            </span>
+            <div className={s.toolbarLeft}>
+              <div className={s.contentFilters}>
+                <button
+                  className={`${s.contentFilterBtn} ${contentFilter === "all" ? s.contentFilterBtnActive : ""}`}
+                  onClick={() => handleContentFilterChange("all")}
+                >
+                  Tout <span className={s.contentFilterCount}>{articles.length}</span>
+                </button>
+                <button
+                  className={`${s.contentFilterBtn} ${contentFilter === "articles" ? s.contentFilterBtnActive : ""}`}
+                  onClick={() => handleContentFilterChange("articles")}
+                >
+                  Articles <span className={s.contentFilterCount}>{articleCount}</span>
+                </button>
+                {videoCount > 0 && (
+                  <button
+                    className={`${s.contentFilterBtn} ${contentFilter === "videos" ? s.contentFilterBtnActive : ""}`}
+                    onClick={() => handleContentFilterChange("videos")}
+                  >
+                    Vid&eacute;os <span className={s.contentFilterCount}>{videoCount}</span>
+                  </button>
+                )}
+              </div>
+            </div>
             <div className={s.sortWrap}>
               <select
                 className={s.sortSelect}
@@ -326,7 +380,7 @@ export default function SousTopicPage() {
                     style={{ "--cat-color": color } as React.CSSProperties}
                   >
                     <a
-                      href={`/article/${article.slug}`}
+                      href={contentUrl(article)}
                       className={s.cardLink}
                     >
                       <div className={s.cardImgWrap}>
@@ -337,6 +391,11 @@ export default function SousTopicPage() {
                           loading="lazy"
                           decoding="async"
                         />
+                        {isVideo(article) && (
+                          <span className={s.cardPlayBadge} aria-label="Vidéo">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="6 3 20 12 6 21" /></svg>
+                          </span>
+                        )}
                       </div>
                       <div className={s.cardBody}>
                         <div className={s.cardMeta}>
@@ -387,7 +446,7 @@ export default function SousTopicPage() {
                             image={article.imageUrl}
                             univers={univers.name}
                           />
-                          <span className={s.cardCta}>Lire &rarr;</span>
+                          <span className={s.cardCta}>{isVideo(article) ? "Voir" : "Lire"} &rarr;</span>
                         </div>
                       </div>
                     </a>
