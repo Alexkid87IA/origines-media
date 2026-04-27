@@ -32,6 +32,7 @@ import {
   POPULAR_ARTICLES_QUERY,
 } from "@/lib/queries";
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import { UNIVERS } from "@/data/univers";
 import s from "./ArticlePageV2.module.css";
 
 const SOUSTOPIC_LABELS: Record<string, string> = {
@@ -418,6 +419,36 @@ export default function ArticlePageV2() {
     instagram: author?.instagram || author?.social?.instagram,
   };
 
+  const CATEGORY_PARENTS: Record<string, { name: string; url: string }> = {
+    comprendre: { name: "Comprendre", url: "/comprendre" },
+    reflexions: { name: "Réflexions", url: "/reflexions" },
+  };
+  const artCategory = article.category as string | undefined;
+  const artType = article.typeArticle as string | undefined;
+  const parentPage = artType === "actu"
+    ? { name: "Actualités", url: "/actu" }
+    : (artCategory && CATEGORY_PARENTS[artCategory]) || { name: "Articles", url: "/articles" };
+
+  const breadcrumbItems = [
+    { name: "Accueil", url: "/" },
+    parentPage,
+  ];
+  const univId = article.univpilar as string | undefined;
+  const stSlug = article.soustopic as string | undefined;
+  if (verticale?.nom) {
+    const catUrl = univId && stSlug ? `/univers/${univId}/${stSlug}` : `${parentPage.url}`;
+    breadcrumbItems.push({ name: verticale.nom, url: catUrl });
+  } else if (univId && stSlug) {
+    const univ = UNIVERS.find((u) => u.id === univId);
+    const st = univ?.subtopics.find((s) => s.slug === stSlug);
+    if (st) {
+      breadcrumbItems.push({ name: st.label, url: `/univers/${univId}/${stSlug}` });
+    } else if (univ) {
+      breadcrumbItems.push({ name: univ.name, url: `/univers/${univId}` });
+    }
+  }
+  breadcrumbItems.push({ name: title, url: `/article/${slug}` });
+
   return (
     <div className={s.page} style={{ "--theme": themeColor } as React.CSSProperties}>
       <SEO
@@ -428,22 +459,10 @@ export default function ArticlePageV2() {
         type="article"
         author={authorName}
         publishedTime={date}
-        section={verticale?.nom}
+        section={verticale?.nom || soustopicLabel || parentPage.name}
         jsonLd="article"
         twitterCreator={authorSocial.twitter ? `@${authorSocial.twitter.replace(/^@/, '')}` : undefined}
-        breadcrumbs={[
-          { name: "Accueil", url: "/" },
-          { name: "Articles", url: "/articles" },
-          ...(verticale?.nom
-            ? [
-                {
-                  name: verticale.nom,
-                  url: `/articles?verticale=${(verticale as any).slug?.current || verticale.nom.toLowerCase()}`,
-                },
-              ]
-            : []),
-          { name: title, url: `/article/${slug}` },
-        ]}
+        breadcrumbs={breadcrumbItems}
       />
 
       {/* Progress Bar */}
@@ -456,19 +475,7 @@ export default function ArticlePageV2() {
 
       <main>
         <div className="v2-container">
-          <Breadcrumb items={[
-            { name: "Accueil", url: "/" },
-            { name: "Articles", url: "/articles" },
-            ...(verticale?.nom
-              ? [
-                  {
-                    name: verticale.nom,
-                    url: `/articles?verticale=${(verticale as any).slug?.current || verticale.nom.toLowerCase()}`,
-                  },
-                ]
-              : []),
-            { name: title, url: `/article/${slug}` },
-          ]} />
+          <Breadcrumb items={breadcrumbItems} />
         </div>
         {/* ═══ Header — centered editorial ═══ */}
         <header className={s.header}>

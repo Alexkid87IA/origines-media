@@ -917,6 +917,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
     // Rubrique & sous-topic
     rubrique,
     category,
+    typeArticle,
     soustopic,
     univpilar,
 
