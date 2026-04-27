@@ -53,7 +53,7 @@ export default function HomePageV2() {
     "@context": "https://schema.org",
     "@graph": [
       { "@type": "SiteNavigationElement", name: "Média", url: "https://www.origines.media/media", description: "Articles, récits, immersions et témoignages" },
-      { "@type": "SiteNavigationElement", name: "Programmes", url: "https://www.origines.media/programmes", description: "Documentaires, reportages, interviews et formats vidéo" },
+      { "@type": "SiteNavigationElement", name: "Vidéos", url: "https://www.origines.media/videos", description: "Documentaires, reportages, interviews et formats vidéo" },
       { "@type": "SiteNavigationElement", name: "Guides", url: "https://www.origines.media/guides", description: "Masterclass, ateliers, programmes et kits" },
       { "@type": "SiteNavigationElement", name: "Boutique", url: "https://www.origines.media/boutique", description: "Guides, kits et produits Origines" },
       { "@type": "SiteNavigationElement", name: "Newsletter", url: "https://www.origines.media/newsletter", description: "La Lettre du dimanche — le meilleur de la semaine" },

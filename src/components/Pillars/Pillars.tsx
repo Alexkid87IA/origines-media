@@ -39,10 +39,10 @@ const PILLARS: Pillar[] = [
   {
     id: "prod",
     name: "Origines",
-    subtitle: "Prod",
-    shortLabel: "Prod",
+    subtitle: "Vidéos",
+    shortLabel: "Vidéos",
     tagline: "Documentaires, reportages, interviews — tout ce qu’on filme pour vous.",
-    href: "/programmes",
+    href: "/videos",
     stats: [
       { label: "Vidéos", value: "106" },
       { label: "Programmes", value: "6" },

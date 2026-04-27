@@ -28,7 +28,7 @@ export default function VideoCta() {
           <div className={s.bandLeft}>
             <span className={s.bandKicker}>
               <span className={s.bandKickerDot} aria-hidden="true" />
-              Origines &middot; Programmes
+              Origines &middot; Vid&eacute;os
             </span>
             <h2 id="video-cta-heading" className={s.bandTitle}>
               Ce qu&rsquo;on a <em>film&eacute; pour vous.</em>

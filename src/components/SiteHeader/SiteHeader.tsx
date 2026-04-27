@@ -794,7 +794,7 @@ export default function SiteHeader() {
                 <a href="/articles" className={styles.searchQuickLink}>
                   Derniers articles <span aria-hidden="true">&rarr;</span>
                 </a>
-                <a href="/programmes" className={styles.searchQuickLink}>
+                <a href="/videos" className={styles.searchQuickLink}>
                   Derni&egrave;res vid&eacute;os <span aria-hidden="true">&rarr;</span>
                 </a>
               </div>
