@@ -9,8 +9,6 @@ import SEO from "@/components/SEO";
 import VideoRecorder from "@/components/VideoRecorder/VideoRecorder";
 import { useAuth } from "@/contexts/AuthContext";
 import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
-import { sanityFetch } from "@/lib/sanity";
-import { VIDEOS_SECTION_QUERY } from "@/lib/queries";
 import { doc, setDoc, getDoc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -422,18 +420,6 @@ const STEPS_VIDEO = ["Bienvenue", "Thématique", "Enregistrement", "Identité", 
    HERO + REASSURANCE DATA
    ================================================================ */
 
-interface SanityVideo {
-  _id: string;
-  titre: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  duree?: string;
-  slug: string;
-  verticale?: { _id: string; nom: string; couleurDominante?: string; slug: string };
-}
-
-const FEATURED_VIDEO_SLUG = "lettre-a-la-jeune-louane-hyperactivite-deuil-et-succes";
-
 const REASSURANCE_REASONS = [
   {
     title: "Aider quelqu'un",
@@ -520,7 +506,6 @@ export default function EcrireHistoirePage() {
   const [lyaDone, setLyaDone] = useState(false);
   const [generatedArticle, setGeneratedArticle] = useState<{ titre: string; chapeau: string; article: string } | null>(null);
   const [articleLoading, setArticleLoading] = useState(false);
-  const [featuredVideo, setFeaturedVideo] = useState<SanityVideo | null>(null);
   const isFullGuide = draft.writeMode === "guide";
   const baseQuestions = isFullGuide ? [buildLyaOpening(draft.sujet)] : buildGuidedQuestions(draft.intention, draft.sujet);
   const guidedQuestions = (() => {
@@ -540,19 +525,6 @@ export default function EcrireHistoirePage() {
   const guidedTextareaRef = useRef<HTMLTextAreaElement>(null);
   const aiCallsRef = useRef(new Set<string>());
   const redirectCountRef = useRef(new Map<string, number>());
-
-  // Fetch featured video for hero
-  useEffect(() => {
-    (async () => {
-      try {
-        const videos = (await sanityFetch(VIDEOS_SECTION_QUERY)) as SanityVideo[];
-        const found = videos?.find((v) => v.slug === FEATURED_VIDEO_SLUG);
-        if (found) setFeaturedVideo(found);
-      } catch {
-        // non-blocking
-      }
-    })();
-  }, []);
 
   // Load draft from Firestore
   useEffect(() => {
@@ -1053,33 +1025,13 @@ export default function EcrireHistoirePage() {
               </div>
 
               <div className={s.pageHeroMedia}>
-                {featuredVideo ? (
-                  <Link to={`/video/${featuredVideo.slug}`} className={s.featuredCard}>
-                    <div className={s.featuredThumb}>
-                      <img src={featuredVideo.imageUrl || "/placeholder.svg"} alt={featuredVideo.titre} />
-                      <div className={s.featuredOverlay} />
-                      <div className={s.featuredPlay}>
-                        <div className={s.featuredPlayBtn}>
-                          <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28A1 1 0 008 5.14z" /></svg>
-                        </div>
-                      </div>
-                      {featuredVideo.duree && (
-                        <div className={s.featuredDuration}>{featuredVideo.duree}</div>
-                      )}
-                      <div className={s.featuredMeta}>
-                        {featuredVideo.verticale && (
-                          <div className={s.featuredBadge} style={{ backgroundColor: featuredVideo.verticale.couleurDominante || "#8B5CF6" }}>
-                            <span className={s.featuredBadgeDot} />
-                            {featuredVideo.verticale.nom}
-                          </div>
-                        )}
-                        <h2 className={s.featuredTitle}>{featuredVideo.titre}</h2>
-                      </div>
-                    </div>
-                  </Link>
-                ) : (
-                  <div className={s.featuredSkeleton} />
-                )}
+                <img
+                  src="/images/mosaic-origines.webp"
+                  alt="Les visages d'Origines Media"
+                  className={s.heroMosaic}
+                  loading="eager"
+                  decoding="async"
+                />
               </div>
             </div>
           </div>
