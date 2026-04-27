@@ -250,6 +250,37 @@ export const V2_TRIAD_QUERY = `
   }
 `
 
+// Univers — comptage d'articles par pilier + articles récents par pilier
+export const UNIVERS_COUNTS_QUERY = `
+  {
+    "esprit": count(*[_type == "production" && univpilar == "esprit"]),
+    "corps": count(*[_type == "production" && univpilar == "corps"]),
+    "liens": count(*[_type == "production" && univpilar == "liens"]),
+    "monde": count(*[_type == "production" && univpilar == "monde"]),
+    "avenir": count(*[_type == "production" && univpilar == "avenir"]),
+    "latest": *[_type == "production" && defined(image.asset) && defined(univpilar)] | order(datePublication desc) [0...5] {
+      _id, titre,
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+      "slug": slug.current,
+      univpilar, soustopic, category,
+      datePublication, tempsLecture,
+      "authorName": author->name
+    }
+  }
+`
+
+// Univers detail — articles filtrés par univpilar
+export const ARTICLES_BY_UNIVPILAR_QUERY = `
+  *[_type == "production" && univpilar == $univpilar && defined(slug.current)] | order(datePublication desc) {
+    _id, titre, description, extrait,
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+    "slug": slug.current,
+    datePublication, tempsLecture,
+    univpilar, soustopic, category,
+    "authorName": author->name
+  }
+`
+
 // VideoChannel — vidéos récentes avec verticale
 export const V2_VIDEOS_QUERY = `
   *[_type == "production" && typeArticle == "video" && defined(image.asset)] | order(datePublication desc) [0...12] {

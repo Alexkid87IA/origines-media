@@ -1,121 +1,81 @@
-// src/pages/UniversPage.tsx
-// Page Univers V2 — Affiche les verticales (catégories principales)
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import { sanityFetch } from "../lib/sanity";
 import { sanityImg } from "../lib/sanityImage";
-import {
-  VERTICALES_FOR_UNIVERS_PAGE_QUERY,
-  VERTICALE_DETAIL_QUERY,
-} from "../lib/queries";
+import { UNIVERS_COUNTS_QUERY, ARTICLES_BY_UNIVPILAR_QUERY } from "../lib/queries";
 import { typo } from "../lib/typography";
-import { getUniversColors } from "../lib/universColors";
-import { UNIVERS_MAP, verticaleToUnivers } from "../data/univers";
-import Breadcrumb from '@/components/ui/Breadcrumb';
+import { UNIVERS, UNIVERS_MAP, type UniversId } from "../data/univers";
 import s from "./UniversPage.module.css";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-interface Univers {
-  _id: string;
-  nom: string;
-  slug: string;
-  couleur: string;
-  description: string;
-}
-
-interface Verticale {
-  _id: string;
-  nom: string;
-  slug: string;
-  couleurDominante: string;
-  description: string;
-  imageUrl: string;
-  ordre: number;
-  stats: {
-    articles: number;
-  };
-  univers: Univers[];
-}
-
-interface Production {
+interface ArticlePreview {
   _id: string;
   titre: string;
-  description: string;
+  description?: string;
+  extrait?: string;
+  imageUrl?: string;
   slug: string;
-  imageUrl: string;
-  datePublication: string;
-  tempsLecture: number;
-  univers?: {
-    nom: string;
-    slug: string;
-    couleur: string;
-  };
+  datePublication?: string;
+  tempsLecture?: number;
+  univpilar?: string;
+  soustopic?: string;
+  category?: string;
+  authorName?: string;
 }
 
-interface VerticaleDetail extends Verticale {
-  productions: Production[];
+interface UniversCounts {
+  esprit: number;
+  corps: number;
+  liens: number;
+  monde: number;
+  avenir: number;
+  latest: ArticlePreview[];
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hooks                                                              */
+/* ------------------------------------------------------------------ */
+
+function useReveal() {
+  const ref = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.12 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, className: `${s.reveal} ${visible ? s.visible : ""}` };
 }
 
 /* ------------------------------------------------------------------ */
 /*  Inline SVG icons                                                   */
 /* ------------------------------------------------------------------ */
 
-function ArrowRightIcon({ size = 16, className = "" }: { size?: number; className?: string }) {
+function ArrowIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      width={size}
-      height={size}
-    >
-      <path d="M5 12h14M12 5l7 7-7 7" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width={size} height={size}>
+      <path d="M5 12h14M13 5l7 7-7 7" />
     </svg>
   );
 }
 
 function ArrowLeftIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      width={size}
-      height={size}
-    >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={size} height={size}>
       <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  );
-}
-
-function BookIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      width={size}
-      height={size}
-    >
-      <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
     </svg>
   );
 }
@@ -125,192 +85,227 @@ function BookIcon({ size = 18 }: { size?: number }) {
 /* ================================================================== */
 
 function UniversListPage() {
-  const [verticales, setVerticales] = useState<Verticale[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [counts, setCounts] = useState<UniversCounts | null>(null);
+
+  const heroReveal = useReveal();
+  const gridReveal = useReveal();
+  const themesReveal = useReveal();
+  const latestReveal = useReveal();
 
   useEffect(() => {
-    document.body.style.background = "var(--paper)";
-    document.body.style.color = "var(--ink)";
-    return () => {
-      document.body.style.background = "";
-      document.body.style.color = "";
-    };
+    sanityFetch<UniversCounts>(UNIVERS_COUNTS_QUERY).then(setCounts).catch(() => {});
   }, []);
 
-  useEffect(() => {
-    const fetchVerticales = async () => {
-      try {
-        setLoading(true);
-        const data = await sanityFetch<Verticale[]>(
-          VERTICALES_FOR_UNIVERS_PAGE_QUERY
-        );
-        setVerticales(data || []);
-      } catch {
-        setError("Impossible de charger les univers");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVerticales();
-  }, []);
+  const totalArticles = counts
+    ? counts.esprit + counts.corps + counts.liens + counts.monde + counts.avenir
+    : 0;
 
-  if (loading) {
-    return (
-      <>
-        <SiteHeader />
-        <main id="main" role="main">
-          <div className={s.loadingWrap}>
-            <div className={s.spinner} />
-          </div>
-        </main>
-        <Footer2 />
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <SiteHeader />
-        <main id="main" role="main">
-          <div className={s.errorWrap}>
-            <p className={s.errorText}>{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className={s.errorCta}
-            >
-              R&eacute;essayer
-            </button>
-          </div>
-        </main>
-        <Footer2 />
-      </>
-    );
-  }
+  const pillarOrder: UniversId[] = ["esprit", "corps", "liens", "monde", "avenir"];
 
   return (
     <>
       <SEO
-        title="Nos Univers"
-        description={`Explorez nos ${verticales.length} univers thématiques : ${verticales.map((v) => v.nom).join(", ")}.`.slice(0, 155)}
+        title="Nos Univers — Origines Media"
+        description="Cinq regards sur ce qui nous construit. Explorez L'Esprit, Le Corps, Les Liens, Le Monde et L'Avenir."
         url="/univers"
         breadcrumbs={[
-          { name: 'Accueil', url: '/' },
-          { name: 'Univers', url: '/univers' },
+          { name: "Accueil", url: "/" },
+          { name: "Univers", url: "/univers" },
         ]}
       />
 
       <SiteHeader />
 
-      <main id="main" role="main">
-        <div className="v2-container">
-          <Breadcrumb items={[
-            { name: 'Accueil', url: '/' },
-            { name: 'Univers', url: '/univers' },
-          ]} />
-          <section className={s.page}>
-            {/* Chapter mark */}
-            <div className={`${s.chapterMark} mono`}>
-              <span className={s.cNum}>Univers</span>
-              <span className={s.cSep}>/</span>
-              <span className={s.cLabel}>Exploration</span>
-            </div>
+      <main>
+        {/* ═══ HERO ═══ */}
+        <section ref={heroReveal.ref} className={`${s.hero} ${heroReveal.className}`}>
+          <div className="v2-container">
+            <Breadcrumb items={[
+              { name: "Accueil", url: "/" },
+              { name: "Univers", url: "/univers" },
+            ]} />
 
-            {/* Section header */}
-            <header className={s.sectionHead}>
-              <div className={s.sectionHeadRow}>
-                <div>
-                  <span className={s.sectionKicker}>
-                    <span className={s.sectionKickerDot} aria-hidden="true" />
-                    {verticales.length} th&eacute;matiques &agrave; explorer
-                  </span>
-                  <h1 className={s.sectionTitle}>
-                    Nos <em>univers.</em>
-                  </h1>
-                </div>
-                <div className={s.sectionHeadRight}>
-                  <Link to="/bibliotheque" className={s.linkArrow}>
-                    Voir la biblioth&egrave;que
-                    <ArrowRightIcon size={12} />
-                  </Link>
-                </div>
+            <div className={s.heroInner}>
+              <div className={s.chapterMark}>
+                <span className={s.cNum}>Explorer</span>
+                <span className={s.cSep}>/</span>
+                <span className={s.cLabel}>5 piliers</span>
               </div>
-            </header>
 
-            {/* Univers grid — 5 cols desktop */}
-            <div className={s.universGrid}>
-              {verticales.map((verticale) => {
-                const colors = getUniversColors(verticale.nom);
+              <h1 className={s.heroTitle}>
+                Nos <em>univers.</em>
+              </h1>
+              <p className={s.heroDeck}>
+                Cinq regards sur ce qui nous construit. Chaque univers est une
+                porte d&rsquo;entr&eacute;e vers des r&eacute;cits, des id&eacute;es et des voix
+                qui &eacute;clairent un pan de l&rsquo;exp&eacute;rience humaine.
+              </p>
 
+              {totalArticles > 0 && (
+                <div className={s.heroMeta}>
+                  <span className={s.heroMetaCount}>{totalArticles.toLocaleString("fr-FR")}</span>
+                  <span className={s.heroMetaLabel}>r&eacute;cits publi&eacute;s</span>
+                </div>
+              )}
+
+              <div className={s.spectrumLine}>
+                {pillarOrder.map((id) => (
+                  <span key={id} className={s.spectrumSeg} style={{ backgroundColor: UNIVERS_MAP[id].color }} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ BENTO GRID ═══ */}
+        <section ref={gridReveal.ref} className={`${s.bentoSection} ${gridReveal.className}`}>
+          <div className="v2-container">
+            <div className={s.bentoGrid}>
+              {pillarOrder.map((id, i) => {
+                const u = UNIVERS_MAP[id];
+                const count = counts ? counts[id] : 0;
                 return (
-                  <article
-                    key={verticale._id}
-                    className={s.universCard}
-                    style={
-                      { "--cat-color": colors.bg } as React.CSSProperties
-                    }
+                  <Link
+                    key={id}
+                    to={`/univers/${id}`}
+                    className={s.bentoCard}
+                    style={{ "--pillar-color": u.color, "--i": i } as React.CSSProperties}
                   >
-                    <Link
-                      to={`/univers/${verticale.slug}`}
-                      className={s.universCardLink}
-                    >
-                      <div className={s.universCardImgWrap}>
-                        <img
-                          src={sanityImg(verticale.imageUrl, 600)}
-                          alt={verticale.nom}
-                          className={s.universCardImg}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <span
-                          className={s.universCardBadge}
-                          style={{ backgroundColor: colors.bg }}
-                        >
-                          {verticale.stats.articles} r&eacute;cits
-                        </span>
+                    <span className={s.bentoAccent} />
+
+                    <div className={s.bentoContent}>
+                      <span className={s.bentoKicker}>
+                        <span className={s.bentoDot} />
+                        {count > 0 ? `${count} récits` : "Explorer"}
+                      </span>
+
+                      <h2 className={s.bentoName}>{u.name}</h2>
+                      <p className={s.bentoTagline}>{u.tagline}</p>
+
+                      <div className={s.bentoSubtopics}>
+                        {u.subtopics.slice(0, 6).map((st, j) => (
+                          <span key={st.slug}>
+                            {j > 0 && <span className={s.bentoSubSep}>&middot;</span>}
+                            {st.label}
+                          </span>
+                        ))}
+                        {u.subtopics.length > 6 && (
+                          <span className={s.bentoSubMore}>+{u.subtopics.length - 6}</span>
+                        )}
                       </div>
+                    </div>
 
-                      <div className={s.universCardBody}>
-                        <div className={s.universCardMeta}>
-                          <div
-                            className={s.universCardAccent}
-                            style={{ backgroundColor: colors.bg }}
-                          />
-                          <h2 className={s.universCardTitle}>
-                            {verticale.nom}
-                          </h2>
-                        </div>
-
-                        <p className={s.universCardDesc}>
-                          {verticale.description}
-                        </p>
-
-                        <span
-                          className={s.universCardCta}
-                          style={{ color: colors.bg }}
-                        >
-                          Explorer
-                          <ArrowRightIcon size={12} />
-                        </span>
-                      </div>
-                    </Link>
-                  </article>
+                    <span className={s.bentoArrow}>
+                      <ArrowIcon size={18} />
+                    </span>
+                  </Link>
                 );
               })}
             </div>
+          </div>
+        </section>
 
-            {/* Footer */}
-            <div className={s.listFooter}>
-              <span className={s.listFooterCount}>
-                {verticales.reduce((acc, v) => acc + v.stats.articles, 0)}{" "}
-                r&eacute;cits disponibles
+        {/* ═══ EXPLORE PAR THÈME ═══ */}
+        <section ref={themesReveal.ref} className={`${s.themesSection} ${themesReveal.className}`}>
+          <div className="v2-container">
+            <header className={s.sectionHead}>
+              <span className={s.sectionKicker}>
+                <span className={s.sectionKickerDot} />
+                Th&eacute;matiques
               </span>
-              <Link to="/bibliotheque" className={s.listFooterCta}>
-                Voir la biblioth&egrave;que &rarr;
-              </Link>
+              <h2 className={s.sectionTitle}>Explorer par <em>th&egrave;me.</em></h2>
+            </header>
+
+            <div className={s.themesGrid}>
+              {UNIVERS.map((u) => (
+                <div key={u.id} className={s.themesGroup}>
+                  <span className={s.themesGroupLabel} style={{ color: u.color }}>
+                    <span className={s.themesGroupDot} style={{ backgroundColor: u.color }} />
+                    {u.name}
+                  </span>
+                  <div className={s.themesChips}>
+                    {u.subtopics.map((st) => (
+                      <Link
+                        key={st.slug}
+                        to={`/univers/${u.id}/${st.slug}`}
+                        className={s.themesChip}
+                        style={{ "--pillar-color": u.color } as React.CSSProperties}
+                      >
+                        {st.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ DERNIERS ARTICLES ═══ */}
+        {counts?.latest && counts.latest.length > 0 && (
+          <section ref={latestReveal.ref} className={`${s.latestSection} ${latestReveal.className}`}>
+            <div className="v2-container">
+              <header className={s.sectionHead}>
+                <span className={s.sectionKicker}>
+                  <span className={s.sectionKickerDot} />
+                  Derniers r&eacute;cits
+                </span>
+                <h2 className={s.sectionTitle}>Publi&eacute;s <em>r&eacute;cemment.</em></h2>
+              </header>
+
+              <div className={s.latestGrid}>
+                {counts.latest.slice(0, 4).map((art, i) => {
+                  const pillarColor = art.univpilar && UNIVERS_MAP[art.univpilar as UniversId]
+                    ? UNIVERS_MAP[art.univpilar as UniversId].color
+                    : "#0A0A0A";
+                  return (
+                    <Link
+                      key={art._id}
+                      to={`/article/${art.slug}`}
+                      className={s.latestCard}
+                      style={{ "--i": i } as React.CSSProperties}
+                    >
+                      {art.imageUrl && (
+                        <div className={s.latestImgWrap}>
+                          <img
+                            src={sanityImg(art.imageUrl, 500)}
+                            alt={art.titre}
+                            className={s.latestImg}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      )}
+                      <div className={s.latestBody}>
+                        <span className={s.latestPillar} style={{ color: pillarColor }}>
+                          <span className={s.latestPillarDot} style={{ backgroundColor: pillarColor }} />
+                          {art.univpilar && UNIVERS_MAP[art.univpilar as UniversId]?.name}
+                        </span>
+                        <h3 className={s.latestTitle}>{typo(art.titre)}</h3>
+                        <span className={s.latestMeta}>
+                          {art.tempsLecture || 5} min &middot; {art.authorName || "Origines"}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <div className={s.latestFoot}>
+                <Link to="/articles" className={s.latestCta}>
+                  Tous les articles
+                  <ArrowIcon size={14} />
+                </Link>
+              </div>
             </div>
           </section>
+        )}
+
+        {/* ═══ SPECTRUM BAR ═══ */}
+        <div className={s.spectrumBar}>
+          {pillarOrder.map((id) => (
+            <span key={id} className={s.spectrumBarSeg} style={{ backgroundColor: UNIVERS_MAP[id].color }} />
+          ))}
         </div>
       </main>
 
@@ -325,66 +320,40 @@ function UniversListPage() {
 /* ================================================================== */
 
 function UniversDetailPage({ universId }: { universId: string }) {
-  const [verticale, setVerticale] = useState<VerticaleDetail | null>(null);
+  const univers = UNIVERS_MAP[universId as UniversId];
+  const [articles, setArticles] = useState<ArticlePreview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [allVerticales, setAllVerticales] = useState<Verticale[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 9;
 
-  useEffect(() => {
-    document.body.style.background = "var(--paper)";
-    document.body.style.color = "var(--ink)";
-    return () => {
-      document.body.style.background = "";
-      document.body.style.color = "";
-    };
-  }, []);
+  const heroReveal = useReveal();
+  const subtopicReveal = useReveal();
+  const featuredReveal = useReveal();
+  const gridReveal = useReveal();
+  const relatedReveal = useReveal();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [verticaleData, allData] = await Promise.all([
-          sanityFetch<VerticaleDetail>(VERTICALE_DETAIL_QUERY, {
-            slug: universId,
-          }),
-          sanityFetch<Verticale[]>(VERTICALES_FOR_UNIVERS_PAGE_QUERY),
-        ]);
-        setVerticale(verticaleData);
-        setAllVerticales(allData || []);
-      } catch {
-        setError("Impossible de charger cet univers");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    if (!univers) return;
+    setLoading(true);
+    sanityFetch<ArticlePreview[]>(ARTICLES_BY_UNIVPILAR_QUERY, { univpilar: universId })
+      .then((data) => setArticles(data || []))
+      .catch(() => setArticles([]))
+      .finally(() => setLoading(false));
+  }, [universId, univers]);
+
+  useEffect(() => {
+    setCurrentPage(1);
   }, [universId]);
 
-  if (loading) {
+  if (!univers) {
     return (
       <>
         <SiteHeader />
-        <main id="main" role="main">
-          <div className={s.loadingWrap}>
-            <div className={s.spinner} />
-          </div>
-        </main>
-        <Footer2 />
-      </>
-    );
-  }
-
-  if (error || !verticale) {
-    return (
-      <>
-        <SiteHeader />
-        <main id="main" role="main">
-          <div className={s.errorWrap}>
-            <p className={s.errorText}>{error || "Univers non trouvé"}</p>
-            <Link to="/univers" className={s.errorCta}>
-              Retour aux univers
+        <main>
+          <div className="v2-container" style={{ padding: "120px 0", textAlign: "center" }}>
+            <p style={{ fontFamily: "var(--body)", color: "var(--stone500)" }}>Univers non trouv&eacute;</p>
+            <Link to="/univers" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--ink)", marginTop: 20, display: "inline-block" }}>
+              Retour aux univers &rarr;
             </Link>
           </div>
         </main>
@@ -393,245 +362,138 @@ function UniversDetailPage({ universId }: { universId: string }) {
     );
   }
 
-  const colors = getUniversColors(verticale.nom);
-  const featuredProduction = verticale.productions?.[0];
-  const otherProductions = verticale.productions?.slice(1) || [];
-  const relatedUniverses = allVerticales
-    .filter((v) => v.slug !== verticale.slug)
-    .slice(0, 4);
-
-  const totalPages = Math.ceil(otherProductions.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedProductions = otherProductions.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
+  const featuredArticle = articles[0];
+  const otherArticles = articles.slice(1);
+  const totalPages = Math.ceil(otherArticles.length / ITEMS_PER_PAGE);
+  const paginated = otherArticles.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
   );
+  const otherPillars = UNIVERS.filter((u) => u.id !== universId);
 
   return (
     <>
       <SEO
-        title={`Univers ${verticale.nom}`}
-        description={verticale.description}
-        url={`/univers/${verticale.slug}`}
+        title={`${univers.name} — Origines Media`}
+        description={univers.tagline}
+        url={`/univers/${universId}`}
         breadcrumbs={[
-          { name: 'Accueil', url: '/' },
-          { name: 'Univers', url: '/univers' },
-          { name: verticale.nom, url: `/univers/${verticale.slug}` },
+          { name: "Accueil", url: "/" },
+          { name: "Univers", url: "/univers" },
+          { name: univers.name, url: `/univers/${universId}` },
         ]}
       />
 
       <SiteHeader />
 
-      <main id="main" role="main">
-        <div className="v2-container">
-          <Breadcrumb items={[
-            { name: 'Accueil', url: '/' },
-            { name: 'Univers', url: '/univers' },
-            { name: verticale.nom, url: `/univers/${verticale.slug}` },
-          ]} />
-        </div>
-        {/* ── Hero ── */}
-        <section className={s.hero}>
-          <div className={s.heroImgWrap}>
-            <img
-              src={sanityImg(verticale.imageUrl, 1200)}
-              alt={verticale.nom}
-              className={s.heroImg}
-              fetchpriority="high"
-              loading="eager"
-            />
-            <div className={s.heroOverlay} />
-            <div
-              className={s.heroColorOverlay}
-              style={{ backgroundColor: colors.bg }}
-            />
-          </div>
+      <main>
+        {/* ═══ HERO ═══ */}
+        <section
+          ref={heroReveal.ref}
+          className={`${s.detailHero} ${heroReveal.className}`}
+          style={{ "--pillar-color": univers.color } as React.CSSProperties}
+        >
+          <div className="v2-container">
+            <Breadcrumb items={[
+              { name: "Accueil", url: "/" },
+              { name: "Univers", url: "/univers" },
+              { name: univers.name, url: `/univers/${universId}` },
+            ]} />
 
-          <div className={s.heroContent}>
-            <div className={s.heroGrid}>
-              {/* Left column */}
-              <div>
-                {/* Nav */}
-                <nav className={s.heroNav}>
-                  <Link to="/univers" className={s.heroBackLink}>
-                    <ArrowLeftIcon size={12} />
-                    Retour
-                  </Link>
-                  <span
-                    className={s.heroLabel}
-                    style={{ backgroundColor: `${colors.bg}cc` }}
-                  >
-                    <span className={s.heroLabelDot} />
-                    Univers
-                  </span>
-                </nav>
+            <nav className={s.detailNav}>
+              <Link to="/univers" className={s.detailBack}>
+                <ArrowLeftIcon size={12} />
+                Univers
+              </Link>
+            </nav>
 
-                {/* Title */}
-                <h1 className={s.heroTitle}>{verticale.nom}</h1>
-                <span
-                  className={s.heroAccent}
-                  style={{ backgroundColor: colors.bg }}
-                />
-
-                {/* Description */}
-                <p className={s.heroDesc}>{verticale.description}</p>
-
-                {/* Tags */}
-                {verticale.univers && verticale.univers.length > 0 && (
-                  <div className={s.heroTags}>
-                    {verticale.univers.map((u) => (
-                      <span key={u._id} className={s.heroTag}>
-                        {u.nom}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* CTA */}
-                <Link
-                  to={`/bibliotheque?verticale=${verticale.slug}`}
-                  className={s.heroCta}
-                >
-                  <BookIcon size={16} />
-                  Explorer les r&eacute;cits
-                  <ArrowRightIcon size={14} />
-                </Link>
+            <div className={s.detailHeroInner}>
+              <div className={s.detailHeroText}>
+                <span className={s.detailAccentBar} />
+                <h1 className={s.detailTitle}>{univers.name}</h1>
+                <p className={s.detailTagline}>{univers.tagline}</p>
               </div>
 
-              {/* Right column — Stats (desktop) */}
-              <div className={s.heroStats}>
-                <div className={s.heroStatBlock}>
-                  <div className={s.heroStatValue}>
-                    {verticale.stats.articles}
-                  </div>
-                  <div className={s.heroStatLabel}>Articles</div>
+              <div className={s.detailStats}>
+                <div className={s.detailStat}>
+                  <span className={s.detailStatVal}>{articles.length}</span>
+                  <span className={s.detailStatLabel}>articles</span>
                 </div>
-
-                {verticale.univers && verticale.univers.length > 0 && (
-                  <>
-                    <div className={s.heroStatSep} />
-                    <div className={s.heroStatBlock}>
-                      <div className={s.heroStatValue}>
-                        {verticale.univers.length}
-                      </div>
-                      <div className={s.heroStatLabel}>Th&egrave;mes</div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile stats */}
-            <div className={s.heroStatsMobile}>
-              <div className={s.heroStatMobileItem}>
-                <span className={s.heroStatMobileValue}>
-                  {verticale.stats.articles}
-                </span>
-                <span className={s.heroStatMobileLabel}>articles</span>
-              </div>
-              {verticale.univers && verticale.univers.length > 0 && (
-                <div className={s.heroStatMobileItem}>
-                  <span className={s.heroStatMobileValue}>
-                    {verticale.univers.length}
-                  </span>
-                  <span className={s.heroStatMobileLabel}>
-                    th&egrave;mes
-                  </span>
+                <span className={s.detailStatSep} />
+                <div className={s.detailStat}>
+                  <span className={s.detailStatVal}>{univers.subtopics.length}</span>
+                  <span className={s.detailStatLabel}>th&egrave;mes</span>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── Sous-topics navigation ── */}
-        {(() => {
-          const universIdMapped = verticaleToUnivers(verticale.nom);
-          const uni = UNIVERS_MAP[universIdMapped];
-          if (!uni || uni.subtopics.length === 0) return null;
-          return (
-            <section className={s.subtopicSection}>
-              <div className={s.subtopicInner}>
-                <h2 className={s.subtopicTitle}>Explorer par th&eacute;matique</h2>
-                <div className={s.subtopicGrid}>
-                  {uni.subtopics.map((st) => (
-                    <Link
-                      key={st.slug}
-                      to={`/univers/${uni.id}/${st.slug}`}
-                      className={s.subtopicChip}
-                      style={{ "--cat-color": colors.bg } as React.CSSProperties}
-                    >
-                      {st.label}
-                      <ArrowRightIcon size={12} className={s.subtopicArrow} />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </section>
-          );
-        })()}
+        {/* ═══ SUBTOPICS ═══ */}
+        <section ref={subtopicReveal.ref} className={`${s.subtopicSection} ${subtopicReveal.className}`}>
+          <div className="v2-container">
+            <h2 className={s.subtopicHeading}>Explorer par th&eacute;matique</h2>
+            <div className={s.subtopicGrid}>
+              {univers.subtopics.map((st) => (
+                <Link
+                  key={st.slug}
+                  to={`/univers/${universId}/${st.slug}`}
+                  className={s.subtopicChip}
+                  style={{ "--pillar-color": univers.color } as React.CSSProperties}
+                >
+                  {st.label}
+                  <ArrowIcon size={10} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
 
-        {/* ── Featured production ── */}
-        {featuredProduction && (
-          <section className={s.featuredSection}>
-            <div className={s.featuredSectionInner}>
-              <div className={s.featuredHead}>
-                <div>
-                  <div
-                    className={s.featuredHeadAccent}
-                    style={{ backgroundColor: colors.bg }}
-                  />
-                  <h2 className={s.featuredHeadTitle}>
-                    &Agrave; la une
-                  </h2>
-                </div>
-              </div>
+        {loading && (
+          <div className={s.loadingWrap}>
+            <div className={s.spinner} />
+          </div>
+        )}
 
-              <Link
-                to={`/article/${featuredProduction.slug}`}
-                className={s.featuredCard}
-              >
-                <div className={s.featuredImgWrap}>
-                  <img
-                    src={sanityImg(featuredProduction.imageUrl, 800)}
-                    alt={featuredProduction.titre}
-                    className={s.featuredImg}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
+        {/* ═══ FEATURED ═══ */}
+        {!loading && featuredArticle && (
+          <section ref={featuredReveal.ref} className={`${s.featuredSection} ${featuredReveal.className}`}>
+            <div className="v2-container">
+              <header className={s.sectionHead}>
+                <span className={s.sectionKicker}>
+                  <span className={s.sectionKickerDot} style={{ backgroundColor: univers.color }} />
+                  &Agrave; la une
+                </span>
+                <h2 className={s.sectionTitle}>{univers.name}</h2>
+              </header>
 
+              <Link to={`/article/${featuredArticle.slug}`} className={s.featuredCard}>
+                {featuredArticle.imageUrl && (
+                  <div className={s.featuredImgWrap}>
+                    <img
+                      src={sanityImg(featuredArticle.imageUrl, 900)}
+                      alt={featuredArticle.titre}
+                      className={s.featuredImg}
+                      loading="eager"
+                    />
+                  </div>
+                )}
                 <div className={s.featuredBody}>
-                  {featuredProduction.univers && (
-                    <span
-                      className={s.featuredCategory}
-                      style={{ color: colors.bg }}
-                    >
-                      <span
-                        className={s.featuredCatDot}
-                        style={{ backgroundColor: colors.bg }}
-                      />
-                      {featuredProduction.univers.nom}
+                  {featuredArticle.soustopic && (
+                    <span className={s.featuredCat} style={{ color: univers.color }}>
+                      {featuredArticle.soustopic.replace(/-/g, " ")}
                     </span>
                   )}
-
-                  <h3 className={s.featuredTitle}>
-                    {typo(featuredProduction.titre)}
-                  </h3>
-
+                  <h3 className={s.featuredTitle}>{typo(featuredArticle.titre)}</h3>
                   <p className={s.featuredDesc}>
-                    {featuredProduction.description}
+                    {featuredArticle.description || featuredArticle.extrait || ""}
                   </p>
-
                   <div className={s.featuredFoot}>
-                    <span className={s.featuredReadTime}>
-                      {featuredProduction.tempsLecture || 5} min de lecture
+                    <span className={s.featuredMeta}>
+                      {featuredArticle.tempsLecture || 5} min &middot; {featuredArticle.authorName || "Origines"}
                     </span>
-                    <span
-                      className={s.featuredCta}
-                      style={{ color: colors.bg }}
-                    >
-                      Lire l&rsquo;article
-                      <ArrowRightIcon size={14} />
+                    <span className={s.featuredCta} style={{ color: univers.color }}>
+                      Lire &rarr;
                     </span>
                   </div>
                 </div>
@@ -640,134 +502,88 @@ function UniversDetailPage({ universId }: { universId: string }) {
           </section>
         )}
 
-        {/* ── Productions grid ── */}
-        {otherProductions.length > 0 && (
-          <section className={s.gridSection}>
-            <div className={s.gridSectionInner}>
+        {/* ═══ ARTICLES GRID ═══ */}
+        {!loading && otherArticles.length > 0 && (
+          <section ref={gridReveal.ref} className={`${s.gridSection} ${gridReveal.className}`}>
+            <div className="v2-container">
               <div className={s.gridHead}>
-                <div
-                  className={s.gridHeadAccent}
-                  style={{ backgroundColor: colors.bg }}
-                />
-                <div className={s.gridHeadRow}>
-                  <div>
-                    <h2 className={s.gridHeadTitle}>
-                      Tous les r&eacute;cits
-                    </h2>
-                    <p className={s.gridHeadSub}>
-                      {otherProductions.length} articles sur{" "}
-                      {verticale?.nom?.toLowerCase() || "cet univers"}
-                    </p>
-                  </div>
-                  {totalPages > 1 && (
-                    <span className={s.gridHeadPage}>
-                      Page {currentPage} / {totalPages}
-                    </span>
-                  )}
-                </div>
+                <h2 className={s.gridHeadTitle}>Tous les r&eacute;cits</h2>
+                <span className={s.gridHeadCount}>{otherArticles.length} articles</span>
               </div>
 
-              <div className={s.prodGrid}>
-                {paginatedProductions.map((prod) => (
-                  <article
-                    key={prod._id}
-                    className={s.prodCard}
-                    style={
-                      { "--cat-color": colors.bg } as React.CSSProperties
-                    }
+              <div className={s.articlesGrid}>
+                {paginated.map((art, i) => (
+                  <Link
+                    key={art._id}
+                    to={`/article/${art.slug}`}
+                    className={s.articleCard}
+                    style={{ "--i": i } as React.CSSProperties}
                   >
-                    <Link
-                      to={`/article/${prod.slug}`}
-                      className={s.prodCardLink}
-                    >
-                      <div className={s.prodCardImgWrap}>
+                    <div className={s.articleImgWrap}>
+                      {art.imageUrl ? (
                         <img
-                          src={sanityImg(prod.imageUrl, 400)}
-                          alt={prod.titre}
-                          className={s.prodCardImg}
+                          src={sanityImg(art.imageUrl, 400)}
+                          alt={art.titre}
+                          className={s.articleImg}
                           loading="lazy"
                           decoding="async"
                         />
-                        <div className={s.prodCardOverlay} />
-
-                        {prod.univers && (
-                          <span
-                            className={s.prodCardBadge}
-                            style={{
-                              backgroundColor: `${colors.bg}dd`,
-                            }}
-                          >
-                            {prod.univers.nom}
-                          </span>
-                        )}
-
-                        <div className={s.prodCardContent}>
-                          <h3 className={s.prodCardTitle}>
-                            {typo(prod.titre)}
-                          </h3>
-                          <span className={s.prodCardTime}>
-                            {prod.tempsLecture || 5} min
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  </article>
+                      ) : (
+                        <div className={s.articlePlaceholder} style={{ backgroundColor: `${univers.color}15` }} />
+                      )}
+                      <span className={s.articleOverlay} />
+                    </div>
+                    <div className={s.articleBody}>
+                      {art.soustopic && (
+                        <span className={s.articleCat} style={{ color: univers.color }}>
+                          {art.soustopic.replace(/-/g, " ")}
+                        </span>
+                      )}
+                      <h3 className={s.articleTitle}>{typo(art.titre)}</h3>
+                      <span className={s.articleMeta}>
+                        {art.tempsLecture || 5} min
+                      </span>
+                    </div>
+                  </Link>
                 ))}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
-                <nav className={s.pagination} aria-label="Pagination">
+                <nav className={s.pagination}>
                   <button
                     className={s.pageBtn}
                     disabled={currentPage === 1}
                     onClick={() => {
-                      setCurrentPage((p) => Math.max(1, p - 1));
+                      setCurrentPage((p) => p - 1);
                       window.scrollTo({ top: 500, behavior: "smooth" });
                     }}
                   >
                     <ArrowLeftIcon size={14} />
                   </button>
-
                   <div className={s.pageNums}>
-                    {Array.from(
-                      { length: totalPages },
-                      (_, i) => i + 1
-                    ).map((page) => (
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                       <button
-                        key={page}
-                        className={`${s.pageNum} ${
-                          currentPage === page ? s.pageNumActive : ""
-                        }`}
-                        style={
-                          currentPage === page
-                            ? { backgroundColor: colors.bg, borderColor: colors.bg }
-                            : undefined
-                        }
+                        key={p}
+                        className={`${s.pageNum} ${currentPage === p ? s.pageNumActive : ""}`}
+                        style={currentPage === p ? { backgroundColor: univers.color, borderColor: univers.color } : undefined}
                         onClick={() => {
-                          setCurrentPage(page);
-                          window.scrollTo({
-                            top: 500,
-                            behavior: "smooth",
-                          });
+                          setCurrentPage(p);
+                          window.scrollTo({ top: 500, behavior: "smooth" });
                         }}
                       >
-                        {page}
+                        {p}
                       </button>
                     ))}
                   </div>
-
                   <button
                     className={s.pageBtn}
                     disabled={currentPage === totalPages}
                     onClick={() => {
-                      setCurrentPage((p) =>
-                        Math.min(totalPages, p + 1)
-                      );
+                      setCurrentPage((p) => p + 1);
                       window.scrollTo({ top: 500, behavior: "smooth" });
                     }}
                   >
-                    <ArrowRightIcon size={14} />
+                    <ArrowIcon size={14} />
                   </button>
                 </nav>
               )}
@@ -775,104 +591,42 @@ function UniversDetailPage({ universId }: { universId: string }) {
           </section>
         )}
 
-        {/* ── Related universes ── */}
-        {relatedUniverses.length > 0 && (
-          <section className={s.relatedSection}>
-            <div className={s.relatedInner}>
-              {/* Header */}
-              <div className={s.relatedHead}>
-                <span className={s.relatedKicker}>
-                  <span className={s.relatedKickerDot} />
-                  Continuez l&rsquo;exploration
-                </span>
-                <h2 className={s.relatedTitle}>
-                  D&rsquo;autres univers &agrave; d&eacute;couvrir
-                </h2>
-                <p className={s.relatedDeck}>
-                  Chaque univers raconte une histoire unique. Lequel vous
-                  appelle&nbsp;?
-                </p>
-              </div>
+        {/* ═══ AUTRES UNIVERS ═══ */}
+        <section ref={relatedReveal.ref} className={`${s.relatedSection} ${relatedReveal.className}`}>
+          <div className="v2-container">
+            <header className={s.sectionHead}>
+              <span className={s.sectionKicker}>
+                <span className={s.sectionKickerDot} />
+                Continuez l&rsquo;exploration
+              </span>
+              <h2 className={s.sectionTitle}>D&rsquo;autres <em>univers.</em></h2>
+            </header>
 
-              {/* Grid */}
-              <div className={s.relatedGrid}>
-                {relatedUniverses.map((uni) => {
-                  const uniColors = getUniversColors(uni.nom);
-                  return (
-                    <article
-                      key={uni._id}
-                      className={s.relatedCard}
-                      style={
-                        {
-                          "--cat-color": uniColors.bg,
-                        } as React.CSSProperties
-                      }
-                    >
-                      <Link
-                        to={`/univers/${uni.slug}`}
-                        className={s.relatedCardLink}
-                      >
-                        <div className={s.relatedCardImgWrap}>
-                          <img
-                            src={sanityImg(uni.imageUrl, 600)}
-                            alt={uni.nom}
-                            className={s.relatedCardImg}
-                            loading="lazy"
-                            decoding="async"
-                          />
-                          <div className={s.relatedCardOverlay} />
-                          <div
-                            className={s.relatedCardColorOverlay}
-                            style={{
-                              backgroundColor: uniColors.bg,
-                            }}
-                          />
-
-                          <div className={s.relatedCardContent}>
-                            <span className={s.relatedCardBadge}>
-                              {uni.stats.articles} r&eacute;cits
-                            </span>
-
-                            <div className={s.relatedCardBottom}>
-                              <h3 className={s.relatedCardName}>
-                                {uni.nom}
-                              </h3>
-                              <span className={s.relatedCardArrow}>
-                                <ArrowRightIcon size={16} />
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    </article>
-                  );
-                })}
-              </div>
-
-              {/* Bottom CTA */}
-              <div className={s.relatedBottomCta}>
-                <Link to="/univers" className={s.relatedCtaLink}>
-                  Voir tous les univers
-                  <ArrowRightIcon size={14} />
+            <div className={s.relatedGrid}>
+              {otherPillars.map((u, i) => (
+                <Link
+                  key={u.id}
+                  to={`/univers/${u.id}`}
+                  className={s.relatedCard}
+                  style={{ "--pillar-color": u.color, "--i": i } as React.CSSProperties}
+                >
+                  <span className={s.relatedAccent} />
+                  <h3 className={s.relatedName}>{u.name}</h3>
+                  <p className={s.relatedTagline}>{u.tagline}</p>
+                  <span className={s.relatedArrow}>
+                    <ArrowIcon size={14} />
+                  </span>
                 </Link>
-              </div>
-
-              {/* Color bar */}
-              <div className={s.relatedColorBar}>
-                {relatedUniverses.map((uni) => {
-                  const uniColors = getUniversColors(uni.nom);
-                  return (
-                    <div
-                      key={uni._id}
-                      className={s.relatedColorBarSegment}
-                      style={{ backgroundColor: uniColors.bg }}
-                    />
-                  );
-                })}
-              </div>
+              ))}
             </div>
-          </section>
-        )}
+
+            <div className={s.spectrumBar}>
+              {UNIVERS.map((u) => (
+                <span key={u.id} className={s.spectrumBarSeg} style={{ backgroundColor: u.color }} />
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer2 />
@@ -887,10 +641,6 @@ function UniversDetailPage({ universId }: { universId: string }) {
 
 export default function UniversPage() {
   const { universId } = useParams<{ universId: string }>();
-
-  if (!universId) {
-    return <UniversListPage />;
-  }
-
+  if (!universId) return <UniversListPage />;
   return <UniversDetailPage universId={universId} />;
 }
