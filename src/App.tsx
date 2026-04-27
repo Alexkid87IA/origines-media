@@ -91,7 +91,9 @@ const GuidesPage = lazyRetry(() => import('./pages/GuidesPage'));
 const MediaPage = lazyRetry(() => import('./pages/MediaPage'));
 const ProdPage = lazyRetry(() => import('./pages/ProdPage'));
 const TypePage = lazyRetry(() => import('./pages/TypePage'));
+const ComprendreListPage = lazyRetry(() => import('./pages/ComprendreListPage'));
 const ComprendreArticlePage = lazyRetry(() => import('./pages/ComprendreArticlePage'));
+const ReflexionsListPage = lazyRetry(() => import('./pages/ReflexionsListPage'));
 const ReflexionsArticlePage = lazyRetry(() => import('./pages/ReflexionsArticlePage'));
 const TemoignagesPage = lazyRetry(() => import('./pages/TemoignagesPage'));
 const EcrireHistoirePage = lazyRetry(() => import('./pages/EcrireHistoirePage'));
@@ -172,9 +174,9 @@ function App() {
         <Route path="/academy" element={<Navigate to="/boutique" replace />} />
         <Route path="/communaute" element={<Navigate to="/ensemble" replace />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
-        <Route path="/comprendre" element={<Navigate to="/articles" replace />} />
+        <Route path="/comprendre" element={<ComprendreListPage />} />
         <Route path="/comprendre/:slug" element={<ComprendreArticlePage />} />
-        <Route path="/reflexions" element={<Navigate to="/articles" replace />} />
+        <Route path="/reflexions" element={<ReflexionsListPage />} />
         <Route path="/reflexions/:slug" element={<ReflexionsArticlePage />} />
         <Route path="/temoignages" element={<TemoignagesPage />} />
         <Route path="/ecrire-mon-histoire" element={<EcrireHistoirePage />} />

@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import { estimateReadingTimeFromText } from "@/lib/typography";
 import s from "./TemoignagesArticlePage.module.css";
 
@@ -49,6 +50,11 @@ export default function TemoignagesArticlePage() {
         author={t.isAnonymous ? "Anonyme" : t.prenom}
         section="Témoignages"
         jsonLd="article"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Témoignages", url: "/temoignages" },
+          { name: t.title, url: `/temoignages/${t.slug}` },
+        ]}
       />
       <SiteHeader />
 
@@ -66,10 +72,11 @@ export default function TemoignagesArticlePage() {
 
         <article className={s.article}>
           <header className={s.header}>
-            <a href="/temoignages" className={s.breadcrumb}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
-              T&eacute;moignages
-            </a>
+            <Breadcrumb items={[
+              { name: "Accueil", url: "/" },
+              { name: "Témoignages", url: "/temoignages" },
+              { name: t.title, url: `/temoignages/${t.slug}` },
+            ]} />
             <h1 className={s.title}>{t.title}</h1>
             <p className={s.chapeau}>{t.chapeau}</p>
             <div className={s.headerWho}>

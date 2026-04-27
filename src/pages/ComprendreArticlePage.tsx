@@ -3,6 +3,7 @@ import SEO from "@/components/SEO";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import EmailCapture from "@/components/EmailCapture";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import { estimateReadingTimeFromText } from "@/lib/typography";
 import s from "./ComprendreArticlePage.module.css";
 
@@ -89,6 +90,11 @@ export default function ComprendreArticlePage() {
         author={a.author}
         section="Comprendre"
         jsonLd="article"
+        breadcrumbs={[
+          { name: "Accueil", url: "/" },
+          { name: "Comprendre", url: "/comprendre" },
+          { name: a.title, url: `/comprendre/${a.slug}` },
+        ]}
         faqData={a.faq.map((f) => ({ question: f.question, answer: f.answer }))}
       />
       <SiteHeader />
@@ -96,10 +102,11 @@ export default function ComprendreArticlePage() {
       {/* ── Hero ── */}
       <header className={s.hero}>
         <div className={s.heroInner}>
-          <a href="/comprendre" className={s.breadcrumb}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
-            Comprendre
-          </a>
+          <Breadcrumb items={[
+            { name: "Accueil", url: "/" },
+            { name: "Comprendre", url: "/comprendre" },
+            { name: a.title, url: `/comprendre/${a.slug}` },
+          ]} />
           <span className={s.heroMeta}>
             <span className={s.heroUniv} style={{ background: a.universColor }}>{a.univers}</span>
             {a.readTime} &middot; {a.date}
