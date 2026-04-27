@@ -604,12 +604,13 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 14px 24px;
+  padding: 14px 16px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
   color: #fff;
   background: linear-gradient(135deg, #D64C90, #7B5CD6, #E67839, #2E94B5);
   background-size: 300% 100%;

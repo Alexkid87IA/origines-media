@@ -151,17 +151,17 @@ const PILIERS: Pilier[] = [
   },
   {
     id: "prod",
-    name: "Prod",
+    name: "Vidéos",
     description: "Reportages, documentaires, interviews et formats courts. 10 programmes, 106 vidéos — des histoires qu'on ne raconte pas ailleurs.",
     color: "#C2410C",
-    href: "/programmes",
+    href: "/videos",
     subtopics: [
       { label: "Reportages", href: "/videos?format=reportages" },
       { label: "Documentaires", href: "/videos?format=documentaires" },
       { label: "Interviews", href: "/videos?format=interviews" },
       { label: "Shorts", href: "/videos?format=shorts" },
       { label: "Live", href: "/videos?format=live" },
-      { label: "Programmes", href: "/programmes" },
+      { label: "Nos séries", href: "/programmes" },
     ],
   },
   {
@@ -748,7 +748,7 @@ const MOBILE_SECTIONS = [
     title: "Origines",
     links: [
       { label: "Média" , href: "/media" },
-      { label: "Prod", href: "/programmes" },
+      { label: "Vidéos", href: "/videos" },
       { label: "Guides & Ateliers", href: "/guides" },
       { label: "Boutique", href: "/boutique" },
       { label: "Newsletter", href: "/newsletter" },

@@ -67,16 +67,16 @@ const GALAXIE = [
   },
   {
     id: "prod",
-    name: "Prod",
+    name: "Vidéos",
     tagline: "Reportages, documentaires et formats courts.",
     color: "#C2410C",
-    href: "/programmes",
+    href: "/videos",
     items: [
       { label: "Reportages", href: "/videos?format=reportages" },
       { label: "Documentaires", href: "/videos?format=documentaires" },
       { label: "Interviews", href: "/videos?format=interviews" },
       { label: "Shorts", href: "/videos?format=shorts" },
-      { label: "Programmes", href: "/programmes" },
+      { label: "Nos séries", href: "/programmes" },
     ],
   },
   {
@@ -152,8 +152,8 @@ const SECONDARY: SecondaryNav[] = [
     ],
   },
   {
-    href: "/programmes",
-    label: "Programmes",
+    href: "/videos",
+    label: "Vidéos",
     num: "02",
     hoverColor: "#E67839",
     dropdownLabel: "Par format",
@@ -166,9 +166,9 @@ const SECONDARY: SecondaryNav[] = [
       { href: "/videos?format=shorts", label: "Shorts", color: "#D64C90" },
       { href: "/videos?format=live", label: "Live", color: "#5AA352" },
     ],
-    secondaryLabel: "Par catégorie",
+    secondaryLabel: "Nos séries",
     secondaryItems: [
-      { href: "/videos/formats", label: "Nos formats", color: "#C99B1E" },
+      { href: "/programmes", label: "Tous les programmes", color: "#C2410C" },
     ],
   },
   {
