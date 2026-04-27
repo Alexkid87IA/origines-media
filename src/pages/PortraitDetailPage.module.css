@@ -444,16 +444,16 @@
 .youtubeEmbed {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%;
+  aspect-ratio: 16 / 9;
   margin: 32px 0;
   overflow: hidden;
   background: var(--ink);
 }
 
-.youtubeEmbed iframe {
+.youtubeEmbed iframe,
+.youtubeEmbed button {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
@@ -1220,33 +1220,11 @@
 }
 
 /* ──────────────────────────────────────────────────────────
-   Mobile TOC button
+   Hide scroll-to-top on mobile (integrated in mobile bar)
    ────────────────────────────────────────────────────────── */
 
-.mobileTocBtn {
-  position: fixed;
-  right: 16px;
-  z-index: 50;
-  bottom: calc(72px + env(safe-area-inset-bottom));
-  width: 44px;
-  height: 44px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: var(--ink);
-  color: var(--paper);
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.mobileTocBtn:hover {
-  background: var(--stone800);
-}
-
-.mobileTocBtn svg {
-  width: 20px;
-  height: 20px;
+.scrollTopWrap {
+  display: contents;
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -1609,8 +1587,8 @@
     display: block;
   }
 
-  .mobileTocBtn {
-    display: flex;
+  .scrollTopWrap {
+    display: none;
   }
 
   .heroGrid {

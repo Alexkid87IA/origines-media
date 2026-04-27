@@ -1104,7 +1104,9 @@ export default function PortraitDetailPage() {
         {/* Share modal */}
         {renderShareModal()}
 
-        <ScrollToTopV2 />
+        <div className={s.scrollTopWrap}>
+          <ScrollToTopV2 />
+        </div>
       </div>
     );
   }
@@ -1339,7 +1341,9 @@ export default function PortraitDetailPage() {
       {/* Share modal */}
       {renderShareModal()}
 
-      <ScrollToTopV2 />
+      <div className={s.scrollTopWrap}>
+        <ScrollToTopV2 />
+      </div>
     </div>
   );
 
@@ -1351,6 +1355,18 @@ export default function PortraitDetailPage() {
     return (
       <div className={s.mobileBar}>
         <div className={s.mobileBarInner}>
+          {headings.length > 0 && (
+            <button
+              className={s.mobileBarBtn}
+              onClick={() => setShowMobileToc(true)}
+              aria-label="Ouvrir le sommaire"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+              </svg>
+            </button>
+          )}
+
           <button
             onClick={() => setLiked(!liked)}
             className={liked ? s.mobileBarBtnActive : s.mobileBarBtn}
@@ -1398,18 +1414,6 @@ export default function PortraitDetailPage() {
   function renderMobileToc() {
     return (
       <>
-        {headings.length > 0 && (
-          <button
-            className={s.mobileTocBtn}
-            onClick={() => setShowMobileToc(true)}
-            aria-label="Ouvrir le sommaire"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-            </svg>
-          </button>
-        )}
-
         {showMobileToc && (
           <div
             className={`${s.mobileTocOverlay} ${s.mobileTocOverlayOpen}`}
