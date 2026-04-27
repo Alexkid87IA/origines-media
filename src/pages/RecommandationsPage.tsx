@@ -503,7 +503,7 @@ export default function RecommandationsPage() {
 
                 {/* CTA cards */}
                 <div className={s.heroRight}>
-                  <Link to="/contact" className={s.ctaCard}>
+                  <Link to="/proposer-une-reco" className={s.ctaCard}>
                     <div className={s.ctaCardIcon}>{ICONS.send}</div>
                     <div className={s.ctaCardText}>
                       <p className={s.ctaCardTitle}>

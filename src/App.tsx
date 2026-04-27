@@ -64,6 +64,7 @@ const JoinPage = lazy(() => import('./pages/JoinPage'));
 const ShareStoryPage = lazy(() => import('./pages/ShareStoryPage'));
 const RecommandationsPage = lazy(() => import('./pages/RecommandationsPage'));
 const RecommandationPage = lazy(() => import('./pages/RecommandationPage'));
+const ProposerRecoPage = lazy(() => import('./pages/ProposerRecoPage'));
 const BoutiquePage = lazy(() => import('./pages/BoutiquePage'));
 const EnsemblePage = lazy(() => import('./pages/EnsemblePage'));
 const NewsletterPage = lazy(() => import('./pages/NewsletterPage'));
@@ -136,6 +137,7 @@ function App() {
         <Route path="/racontez-votre-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />
         <Route path="/partager-son-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
+        <Route path="/proposer-une-reco" element={<ProposerRecoPage />} />
         <Route path="/recommandation/:slug" element={<RedirectToRecommandation />} />
         <Route path="/recommandations/:slug" element={<RecommandationResolver />} />
         <Route path="/boutique" element={<BoutiquePage />} />

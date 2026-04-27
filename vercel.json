@@ -29,6 +29,12 @@
     },
     "api/interview/cleanup.ts": {
       "maxDuration": 30
+    },
+    "api/reco/enrich.ts": {
+      "maxDuration": 10
+    },
+    "api/reco/submit.ts": {
+      "maxDuration": 10
     }
   },
   "redirects": [
