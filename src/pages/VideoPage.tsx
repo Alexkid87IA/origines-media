@@ -10,6 +10,7 @@ import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
 import { typo, estimateReadingTime } from "@/lib/typography";
 import { sanityImg } from "@/lib/sanityImage";
+import { UNIVERS } from "@/data/univers";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import { shareButtons } from "@/components/article/SocialIcons";
 import SaveButton from "@/components/SaveButton/SaveButton";
@@ -37,7 +38,9 @@ const VIDEO_BY_SLUG_QUERY = `
     "readTime": tempsLecture,
     "datePublication": datePublication,
     "publishedAt": datePublication,
-    "verticale": verticale->{ "nom": titre, "couleurDominante": couleur },
+    "verticale": verticale->{ "nom": titre, "slug": slug.current, "couleurDominante": couleur },
+    univpilar,
+    soustopic,
     "tags": tags[]->{ _id, "title": titre, "color": null, "slug": slug.current },
     "contenu": contenu,
     "body": contenu
@@ -352,6 +355,18 @@ export default function VideoPage() {
   const verticale = article.verticale;
   const hasYT = article.videoUrl && extractYouTubeId(article.videoUrl);
 
+  const breadcrumbItems = [
+    { name: "Accueil", url: "/" },
+    { name: "Vidéos", url: "/videos" },
+  ];
+  if (verticale?.nom) {
+    const univId = article.univpilar;
+    const stSlug = article.soustopic;
+    const catUrl = univId && stSlug ? `/univers/${univId}/${stSlug}` : "/videos";
+    breadcrumbItems.push({ name: verticale.nom, url: catUrl });
+  }
+  breadcrumbItems.push({ name: title, url: `/video/${slug}` });
+
   return (
     <div className={s.page}>
       <SEO
@@ -364,22 +379,14 @@ export default function VideoPage() {
         section={verticale?.nom}
         jsonLd="video"
         videoUrl={article.videoUrl}
-        breadcrumbs={[
-          { name: "Accueil", url: "/" },
-          { name: "Vidéos", url: "/videos" },
-          { name: title, url: `/video/${slug}` },
-        ]}
+        breadcrumbs={breadcrumbItems}
       />
 
       <div className={s.progressBar} style={{ width: `${scrollProgress}%` }} />
       <SiteHeader />
 
       <div className="v2-container">
-        <Breadcrumb items={[
-          { name: "Accueil", url: "/" },
-          { name: "Vidéos", url: "/videos" },
-          { name: title, url: `/video/${slug}` },
-        ]} />
+        <Breadcrumb items={breadcrumbItems} />
       </div>
 
       {/* YouTube hero */}
