@@ -28,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   console.log(`Transcribe request: audio length=${audio.length}, mimeType=${mimeType || "unknown"}`);
 
   try {
-    const base64Data = audio.replace(/^data:[^;]+;base64,/, "");
+    const base64Data = audio.includes(",") ? audio.split(",")[1] : audio;
     const buffer = Buffer.from(base64Data, "base64");
     console.log(`Buffer size: ${buffer.length} bytes`);
 
