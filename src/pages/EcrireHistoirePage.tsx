@@ -843,15 +843,13 @@ export default function EcrireHistoirePage() {
       if (result === "done") {
         return;
       }
-      if (guidedIdx < guidedQuestions.length) {
+      setTimeout(() => {
+        setGuidedIdx((i) => i + 1);
         setTimeout(() => {
-          setGuidedIdx((i) => Math.min(i + 1, guidedQuestions.length));
-          setTimeout(() => {
-            guidedTextareaRef.current?.focus();
-            setTimeout(() => setLyaMessage(null), 4000);
-          }, 100);
-        }, 50);
-      }
+          guidedTextareaRef.current?.focus();
+          setTimeout(() => setLyaMessage(null), 4000);
+        }, 100);
+      }, 50);
       return;
     }
 
@@ -1623,7 +1621,33 @@ export default function EcrireHistoirePage() {
                         {guidedIdx === 0 ? "Retour" : "Précédente"}
                       </button>
 
-                      {guidedIdx < guidedQuestions.length - 1 ? (
+                      {isFullGuide ? (
+                        lyaDone ? (
+                          <button
+                            className={`${s.guidedNavBtn} ${s.guidedNavBtnPrimary}`}
+                            onClick={goNext}
+                            disabled={!canProceed()}
+                          >
+                            Terminer la rédaction
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <button
+                            className={`${s.guidedNavBtn} ${s.guidedNavBtnPrimary}`}
+                            onClick={guidedGoNext}
+                            disabled={lyaLoading || getGuidedAnswer(guidedQuestions[guidedIdx]?.id).trim().length < 20}
+                          >
+                            {lyaLoading ? "Lya analyse..." : "Envoyer à Lya"}
+                            {!lyaLoading && (
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                              </svg>
+                            )}
+                          </button>
+                        )
+                      ) : guidedIdx < guidedQuestions.length - 1 ? (
                         <button
                           className={`${s.guidedNavBtn} ${s.guidedNavBtnPrimary}`}
                           onClick={guidedGoNext}

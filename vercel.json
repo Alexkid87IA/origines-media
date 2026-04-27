@@ -24,6 +24,9 @@
     "api/interview/generate.ts": {
       "maxDuration": 15
     },
+    "api/interview/article.ts": {
+      "maxDuration": 30
+    },
     "api/interview/notify.ts": {
       "maxDuration": 10
     },
