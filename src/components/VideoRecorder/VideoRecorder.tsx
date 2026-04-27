@@ -246,12 +246,13 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
             setQuestionIdx((i) => i + 1);
             setPhase("ready");
           }, 1500);
+        } else {
+          setPhase("ready");
         }
-      } catch {
-        setAiDone(true);
-        const blobs = recordings.filter((b): b is Blob => b !== null);
-        streamRef.current?.getTracks().forEach((t) => t.stop());
-        onComplete(blobs);
+      } catch (err) {
+        console.error("[VideoRecorder] advance error:", err);
+        setAiMessage("Un problème est survenu. Vous pouvez continuer ou terminer.");
+        setTimeout(() => setPhase("ready"), 2000);
       }
       return;
     }

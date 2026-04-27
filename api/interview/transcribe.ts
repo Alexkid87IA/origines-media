@@ -3,7 +3,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: "25mb",
+      sizeLimit: "50mb",
     },
   },
 };
@@ -15,21 +15,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
+    console.error("OPENAI_API_KEY not configured");
     return res.status(500).json({ error: "OPENAI_API_KEY not configured" });
   }
 
-  const { audio } = req.body as { audio?: string };
+  const { audio, mimeType } = req.body as { audio?: string; mimeType?: string };
   if (!audio) {
+    console.error("No audio data in request body");
     return res.status(400).json({ error: "No audio data provided" });
   }
+
+  console.log(`Transcribe request: audio length=${audio.length}, mimeType=${mimeType || "unknown"}`);
 
   try {
     const base64Data = audio.replace(/^data:[^;]+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
+    console.log(`Buffer size: ${buffer.length} bytes`);
+
+    const ext = (mimeType || "").includes("mp4") ? "mp4" : "webm";
+    const contentType = (mimeType || "").includes("mp4") ? "video/mp4" : "video/webm";
 
     const formData = new FormData();
-    const blob = new Blob([buffer], { type: "audio/webm" });
-    formData.append("file", blob, "audio.webm");
+    const blob = new Blob([buffer], { type: contentType });
+    formData.append("file", blob, `recording.${ext}`);
     formData.append("model", "whisper-1");
     formData.append("language", "fr");
     formData.append("response_format", "text");
@@ -44,11 +52,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!whisperRes.ok) {
       const errText = await whisperRes.text();
-      console.error("Whisper API error:", errText);
-      return res.status(502).json({ error: "Transcription failed" });
+      console.error("Whisper API error:", whisperRes.status, errText);
+      return res.status(502).json({ error: "Transcription failed", detail: errText });
     }
 
     const text = await whisperRes.text();
+    console.log(`Transcription result: "${text.trim().slice(0, 100)}..."`);
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({ text: text.trim() });
   } catch (err) {

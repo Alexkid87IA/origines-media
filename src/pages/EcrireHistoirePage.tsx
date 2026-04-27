@@ -718,22 +718,33 @@ export default function EcrireHistoirePage() {
   const videoExchangeCount = useRef(0);
 
   const handleVideoAiRecord = useCallback(async (blob: Blob, questionLabel: string): Promise<{ done: boolean; question?: { label: string; hint?: string }; encouragement?: string }> => {
+    const FALLBACK_QUESTION = { label: "Continuez — qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps, racontez la suite." };
+
     try {
-      const reader = new FileReader();
+      console.log("[VideoAI] Starting transcription, blob size:", blob.size, "type:", blob.type);
+
       const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
         reader.onload = () => resolve(reader.result as string);
         reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
 
+      console.log("[VideoAI] Base64 ready, length:", base64.length);
+
       const transcribeRes = await fetch("/api/interview/transcribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ audio: base64 }),
+        body: JSON.stringify({ audio: base64, mimeType: blob.type }),
       });
 
-      if (!transcribeRes.ok) return { done: true, encouragement: "Merci pour votre témoignage." };
+      if (!transcribeRes.ok) {
+        console.error("[VideoAI] Transcription failed:", transcribeRes.status, await transcribeRes.text().catch(() => ""));
+        return { done: false, question: FALLBACK_QUESTION, encouragement: "Problème de transcription — continuez, on réessaie." };
+      }
       const { text } = await transcribeRes.json();
+      console.log("[VideoAI] Transcription:", text?.slice(0, 80));
+
       if (!text || text.trim().length < 10) return { done: false, question: { label: "Pouvez-vous développer un peu plus ?", hint: "N'hésitez pas à prendre votre temps." } };
 
       videoHistoryRef.current.push({ question: questionLabel, answer: text });
@@ -756,8 +767,12 @@ export default function EcrireHistoirePage() {
         }),
       });
 
-      if (!lyaRes.ok) return { done: true, encouragement: "Merci pour ce beau témoignage." };
+      if (!lyaRes.ok) {
+        console.error("[VideoAI] Generate failed:", lyaRes.status);
+        return { done: false, question: FALLBACK_QUESTION, encouragement: "Lya a eu un souci — continuez votre récit." };
+      }
       const data = await lyaRes.json();
+      console.log("[VideoAI] Lya response:", JSON.stringify(data).slice(0, 200));
 
       if (data.done) {
         return { done: true, encouragement: data.encouragement || "Merci, j'ai tout ce qu'il faut." };
@@ -771,9 +786,10 @@ export default function EcrireHistoirePage() {
         return { done: false, question: { label: data.question, hint: data.hint || "" }, encouragement: data.encouragement };
       }
 
-      return { done: true, encouragement: "Merci pour votre témoignage." };
-    } catch {
-      return { done: true, encouragement: "Merci pour votre témoignage." };
+      return { done: false, question: FALLBACK_QUESTION };
+    } catch (err) {
+      console.error("[VideoAI] Error:", err);
+      return { done: false, question: FALLBACK_QUESTION, encouragement: "Problème technique — continuez votre récit." };
     }
   }, [draft.intention, draft.sujet]);
 
