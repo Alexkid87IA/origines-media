@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
@@ -45,18 +45,20 @@ interface UniversCounts {
 /* ------------------------------------------------------------------ */
 
 function useReveal() {
-  const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+  const obsRef = useRef<IntersectionObserver | null>(null);
+
+  const ref = useCallback((el: HTMLElement | null) => {
+    if (obsRef.current) { obsRef.current.disconnect(); obsRef.current = null; }
+    if (!el || visible) return;
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
       { threshold: 0.12 }
     );
     obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+    obsRef.current = obs;
+  }, [visible]);
+
   return { ref, className: `${s.reveal} ${visible ? s.visible : ""}` };
 }
 
