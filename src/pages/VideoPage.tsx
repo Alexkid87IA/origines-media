@@ -693,28 +693,73 @@ export default function VideoPage() {
         {relatedArticles.length > 0 && (
           <section className={s.relatedSection}>
             <div className={s.relatedInner}>
-              <h2 className={s.relatedTitle}>Vidéos recommandées</h2>
-              <div className={s.relatedGrid}>
-                {relatedArticles.slice(0, 4).map((rel) => (
-                  <Link key={rel._id} to={`/video/${rel.slug.current}`} className={s.relatedCard}>
-                    <div className={s.relatedCardImg}>
-                      <img src={sanityImg(rel.imageUrl, 400) || "/placeholder.svg"} alt={rel.titre || rel.title || ""} loading="lazy" />
-                    </div>
-                    <div className={s.relatedCardBody}>
-                      {rel.verticale && (
-                        <span className={s.relatedCardCat} style={{ color: rel.verticale.couleurDominante || themeColor }}>
-                          {rel.verticale.nom}
-                        </span>
-                      )}
-                      <h3 className={s.relatedCardTitle}>{rel.titre || rel.title}</h3>
-                    </div>
-                  </Link>
-                ))}
+              <div className={s.relatedHeader}>
+                <div className={s.relatedHeaderLeft}>
+                  <span className={s.relatedKicker}>
+                    <span className={s.relatedKickerDot} aria-hidden="true" />
+                    Continuez l&rsquo;exploration
+                  </span>
+                  <h2 className={s.relatedTitle}>
+                    Vid&eacute;os <em>recommand&eacute;es.</em>
+                  </h2>
+                </div>
+                <Link to="/videos" className={s.relatedAllLink}>
+                  Toutes les vid&eacute;os
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                </Link>
               </div>
-              <Link to="/videos" className={s.relatedCta}>
-                Toutes les vidéos
-                <ArrowRightSvg className={s.relatedCtaArrow} />
-              </Link>
+
+              <div className={s.relatedGrid}>
+                {relatedArticles.slice(0, 4).map((rel, i) => {
+                  const relTitle = rel.titre || rel.title || "";
+                  const vertColor = rel.verticale?.couleurDominante || themeColor;
+                  return (
+                    <article key={rel._id} className={s.relatedCard} style={{ "--i": i, "--vert": vertColor } as React.CSSProperties}>
+                      <Link to={`/video/${rel.slug.current}`} className={s.relatedCardLink}>
+                        <div className={s.relatedCardImgWrap}>
+                          <img
+                            src={sanityImg(rel.imageUrl, 480) || "/placeholder.svg"}
+                            alt={relTitle}
+                            className={s.relatedCardImg}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <div className={s.relatedCardImgOverlay} />
+                          <span className={s.relatedCardPlayBtn} aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="9 6 19 12 9 18" /></svg>
+                          </span>
+                        </div>
+                        <div className={s.relatedCardBody}>
+                          <div className={s.relatedCardMeta}>
+                            <span className={s.relatedCardDot} aria-hidden="true" />
+                            {rel.verticale && (
+                              <span className={s.relatedCardCat}>{rel.verticale.nom}</span>
+                            )}
+                          </div>
+                          <h3 className={s.relatedCardTitle}>{relTitle}</h3>
+                        </div>
+                      </Link>
+                      <div className={s.relatedCardFooter}>
+                        <span className={s.relatedCardType}>Vid&eacute;o</span>
+                        <SaveButton
+                          type="video"
+                          slug={rel.slug.current}
+                          title={relTitle}
+                          image={rel.imageUrl}
+                          univers={rel.verticale?.nom}
+                        />
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <div className={s.relatedCtaWrap}>
+                <Link to="/videos" className={s.relatedCta}>
+                  Toutes les vid&eacute;os
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                </Link>
+              </div>
             </div>
           </section>
         )}

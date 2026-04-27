@@ -1128,7 +1128,13 @@ export default function ArticlePageV2() {
                 {relatedArticles.slice(0, 4).map((related, i) => {
                   const relSlug = related.slug.current;
                   const relTitle = related.titre || related.title || "";
-                  const vertColor = related.verticale?.couleurDominante || "var(--ink)";
+                  const catLabel = related.verticale?.nom
+                    || UNIVERS.find((u) => u.id === (related as any).univpilar)?.name
+                    || (related as any).categories?.[0]?.title
+                    || "";
+                  const vertColor = related.verticale?.couleurDominante
+                    || UNIVERS.find((u) => u.id === (related as any).univpilar)?.color
+                    || "var(--ink)";
                   return (
                     <article key={related._id} className={s.relCard} style={{ "--i": i, "--vert": vertColor } as React.CSSProperties}>
                       <Link to={`/article/${relSlug}`} className={s.relCardLink}>
@@ -1147,13 +1153,15 @@ export default function ArticlePageV2() {
                         </div>
                         <div className={s.relCardBody}>
                           <div className={s.relCardMeta}>
-                            <span className={s.relCardDot} aria-hidden="true" />
-                            {related.verticale && (
-                              <span className={s.relCardVert}>{related.verticale.nom}</span>
+                            {catLabel && (
+                              <>
+                                <span className={s.relCardDot} aria-hidden="true" />
+                                <span className={s.relCardVert}>{catLabel}</span>
+                              </>
                             )}
                             {related.readingTime && (
                               <>
-                                <span className={s.relCardMetaSep} aria-hidden="true" />
+                                {catLabel && <span className={s.relCardMetaSep} aria-hidden="true" />}
                                 <span className={s.relCardReadTime}>{related.readingTime} min</span>
                               </>
                             )}

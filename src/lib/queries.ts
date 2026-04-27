@@ -982,6 +982,7 @@ export const RELATED_ARTICLES_QUERY = `
     categories[0]-> {
       title
     },
+    univpilar,
     verticale-> {
       nom,
       couleurDominante
