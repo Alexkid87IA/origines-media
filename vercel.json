@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/interview/cleanup",
+      "schedule": "0 3 * * *"
+    }
+  ],
   "functions": {
     "api/article/[slug].ts": {
       "maxDuration": 10
@@ -14,6 +20,15 @@
     },
     "api/subscribe.ts": {
       "maxDuration": 10
+    },
+    "api/interview/generate.ts": {
+      "maxDuration": 15
+    },
+    "api/interview/notify.ts": {
+      "maxDuration": 10
+    },
+    "api/interview/cleanup.ts": {
+      "maxDuration": 30
     }
   },
   "redirects": [
@@ -350,6 +365,15 @@
     },
     {
       "source": "/api/subscribe",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/interview/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
