@@ -222,7 +222,11 @@ export default function SousTopicPage() {
     <>
       <SEO
         title={`${subtopic.label} — ${univers.name} · Origines Media`}
-        description={subtopic.description || `Tous nos articles sur ${subtopic.label.toLowerCase()} dans l'univers ${univers.name}. ${articles.length} publications pour explorer le sujet en profondeur.`}
+        description={
+          subtopic.description
+            ? `${subtopic.description}${articles.length > 0 ? ` ${articles.length} articles et vidéos sur Origines Media.` : ""}`
+            : `Tous nos articles sur ${subtopic.label.toLowerCase()} dans l'univers ${univers.name}. ${articles.length} publications pour explorer le sujet en profondeur.`
+        }
         url={`/univers/${univers.id}/${subtopic.slug}`}
         breadcrumbs={[
           { name: "Accueil", url: "/" },

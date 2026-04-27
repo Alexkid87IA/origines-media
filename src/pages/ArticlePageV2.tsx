@@ -489,12 +489,17 @@ export default function ArticlePageV2() {
             {(verticale || soustopicLabel) && (
               <div className={s.headerKickerRow}>
                 {verticale && (
-                  <span className={s.headerKicker} style={{ color: themeColor }}>{verticale.nom}</span>
+                  univId
+                    ? <Link to={`/univers/${univId}`} className={s.headerKicker} style={{ color: themeColor }}>{verticale.nom}</Link>
+                    : <span className={s.headerKicker} style={{ color: themeColor }}>{verticale.nom}</span>
                 )}
                 {soustopicLabel && (
                   <>
                     {verticale && <span className={s.headerKickerSep} style={{ color: themeColor }}>/</span>}
-                    <span className={s.headerSubtopic} style={{ color: themeColor }}>{soustopicLabel}</span>
+                    {univId && stSlug
+                      ? <Link to={`/univers/${univId}/${stSlug}`} className={s.headerSubtopic} style={{ color: themeColor }}>{soustopicLabel}</Link>
+                      : <span className={s.headerSubtopic} style={{ color: themeColor }}>{soustopicLabel}</span>
+                    }
                   </>
                 )}
               </div>

@@ -53,6 +53,12 @@ function useReveal() {
   return { ref, className: `${s.reveal} ${visible ? s.visible : ""}` };
 }
 
+const SOUSTOPIC_CANONICAL: Record<string, string> = {
+  "bien-etre-physique": "bien-etre",
+  "recits-de-voyage": "recits-voyage",
+  "intelligence-artificielle": "ia",
+};
+
 function ArrowIcon({ size = 16 }: { size?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width={size} height={size}>
@@ -103,7 +109,10 @@ function UniversListPage() {
     <>
       <SEO
         title="Nos Univers — Origines Media"
-        description="Cinq regards sur ce qui nous construit. Explorez L'Esprit, Le Corps, Les Liens, Le Monde et L'Avenir — plus de 600 récits pour comprendre l'expérience humaine."
+        description={totalArticles > 0
+          ? `Cinq regards sur ce qui nous construit : L'Esprit, Le Corps, Les Liens, Le Monde et L'Avenir. ${totalArticles} récits, reportages et vidéos pour explorer l'expérience humaine en profondeur.`
+          : "Cinq regards sur ce qui nous construit : L'Esprit, Le Corps, Les Liens, Le Monde et L'Avenir. Articles, vidéos et reportages pour explorer l'expérience humaine en profondeur."
+        }
         url="/univers"
         breadcrumbs={[
           { name: "Accueil", url: "/" },
@@ -292,6 +301,11 @@ function UniversDetailPage({ universId }: { universId: string }) {
       if (a.soustopic) {
         if (!map[a.soustopic]) map[a.soustopic] = [];
         map[a.soustopic].push(a);
+        const canonical = SOUSTOPIC_CANONICAL[a.soustopic];
+        if (canonical && canonical !== a.soustopic) {
+          if (!map[canonical]) map[canonical] = [];
+          map[canonical].push(a);
+        }
       }
     }
     return map;
@@ -303,7 +317,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
     <>
       <SEO
         title={`${univers.name} — Origines Media`}
-        description={`${univers.tagline} ${articles.length} articles pour explorer ${univers.name.toLowerCase()}.`}
+        description={`${univers.tagline} ${articles.length > 0 ? `${articles.length} articles` : "Articles, vidéos et reportages"} pour explorer ${univers.name.toLowerCase()} : ${univers.subtopics.slice(0, 5).map(st => st.label).join(", ")} et plus.`}
         url={`/univers/${universId}`}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
@@ -414,8 +428,8 @@ function UniversDetailPage({ universId }: { universId: string }) {
                 <h2 className={s.sectionTitle}>En <em>profondeur.</em></h2>
               </header>
               <div className={s.topicsGrid}>
-                {univers.subtopics.slice(0, 4).map((st, i) => {
-                  const stArticles = articlesBySubtopic[st.slug] || articlesBySubtopic[st.slug.replace(/-/g, "-")] || [];
+                {univers.subtopics.map((st, i) => {
+                  const stArticles = articlesBySubtopic[st.slug] || [];
                   const topArt = stArticles.find((a) => a.imageUrl);
                   return (
                     <div key={st.slug} className={s.topicCard} style={{ "--i": i, "--pillar-color": color } as React.CSSProperties}>

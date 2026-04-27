@@ -387,6 +387,7 @@ export default function VideoPage() {
         section={verticale?.nom}
         jsonLd="video"
         videoUrl={article.videoUrl}
+        publishedTime={date}
         breadcrumbs={breadcrumbItems}
       />
 
@@ -421,9 +422,9 @@ export default function VideoPage() {
           </div>
           <div className={s.splitContent}>
             {verticale && (
-              <span className={s.splitKicker} style={{ color: themeColor }}>
-                {verticale.nom}
-              </span>
+              univId
+                ? <Link to={`/univers/${univId}`} className={s.splitKicker} style={{ color: themeColor }}>{verticale.nom}</Link>
+                : <span className={s.splitKicker} style={{ color: themeColor }}>{verticale.nom}</span>
             )}
             <h1 className={s.splitTitle}>{typo(title)}</h1>
             {description && <p className={s.splitDeck}>{typo(description)}</p>}
@@ -459,9 +460,9 @@ export default function VideoPage() {
         <header className={s.videoHeader}>
           <div className={s.videoHeaderInner}>
             {verticale && (
-              <span className={s.videoHeaderKicker} style={{ color: themeColor }}>
-                {verticale.nom}
-              </span>
+              univId
+                ? <Link to={`/univers/${univId}`} className={s.videoHeaderKicker} style={{ color: themeColor }}>{verticale.nom}</Link>
+                : <span className={s.videoHeaderKicker} style={{ color: themeColor }}>{verticale.nom}</span>
             )}
             <span className={s.videoHeaderBar} />
             <h1 className={s.videoHeaderTitle}>{typo(title)}</h1>
