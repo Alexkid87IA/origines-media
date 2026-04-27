@@ -752,6 +752,7 @@ export default function EcrireHistoirePage() {
           totalBaseQuestions: 1,
           aiQuestionsAsked: videoExchangeCount.current,
           fullGuide: true,
+          videoMode: true,
         }),
       });
 

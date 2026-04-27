@@ -229,6 +229,18 @@
   color: var(--paper);
 }
 
+.finishBtn {
+  background: #10B981;
+  color: #fff;
+  border-color: #10B981;
+  padding: 10px 20px;
+}
+.finishBtn:hover {
+  background: #059669;
+  border-color: #059669;
+  color: #fff;
+}
+
 .nextBtn {
   background: var(--ink);
   color: var(--paper);

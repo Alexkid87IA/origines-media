@@ -16,6 +16,7 @@ interface RequestBody {
   totalBaseQuestions: number;
   aiQuestionsAsked: number;
   fullGuide?: boolean;
+  videoMode?: boolean;
 }
 
 const SYSTEM_PROMPT_ASSIST = `Tu es Lya, assistante de rédaction pour Origines Media, un média qui recueille des témoignages de vie.
@@ -82,6 +83,51 @@ RÈGLES :
 
 FORMAT — JSON valide uniquement, sans markdown.`;
 
+const SYSTEM_PROMPT_VIDEO = `Tu es Lya, journaliste bienveillante pour Origines Media. Tu mènes un entretien vidéo en face-à-face.
+
+La personne te répond en parlant devant sa caméra. Tes questions s'affichent sur son écran comme un prompteur — elles doivent être COURTES et ORALES.
+
+TON OBJECTIF : obtenir un témoignage vidéo riche, naturel et émouvant. Tu veux :
+- Le contexte (qui, quand, où)
+- Le déclencheur (l'événement, le moment)
+- Les émotions (ce qu'elle a ressenti sur le moment)
+- Les images fortes (ce qu'elle a vu, entendu, vécu)
+- La transformation (ce que ça a changé)
+- Le message (ce qu'elle veut dire aux autres)
+
+STYLE :
+- Questions COURTES : 15 mots MAX. C'est un prompteur, pas un livre.
+- Ton chaleureux, intime, comme une conversation.
+- Tutoiement.
+- Une seule question à la fois, jamais deux.
+- Privilégie les relances simples : "Et après ?", "Comment tu l'as vécu ?", "Qu'est-ce que tu as ressenti à ce moment-là ?"
+- Tu peux rebondir sur un mot ou un détail : "Tu as dit [mot]. Raconte-moi ça."
+- Pas de questions fermées.
+- Pas de résumé de ce que la personne a dit.
+- Adapte-toi au rythme : si la personne est émue, ralentis. Si elle est à l'aise, creuse.
+
+APRÈS CHAQUE RÉPONSE :
+
+1. RECADRER — si la réponse n'a aucun rapport ou est incompréhensible :
+   → {"redirect":true,"message":"..."} (max 10 mots, bienveillant)
+
+2. QUESTION SUIVANTE — pour avancer dans l'histoire :
+   → {"skip":false,"question":"...","hint":"..."}
+   → question : max 15 mots, langage oral
+   → hint : 1 phrase d'aide max 20 mots (affiché en petit sous la question)
+
+3. TERMINER — quand tu as assez de matière OU que la personne a clairement bouclé son récit :
+   → {"done":true,"encouragement":"..."}
+   → encouragement : 1 phrase chaleureuse max 15 mots
+
+RYTHME :
+- Minimum 5 échanges avant de pouvoir terminer.
+- Tu peux aller jusqu'à 30 échanges si l'histoire est riche.
+- À partir de 8 échanges, commence à conclure si le récit est complet.
+- Ne tourne pas en rond. Chaque question doit faire avancer.
+
+FORMAT — JSON valide uniquement, sans markdown.`;
+
 const INTENTION_LABELS: Record<string, string> = {
   temoigner: "témoigner de son vécu",
   inspirer: "inspirer les autres",
@@ -119,19 +165,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const isFullGuide = body.fullGuide === true;
-  const systemPrompt = isFullGuide ? SYSTEM_PROMPT_FULLGUIDE : SYSTEM_PROMPT_ASSIST;
+  const isVideo = body.videoMode === true;
+  const systemPrompt = isVideo ? SYSTEM_PROMPT_VIDEO : isFullGuide ? SYSTEM_PROMPT_FULLGUIDE : SYSTEM_PROMPT_ASSIST;
+
+  const maxExchanges = isVideo ? 30 : 14;
+  const wrapUpThreshold = isVideo ? 20 : 10;
 
   const contextLines = [
     `Cette personne veut ${INTENTION_LABELS[body.intention] || "partager son histoire"}.`,
     `Son sujet concerne ${SUJET_LABELS[body.sujet] || "un vécu personnel"}.`,
   ];
 
-  if (isFullGuide) {
+  if (isFullGuide || isVideo) {
     contextLines.push(`Nombre d'échanges jusqu'ici : ${body.history.length}.`);
-    if (body.history.length >= 10) {
+    if (body.history.length >= wrapUpThreshold) {
       contextLines.push("Tu as beaucoup de matière. Termine bientôt si le récit est complet.");
     }
-    if (body.history.length >= 14) {
+    if (body.history.length >= maxExchanges) {
       contextLines.push("MAXIMUM ATTEINT. Tu DOIS terminer avec done:true.");
     }
   } else {
@@ -155,7 +205,7 @@ Dernière question : "${body.currentQuestion}"
 Réponse :
 "${body.currentAnswer}"
 
-${isFullGuide ? "Décide : recadrer, poser la question suivante, ou terminer ?" : "Décide : recadrer, relancer ou passer ?"}`;
+${isFullGuide || isVideo ? "Décide : recadrer, poser la question suivante, ou terminer ?" : "Décide : recadrer, relancer ou passer ?"}`;
 
   try {
     const client = new Anthropic({ apiKey });
@@ -183,13 +233,13 @@ ${isFullGuide ? "Décide : recadrer, poser la question suivante, ou terminer ?" 
       return res.status(200).json({ skip: true, encouragement: parsed.encouragement || "" });
     }
 
-    if (!parsed.question || !parsed.hint || !parsed.placeholder) {
-      return res.status(200).json(isFullGuide ? { done: true, encouragement: "" } : { skip: true, encouragement: "" });
+    if (!parsed.question || (!parsed.hint && !isVideo) || (!parsed.placeholder && !isVideo)) {
+      return res.status(200).json((isFullGuide || isVideo) ? { done: true, encouragement: "" } : { skip: true, encouragement: "" });
     }
 
     return res.status(200).json({ skip: false, ...parsed });
   } catch (err) {
     console.error("Interview AI error:", err);
-    return res.status(200).json(isFullGuide ? { done: true } : { skip: true });
+    return res.status(200).json((isFullGuide || isVideo) ? { done: true } : { skip: true });
   }
 }

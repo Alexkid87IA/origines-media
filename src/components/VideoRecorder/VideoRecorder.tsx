@@ -196,6 +196,22 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     setPhase("ready");
   }, [reviewUrl, questionIdx]);
 
+  // ── User chooses to stop early (AI mode) ──
+  const finishEarly = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (recorderRef.current?.state === "recording") {
+      recorderRef.current.stop();
+    }
+    if (reviewUrl) URL.revokeObjectURL(reviewUrl);
+    setAiDone(true);
+    const blobs = recordings.filter((b): b is Blob => b !== null);
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    onComplete(blobs);
+  }, [recordings, onComplete, reviewUrl]);
+
   // ── Next question or finish ──
   const advance = useCallback(async () => {
     if (reviewUrl) URL.revokeObjectURL(reviewUrl);
@@ -398,6 +414,14 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
               </svg>
               Refaire cette réponse
             </button>
+            {isAiMode && doneCount >= 2 && !isLastQuestion && (
+              <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={finishEarly}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                J'ai terminé
+              </button>
+            )}
             <button className={`${s.controlBtn} ${s.nextBtn}`} onClick={advance}>
               {isLastQuestion ? (
                 <>
@@ -474,7 +498,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         <div className={s.prompter}>
           <span className={s.prompterKicker}>
             {isAiMode ? (
-              <>Lya — Question {questionIdx + 1}</>
+              <>Lya — Question {questionIdx + 1}{aiDone ? " (dernière)" : ""}</>
             ) : (
               <>Question {questionIdx + 1} / {questions.length}</>
             )}
@@ -542,6 +566,15 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
               <rect x="6" y="6" width="12" height="12" rx="1" />
             </svg>
             Arrêter l'enregistrement
+          </button>
+        )}
+
+        {isAiMode && doneCount >= 1 && (phase === "ready" || phase === "recording") && (
+          <button className={`${s.controlBtn} ${s.finishBtn}`} onClick={finishEarly}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+            J'ai terminé
           </button>
         )}
       </div>
