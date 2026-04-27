@@ -1008,7 +1008,7 @@ export default function HistoiresPage() {
                       "Partagez votre parcours et inspirez des milliers de lecteurs."
                     )}
                   </p>
-                  <Link to="/racontez-votre-histoire" className={s.sidebarCtaLink}>
+                  <Link to="/ecrire-mon-histoire" className={s.sidebarCtaLink}>
                     Racontez la v&ocirc;tre
                     <IconArrowRight />
                   </Link>
@@ -1125,7 +1125,7 @@ export default function HistoiresPage() {
                       "Partagez votre parcours et inspirez des milliers de lecteurs."
                     )}
                   </p>
-                  <Link to="/racontez-votre-histoire" className={s.sidebarCtaLink}>
+                  <Link to="/ecrire-mon-histoire" className={s.sidebarCtaLink}>
                     Racontez la v&ocirc;tre
                     <IconArrowRight />
                   </Link>

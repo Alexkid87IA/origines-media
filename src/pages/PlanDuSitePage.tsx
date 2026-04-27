@@ -49,7 +49,7 @@ const SITE_SECTIONS = [
     links: [
       { href: "/ensemble", label: "Ensemble — Vie du média" },
       { href: "/newsletter", label: "La Lettre du dimanche" },
-      { href: "/racontez-votre-histoire", label: "Racontez votre histoire" },
+      { href: "/ecrire-mon-histoire", label: "Racontez votre histoire" },
       { href: "/ecrire-mon-histoire", label: "Écrire mon histoire (membres)" },
     ],
   },

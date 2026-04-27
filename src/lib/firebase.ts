@@ -1,10 +1,12 @@
 import type { FirebaseApp } from "firebase/app";
 import type { Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
+import type { FirebaseStorage } from "firebase/storage";
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
+let storage: FirebaseStorage | null = null;
 let initPromise: Promise<void> | null = null;
 
 async function initFirebase() {
@@ -15,6 +17,7 @@ async function initFirebase() {
   const { initializeApp } = await import("firebase/app");
   const { getAuth } = await import("firebase/auth");
   const { getFirestore } = await import("firebase/firestore");
+  const { getStorage } = await import("firebase/storage");
 
   const firebaseConfig = {
     apiKey,
@@ -27,6 +30,7 @@ async function initFirebase() {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
 }
 
 export async function getFirebaseAuth(): Promise<Auth | null> {
@@ -39,4 +43,10 @@ export async function getFirebaseDb(): Promise<Firestore | null> {
   if (!initPromise) initPromise = initFirebase();
   await initPromise;
   return db;
+}
+
+export async function getFirebaseStorage(): Promise<FirebaseStorage | null> {
+  if (!initPromise) initPromise = initFirebase();
+  await initPromise;
+  return storage;
 }

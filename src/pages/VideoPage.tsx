@@ -647,7 +647,7 @@ export default function VideoPage() {
                 )}
 
                 {/* CTA */}
-                <Link to="/racontez-votre-histoire" className={s.ctaWidget}>
+                <Link to="/ecrire-mon-histoire" className={s.ctaWidget}>
                   <div className={s.ctaWidgetIcon}><PenSvg /></div>
                   <div className={s.ctaWidgetText}>
                     <p className={s.ctaWidgetTitle}>Racontez votre histoire</p>

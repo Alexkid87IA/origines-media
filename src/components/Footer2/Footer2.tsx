@@ -600,7 +600,7 @@ const APROPOS = [
     color: "#F59E0B",
     href: "/temoignages",
     articles: [
-      { title: "Raconter votre histoire sur Origines.", href: "/racontez-votre-histoire" },
+      { title: "Raconter votre histoire sur Origines.", href: "/ecrire-mon-histoire" },
       { title: "Lire les témoignages de la communauté.", href: "/temoignages" },
       { title: "S'inscrire à la Lettre du dimanche.", href: "/newsletter" },
     ],

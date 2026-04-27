@@ -80,7 +80,7 @@ const navigationColumns = [
     titleHref: '/ensemble',
     color: '#14B8A6',
     links: [
-      { label: 'Raconter son histoire', href: '/racontez-votre-histoire' },
+      { label: 'Raconter son histoire', href: '/ecrire-mon-histoire' },
       { label: 'Rejoindre l\'équipe', href: '/rejoindre' },
       { label: 'Newsletter', href: '/newsletter' },
       { label: 'Partenariats', href: '/partenariats' },

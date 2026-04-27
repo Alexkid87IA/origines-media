@@ -73,7 +73,7 @@ const CALENDRIER = [
 ];
 
 const PARTICIPATE = [
-  { title: "Racontez votre histoire", desc: "Vous avez un parcours, une expérience à partager ? On veut vous entendre.", href: "/racontez-votre-histoire", color: "#D64C90" },
+  { title: "Racontez votre histoire", desc: "Vous avez un parcours, une expérience à partager ? On veut vous entendre.", href: "/ecrire-mon-histoire", color: "#D64C90" },
   { title: "Suggérez un sujet", desc: "Un thème qu’on devrait explorer ? Un angle qu’on a manqué ?", href: "/contact?sujet=idee", color: "#7B5CD6" },
   { title: "Proposez une amélioration", desc: "Une idée pour améliorer Origines ? Vos retours nous font avancer.", href: "/contact?sujet=suggestion", color: "#5AA352" },
 ];

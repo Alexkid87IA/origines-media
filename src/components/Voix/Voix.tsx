@@ -289,7 +289,7 @@ export default function Voix({ cmsStories }: VoixProps) {
             Votre r&eacute;cit peut aider quelqu&rsquo;un que vous ne
             conna&icirc;trez jamais.
           </p>
-          <a href="/racontez-votre-histoire" className={s.bannerCta}>
+          <a href="/ecrire-mon-histoire" className={s.bannerCta}>
             Raconter mon histoire
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
               <path d="M5 12h14M13 5l7 7-7 7" />

@@ -1041,7 +1041,7 @@ export default function ArticlePageV2() {
 
                 {/* 8. CTA */}
                 <Link
-                  to="/racontez-votre-histoire"
+                  to="/ecrire-mon-histoire"
                   className={s.ctaWidget}
                 >
                   <span className={s.ctaWidgetIcon}>

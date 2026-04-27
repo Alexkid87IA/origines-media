@@ -110,7 +110,7 @@ export default function TemoignagesArticlePage() {
               <p className={s.ctaText}>
                 Votre histoire peut aider quelqu&rsquo;un. Anonymat garanti si vous le souhaitez.
               </p>
-              <a href="/racontez-votre-histoire" className={s.ctaBtnOutline}>
+              <a href="/ecrire-mon-histoire" className={s.ctaBtnOutline}>
                 Partager mon histoire
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
               </a>

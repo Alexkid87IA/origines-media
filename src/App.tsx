@@ -133,7 +133,8 @@ function App() {
         <Route path="/rejoindre" element={<JoinPage />} />
         <Route path="/newsletter" element={<NewsletterPage />} />
         <Route path="/join-partner" element={<JoinPartnerPage />} />
-        <Route path="/racontez-votre-histoire" element={<ShareStoryPage />} />
+        <Route path="/racontez-votre-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />
+        <Route path="/partager-son-histoire" element={<Navigate to="/ecrire-mon-histoire" replace />} />
         <Route path="/recommandations" element={<RecommandationsPage />} />
         <Route path="/recommandation/:slug" element={<RedirectToRecommandation />} />
         <Route path="/recommandations/:slug" element={<RecommandationResolver />} />

@@ -467,7 +467,7 @@ export default function SiteHeader() {
           </nav>
 
           <div className={styles.headerActions}>
-            <a className={styles.cta} href="/racontez-votre-histoire">
+            <a className={styles.cta} href="/ecrire-mon-histoire">
               <span>Racontez votre histoire</span>
               <svg
                 className={styles.arrow}
@@ -483,7 +483,7 @@ export default function SiteHeader() {
 
             <a
               className={styles.ctaIcon}
-              href="/racontez-votre-histoire"
+              href="/ecrire-mon-histoire"
               aria-label="Racontez votre histoire"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -830,7 +830,7 @@ export default function SiteHeader() {
           </div>
 
           {/* CTA — immediately visible */}
-          <a href="/racontez-votre-histoire" className={styles.mobileStoryCta} onClick={() => setMobileOpen(false)}>
+          <a href="/ecrire-mon-histoire" className={styles.mobileStoryCta} onClick={() => setMobileOpen(false)}>
             Racontez votre histoire
             <span aria-hidden="true">&rarr;</span>
           </a>

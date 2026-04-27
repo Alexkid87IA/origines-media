@@ -763,7 +763,7 @@ export default function PortraitDetailPage() {
       </div>
 
       {/* CTA Raconter */}
-      <Link to="/racontez-votre-histoire" className={s.ctaWidget}>
+      <Link to="/ecrire-mon-histoire" className={s.ctaWidget}>
         <span className={s.ctaWidgetIcon}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M12 20h9" />

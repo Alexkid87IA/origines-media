@@ -376,10 +376,10 @@ const ShareStoryPage: React.FC = () => {
       <SEO
         title="Racontez votre histoire"
         description="Partagez votre parcours et inspirez des milliers de personnes. 100% gratuit, accompagnement personnalisé."
-        url="/racontez-votre-histoire"
+        url="/ecrire-mon-histoire"
         breadcrumbs={[
           { name: "Accueil", url: "/" },
-          { name: "Racontez votre histoire", url: "/racontez-votre-histoire" },
+          { name: "Racontez votre histoire", url: "/ecrire-mon-histoire" },
         ]}
       />
 
