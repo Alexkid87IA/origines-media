@@ -13,16 +13,37 @@ interface AuthContextValue {
   loading: boolean;
   signup: (email: string, password: string, displayName: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: () => Promise<"popup" | "redirect" | void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const isMobile = typeof navigator !== "undefined"
-  ? /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-  : false;
+function shouldUseRedirectForGoogleAuth() {
+  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
+
+  const userAgent = navigator.userAgent || "";
+  const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  const isIPadDesktopMode = /Macintosh/i.test(userAgent) && navigator.maxTouchPoints > 1;
+  const hasCoarsePointer = window.matchMedia?.("(pointer: coarse)").matches ?? false;
+  const isNarrowViewport = window.innerWidth < 768;
+
+  return isMobileUserAgent || isIPadDesktopMode || (hasCoarsePointer && isNarrowViewport);
+}
+
+function shouldFallbackToRedirect(error: unknown) {
+  const code = typeof error === "object" && error && "code" in error
+    ? String((error as { code?: string }).code)
+    : "";
+
+  return [
+    "auth/popup-blocked",
+    "auth/cancelled-popup-request",
+    "auth/operation-not-supported-in-this-environment",
+    "auth/web-storage-unsupported",
+  ].includes(code);
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -74,10 +95,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!auth) return;
     const { signInWithPopup, signInWithRedirect, GoogleAuthProvider } = await import("firebase/auth");
     const provider = new GoogleAuthProvider();
-    if (isMobile) {
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    if (shouldUseRedirectForGoogleAuth()) {
       await signInWithRedirect(auth, provider);
-    } else {
+      return "redirect";
+    }
+
+    try {
       await signInWithPopup(auth, provider);
+      return "popup";
+    } catch (error) {
+      if (!shouldFallbackToRedirect(error)) throw error;
+
+      await signInWithRedirect(auth, provider);
+      return "redirect";
     }
   }
 

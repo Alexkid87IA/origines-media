@@ -2,8 +2,8 @@
   position: fixed;
   inset: 0;
   z-index: 9990;
-  background: rgba(10,10,10,0.6);
-  backdrop-filter: blur(2px);
+  background: rgba(10, 10, 10, 0.46);
+  backdrop-filter: blur(6px);
   opacity: 0;
   animation: overlayIn 0.3s ease forwards;
 }
@@ -32,14 +32,17 @@
 }
 
 .card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--ink);
-  border: 1px solid rgba(247,245,240,0.1);
+  width: min(100%, 500px);
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #0A0A0A;
+  border: 1px solid rgba(245, 245, 245, 0.16);
+  box-shadow: 0 24px 80px rgba(10, 10, 10, 0.35);
   pointer-events: auto;
   opacity: 0;
-  transform: translateY(16px);
-  animation: cardIn 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) 0.1s forwards;
+  transform: translateY(16px) scale(0.98);
+  animation: cardIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
 }
 
 .cardOut {
@@ -47,162 +50,203 @@
 }
 
 @keyframes cardIn {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes cardOut {
-  to { opacity: 0; transform: translateY(16px); }
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
 }
 
-.header {
-  position: relative;
-  padding: 32px 32px 0;
+.accent {
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, #8B5CF6, #EC4899);
 }
 
 .close {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(247,245,240,0.2);
-  background: transparent;
-  color: rgba(247,245,240,0.5);
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  color: rgba(245, 245, 245, 0.72);
+  background: rgba(245, 245, 245, 0.06);
+  border-color: rgba(245, 245, 245, 0.14);
+  z-index: 1;
 }
+
 .close:hover {
-  border-color: rgba(247,245,240,0.5);
-  color: var(--paper);
+  color: #F5F5F5;
+  background: rgba(245, 245, 245, 0.1);
+  border-color: rgba(245, 245, 245, 0.28);
 }
-.close svg { width: 14px; height: 14px; }
+
+.content {
+  padding: 36px 36px 32px;
+}
 
 .eyebrow {
   font-family: var(--mono);
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(247,245,240,0.4);
-  margin-bottom: 16px;
+  color: rgba(245, 245, 245, 0.46);
+  margin-bottom: 14px;
 }
 
 .title {
+  max-width: 360px;
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 22px;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: var(--paper);
-  margin-bottom: 10px;
+  font-weight: 900;
+  font-size: clamp(28px, 5vw, 42px);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #F5F5F5;
+  margin: 0 0 14px;
 }
 
 .desc {
+  max-width: 380px;
   font-family: var(--body);
-  font-size: 13px;
-  line-height: 1.55;
-  color: rgba(247,245,240,0.55);
-}
-
-.body {
-  padding: 24px 32px 32px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(245, 245, 245, 0.66);
+  margin: 0 0 26px;
 }
 
 .form {
-  display: flex;
-  gap: 8px;
+  display: grid;
+  gap: 12px;
 }
 
 .input {
-  flex: 1;
-  height: 40px;
-  padding: 0 14px;
-  border: 1px solid rgba(247,245,240,0.2);
-  background: transparent;
-  color: var(--paper);
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(245, 245, 245, 0.18);
+  border-radius: 8px;
+  background: rgba(245, 245, 245, 0.04);
+  color: #F5F5F5;
   font-family: var(--body);
-  font-size: 13px;
+  font-size: 15px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.3s ease, background 0.3s ease;
 }
-.input::placeholder { color: rgba(247,245,240,0.3); }
-.input:focus { border-color: rgba(247,245,240,0.5); }
+
+.input::placeholder {
+  color: rgba(245, 245, 245, 0.36);
+}
+
+.input:focus {
+  border-color: rgba(139, 92, 246, 0.65);
+  background: rgba(245, 245, 245, 0.07);
+}
 
 .submit {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 40px;
-  padding: 0 18px;
-  border: none;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
+  min-height: 52px;
+  border-radius: 8px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.2s;
 }
-.submit:hover { opacity: 0.85; }
-.submit:disabled { opacity: 0.4; cursor: default; }
-.submit svg { width: 14px; height: 14px; }
 
-.legal {
+.assurances {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 18px;
+}
+
+.assurances span {
   font-family: var(--mono);
   font-size: 9px;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(247,245,240,0.25);
-  margin-top: 14px;
+  color: rgba(245, 245, 245, 0.38);
 }
 
 .success {
   text-align: center;
-  padding: 8px 0;
+  padding: 8px 0 0;
 }
 
 .successIcon {
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgba(247,245,240,0.2);
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
-  color: var(--paper);
+  border-radius: 50%;
+  margin-bottom: 16px;
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
 }
-.successIcon svg { width: 18px; height: 18px; }
+
+.successIcon svg {
+  width: 22px;
+  height: 22px;
+}
 
 .successTitle {
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--paper);
-  margin-bottom: 6px;
+  font-weight: 800;
+  font-size: 18px;
+  color: #F5F5F5;
+  margin: 0 0 6px;
 }
 
 .successDesc {
   font-family: var(--body);
-  font-size: 13px;
-  color: rgba(247,245,240,0.5);
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(245, 245, 245, 0.58);
+  margin: 0;
 }
 
 .error {
   font-family: var(--body);
-  font-size: 12px;
-  color: #E67839;
-  margin-top: 10px;
+  font-size: 13px;
+  color: #FCA5A5;
+  margin: 10px 0 0;
 }
 
-@media (max-width: 480px) {
-  .header { padding: 24px 24px 0; }
-  .body { padding: 20px 24px 28px; }
-  .form { flex-direction: column; }
-  .submit { justify-content: center; }
+@media (max-width: 520px) {
+  .modal {
+    align-items: flex-end;
+    padding: 12px;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .content {
+    padding: 30px 24px 26px;
+  }
+
+  .close {
+    top: 16px;
+    right: 16px;
+  }
+
+  .assurances {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .overlayOut,
+  .card,
+  .cardOut {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }

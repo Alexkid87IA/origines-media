@@ -24,8 +24,8 @@ export default function LoginModal({ onClose }: LoginModalProps) {
 
   async function handleGoogle() {
     try {
-      await loginWithGoogle();
-      onClose();
+      const mode = await loginWithGoogle();
+      if (mode !== "redirect") onClose();
     } catch {
       // user cancelled
     }

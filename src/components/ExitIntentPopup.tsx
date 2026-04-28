@@ -1,10 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type FormEvent } from 'react';
+import { ArrowRight, Check, X } from 'lucide-react';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import IconButton from '@/components/ui/IconButton';
 import { useSubscribe } from '../hooks/useSubscribe';
 import styles from './ExitIntentPopup.module.css';
 
 const COOKIE_NAME = 'origines_exit_popup';
 const COOKIE_DAYS = 7;
 const MIN_TIME_ON_PAGE_MS = 15000;
+const SUPPRESSED_PATHS = [
+  '/ecrire-mon-histoire',
+  '/racontez-votre-histoire',
+  '/inscription',
+  '/connexion',
+  '/compte',
+];
 
 function setCookie(name: string, value: string, days: number) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
@@ -16,6 +27,11 @@ function getCookie(name: string): string | null {
   return match ? match[1] : null;
 }
 
+function isSuppressedPath() {
+  if (typeof window === 'undefined') return true;
+  return SUPPRESSED_PATHS.some((path) => window.location.pathname.startsWith(path));
+}
+
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -24,6 +40,7 @@ export default function ExitIntentPopup() {
   const { status, error, subscribe } = useSubscribe({ source: 'exit-intent' });
 
   const show = useCallback(() => {
+    if (isSuppressedPath()) return;
     if (triggered || getCookie(COOKIE_NAME)) return;
     setTriggered(true);
     setVisible(true);
@@ -38,18 +55,23 @@ export default function ExitIntentPopup() {
   }, []);
 
   useEffect(() => {
+    if (isSuppressedPath()) return;
     if (getCookie(COOKIE_NAME)) return;
+    let removeLeave: (() => void) | undefined;
     const timer = setTimeout(() => {
       const handleLeave = (e: MouseEvent) => {
         if (e.clientY <= 0) show();
       };
       document.addEventListener('mouseleave', handleLeave);
-      return () => document.removeEventListener('mouseleave', handleLeave);
+      removeLeave = () => document.removeEventListener('mouseleave', handleLeave);
     }, MIN_TIME_ON_PAGE_MS);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      removeLeave?.();
+    };
   }, [show]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email || status === 'loading') return;
     await subscribe(email);
@@ -63,27 +85,32 @@ export default function ExitIntentPopup() {
         className={`${styles.overlay}${closing ? ` ${styles.overlayOut}` : ''}`}
         onClick={close}
       />
-      <div className={styles.modal}>
-        <div className={`${styles.card}${closing ? ` ${styles.cardOut}` : ''}`}>
-          <div className={styles.header}>
-            <button className={styles.close} onClick={close} type="button" aria-label="Fermer">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M6 6l12 12M18 6L6 18" />
-              </svg>
-            </button>
+      <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="exit-intent-title">
+        <Card
+          variant="glass"
+          size="md"
+          className={`${styles.card}${closing ? ` ${styles.cardOut}` : ''}`}
+        >
+          <span className={styles.accent} aria-hidden="true" />
+          <IconButton
+            icon={X}
+            aria-label="Fermer"
+            variant="ghost"
+            size="md"
+            className={styles.close}
+            onClick={close}
+            type="button"
+          />
+          <div className={styles.content}>
             <div className={styles.eyebrow}>La lettre du dimanche</div>
-            <h2 className={styles.title}>Avant de partir&hellip;</h2>
+            <h2 id="exit-intent-title" className={styles.title}>Une histoire pour dimanche&nbsp;?</h2>
             <p className={styles.desc}>
-              Chaque dimanche, le meilleur d&rsquo;Origines dans votre bo&icirc;te mail. Gratuit, sans spam.
+              Recevez une s&eacute;lection courte, sensible et utile. Une seule fois par semaine.
             </p>
-          </div>
-          <div className={styles.body}>
             {status === 'success' ? (
               <div className={styles.success}>
                 <div className={styles.successIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 13l4 4L19 7" />
-                  </svg>
+                  <Check aria-hidden="true" />
                 </div>
                 <p className={styles.successTitle}>Bienvenue.</p>
                 <p className={styles.successDesc}>Rendez-vous dimanche dans votre bo&icirc;te mail.</p>
@@ -102,31 +129,31 @@ export default function ExitIntentPopup() {
                     disabled={status === 'loading'}
                     className={styles.input}
                   />
-                  <button
+                  <Button
                     type="submit"
                     disabled={status === 'loading' || !email}
+                    variant="gradient"
+                    size="lg"
+                    fullWidth
+                    isLoading={status === 'loading'}
+                    rightIcon={ArrowRight}
                     className={styles.submit}
                   >
-                    {status === 'loading' ? (
-                      'Envoi…'
-                    ) : (
-                      <>
-                        S&rsquo;abonner
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <path d="M5 12h14M13 5l7 7-7 7" />
-                        </svg>
-                      </>
-                    )}
-                  </button>
+                    {status === 'loading' ? 'Envoi...' : "S'abonner"}
+                  </Button>
                 </form>
                 {status === 'error' && error && (
                   <p className={styles.error}>{error}</p>
                 )}
-                <p className={styles.legal}>D&eacute;sabonnement en 1 clic &middot; Pas de spam</p>
+                <div className={styles.assurances}>
+                  <span>1 email / semaine</span>
+                  <span>D&eacute;sabonnement en 1 clic</span>
+                  <span>Pas de spam</span>
+                </div>
               </>
             )}
           </div>
-        </div>
+        </Card>
       </div>
     </>
   );

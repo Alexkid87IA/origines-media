@@ -25,7 +25,7 @@ interface PreflightContext {
 
 interface VideoRecorderProps {
   questions: Question[];
-  onComplete: (recordings: Blob[]) => void;
+  onComplete: (recordings: Blob[], questions: Question[]) => void;
   onCancel: () => void;
   onAfterRecord?: (blob: Blob, questionLabel: string, preflightCtx?: PreflightContext) => Promise<AiNextResult>;
 }
@@ -47,7 +47,7 @@ interface PreflightItem {
 const PREFLIGHT_CHECKS: PreflightItem[] = [
   {
     id: "welcome",
-    lyaIntro: "Bonjour ! Je suis Lya, votre guide pour cet entretien. Avant de commencer, on va prendre quelques minutes pour bien se préparer ensemble.",
+    lyaIntro: "Bonjour ! Je suis Allya, votre guide pour cet entretien. Avant de commencer, on va prendre quelques minutes pour bien se préparer ensemble.",
     question: "C'est la première fois que vous racontez votre histoire face caméra ?",
     options: [
       { label: "Oui, c'est la première fois", value: "first-time", ok: true },
@@ -466,8 +466,8 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     setAiDone(true);
     const blobs = recordings.filter((b): b is Blob => b !== null);
     streamRef.current?.getTracks().forEach((t) => t.stop());
-    onComplete(blobs);
-  }, [recordings, onComplete, reviewUrl]);
+    onComplete(blobs, questions);
+  }, [recordings, onComplete, reviewUrl, questions]);
 
   // ── Next question or finish ──
   const [processingError, setProcessingError] = useState(false);
@@ -563,7 +563,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
             const blobs = recordings.filter((b): b is Blob => b !== null);
             if (currentBlob && !blobs.includes(currentBlob)) blobs.push(currentBlob);
             streamRef.current?.getTracks().forEach((t) => t.stop());
-            onComplete(blobs);
+            onComplete(blobs, questions);
           }, 3500);
           return;
         }
@@ -590,13 +590,13 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     } else {
       const blobs = recordings.filter((b): b is Blob => b !== null);
       streamRef.current?.getTracks().forEach((t) => t.stop());
-      onComplete(blobs);
+      onComplete(blobs, questions);
     }
-  }, [reviewUrl, questionIdx, questions.length, recordings, onComplete, isAiMode, aiDone, onAfterRecord, currentQ, waitForAudioBlob]);
+  }, [reviewUrl, questionIdx, questions, recordings, onComplete, isAiMode, aiDone, onAfterRecord, currentQ, waitForAudioBlob]);
 
-  /* ── Lya avatar (shared) ── */
+  /* ── Allya avatar (shared) ── */
   const lyaIcon = (cls?: string) => (
-    <div className={`${s.lyaAvatar} ${cls || ""}`}>L</div>
+    <div className={`${s.lyaAvatar} ${cls || ""}`}>A</div>
   );
 
   /* ── Question dots (shared) ── */
@@ -646,7 +646,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     );
   }
 
-  // ── Preflight checklist (Lya) ──
+  // ── Preflight checklist (Allya) ──
   if (phase === "preflight") {
     const check = PREFLIGHT_CHECKS[preflightIdx];
     const isLastCheck = preflightIdx >= PREFLIGHT_CHECKS.length - 1;
@@ -787,7 +787,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
               <div className={s.processingBubble}>
                 {lyaIcon(s.lyaAvatarPulse)}
                 <div className={s.processingBody}>
-                  <p className={s.processingName}>Lya</p>
+                  <p className={s.processingName}>Allya</p>
                   <p className={s.processingText}>J'écoute votre réponse...</p>
                   <div className={s.processingDots}>
                     <span className={s.processingDot} />
@@ -815,7 +815,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                 <div className={s.processingBubble}>
                   {lyaIcon(s.lyaAvatarSmall)}
                   <div className={s.processingBody}>
-                    <p className={s.processingName}>Lya</p>
+                    <p className={s.processingName}>Allya</p>
                     <p className={s.processingText}>
                       {aiDone
                         ? (aiMessage || "Merci, j'ai tout ce qu'il faut pour raconter votre histoire.")
@@ -939,7 +939,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                 </>
               ) : isAiMode ? (
                 <>
-                  Envoyer à Lya
+                  Envoyer à Allya
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <line x1="5" y1="12" x2="19" y2="12" />
                     <polyline points="12 5 19 12 12 19" />
@@ -969,7 +969,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           {isAiMode && !isLastQuestion && (
             <div className={s.reviewNextPreview}>
               <span className={s.reviewNextLabel}>Mode IA</span>
-              <p className={s.reviewNextQuestion}>Lya analysera votre réponse et posera la question suivante.</p>
+              <p className={s.reviewNextQuestion}>Allya analysera votre réponse et posera la question suivante.</p>
             </div>
           )}
         </div>
@@ -1001,14 +1001,14 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           </div>
         )}
 
-        {/* Teleprompter — Lya bubble */}
+        {/* Teleprompter — Allya bubble */}
         <div className={s.prompter}>
           <div className={s.prompterBubble} key={questionIdx}>
             {isAiMode && lyaIcon(s.lyaAvatarSmall)}
             <div className={s.prompterBody}>
               <span className={s.prompterName}>
                 {isAiMode ? (
-                  <><span className={s.prompterNameAccent}>Lya</span> · question {questionIdx + 1}</>
+                  <><span className={s.prompterNameAccent}>Allya</span> · question {questionIdx + 1}</>
                 ) : (
                   <>Question {questionIdx + 1} / {questions.length}</>
                 )}
@@ -1035,11 +1035,11 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
 
       <div className={s.bottomBar}>
       {phase === "ready" && (
-        <div className={s.readyHint}>
-          {isAiMode
-            ? "Lisez la question de Lya, puis appuyez sur le bouton rouge."
+      <div className={s.readyHint}>
+        {isAiMode
+            ? "Lisez la question d'Allya, puis appuyez sur le bouton rouge."
             : "Lisez la question à l'écran, puis lancez l'enregistrement."}
-        </div>
+      </div>
       )}
 
       {phase === "recording" && (
@@ -1084,9 +1084,9 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
           <div className={s.confirmCard}>
             {lyaIcon()}
             <div className={s.confirmContent}>
-              <p className={s.processingName}>Lya</p>
+              <p className={s.processingName}>Allya</p>
               <p className={s.confirmText}>
-                Vous avez enregistré {doneCount} vidéo{doneCount > 1 ? "s" : ""}. Si vous terminez maintenant, {doneCount > 1 ? "elles seront envoyées" : "elle sera envoyée"} à notre équipe.
+                Vous avez enregistré {doneCount} vidéo{doneCount > 1 ? "s" : ""}. Si vous terminez maintenant, {doneCount > 1 ? "elles seront ajoutées" : "elle sera ajoutée"} à votre témoignage avant la relecture.
               </p>
               <p className={s.confirmSubtext}>Êtes-vous sûr·e de vouloir terminer ?</p>
               <div className={s.confirmActions}>
@@ -1097,7 +1097,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
-                  Oui, terminer et envoyer
+                  Oui, terminer l'entretien
                 </button>
               </div>
             </div>

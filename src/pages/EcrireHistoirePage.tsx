@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Ticker from "@/components/Ticker/Ticker";
 import Marquee from "@/components/Marquee/Marquee";
@@ -7,6 +7,8 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import VideoRecorder from "@/components/VideoRecorder/VideoRecorder";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import { sanityFetch } from "@/lib/sanity";
 import { VIDEOS_SECTION_QUERY } from "@/lib/queries";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,13 +16,15 @@ import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import { motion } from "framer-motion";
+import { ArrowRight, CheckCircle2, Compass, Film, HeartHandshake, PenLine, Play, ShieldCheck, Users, Video, type LucideIcon } from "lucide-react";
 import s from "./EcrireHistoirePage.module.css";
 
 /* ================================================================
    LYA TYPEWRITER
    ================================================================ */
 
-function LyaTypewriter({ text, speed = 22 }: { text: string; speed?: number }) {
+function AllyaTypewriter({ text, speed = 22 }: { text: string; speed?: number }) {
   const [displayed, setDisplayed] = useState("");
   const [done, setDone] = useState(false);
   useEffect(() => {
@@ -79,6 +83,49 @@ interface StoryDraft {
   motDeFin: string;
   videoUrls: string[];
 }
+
+interface StoryBridgeStep {
+  label: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}
+
+interface ImpactReason {
+  marker: string;
+  title: string;
+  desc: string;
+  detail: string;
+  color: string;
+  icon: LucideIcon;
+}
+
+interface VideoReassurance {
+  title: string;
+  desc: string;
+  icon: LucideIcon;
+}
+
+const STORY_BRIDGE_STEPS: StoryBridgeStep[] = [
+  {
+    label: "01",
+    title: "Trouvez le bon angle",
+    description: "On part de votre vécu, puis on clarifie le sujet, l'intention et le format le plus juste.",
+    icon: PenLine,
+  },
+  {
+    label: "02",
+    title: "Racontez à votre rythme",
+    description: "À l'écrit ou face caméra, Allya relance uniquement sur ce que vous venez de partager.",
+    icon: Video,
+  },
+  {
+    label: "03",
+    title: "Gardez le contrôle",
+    description: "Votre témoignage reste relu, ajustable et jamais publié sans validation éditoriale.",
+    icon: ShieldCheck,
+  },
+];
 
 const EMPTY_DRAFT: StoryDraft = {
   format: "texte",
@@ -361,7 +408,7 @@ const VIDEO_LYA_OPENERS: Record<string, { question: string; hint: string }> = {
   "autre": { question: "Dis-moi ton prénom et ce qui t'amène à témoigner aujourd'hui.", hint: "Présente-toi simplement. Qu'est-ce qui t'a donné envie de prendre la parole ?" },
 };
 
-function buildLyaOpening(sujet: string | null): GuidedQuestion {
+function buildAllyaOpening(sujet: string | null): GuidedQuestion {
   const opener = LYA_OPENERS[sujet || "autre"] || LYA_OPENERS.autre;
   return {
     id: "lya-opening",
@@ -370,7 +417,7 @@ function buildLyaOpening(sujet: string | null): GuidedQuestion {
     placeholder: opener.placeholder,
     minRows: 5,
     isAi: true,
-    encouragement: "Lya vous accompagne tout au long de ce récit.",
+    encouragement: "Allya vous accompagne tout au long de ce récit.",
   };
 }
 
@@ -454,55 +501,38 @@ const STEPS_VIDEO = ["Bienvenue", "Thématique", "Enregistrement", "Identité", 
    HERO + REASSURANCE DATA
    ================================================================ */
 
-const REASSURANCE_REASONS = [
+const REASSURANCE_REASONS: ImpactReason[] = [
   {
-    title: "Aider quelqu'un",
-    desc: "Votre histoire pourrait être exactement ce dont quelqu'un a besoin aujourd'hui.",
-    stat: "2M+",
-    statLabel: "messages reçus",
-    color: "#EC4899",
+    marker: "Pour l'autre",
+    title: "Faire sentir quelqu'un moins seul",
+    desc: "Un récit précis peut devenir un point d'appui pour une personne qui traverse la même chose.",
+    detail: "Reconnaissance",
+    color: "#D64C90",
+    icon: HeartHandshake,
   },
   {
-    title: "Donner du sens",
-    desc: "Transformez votre vécu en quelque chose de plus grand que vous.",
-    stat: "89%",
-    statLabel: "se sentent libérés",
-    color: "#F59E0B",
+    marker: "Pour vous",
+    title: "Mettre de l'ordre dans ce vécu",
+    desc: "Raconter aide à choisir les mots, distinguer les étapes et retrouver une forme de clarté.",
+    detail: "Clarté",
+    color: "#7B5CD6",
+    icon: Compass,
   },
   {
-    title: "Rejoindre une communauté",
-    desc: "Faites partie d'un mouvement de 1 000+ personnes qui osent raconter.",
-    stat: "1K+",
-    statLabel: "témoins actifs",
-    color: "#8B5CF6",
+    marker: "Pour le collectif",
+    title: "Nourrir une conversation utile",
+    desc: "Votre expérience peut éclairer un sujet que beaucoup vivent sans toujours oser le nommer.",
+    detail: "Transmission",
+    color: "#2E94B5",
+    icon: Users,
   },
   {
-    title: "Créer un héritage",
-    desc: "Laissez une trace qui inspirera encore dans 10, 20, 50 ans.",
-    stat: "10B+",
-    statLabel: "vues totales",
-    color: "#10B981",
-  },
-];
-
-const REASSURANCE_TESTIMONIALS = [
-  {
-    quote: "J'avais peur de me livrer. L'équipe m'a mise tellement à l'aise que j'ai oublié la caméra.",
-    author: "Nadia K.",
-    role: "A partagé en vidéo",
-    color: "#8B5CF6",
-  },
-  {
-    quote: "Je reçois encore des messages de personnes que mon témoignage a aidées. C'est incroyable.",
-    author: "Thomas R.",
-    role: "A partagé en vidéo",
-    color: "#F59E0B",
-  },
-  {
-    quote: "L'outil d'écriture guidé m'a aidée à trouver les mots que je cherchais depuis des années.",
-    author: "Sophie M.",
-    role: "A partagé par écrit",
-    color: "#10B981",
+    marker: "Avec sécurité",
+    title: "Garder la main jusqu'au bout",
+    desc: "L'équipe relit, contextualise et ne publie rien sans validation explicite de votre part.",
+    detail: "Validation",
+    color: "#34A853",
+    icon: ShieldCheck,
   },
 ];
 
@@ -515,33 +545,57 @@ const REASSURANCE_FAQS = [
   { q: "Et si je change d'avis ?", a: "Vous pouvez vous retirer à tout moment, même après publication." },
 ];
 
+const VIDEO_REASSURANCE: VideoReassurance[] = [
+  {
+    title: "Un cadre avant la caméra",
+    desc: "On clarifie ce qui peut être dit, ce qui reste hors champ et pourquoi la vidéo est pertinente.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Un montage sans effet facile",
+    desc: "Pas de phrase arrachée à son contexte : le récit reste sobre, lisible et digne.",
+    icon: Film,
+  },
+  {
+    title: "Une validation avant diffusion",
+    desc: "La version finale et le niveau d'identité associé sont validés avec vous avant publication.",
+    icon: CheckCircle2,
+  },
+];
+
+function getAuthErrorCode(error: unknown) {
+  return typeof error === "object" && error && "code" in error
+    ? String((error as { code?: unknown }).code)
+    : "";
+}
+
 /* ================================================================
    PAGE
    ================================================================ */
 
 export default function EcrireHistoirePage() {
-  const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
+  const { user, loading: authLoading, loginWithGoogle } = useAuth();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<StoryDraft>(EMPTY_DRAFT);
   const [saving, setSaving] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [authGateGoogleLoading, setAuthGateGoogleLoading] = useState(false);
+  const [authGateError, setAuthGateError] = useState<string | null>(null);
   const [draftLoaded, setDraftLoaded] = useState(false);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [wordCount, setWordCount] = useState(0);
   const [videoBlobs, setVideoBlobs] = useState<Blob[]>([]);
+  const [videoQuestionLabels, setVideoQuestionLabels] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [guidedIdx, setGuidedIdx] = useState(0);
   const [dynamicQuestions, setDynamicQuestions] = useState<GuidedQuestion[]>([]);
-  const [lyaLoading, setLyaLoading] = useState(false);
-  const [lyaMessage, setLyaMessage] = useState<{ type: "redirect" | "encouragement"; text: string } | null>(null);
-  const [lyaDone, setLyaDone] = useState(false);
-  const [generatedArticle, setGeneratedArticle] = useState<{ titre: string; chapeau: string; article: string } | null>(null);
-  const [articleLoading, setArticleLoading] = useState(false);
+  const [lyaLoading, setAllyaLoading] = useState(false);
+  const [lyaMessage, setAllyaMessage] = useState<{ type: "redirect" | "encouragement"; text: string } | null>(null);
+  const [lyaDone, setAllyaDone] = useState(false);
   const isFullGuide = draft.writeMode === "guide";
-  const baseQuestions = isFullGuide ? [buildLyaOpening(draft.sujet)] : buildGuidedQuestions(draft.intention, draft.sujet);
+  const baseQuestions = isFullGuide ? [buildAllyaOpening(draft.sujet)] : buildGuidedQuestions(draft.intention, draft.sujet);
   const guidedQuestions = (() => {
     const merged: GuidedQuestion[] = [...baseQuestions];
     for (const dq of dynamicQuestions) {
@@ -560,6 +614,24 @@ export default function EcrireHistoirePage() {
   const aiCallsRef = useRef(new Set<string>());
   const redirectCountRef = useRef(new Map<string, number>());
   const [sectionVideos, setSectionVideos] = useState<{ _id: string; titre: string; imageUrl?: string; slug: string; duree?: string; verticale?: { nom: string; couleurDominante?: string } }[]>([]);
+
+  const handleAuthGateGoogle = useCallback(async () => {
+    let redirecting = false;
+    setAuthGateError(null);
+    setAuthGateGoogleLoading(true);
+
+    try {
+      const mode = await loginWithGoogle();
+      redirecting = mode === "redirect";
+    } catch (err: unknown) {
+      const code = getAuthErrorCode(err);
+      if (code !== "auth/popup-closed-by-user" && code !== "auth/redirect-cancelled-by-user") {
+        setAuthGateError("Connexion Google impossible pour le moment. Essayez avec l'e-mail, ou réessayez dans quelques instants.");
+      }
+    } finally {
+      if (!redirecting) setAuthGateGoogleLoading(false);
+    }
+  }, [loginWithGoogle]);
 
   useEffect(() => {
     (async () => {
@@ -730,14 +802,15 @@ export default function EcrireHistoirePage() {
           return answered.length >= 3;
         }
         return draft.titre.trim().length >= 5 && draft.recit.trim().length >= 100;
-      case 3: return draft.identite === "anonyme" || draft.pseudonyme.trim().length > 0 || (draft.identite === "prenom" && !!user?.displayName);
+      case 3: return draft.identite === "anonyme" || draft.identite === "prenom" || draft.pseudonyme.trim().length > 0;
       case 4: return true;
       default: return false;
     }
   };
 
-  const handleVideoComplete = useCallback((blobs: Blob[]) => {
+  const handleVideoComplete = useCallback((blobs: Blob[], questions: { label: string }[]) => {
     setVideoBlobs(blobs);
+    setVideoQuestionLabels(questions.map((question) => question.label));
     goNext();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -806,10 +879,10 @@ export default function EcrireHistoirePage() {
 
       if (!lyaRes.ok) {
         console.error("[VideoAI] Generate failed:", lyaRes.status);
-        return { done: false, question: FALLBACK_QUESTION, encouragement: "Lya a eu un souci — continuez votre récit." };
+        return { done: false, question: FALLBACK_QUESTION, encouragement: "Allya a eu un souci — continuez votre récit." };
       }
       const data = await lyaRes.json();
-      console.log("[VideoAI] Lya response:", JSON.stringify(data).slice(0, 300));
+      console.log("[VideoAI] Allya response:", JSON.stringify(data).slice(0, 300));
       if (data._fallback) console.warn("[VideoAI] FALLBACK used, reason:", data._reason || data._error || "unknown");
 
       if (data.done) {
@@ -852,15 +925,15 @@ export default function EcrireHistoirePage() {
     });
   }, [saveDraft]);
 
-  const callLya = useCallback(async (currentQ: GuidedQuestion, currentAnswer: string): Promise<"redirect" | "followup" | "skip" | "done"> => {
+  const callAllya = useCallback(async (currentQ: GuidedQuestion, currentAnswer: string): Promise<"redirect" | "followup" | "skip" | "done"> => {
     if (currentAnswer.trim().length < 20) return isFullGuide ? "done" : "skip";
     if (!isFullGuide && dynamicQuestions.length >= 10) return "skip";
 
     const alreadyCalled = aiCallsRef.current.has(currentQ.id);
     aiCallsRef.current.add(currentQ.id);
 
-    setLyaLoading(true);
-    setLyaMessage(null);
+    setAllyaLoading(true);
+    setAllyaMessage(null);
 
     const history = draft.guidedAnswers
       .filter((a) => a.answer.trim().length > 0 && a.questionId !== currentQ.id)
@@ -890,7 +963,7 @@ export default function EcrireHistoirePage() {
           const count = (redirectCountRef.current.get(currentQ.id) || 0) + 1;
           redirectCountRef.current.set(currentQ.id, count);
           if (count <= 2) {
-            setLyaMessage({ type: "redirect", text: data.message });
+            setAllyaMessage({ type: "redirect", text: data.message });
             aiCallsRef.current.delete(currentQ.id);
             return "redirect";
           }
@@ -898,14 +971,14 @@ export default function EcrireHistoirePage() {
 
         if (data.done) {
           if (data.encouragement) {
-            setLyaMessage({ type: "encouragement", text: data.encouragement });
+            setAllyaMessage({ type: "encouragement", text: data.encouragement });
           }
-          setLyaDone(true);
+          setAllyaDone(true);
           return "done";
         }
 
         if (data.encouragement) {
-          setLyaMessage({ type: "encouragement", text: data.encouragement });
+          setAllyaMessage({ type: "encouragement", text: data.encouragement });
         }
 
         if (!data.skip && data.question && !alreadyCalled) {
@@ -916,7 +989,7 @@ export default function EcrireHistoirePage() {
             placeholder: data.placeholder,
             minRows: 4,
             isAi: true,
-            encouragement: "Lya, votre assistante de rédaction, a une question pour vous.",
+            encouragement: "Allya, votre assistante de rédaction, a une question pour vous.",
           };
           setDynamicQuestions((prev) => [...prev, aiQuestion]);
           return "followup";
@@ -926,7 +999,7 @@ export default function EcrireHistoirePage() {
     } catch {
       return isFullGuide ? "done" : "skip";
     } finally {
-      setLyaLoading(false);
+      setAllyaLoading(false);
     }
   }, [draft.guidedAnswers, draft.intention, draft.sujet, guidedIdx, baseQuestions.length, dynamicQuestions.length, isFullGuide]);
 
@@ -936,7 +1009,7 @@ export default function EcrireHistoirePage() {
 
     if (isFullGuide) {
       if (currentAnswer.trim().length < 20) return;
-      const result = await callLya(currentQ, currentAnswer);
+      const result = await callAllya(currentQ, currentAnswer);
       if (result === "redirect") {
         setTimeout(() => guidedTextareaRef.current?.focus(), 100);
         return;
@@ -948,7 +1021,7 @@ export default function EcrireHistoirePage() {
         setGuidedIdx((i) => i + 1);
         setTimeout(() => {
           guidedTextareaRef.current?.focus();
-          setTimeout(() => setLyaMessage(null), 4000);
+          setTimeout(() => setAllyaMessage(null), 4000);
         }, 100);
       }, 50);
       return;
@@ -957,7 +1030,7 @@ export default function EcrireHistoirePage() {
     if (guidedIdx >= guidedQuestions.length - 1) return;
 
     if (currentAnswer.trim().length >= 20) {
-      const result = await callLya(currentQ, currentAnswer);
+      const result = await callAllya(currentQ, currentAnswer);
       if (result === "redirect") {
         setTimeout(() => guidedTextareaRef.current?.focus(), 100);
         return;
@@ -967,13 +1040,13 @@ export default function EcrireHistoirePage() {
     setGuidedIdx((i) => i + 1);
     setTimeout(() => {
       guidedTextareaRef.current?.focus();
-      setTimeout(() => setLyaMessage(null), 4000);
+      setTimeout(() => setAllyaMessage(null), 4000);
     }, 100);
-  }, [guidedIdx, guidedQuestions, getGuidedAnswer, callLya, isFullGuide]);
+  }, [guidedIdx, guidedQuestions, getGuidedAnswer, callAllya, isFullGuide]);
 
   const guidedGoPrev = useCallback(() => {
     if (guidedIdx > 0) {
-      setLyaMessage(null);
+      setAllyaMessage(null);
       setGuidedIdx((i) => i - 1);
       setTimeout(() => guidedTextareaRef.current?.focus(), 100);
     }
@@ -1077,6 +1150,9 @@ export default function EcrireHistoirePage() {
     );
   }
 
+  const featuredVideo = sectionVideos[0];
+  const supportingVideos = sectionVideos.slice(1, 7);
+
   // ── Main page (hero + tool + reassurance) ──
   return (
     <div className={s.page}>
@@ -1125,17 +1201,10 @@ export default function EcrireHistoirePage() {
                   d'un projet éditorial.
                 </p>
 
-                {user ? (
-                  <a href="#outil" className={s.pageHeroCta}>
-                    Commencer à écrire
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                  </a>
-                ) : (
-                  <Link to="/inscription" className={s.pageHeroCta}>
-                    Créer un compte gratuit
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                  </Link>
-                )}
+                <a href="#outil" className={s.pageHeroCta}>
+                  Commencer mon témoignage
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                </a>
 
                 <div className={s.pageHeroChecks}>
                   <span className={s.pageHeroCheck}>
@@ -1166,55 +1235,69 @@ export default function EcrireHistoirePage() {
           </div>
         </section>
 
+        <motion.section
+          id="story-bridge"
+          className={s.heroBridge}
+          aria-labelledby="story-bridge-title"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className={s.heroBridgeInner}>
+            <div className={s.heroBridgeIntro}>
+              <div className={s.heroBridgeMark}>
+                <span className={s.heroBridgeMarkNum}>Ch.01 bis</span>
+                <span className={s.heroBridgeMarkSep}>/</span>
+                <span className={s.heroBridgeMarkLabel}>Espace guidé</span>
+              </div>
+              <h2 id="story-bridge-title" className={s.heroBridgeTitle}>
+                Du vécu brut à un récit <em>clair, sensible, publiable.</em>
+              </h2>
+              <p className={s.heroBridgeDeck}>
+                La suite n'est pas un simple formulaire. C'est un accompagnement éditorial
+                qui vous aide à choisir l'angle, préciser les détails importants et garder
+                la main sur ce que vous confiez.
+              </p>
+              <div className={s.heroBridgeSignals} aria-label="Garanties de l'accompagnement">
+                <span>Écrit ou vidéo</span>
+                <span>Questions adaptées</span>
+                <span>Relecture humaine</span>
+              </div>
+            </div>
+
+            <div className={s.heroBridgeFlow} aria-label="Déroulé de l'accompagnement">
+              {STORY_BRIDGE_STEPS.map((step) => {
+                const Icon = step.icon;
+                return (
+                  <Card
+                    key={step.label}
+                    variant="outlined"
+                    size="md"
+                    color="#0A0A0A"
+                    className={s.heroBridgeStep}
+                  >
+                    <div className={s.heroBridgeStepTop}>
+                      <span className={s.heroBridgeStepLabel}>{step.label}</span>
+                      <span className={s.heroBridgeStepIcon}>
+                        <Icon aria-hidden="true" />
+                      </span>
+                    </div>
+                    <h3 className={s.heroBridgeStepTitle}>{step.title}</h3>
+                    <p className={s.heroBridgeStepText}>{step.description}</p>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </motion.section>
+
         {/* ════════════════════════════════════════════════
            TOOL AREA
            ════════════════════════════════════════════════ */}
         <section id="outil" className={s.toolSection}>
-
-          {/* ── Auth gate (not logged in) ── */}
-          {!user && (
-            <div className={s.authGate}>
-              <div className={s.authGateInner}>
-                <div className={s.authGateIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                </div>
-                <span className={s.authGateKicker}>Espace d'écriture</span>
-                <h2 className={s.authGateTitle}>
-                  Créez un compte pour<br />commencer à <em>écrire.</em>
-                </h2>
-                <p className={s.authGateDeck}>
-                  Écrivez ou enregistrez-vous en vidéo. Notre outil guidé vous
-                  accompagne question par question. Créez un compte en 30 secondes — c'est gratuit.
-                </p>
-                <div className={s.authGateActions}>
-                  <Link to="/inscription" className={s.authGatePrimary}>
-                    Créer un compte gratuit
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-                  </Link>
-                  <Link to="/connexion" className={s.authGateSecondary}>
-                    J'ai déjà un compte
-                  </Link>
-                </div>
-                <div className={s.authGateGuarantees}>
-                  <span className={s.authGateGuarantee}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
-                    Anonymat garanti
-                  </span>
-                  <span className={s.authGateGuarantee}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
-                    Sauvegarde automatique
-                  </span>
-                  <span className={s.authGateGuarantee}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
-                    Relecture avant publication
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── Wizard (logged in) ── */}
-          {user && (
+          {/* ── Wizard ── */}
+          {(
             <>
               {/* ── Progress bar ── */}
               <div className={s.progressWrap}>
@@ -1247,7 +1330,7 @@ export default function EcrireHistoirePage() {
                 <span className={s.welcomeKicker}>Racontez votre histoire</span>
                 <h2 className={s.welcomeTitle}>
                   Écrivez ou filmez-vous.<br />
-                  On s'occupe du <em>reste.</em>
+                  <em>On s'occupe du reste.</em>
                 </h2>
                 <p className={s.welcomeDeck}>
                   Votre témoignage pourra devenir un article Origines, une vidéo sur
@@ -1275,6 +1358,9 @@ export default function EcrireHistoirePage() {
                       Rédigez votre histoire à votre rythme. Elle pourra devenir un article
                       publié sur Origines.
                     </span>
+                    <span className={s.formatCardAction}>
+                      {draft.format === "texte" ? "Format sélectionné" : "Choisir ce format"}
+                    </span>
                     {draft.format === "texte" && (
                       <span className={s.formatCardCheck}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6L9 17l-5-5" /></svg>
@@ -1295,6 +1381,9 @@ export default function EcrireHistoirePage() {
                     <span className={s.formatCardDesc}>
                       Répondez face caméra à des questions guidées. Notre équipe montera
                       votre témoignage en vidéo professionnelle.
+                    </span>
+                    <span className={s.formatCardAction}>
+                      {draft.format === "video" ? "Format sélectionné" : "Choisir ce format"}
                     </span>
                     {draft.format === "video" && (
                       <span className={s.formatCardCheck}>
@@ -1367,10 +1456,16 @@ export default function EcrireHistoirePage() {
                     </>
                   )}
                 </div>
-                <button className={s.welcomeCta} onClick={goNext}>
-                  {draft.format === "video" ? "C'est parti, je me filme" : "C'est parti, j'écris"}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-                </button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  rightIcon={ArrowRight}
+                  onClick={goNext}
+                  className={s.welcomeCta}
+                >
+                  Continuer avec ce format
+                </Button>
               </div>
             </section>
           )}
@@ -1493,13 +1588,13 @@ export default function EcrireHistoirePage() {
                 <span className={s.stepKicker}>Étape 3 sur 5</span>
                 <h2 className={s.stepTitle}>
                   {draft.writeMode === "guide"
-                    ? <>Lya vous <em>guide.</em></>
+                    ? <>Allya vous <em>guide.</em></>
                     : <>Enregistrez votre <em>témoignage.</em></>
                   }
                 </h2>
                 <p className={s.stepDeck}>
                   {draft.writeMode === "guide"
-                    ? "Notre journaliste IA Lya vous pose des questions en temps réel, adaptées à votre récit. Répondez face caméra — elle s'occupe du reste."
+                    ? "Notre journaliste IA Allya vous pose des questions en temps réel, adaptées à votre récit. Répondez face caméra — elle s'occupe du reste."
                     : "6 questions s'affichent à l'écran, une par une. Répondez naturellement, comme si vous parliez à un ami. 2 minutes max par question. Prenez votre temps — les indications sous chaque question sont là pour vous aider."
                   }
                 </p>
@@ -1513,7 +1608,7 @@ export default function EcrireHistoirePage() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
-                  Guidé par Lya
+                  Guidé par Allya
                   <span className={s.modeBadge}>IA</span>
                 </button>
                 <button
@@ -1534,7 +1629,7 @@ export default function EcrireHistoirePage() {
                 <div className={s.videoLyaPanel}>
                   <div className={s.videoLyaPanelHeader}>
                     <span className={s.videoLyaPanelKicker}>Entretien adaptatif</span>
-                    <strong>Lya construit la suite à partir de vos réponses.</strong>
+                    <strong>Allya construit la suite à partir de vos réponses.</strong>
                   </div>
                   <div className={s.videoLyaPanelGrid}>
                     <div className={s.videoLyaPanelItem}>
@@ -1632,17 +1727,17 @@ export default function EcrireHistoirePage() {
                       </span>
                     </div>
 
-                    {/* Lya feedback — loading, redirect, encouragement */}
+                    {/* Allya feedback — loading, redirect, encouragement */}
                     {lyaLoading && (
                       <div className={s.lyaBubble}>
                         <div className={s.lyaBubbleBar} />
                         <div className={s.lyaBubbleInner}>
                           <div className={s.lyaAvatarWrap}>
-                            <span className={s.lyaAvatar}>L</span>
+                            <span className={s.lyaAvatar}>A</span>
                             <span className={s.lyaOnline} />
                           </div>
                           <div className={s.lyaBubbleContent}>
-                            <span className={s.lyaBubbleName}>Lya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
+                            <span className={s.lyaBubbleName}>Allya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
                             <div className={s.lyaDotsWrap}>
                               <span className={s.lyaDot} />
                               <span className={s.lyaDot} />
@@ -1657,13 +1752,13 @@ export default function EcrireHistoirePage() {
                         <div className={s.lyaBubbleBar} />
                         <div className={s.lyaBubbleInner}>
                           <div className={s.lyaAvatarWrap}>
-                            <span className={s.lyaAvatar}>L</span>
+                            <span className={s.lyaAvatar}>A</span>
                             <span className={s.lyaOnline} />
                           </div>
                           <div className={s.lyaBubbleContent}>
-                            <span className={s.lyaBubbleName}>Lya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
+                            <span className={s.lyaBubbleName}>Allya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
                             <p className={s.lyaBubbleText}>
-                              <LyaTypewriter text={lyaMessage.text} speed={18} />
+                              <AllyaTypewriter text={lyaMessage.text} speed={18} />
                             </p>
                           </div>
                         </div>
@@ -1674,13 +1769,13 @@ export default function EcrireHistoirePage() {
                         <div className={s.lyaBubbleBar} />
                         <div className={s.lyaBubbleInner}>
                           <div className={s.lyaAvatarWrap}>
-                            <span className={s.lyaAvatar}>L</span>
+                            <span className={s.lyaAvatar}>A</span>
                             <span className={s.lyaOnline} />
                           </div>
                           <div className={s.lyaBubbleContent}>
-                            <span className={s.lyaBubbleName}>Lya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
+                            <span className={s.lyaBubbleName}>Allya <span className={s.lyaBubbleRole}>assistante de rédaction</span></span>
                             <p className={s.lyaBubbleText}>
-                              <LyaTypewriter text={lyaMessage.text} speed={18} />
+                              <AllyaTypewriter text={lyaMessage.text} speed={18} />
                             </p>
                           </div>
                         </div>
@@ -1706,7 +1801,7 @@ export default function EcrireHistoirePage() {
                           ) : guidedIdx + 1}
                         </span>
                         <div>
-                          {q.isAi && <span className={s.lyaBadge}>Lya - Assistante de rédaction</span>}
+                          {q.isAi && <span className={s.lyaBadge}>Allya - Assistante de rédaction</span>}
                           <h3 className={s.guidedCardQuestion}>{q.question}</h3>
                           <p className={s.guidedCardHint}>{q.hint}</p>
                         </div>
@@ -1777,7 +1872,7 @@ export default function EcrireHistoirePage() {
                             onClick={guidedGoNext}
                             disabled={lyaLoading || getGuidedAnswer(guidedQuestions[guidedIdx]?.id).trim().length < 20}
                           >
-                            {lyaLoading ? "Lya analyse..." : "Envoyer à Lya"}
+                            {lyaLoading ? "Allya analyse..." : "Envoyer à Allya"}
                             {!lyaLoading && (
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
                                 <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
@@ -1791,7 +1886,7 @@ export default function EcrireHistoirePage() {
                           onClick={guidedGoNext}
                           disabled={lyaLoading}
                         >
-                          {lyaLoading ? "Lya analyse..." : "Question suivante"}
+                          {lyaLoading ? "Allya analyse..." : "Question suivante"}
                           {!lyaLoading && (
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
                               <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
@@ -1960,7 +2055,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                 {([
                   { value: "anonyme" as const, label: "Anonyme", desc: "Aucune information personnelle ne sera affichée.", icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" },
                   { value: "pseudo" as const, label: "Pseudonyme", desc: "Choisissez un nom d'emprunt.", icon: "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 3a4 4 0 110 8 4 4 0 010-8z" },
-                  { value: "prenom" as const, label: "Mon prénom", desc: `Apparaîtra comme « ${user.displayName?.split(" ")[0] || "Prénom"} ».`, icon: "M20 6L9 17l-5-5" },
+                  { value: "prenom" as const, label: "Mon prénom", desc: `Apparaîtra comme « ${user?.displayName?.split(" ")[0] || "Prénom"} ».`, icon: "M20 6L9 17l-5-5" },
                 ]).map((opt) => (
                   <button
                     key={opt.value}
@@ -1968,7 +2063,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                     onClick={() => {
                       const patch: Partial<StoryDraft> = { identite: opt.value };
                       if (opt.value === "prenom" && !draft.pseudonyme) {
-                        patch.pseudonyme = user.displayName?.split(" ")[0] || "";
+                        patch.pseudonyme = user?.displayName?.split(" ")[0] || "";
                       }
                       updateDraft(patch);
                     }}
@@ -2007,7 +2102,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                   <input
                     type="text"
                     className={s.fieldInput}
-                    value={draft.pseudonyme || user.displayName?.split(" ")[0] || ""}
+                    value={draft.pseudonyme || user?.displayName?.split(" ")[0] || ""}
                     onChange={(e) => updateDraft({ pseudonyme: e.target.value })}
                     placeholder="Ex : Marie"
                     maxLength={50}
@@ -2097,7 +2192,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
 
                   <div className={s.previewAuthor}>
                     <span className={s.previewAuthorName}>
-                      {draft.identite === "anonyme" ? "Anonyme" : draft.pseudonyme || user.displayName?.split(" ")[0] || "Anonyme"}
+                      {draft.identite === "anonyme" ? "Anonyme" : draft.pseudonyme || user?.displayName?.split(" ")[0] || "Anonyme"}
                     </span>
                     {draft.trancheAge && (
                       <>
@@ -2114,7 +2209,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                       <div key={i} className={s.previewVideoItem}>
                         <span className={s.previewVideoLabel}>
                           <span className={s.previewVideoNum}>Q{i + 1}</span>
-                          {VIDEO_QUESTIONS[i]?.label}
+                          {videoQuestionLabels[i] || VIDEO_QUESTIONS[i]?.label || "Réponse vidéo"}
                         </span>
                         <video
                           className={s.previewVideoPlayer}
@@ -2152,7 +2247,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
 
                   <div className={s.previewAuthor}>
                     <span className={s.previewAuthorName}>
-                      {draft.identite === "anonyme" ? "Anonyme" : draft.pseudonyme || user.displayName?.split(" ")[0] || "Anonyme"}
+                      {draft.identite === "anonyme" ? "Anonyme" : draft.pseudonyme || user?.displayName?.split(" ")[0] || "Anonyme"}
                     </span>
                     {draft.trancheAge && (
                       <>
@@ -2201,7 +2296,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
 
                   <div className={s.previewAuthor}>
                     <span className={s.previewAuthorName}>
-                      {draft.identite === "anonyme" ? "Anonyme" : draft.pseudonyme || user.displayName?.split(" ")[0] || "Anonyme"}
+                      {draft.identite === "anonyme" ? "Anonyme" : draft.pseudonyme || user?.displayName?.split(" ")[0] || "Anonyme"}
                     </span>
                     {draft.trancheAge && (
                       <>
@@ -2257,7 +2352,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                   </div>
                   <span className={s.uploadHint}>{uploadProgress}%</span>
                 </div>
-              ) : (
+              ) : user ? (
                 <div className={s.submitSection}>
                   <p className={s.submitNote}>
                     En envoyant votre {draft.format === "video" ? "témoignage" : "récit"}, vous acceptez qu'il soit relu par l'équipe éditoriale
@@ -2283,6 +2378,49 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                     </button>
                   </div>
                 </div>
+              ) : (
+                <div className={s.submitAuthPrompt}>
+                  <div className={s.submitAuthIcon}>
+                    <ShieldCheck aria-hidden="true" />
+                  </div>
+                  <span className={s.submitAuthKicker}>Dernière étape</span>
+                  <h3 className={s.submitAuthTitle}>Créez votre espace pour envoyer ce témoignage.</h3>
+                  <p className={s.submitAuthText}>
+                    Votre brouillon est prêt. Connectez-vous pour le sauvegarder, l'envoyer à la rédaction
+                    et le retrouver ensuite. Rien ne sera publié sans votre accord.
+                  </p>
+                  {authGateError && <p className={s.authGateError}>{authGateError}</p>}
+                  <div className={s.submitAuthActions}>
+                    <button className={s.navBack} onClick={goPrev}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                      Modifier
+                    </button>
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="lg"
+                      rightIcon={ArrowRight}
+                      isLoading={authGateGoogleLoading}
+                      onClick={handleAuthGateGoogle}
+                      className={s.authGateGoogleButton}
+                    >
+                      Créer mon espace avec Google
+                    </Button>
+                    <Button
+                      as="link"
+                      to="/inscription"
+                      variant="outline"
+                      size="lg"
+                      color="#F5F5F5"
+                      className={s.authGateEmailButton}
+                    >
+                      Créer avec email
+                    </Button>
+                  </div>
+                  <p className={s.authGateLoginLine}>
+                    Déjà membre ? <Link to="/connexion">Se connecter</Link>
+                  </p>
+                </div>
               )}
             </section>
           )}
@@ -2295,101 +2433,253 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
         {/* ════════════════════════════════════════════════
            REASSURANCE — Pourquoi partager
            ════════════════════════════════════════════════ */}
-        <section className={s.reasons}>
+        <motion.section
+          className={s.reasons}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className={s.reasonsInner}>
             <div className={s.chapterMark}>
               <span className={s.cNum}>{user ? "Ch.02" : "Ch.02"}</span>
               <span className={s.cSep}>/</span>
               <span className={s.cLabel}>L'impact</span>
             </div>
-            <h2 className={s.reasonsTitle}>Pourquoi partager votre histoire ?</h2>
-            <p className={s.reasonsDeck}>
-              Chaque témoignage a le pouvoir de transformer des vies.
-              Voici ce qui se passe quand vous osez raconter.
-            </p>
+            <div className={s.reasonsHeader}>
+              <h2 className={s.reasonsTitle}>Ce que votre histoire peut déclencher.</h2>
+              <p className={s.reasonsDeck}>
+                Pas besoin de promettre des milliards de vues. Une histoire compte
+                quand elle aide quelqu'un à reconnaître ce qu'il vit, ou vous aide
+                à poser enfin les bons mots.
+              </p>
+            </div>
 
             <div className={s.reasonsGrid}>
-              {REASSURANCE_REASONS.map((reason, i) => (
-                <div key={i} className={s.reasonCard}>
-                  <div className={s.reasonStat} style={{ color: reason.color }}>
-                    {reason.stat}
-                  </div>
-                  <div className={s.reasonIcon} style={{ background: `${reason.color}25` }}>
-                    <svg viewBox="0 0 24 24" fill={reason.color} stroke="none" width="20" height="20">
-                      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                    </svg>
-                  </div>
-                  <h3 className={s.reasonCardTitle}>{reason.title}</h3>
-                  <p className={s.reasonCardDesc}>{reason.desc}</p>
-                  <span className={s.reasonStatLabel} style={{ color: reason.color }}>
-                    <span className={s.reasonStatDot} style={{ backgroundColor: reason.color }} />
-                    {reason.statLabel}
-                  </span>
-                </div>
-              ))}
+              {REASSURANCE_REASONS.map((reason, index) => {
+                const Icon = reason.icon;
+                const toneClass = [s.reasonTonePink, s.reasonTonePurple, s.reasonToneBlue, s.reasonToneGreen][index] || "";
+                return (
+                  <Card
+                    key={reason.marker}
+                    variant="outlined"
+                    size="md"
+                    color={reason.color}
+                    className={`${s.reasonCard} ${toneClass}`}
+                  >
+                    <div className={s.reasonCardTop}>
+                      <span className={s.reasonMarker} style={{ color: reason.color }}>
+                        {reason.marker}
+                      </span>
+                      <span className={s.reasonIcon} style={{ color: reason.color }}>
+                        <Icon aria-hidden="true" />
+                      </span>
+                    </div>
+                    <h3 className={s.reasonCardTitle}>{reason.title}</h3>
+                    <p className={s.reasonCardDesc}>{reason.desc}</p>
+                    <span className={s.reasonStatLabel} style={{ color: reason.color }}>
+                      <span className={s.reasonStatDot} style={{ backgroundColor: reason.color }} />
+                      {reason.detail}
+                    </span>
+                  </Card>
+                );
+              })}
+            </div>
+
+            <div className={s.reasonsFooter}>
+              <p>
+                L'objectif n'est pas de surexposer votre histoire. C'est de la rendre juste,
+                lisible et utile, avec un cadre clair.
+              </p>
+              <div className={s.reasonsFooterChecks} aria-label="Cadre de publication">
+                <span>Vous choisissez le niveau d'identité</span>
+                <span>Vous relisez avant publication</span>
+                <span>Vous pouvez retirer votre témoignage</span>
+              </div>
+            </div>
+
+            <div className={s.reasonsProjects}>
+              <span className={s.reasonsProjectsKicker}>Après le témoignage</span>
+              <h3>Une histoire peut devenir un projet culturel.</h3>
+              <p>
+                Certaines histoires ouvrent un monde plus grand qu'un article. Quand le sujet le mérite,
+                nous pouvons imaginer avec vous un film, un livre, un podcast ou un documentaire,
+                et devenir les coproducteurs patients du projet.
+              </p>
+              <div className={s.reasonsProjectFormats} aria-label="Formats possibles">
+                <span>Cinéma</span>
+                <span>Livre</span>
+                <span>Podcast</span>
+                <span>Documentaire</span>
+              </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* ════════════════════════════════════════════════
            REASSURANCE — Vidéos témoignages
            ════════════════════════════════════════════════ */}
-        {sectionVideos.length > 0 && (
-          <section className={s.testimonials}>
+        {featuredVideo && (
+          <motion.section
+            className={s.testimonials}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.18 }}
+            transition={{ duration: 0.5 }}
+          >
             <div className={s.testimonialsInner}>
               <div className={s.chapterMark}>
                 <span className={s.cNum}>Ch.03</span>
                 <span className={s.cSep}>/</span>
                 <span className={s.cLabel}>Témoignages vidéo</span>
               </div>
-              <h2 className={s.testimonialsTitle}>Ils ont partagé leur <em>histoire.</em></h2>
-              <p className={s.testimonialsDeck}>
-                Voici ce qui se passe quand vous osez raconter.
-              </p>
 
-              <div className={s.videoGrid}>
-                {sectionVideos.map((v) => (
-                  <Link key={v._id} to={`/video/${v.slug}`} className={s.videoCard}>
-                    <div className={s.videoThumb}>
-                      <img
-                        src={v.imageUrl || "/placeholder.svg"}
-                        alt={v.titre}
-                        loading="lazy"
-                      />
-                      <div className={s.videoOverlay} />
-                      <div className={s.videoPlayBtn}>
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                          <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28A1 1 0 008 5.14z" />
-                        </svg>
-                      </div>
-                      {v.duree && <span className={s.videoDuration}>{v.duree}</span>}
-                    </div>
-                    <div className={s.videoMeta}>
-                      {v.verticale && (
-                        <span
-                          className={s.videoBadge}
-                          style={{ color: v.verticale.couleurDominante || "#8B5CF6" }}
-                        >
-                          {v.verticale.nom}
-                        </span>
-                      )}
-                      <h3 className={s.videoTitle}>{v.titre}</h3>
-                    </div>
-                  </Link>
-                ))}
+              <div className={s.testimonialsHeader}>
+                <div>
+                  <span className={s.testimonialsKicker}>Témoignages filmés</span>
+                  <h2 className={s.testimonialsTitle}>Des récits filmés avec <em>tact.</em></h2>
+                </div>
+                <p className={s.testimonialsDeck}>
+                  Certaines histoires gagnent à être entendues avec une voix, un visage,
+                  des silences. La vidéo n'est proposée que lorsqu'elle rend le récit plus juste.
+                </p>
               </div>
+
+              <div className={s.cinemaStage}>
+                <Card
+                  href={`/video/${featuredVideo.slug}`}
+                  variant="outlined"
+                  size="md"
+                  className={s.featuredVideoCard}
+                >
+                  <div className={s.featuredVideoFrame}>
+                    <img
+                      src={featuredVideo.imageUrl || "/placeholder.svg"}
+                      alt={featuredVideo.titre}
+                      loading="lazy"
+                      className={s.featuredVideoImage}
+                    />
+                    <div className={s.featuredVideoPlay}>
+                      <Play aria-hidden="true" />
+                    </div>
+                    <span className={s.featuredVideoTag}>Récit filmé</span>
+                    {featuredVideo.duree && (
+                      <span className={s.featuredVideoDuration}>{featuredVideo.duree}</span>
+                    )}
+                  </div>
+                  <div className={s.featuredVideoBody}>
+                    <span className={s.featuredVideoEyebrow}>
+                      {featuredVideo.verticale?.nom || "Témoignage"}
+                    </span>
+                    <h3>{featuredVideo.titre}</h3>
+                    <p>
+                      Le cadre se construit avec la personne : ce qui se dit, ce qui reste
+                      hors champ, ce que le montage doit préserver. La vidéo sert le récit,
+                      jamais l'inverse.
+                    </p>
+                  </div>
+                </Card>
+
+                <div className={s.videoTrustPanel}>
+                  <span className={s.videoTrustKicker}>Notre cadre vidéo</span>
+                  {VIDEO_REASSURANCE.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <div key={item.title} className={s.videoTrustItem}>
+                        <span className={s.videoTrustIcon}>
+                          <Icon aria-hidden="true" />
+                        </span>
+                        <div>
+                          <h3>{item.title}</h3>
+                          <p>{item.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {supportingVideos.length > 0 && (
+                <div className={s.videoRailWrap}>
+                  <div className={s.videoRailHeader}>
+                    <span>D'autres récits accompagnés</span>
+                    <p>Chaque vidéo garde le même cadre : du contexte, de la pudeur et un accord clair.</p>
+                  </div>
+
+                  <div className={s.videoRail}>
+                    {supportingVideos.map((v, index) => (
+                      <motion.div
+                        key={v._id}
+                        initial={{ opacity: 0, y: 18 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.25 }}
+                        transition={{ duration: 0.4, delay: index * 0.06 }}
+                      >
+                        <Card
+                          href={`/video/${v.slug}`}
+                          variant="outlined"
+                          size="md"
+                          className={s.videoCard}
+                          color={v.verticale?.couleurDominante || "#8B5CF6"}
+                        >
+                          <div className={s.videoThumb}>
+                            <img
+                              src={v.imageUrl || "/placeholder.svg"}
+                              alt={v.titre}
+                              loading="lazy"
+                            />
+                            <div className={s.videoOverlay} />
+                            <div className={s.videoPlayBtn}>
+                              <Play aria-hidden="true" />
+                            </div>
+                            {v.duree && <span className={s.videoDuration}>{v.duree}</span>}
+                          </div>
+                          <div className={s.videoMeta}>
+                            {v.verticale && (
+                              <span
+                                className={s.videoBadge}
+                                style={{ color: v.verticale.couleurDominante || "#8B5CF6" }}
+                              >
+                                {v.verticale.nom}
+                              </span>
+                            )}
+                            <h3 className={s.videoTitle}>{v.titre}</h3>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className={s.videoGridCta}>
-                <Link to="/videos" className={s.videoGridCtaLink}>
+                <Button as="link" to="/videos" variant="primary" size="lg" rightIcon={ArrowRight} className={s.videoGridCtaButton}>
                   Voir toutes les vidéos
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14">
-                    <path d="M5 12h14M13 5l7 7-7 7" />
-                  </svg>
-                </Link>
+                </Button>
               </div>
             </div>
-          </section>
+          </motion.section>
         )}
+
+        <motion.section
+          className={s.storyCoda}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5 }}
+          aria-label="Conclusion éditoriale"
+        >
+          <div className={s.storyCodaInner}>
+            <span className={s.storyCodaKicker}>Ce qui compte</span>
+            <blockquote className={s.storyCodaQuote}>
+              “Une histoire n’a pas besoin d’être spectaculaire pour mériter d’être racontée.
+              Elle doit seulement être juste.”
+            </blockquote>
+            <p className={s.storyCodaText}>
+              Écrite, filmée ou gardée privée, elle reste la vôtre jusqu’au dernier mot.
+            </p>
+          </div>
+        </motion.section>
 
         {/* ════════════════════════════════════════════════
            REASSURANCE — FAQ

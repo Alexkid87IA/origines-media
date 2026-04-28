@@ -13,6 +13,12 @@ const FIREBASE_ERRORS: Record<string, string> = {
   "auth/too-many-requests": "Trop de tentatives. Réessayez plus tard.",
 };
 
+function getAuthErrorCode(error: unknown) {
+  return typeof error === "object" && error && "code" in error
+    ? String((error as { code?: unknown }).code)
+    : "";
+}
+
 export default function ConnexionPage() {
   const { user, loading, login, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
@@ -32,8 +38,8 @@ export default function ConnexionPage() {
     try {
       await login(email, password);
       navigate("/compte");
-    } catch (err: any) {
-      setError(FIREBASE_ERRORS[err?.code] || "Une erreur est survenue. Réessayez.");
+    } catch (err: unknown) {
+      setError(FIREBASE_ERRORS[getAuthErrorCode(err)] || "Une erreur est survenue. Réessayez.");
     } finally {
       setSubmitting(false);
     }
@@ -85,10 +91,10 @@ export default function ConnexionPage() {
                 onClick={async () => {
                   setError("");
                   try {
-                    await loginWithGoogle();
-                    navigate("/compte");
-                  } catch (err: any) {
-                    if (err?.code !== "auth/popup-closed-by-user")
+                    const mode = await loginWithGoogle();
+                    if (mode !== "redirect") navigate("/compte");
+                  } catch (err: unknown) {
+                    if (getAuthErrorCode(err) !== "auth/popup-closed-by-user")
                       setError("Échec de la connexion Google. Réessayez.");
                   }
                 }}
