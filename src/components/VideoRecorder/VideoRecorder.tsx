@@ -472,12 +472,14 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   // ── Next question or finish ──
   const [processingError, setProcessingError] = useState(false);
   const [processingReady, setProcessingReady] = useState(false);
+  const [processingNextQuestion, setProcessingNextQuestion] = useState<Question | null>(null);
   const pendingQuestionRef = useRef<Question | null>(null);
 
   const acceptAndContinue = useCallback(() => {
     const nextQ = pendingQuestionRef.current;
     pendingQuestionRef.current = null;
     setProcessingTranscript(null);
+    setProcessingNextQuestion(null);
     setAiMessage(null);
     setProcessingReady(false);
     setProcessingError(false);
@@ -498,6 +500,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
     audioBlobsRef.current.delete(questionIdx);
     pendingQuestionRef.current = null;
     setProcessingTranscript(null);
+    setProcessingNextQuestion(null);
     setAiMessage(null);
     setProcessingReady(false);
     setProcessingError(false);
@@ -505,11 +508,12 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   }, [reviewUrl, questionIdx]);
 
   const skipToFallback = useCallback(() => {
-    const fallback = { label: "Continuez votre recit — qu'est-ce qui s'est passe ensuite ?", hint: "Prenez votre temps." };
+    const fallback = { label: "Continuez votre récit — qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps." };
     setQuestions((prev) => [...prev, fallback]);
     setRecordings((prev) => [...prev, null]);
     pendingQuestionRef.current = null;
     setProcessingTranscript(null);
+    setProcessingNextQuestion(null);
     setAiMessage(null);
     setProcessingReady(false);
     setProcessingError(false);
@@ -531,6 +535,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
       setPhase("processing");
       setAiMessage(null);
       setProcessingTranscript(null);
+      setProcessingNextQuestion(null);
       setProcessingError(false);
       setProcessingReady(false);
       pendingQuestionRef.current = null;
@@ -566,6 +571,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
         if (result.question) {
           setQuestions((prev) => [...prev, result.question!]);
           setRecordings((prev) => [...prev, null]);
+          setProcessingNextQuestion(result.question);
           pendingQuestionRef.current = result.question;
         }
         setProcessingReady(true);
@@ -782,7 +788,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                 {lyaIcon(s.lyaAvatarPulse)}
                 <div className={s.processingBody}>
                   <p className={s.processingName}>Lya</p>
-                  <p className={s.processingText}>J'ecoute votre reponse...</p>
+                  <p className={s.processingText}>J'écoute votre réponse...</p>
                   <div className={s.processingDots}>
                     <span className={s.processingDot} />
                     <span className={s.processingDot} />
@@ -817,6 +823,16 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
                     </p>
                   </div>
                 </div>
+
+                {processingNextQuestion && !aiDone && (
+                  <div className={s.processingNextQuestion}>
+                    <span className={s.processingNextLabel}>Prochaine question</span>
+                    <strong>{processingNextQuestion.label}</strong>
+                    {processingNextQuestion.hint && (
+                      <p>{processingNextQuestion.hint}</p>
+                    )}
+                  </div>
+                )}
 
                 {processingReady && !aiDone && (
                   <div className={s.processingActions}>

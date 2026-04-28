@@ -1530,6 +1530,29 @@ export default function EcrireHistoirePage() {
                 </button>
               </div>
 
+              {draft.writeMode === "guide" && (
+                <div className={s.videoLyaPanel}>
+                  <div className={s.videoLyaPanelHeader}>
+                    <span className={s.videoLyaPanelKicker}>Entretien adaptatif</span>
+                    <strong>Lya construit la suite à partir de vos réponses.</strong>
+                  </div>
+                  <div className={s.videoLyaPanelGrid}>
+                    <div className={s.videoLyaPanelItem}>
+                      <span>01</span>
+                      <p>Transcription de chaque prise</p>
+                    </div>
+                    <div className={s.videoLyaPanelItem}>
+                      <span>02</span>
+                      <p>Question suivante liée à votre sujet</p>
+                    </div>
+                    <div className={s.videoLyaPanelItem}>
+                      <span>03</span>
+                      <p>Reprise possible avant l'envoi</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className={s.videoRecorderWrap}>
                 <VideoRecorder
                   key={draft.writeMode}

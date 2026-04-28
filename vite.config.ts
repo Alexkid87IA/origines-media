@@ -1,10 +1,126 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+
+type VercelDevRequest = IncomingMessage & { body?: unknown };
+
+interface VercelDevResponse {
+  status(code: number): VercelDevResponse;
+  setHeader(name: string, value: string | number | readonly string[]): VercelDevResponse;
+  json(payload: unknown): VercelDevResponse;
+  send(payload: unknown): VercelDevResponse;
+  end(payload?: unknown): VercelDevResponse;
+}
+
+type VercelLikeHandler = (req: VercelDevRequest, res: VercelDevResponse) => unknown | Promise<unknown>;
+
+const localInterviewHandlers: Record<string, () => Promise<{ default: unknown }>> = {
+  '/api/interview/article': () => import('./api/interview/article'),
+  '/api/interview/generate': () => import('./api/interview/generate'),
+  '/api/interview/notify': () => import('./api/interview/notify'),
+  '/api/interview/transcribe': () => import('./api/interview/transcribe'),
+};
+
+function applyLocalEnv(mode: string) {
+  const env = loadEnv(mode, process.cwd(), '');
+  for (const [key, value] of Object.entries(env)) {
+    if (process.env[key] === undefined || process.env[key] === '') {
+      process.env[key] = value;
+    }
+  }
+}
+
+async function readJsonBody(req: IncomingMessage) {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  const maxBodySize = 60 * 1024 * 1024;
+
+  for await (const chunk of req) {
+    const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as Uint8Array);
+    size += buffer.length;
+    if (size > maxBodySize) {
+      throw new Error('Request body too large');
+    }
+    chunks.push(buffer);
+  }
+
+  if (chunks.length === 0) {
+    return {};
+  }
+
+  const rawBody = Buffer.concat(chunks).toString('utf8');
+  return rawBody ? JSON.parse(rawBody) : {};
+}
+
+function createVercelDevResponse(res: ServerResponse): VercelDevResponse {
+  return {
+    status(code: number) {
+      res.statusCode = code;
+      return this;
+    },
+    setHeader(name: string, value: string | number | readonly string[]) {
+      res.setHeader(name, value);
+      return this;
+    },
+    json(payload: unknown) {
+      if (!res.headersSent) {
+        res.setHeader('Content-Type', 'application/json');
+      }
+      res.end(JSON.stringify(payload));
+      return this;
+    },
+    send(payload: unknown) {
+      res.end(typeof payload === 'string' ? payload : JSON.stringify(payload));
+      return this;
+    },
+    end(payload?: unknown) {
+      res.end(payload);
+      return this;
+    },
+  };
+}
+
+function localInterviewApiPlugin(mode: string): Plugin {
+  return {
+    name: 'local-interview-api',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const pathname = new URL(req.url || '/', 'http://localhost').pathname;
+        const loadHandler = localInterviewHandlers[pathname];
+
+        if (!loadHandler) {
+          return next();
+        }
+
+        try {
+          applyLocalEnv(mode);
+          const body = await readJsonBody(req);
+          const { default: handlerModule } = await loadHandler();
+          const handler = handlerModule as VercelLikeHandler;
+          const vercelReq = Object.assign(req, { body }) as VercelDevRequest;
+          await handler(vercelReq, createVercelDevResponse(res));
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Local API error';
+          console.error(`[local-interview-api] ${pathname}:`, error);
+          if (!res.headersSent) {
+            res.statusCode = message === 'Request body too large' ? 413 : 500;
+            res.setHeader('Content-Type', 'application/json');
+          }
+          res.end(JSON.stringify({ error: message }));
+        }
+      });
+    },
+  };
+}
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(({ mode }) => {
+  applyLocalEnv(mode);
+
+  return {
+  plugins: [react(), localInterviewApiPlugin(mode)],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -106,4 +222,5 @@ export default defineConfig({
       'Cache-Control': 'public, max-age=31536000',
     },
   },
+  };
 });

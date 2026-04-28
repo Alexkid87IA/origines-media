@@ -1583,6 +1583,70 @@
   margin-top: 20px;
 }
 
+.videoLyaPanel {
+  border: 1px solid var(--stone200);
+  margin-bottom: 24px;
+  background: var(--paper);
+}
+
+.videoLyaPanelHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--stone100);
+}
+
+.videoLyaPanelKicker {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  margin-bottom: 6px;
+}
+
+.videoLyaPanelHeader strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.videoLyaPanelGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.videoLyaPanelItem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 18px 20px;
+  border-right: 1px solid var(--stone100);
+}
+
+.videoLyaPanelItem:last-child {
+  border-right: none;
+}
+
+.videoLyaPanelItem span {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--stone300);
+  flex-shrink: 0;
+}
+
+.videoLyaPanelItem p {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--stone600);
+  margin: 0;
+}
+
 /* ── Upload progress ── */
 .uploadOverlay {
   display: flex;
@@ -1689,6 +1753,13 @@
   .formatCard:first-child { border-right: none; border-bottom: 1px solid var(--stone100); }
   .formatCard { padding: 28px 20px 24px; }
 
+  .videoLyaPanelGrid { grid-template-columns: 1fr; }
+  .videoLyaPanelItem {
+    border-right: none;
+    border-bottom: 1px solid var(--stone100);
+    padding: 16px 20px;
+  }
+  .videoLyaPanelItem:last-child { border-bottom: none; }
   .previewVideoLabel { padding: 12px 20px; font-size: 13px; }
 }
 

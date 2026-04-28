@@ -836,6 +836,40 @@
   animation: bubbleIn 0.3s ease;
 }
 
+.processingNextQuestion {
+  padding: 14px 16px;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  animation: bubbleIn 0.3s ease;
+}
+
+.processingNextLabel {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #C4B5FD;
+  margin-bottom: 6px;
+}
+
+.processingNextQuestion strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: 1.35;
+  color: #fff;
+}
+
+.processingNextQuestion p {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.58);
+  margin: 6px 0 0;
+}
+
 /* ══════════════════════════════════════════════════════════
    Review card
    ══════════════════════════════════════════════════════════ */
