@@ -65,10 +65,8 @@ function getUniversInfo(uid?: string) {
   return UNIVERS_MAP.esprit;
 }
 
-function getReadTime(a: SanityArticle): string | null {
-  const t = estimateReadingTimeFromText(a.contenuTexte) || a.tempsLecture;
-  if (!t) return null;
-  return `${t} min`;
+function getReadTime(a: SanityArticle): number {
+  return estimateReadingTimeFromText(a.contenuTexte) || a.tempsLecture || 5;
 }
 
 function imgSrc(url?: string, w = 800): string | undefined {
@@ -88,10 +86,13 @@ export default function DossierDetailPage() {
   const u = getUniversInfo(dossier?.univpilar);
   const articles = dossier?.articles || [];
   const related = dossier?.relatedDossiers || [];
+  const firstArticle = articles[0];
+  const restArticles = articles.slice(1);
+  const totalReadTime = articles.reduce((sum, a) => sum + getReadTime(a), 0);
 
   const faqData = articles.slice(0, 5).map((a) => ({
-    question: a.titre.includes("?") ? a.titre : `Que dit l'article « ${a.titre} » ?`,
-    answer: getExcerpt(a) || `Cet article explore un angle unique de la question « ${dossier?.question} ».`,
+    question: a.titre.includes("?") ? a.titre : `Que dit l’article « ${a.titre} » ?`,
+    answer: getExcerpt(a) || `Cet article explore un angle unique de la question « ${dossier?.question} ».`,
   }));
 
   if (isLoading) {
@@ -157,128 +158,217 @@ export default function DossierDetailPage() {
         style={
           {
             "--dossier-color": u.color,
-            "--hero-bg": dossier.imageUrl ? `url(${imgSrc(dossier.imageUrl, 1400)})` : "none",
+            "--hero-bg": dossier.imageUrl
+              ? `url(${imgSrc(dossier.imageUrl, 1600)})`
+              : firstArticle?.imageUrl
+                ? `url(${imgSrc(firstArticle.imageUrl, 1600)})`
+                : "none",
           } as React.CSSProperties
         }
       >
         <div className={s.heroOverlay} />
-        <div className={s.heroInner}>
+        <div className={s.heroAccentGlow} />
+        <div className={s.heroContent}>
           <Link to="/dossiers" className={s.heroBack}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16" aria-hidden="true">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             Tous les dossiers
           </Link>
-          <div className={s.heroMeta}>
-            <span className={s.heroUniv} style={{ background: u.color }}>
-              {u.name}
-            </span>
-            <span>Semaine {dossier.semaine} &middot; {dossier.annee}</span>
-            {dossier.isActive && <span className={s.heroActive}>En cours</span>}
+
+          <div className={s.heroTopLine}>
+            <span className={s.heroUnivBadge}>{u.name}</span>
+            <span className={s.heroWeek}>Semaine {dossier.semaine} &middot; {dossier.annee}</span>
+            {dossier.isActive && (
+              <span className={s.heroActivePill}>En cours</span>
+            )}
           </div>
+
           <h1 className={s.heroTitle}>{dossier.question}</h1>
+
           <p className={s.heroDeck}>
             {dossier.chapeau ||
               `${articles.length} article${articles.length > 1 ? "s" : ""} pour explorer cette question sous tous les angles.`}
           </p>
-          <div className={s.heroStats}>
-            <span className={s.heroStat}>
-              <strong>{articles.length}</strong> articles
-            </span>
-            <span className={s.heroStatSep} />
-            <span className={s.heroStat}>
-              <strong>{articles.reduce((sum, a) => sum + (estimateReadingTimeFromText(a.contenuTexte) || (typeof a.tempsLecture === 'number' ? a.tempsLecture : 0) || 5), 0)}</strong> min de lecture
-            </span>
+
+          <div className={s.heroStatsRow}>
+            <div className={s.heroStatBlock}>
+              <span className={s.heroStatNum}>{articles.length}</span>
+              <span className={s.heroStatLabel}>articles</span>
+            </div>
+            <span className={s.heroStatDivider} />
+            <div className={s.heroStatBlock}>
+              <span className={s.heroStatNum}>{totalReadTime}</span>
+              <span className={s.heroStatLabel}>min de lecture</span>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* ── Intro ── */}
-      <section className={s.intro}>
-        <div className={s.introInner}>
-          <h2 className={s.introTitle}>Pourquoi cette question&nbsp;?</h2>
-          <p className={s.introText}>
-            Chaque semaine, Origines Media explore une question essentielle sous plusieurs angles
-            &mdash; psychologie, science, t&eacute;moignage, soci&eacute;t&eacute;, pratique.
-            D&eacute;couvrez les {articles.length} articles de ce dossier pour construire votre propre r&eacute;ponse.
-          </p>
+      {/* ── Sommaire ── */}
+      <section className={s.sommaire}>
+        <div className={s.sommaireInner}>
+          <div className={s.sommaireLeft}>
+            <p className={s.sommaireLabel}>Ce dossier</p>
+            <h2 className={s.sommaireQuestion}>Pourquoi cette question&nbsp;?</h2>
+          </div>
+          <div className={s.sommaireRight}>
+            <p className={s.sommaireText}>
+              {dossier.chapeau ||
+                `Chaque semaine, Origines Media explore une question essentielle sous plusieurs angles — psychologie, science, témoignage, société, pratique. Découvrez les ${articles.length} articles de ce dossier pour construire votre propre réponse.`}
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* ── Article grid ── */}
-      <main className={s.content}>
-        <div className={s.contentInner}>
-          <h2 className={s.contentTitle}>
-            <span className={s.contentTitleCount}>{articles.length}</span>
-            articles &agrave; explorer
-          </h2>
-
-          <div className={s.grid}>
+      {/* ── Timeline index ── */}
+      <section className={s.timeline} style={{ "--dossier-color": u.color } as React.CSSProperties}>
+        <div className={s.timelineInner}>
+          <div className={s.timelineHeader}>
+            <span className={s.timelineCount}>{articles.length}</span>
+            <span className={s.timelineLabel}>articles &agrave; explorer</span>
+          </div>
+          <div className={s.timelineList}>
             {articles.map((article, idx) => {
               const au = getUniversInfo(article.univpilar);
-              const readTime = getReadTime(article);
-              const heroImg = imgSrc(article.imageUrl, 640);
-              const isFirst = idx === 0;
-
+              const rt = getReadTime(article);
               return (
-                <article
+                <Link
                   key={article._id}
-                  className={`${s.card} ${isFirst ? s.cardFeatured : ""}`}
+                  to={`/article/${article.slug || ""}`}
+                  className={s.timelineItem}
                 >
-                  <Link to={`/article/${article.slug || ""}`} className={s.cardLink}>
-                    <div className={s.cardImgWrap}>
-                      {heroImg ? (
-                        <img
-                          src={heroImg}
-                          alt={article.titre}
-                          className={s.cardImg}
-                          loading={idx < 3 ? "eager" : "lazy"}
-                          decoding="async"
-                        />
-                      ) : (
-                        <div className={s.cardImgPlaceholder}>
-                          <span className={s.cardImgPlaceholderNum}>
-                            {String(idx + 1).padStart(2, "0")}
-                          </span>
-                        </div>
-                      )}
-                      <span className={s.cardNum}>
-                        {String(idx + 1).padStart(2, "0")}
-                      </span>
+                  <span className={s.timelineNum}>
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className={s.timelineItemContent}>
+                    <div className={s.timelineItemMeta}>
+                      <span className={s.timelineItemDot} style={{ background: au.color }} />
+                      <span className={s.timelineItemUniv}>{au.name}</span>
+                      <span className={s.timelineItemTime}>&middot; {rt} min</span>
                     </div>
-                    <div className={s.cardBody}>
-                      <div className={s.cardMeta}>
-                        <span className={s.cardDot} style={{ background: au.color }} />
-                        <span>{au.name}</span>
-                        {readTime && (
-                          <>
-                            <span className={s.cardMetaSep}>&middot;</span>
-                            <span>{readTime}</span>
-                          </>
-                        )}
-                      </div>
-                      <h3 className={s.cardTitle}>{article.titre}</h3>
-                      <p className={s.cardExcerpt}>{getExcerpt(article)}</p>
-                      <div className={s.cardFoot}>
-                        <span className={s.cardAuthor}>
-                          Par {article.authorName || "Rédaction Origines"}
-                        </span>
-                        <span className={s.cardCta}>Lire &rarr;</span>
-                      </div>
-                    </div>
-                  </Link>
-                </article>
+                    <h3 className={s.timelineItemTitle}>{article.titre}</h3>
+                  </div>
+                  <span className={s.timelineArrow}>Lire &rarr;</span>
+                </Link>
               );
             })}
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* ── Featured first article ── */}
+      {firstArticle && (
+        <section className={s.featured} style={{ "--dossier-color": u.color } as React.CSSProperties}>
+          <div className={s.featuredInner}>
+            <p className={s.featuredLabel}>Article phare</p>
+            <Link to={`/article/${firstArticle.slug || ""}`} className={s.featuredCard}>
+              <div className={s.featuredImgWrap}>
+                {imgSrc(firstArticle.imageUrl, 900) ? (
+                  <img
+                    src={imgSrc(firstArticle.imageUrl, 900)!}
+                    alt={firstArticle.titre}
+                    className={s.featuredImg}
+                    loading="eager"
+                    decoding="async"
+                  />
+                ) : (
+                  <div className={s.featuredImgPlaceholder}>
+                    <span className={s.featuredImgPlaceholderNum}>01</span>
+                  </div>
+                )}
+                <span className={s.featuredImgNum}>01</span>
+              </div>
+              <div className={s.featuredBody}>
+                <div className={s.featuredMeta}>
+                  <span className={s.featuredDot} style={{ background: getUniversInfo(firstArticle.univpilar).color }} />
+                  <span className={s.featuredMetaText}>
+                    {getUniversInfo(firstArticle.univpilar).name} &middot; {getReadTime(firstArticle)} min
+                  </span>
+                </div>
+                <h3 className={s.featuredTitle}>{firstArticle.titre}</h3>
+                <p className={s.featuredExcerpt}>{getExcerpt(firstArticle)}</p>
+                <div className={s.featuredFoot}>
+                  <span className={s.featuredAuthor}>
+                    Par {firstArticle.authorName || "Rédaction Origines"}
+                  </span>
+                  <span className={s.featuredCta}>Lire l&rsquo;article &rarr;</span>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* ── Remaining articles grid ── */}
+      {restArticles.length > 0 && (
+        <main className={s.content} style={{ "--dossier-color": u.color } as React.CSSProperties}>
+          <div className={s.contentInner}>
+            <h2 className={s.contentTitle}>Continuer la lecture</h2>
+
+            <div className={s.grid}>
+              {restArticles.map((article, idx) => {
+                const au = getUniversInfo(article.univpilar);
+                const readTime = getReadTime(article);
+                const heroImg = imgSrc(article.imageUrl, 640);
+                const num = idx + 2;
+
+                return (
+                  <article key={article._id} className={s.card}>
+                    <Link to={`/article/${article.slug || ""}`} className={s.cardLink}>
+                      <div className={s.cardImgWrap}>
+                        {heroImg ? (
+                          <img
+                            src={heroImg}
+                            alt={article.titre}
+                            className={s.cardImg}
+                            loading={idx < 4 ? "eager" : "lazy"}
+                            decoding="async"
+                          />
+                        ) : (
+                          <div className={s.cardImgPlaceholder}>
+                            <span className={s.cardImgPlaceholderNum}>
+                              {String(num).padStart(2, "0")}
+                            </span>
+                          </div>
+                        )}
+                        <span className={s.cardNum}>
+                          {String(num).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <div className={s.cardBody}>
+                        <div className={s.cardMeta}>
+                          <span className={s.cardDot} style={{ background: au.color }} />
+                          <span>{au.name}</span>
+                          <span className={s.cardMetaSep}>&middot;</span>
+                          <span>{readTime} min</span>
+                        </div>
+                        <h3 className={s.cardTitle}>{article.titre}</h3>
+                        <p className={s.cardExcerpt}>{getExcerpt(article)}</p>
+                        <div className={s.cardFoot}>
+                          <span className={s.cardAuthor}>
+                            Par {article.authorName || "Rédaction Origines"}
+                          </span>
+                          <span className={s.cardCta}>Lire &rarr;</span>
+                        </div>
+                      </div>
+                    </Link>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </main>
+      )}
 
       {/* ── FAQ ── */}
       {faqData.length > 0 && (
-        <section className={s.faqSection}>
+        <section className={s.faqSection} style={{ "--dossier-color": u.color } as React.CSSProperties}>
           <div className={s.faqInner}>
-            <h2 className={s.faqTitle}>Questions fr&eacute;quentes</h2>
+            <div className={s.faqHeader}>
+              <p className={s.faqLabel}>FAQ</p>
+              <h2 className={s.faqTitle}>Questions fr&eacute;quentes</h2>
+            </div>
             <div className={s.faqList}>
               {faqData.map((item, i) => (
                 <details key={i} className={s.faqItem}>
@@ -295,25 +385,33 @@ export default function DossierDetailPage() {
       {related.length > 0 && (
         <section className={s.relatedSection}>
           <div className={s.relatedInner}>
-            <h2 className={s.relatedTitle}>Dossiers dans le m&ecirc;me univers</h2>
+            <div className={s.relatedHeader}>
+              <p className={s.relatedLabel}>Explorer aussi</p>
+              <h2 className={s.relatedTitle}>Dossiers dans le m&ecirc;me univers</h2>
+            </div>
             <div className={s.relatedGrid}>
               {related.map((rd) => {
                 const ru = getUniversInfo(rd.univpilar);
+                const rdImg = imgSrc(rd.imageUrl, 480);
                 return (
                   <Link
                     key={rd.slug}
                     to={`/dossiers/${rd.slug}`}
                     className={s.relatedCard}
-                    style={{ "--rel-color": ru.color } as React.CSSProperties}
                   >
                     <span className={s.relatedCardAccent} style={{ background: ru.color }} />
+                    {rdImg && (
+                      <div className={s.relatedCardImgWrap}>
+                        <img src={rdImg} alt={rd.question} className={s.relatedCardImg} loading="lazy" decoding="async" />
+                      </div>
+                    )}
                     <div className={s.relatedCardBody}>
                       <span className={s.relatedCardMeta}>
                         S.{rd.semaine} &middot; {rd.articleCount || 0} articles
                       </span>
                       <h3 className={s.relatedCardTitle}>{rd.question}</h3>
                     </div>
-                    <span className={s.relatedCardArrow}>&rarr;</span>
+                    <span className={s.relatedCardArrow}>Lire &rarr;</span>
                   </Link>
                 );
               })}
@@ -325,6 +423,7 @@ export default function DossierDetailPage() {
       {/* ── CTA ── */}
       <section className={s.ctaSection}>
         <div className={s.ctaInner}>
+          <p className={s.ctaText}>D&eacute;couvrez tous nos dossiers th&eacute;matiques</p>
           <Link to="/dossiers" className={s.ctaLink}>
             &larr; Tous les dossiers
           </Link>
