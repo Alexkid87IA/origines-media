@@ -52,11 +52,12 @@ export default function HomePageV2() {
   const navSchema = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "SiteNavigationElement", name: "Média", url: "https://www.origines.media/media", description: "Articles, récits, immersions et témoignages" },
-      { "@type": "SiteNavigationElement", name: "Vidéos", url: "https://www.origines.media/videos", description: "Documentaires, reportages, interviews et formats vidéo" },
-      { "@type": "SiteNavigationElement", name: "Guides", url: "https://www.origines.media/guides", description: "Masterclass, ateliers, programmes et kits" },
-      { "@type": "SiteNavigationElement", name: "Boutique", url: "https://www.origines.media/boutique", description: "Guides, kits et produits Origines" },
-      { "@type": "SiteNavigationElement", name: "Newsletter", url: "https://www.origines.media/newsletter", description: "La Lettre du dimanche — le meilleur de la semaine" },
+      { "@type": "SiteNavigationElement", name: "Articles", url: "https://www.origines.media/articles", description: "Psychologie, bien-être, relations, culture : tous les articles Origines Media" },
+      { "@type": "SiteNavigationElement", name: "Vidéos", url: "https://www.origines.media/videos", description: "Documentaires, reportages, interviews et témoignages vidéo" },
+      { "@type": "SiteNavigationElement", name: "Histoires", url: "https://www.origines.media/histoires", description: "Témoignages et récits de vie partagés par la communauté" },
+      { "@type": "SiteNavigationElement", name: "Séries", url: "https://www.origines.media/series", description: "Transmission, État d'esprit, Il était une fois : les formats originaux Origines" },
+      { "@type": "SiteNavigationElement", name: "Recommandations", url: "https://www.origines.media/recommandations", description: "Livres, films, podcasts, musique : les coups de cœur de la rédaction" },
+      { "@type": "SiteNavigationElement", name: "Boutique", url: "https://www.origines.media/boutique", description: "Guides, kits d'introspection et masterclass Origines" },
     ],
   };
 

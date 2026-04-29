@@ -112,6 +112,51 @@
     <!-- Modulepreload for critical JS chunks (will be injected by Vite in production) -->
     <!-- These improve Time to Interactive -->
 
+    <!-- Structured Data — static fallback for crawlers that don't execute JS -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Origines Media",
+      "alternateName": "Origines",
+      "url": "https://www.origines.media",
+      "description": "Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir.",
+      "inLanguage": "fr",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Origines Media",
+        "url": "https://www.origines.media",
+        "logo": { "@type": "ImageObject", "url": "https://www.origines.media/logos/logo-black.png" },
+        "sameAs": [
+          "https://www.youtube.com/@origines",
+          "https://twitter.com/originesmedia",
+          "https://www.instagram.com/origines.media",
+          "https://www.linkedin.com/company/origines-media",
+          "https://www.tiktok.com/@originesmedia",
+          "https://www.facebook.com/originesmedia"
+        ]
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": { "@type": "EntryPoint", "urlTemplate": "https://www.origines.media/recherche?q={search_term_string}" },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "SiteNavigationElement", "name": "Articles", "url": "https://www.origines.media/articles", "description": "Psychologie, bien-être, relations, culture : tous les articles Origines Media" },
+        { "@type": "SiteNavigationElement", "name": "Vidéos", "url": "https://www.origines.media/videos", "description": "Documentaires, reportages, interviews et témoignages vidéo" },
+        { "@type": "SiteNavigationElement", "name": "Histoires", "url": "https://www.origines.media/histoires", "description": "Témoignages et récits de vie partagés par la communauté" },
+        { "@type": "SiteNavigationElement", "name": "Séries", "url": "https://www.origines.media/series", "description": "Transmission, État d'esprit, Il était une fois : les formats originaux Origines" },
+        { "@type": "SiteNavigationElement", "name": "Recommandations", "url": "https://www.origines.media/recommandations", "description": "Livres, films, podcasts, musique : les coups de cœur de la rédaction" },
+        { "@type": "SiteNavigationElement", "name": "Boutique", "url": "https://www.origines.media/boutique", "description": "Guides, kits d'introspection et masterclass Origines" }
+      ]
+    }
+    </script>
+
     <!-- Google Analytics 4 — after preloads to avoid blocking critical resources -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y8CL35ELYZ"></script>
     <script>
