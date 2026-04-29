@@ -65,10 +65,10 @@ export const V2_DOSSIERS_QUERY = `
   }
 `;
 
-// Dossier détail — une question + ses articles
+// Dossier détail — une question + ses articles + dossiers liés
 export const V2_DOSSIER_DETAIL_QUERY = `
   *[_type == "questionDeLaSemaine" && slug.current == $slug][0] {
-    question, semaine, annee, univpilar,
+    question, semaine, annee, univpilar, chapeau, seoDescription,
     "slug": slug.current,
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     isActive,
@@ -76,14 +76,22 @@ export const V2_DOSSIER_DETAIL_QUERY = `
       _id, titre,
       "extrait": coalesce(extrait, chapeau, description),
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
-      "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
       "slug": slug.current,
       datePublication,
       "tempsLecture": coalesce(tempsLecture, readTime),
       univpilar,
+      soustopic,
+      tags,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name
+    },
+    "relatedDossiers": *[_type == "questionDeLaSemaine" && slug.current != $slug && univpilar == ^.univpilar] | order(semaine desc) [0...3] {
+      question, semaine, annee, univpilar,
+      "slug": slug.current,
+      "articleCount": count(articles),
+      "imageUrl": coalesce(image.asset->url, mainImage.asset->url)
     }
   }
 `;
