@@ -20,18 +20,7 @@ interface SanityDossier {
   chapeau?: string;
 }
 
-const MOCK_DOSSIERS: SanityDossier[] = [
-  { question: "Pourquoi dort-on si mal ?", semaine: 17, annee: 2026, univpilar: "corps", slug: "pourquoi-dort-on-si-mal", articleCount: 6, isActive: true, chapeau: "Le sommeil se dégrade partout. On a voulu comprendre ce qui cloche — et ce qu’on peut y faire." },
-  { question: "Peut-on vraiment changer après 40 ans ?", semaine: 16, annee: 2026, univpilar: "esprit", slug: "changer-apres-40-ans", articleCount: 7, chapeau: "Neurosciences, témoignages et psychologie du changement tardif." },
-  { question: "Faut-il couper les ponts avec sa famille ?", semaine: 15, annee: 2026, univpilar: "liens", slug: "couper-les-ponts-famille", articleCount: 7, chapeau: "Quand la distance devient la seule façon de se protéger." },
-  { question: "L’IA va-t-elle nous rendre plus seuls ?", semaine: 14, annee: 2026, univpilar: "avenir", slug: "ia-solitude", articleCount: 5, chapeau: "Assistants, chatbots, compagnons virtuels : enquête sur une promesse ambigüë." },
-  { question: "Pourquoi a-t-on peur du silence ?", semaine: 13, annee: 2026, univpilar: "esprit", slug: "peur-du-silence", articleCount: 7, chapeau: "On le fuit, on le remplit, on l’évite. Sept jours pour réapprendre à l’écouter." },
-  { question: "Voyager seul, est-ce égoïste ?", semaine: 12, annee: 2026, univpilar: "monde", slug: "voyager-seul-egoiste", articleCount: 7, chapeau: "Entre liberté et culpabilité, récits de ceux qui sont partis seuls." },
-  { question: "Faut-il arrêter de vouloir être heureux ?", semaine: 11, annee: 2026, univpilar: "esprit", slug: "arreter-vouloir-etre-heureux", articleCount: 7, chapeau: "L’injonction au bonheur rend-elle malheureux ? La philosophie et les neurosciences répondent." },
-  { question: "Nos enfants mangeront-ils encore de la viande ?", semaine: 10, annee: 2026, univpilar: "corps", slug: "enfants-viande", articleCount: 7, chapeau: "Éthique, santé, planète : la question alimentaire de demain." },
-  { question: "Comment vivre avec quelqu’un qu’on ne comprend plus ?", semaine: 9, annee: 2026, univpilar: "liens", slug: "vivre-incomprehension", articleCount: 7, chapeau: "Couples, parents, amis : quand le dialogue semble impossible." },
-  { question: "Le télétravail a-t-il tué le collectif ?", semaine: 8, annee: 2026, univpilar: "avenir", slug: "teletravail-collectif", articleCount: 7, chapeau: "Trois ans après la généralisation, bilan d’un modèle contesté." },
-];
+const MOCK_DOSSIERS: SanityDossier[] = [];
 
 type SortMode = "recent" | "popular" | "alpha";
 const SORT_LABELS: Record<SortMode, string> = {
