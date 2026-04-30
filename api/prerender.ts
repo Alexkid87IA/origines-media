@@ -100,7 +100,7 @@ interface ResolvedMeta {
 // ---------------------------------------------------------------------------
 // Route → meta resolver
 // ---------------------------------------------------------------------------
-async function resolveMeta(path: string): Promise<ResolvedMeta> {
+async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
   const url = `${BASE_URL}${path}`
   const defaults: ResolvedMeta = {
     title: DEFAULT_TITLE,
@@ -207,7 +207,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /video/:slug
@@ -241,7 +241,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /histoire/:slug  /portraits/:slug
@@ -269,7 +269,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /recommandations/:slug  /recommandation/:slug
@@ -294,7 +294,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /series/:slug
@@ -326,7 +326,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /dossiers/:slug
@@ -397,7 +397,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /univers/:universId/:soustopic
@@ -444,7 +444,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /format/:formatId
@@ -488,10 +488,10 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
-  return defaults
+  return null
 }
 
 // ---------------------------------------------------------------------------
@@ -609,6 +609,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const meta = await resolveMeta(path)
+    if (!meta) {
+      const notFoundHtml = renderHTML({
+        title: 'Page non trouvée — Origines Media',
+        description: 'Cette page n\'existe pas ou a été déplacée.',
+        image: DEFAULT_OG_IMAGE, url: `${BASE_URL}${path}`, ogType: 'website',
+      })
+      res.setHeader('Content-Type', 'text/html; charset=utf-8')
+      res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+      return res.status(404).send(notFoundHtml)
+    }
     const html = renderHTML(meta)
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')

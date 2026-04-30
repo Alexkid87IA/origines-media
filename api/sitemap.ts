@@ -332,7 +332,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const sitemap = generateSitemapXML(content)
 
     res.setHeader('Content-Type', 'application/xml')
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+    res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
     res.status(200).send(sitemap)
   } catch (error) {
     console.error('Error generating sitemap:', error)
