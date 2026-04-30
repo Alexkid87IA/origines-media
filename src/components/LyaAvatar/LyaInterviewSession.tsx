@@ -113,6 +113,18 @@ export default function LyaInterviewSession({
 
   const formatTime = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
 
+  const stateLabel = (() => {
+    switch (lyaState) {
+      case "connecting": return "Connexion en cours…";
+      case "speaking": return "Lya vous parle…";
+      case "listening": return "À vous — parlez naturellement";
+      case "ready": return "Entretien en cours";
+      case "idle": return "Préparation…";
+      case "error": return "Erreur de connexion";
+      default: return "";
+    }
+  })();
+
   return (
     <div className={s.session}>
       <div className={s.grid}>
@@ -153,24 +165,16 @@ export default function LyaInterviewSession({
 
       <div className={s.bottomBar}>
         <div className={s.questionArea}>
-          <p className={s.questionText}>
-            {lyaState === "connecting" && "Connexion en cours…"}
-            {lyaState === "speaking" && "Lya vous parle — écoutez…"}
-            {lyaState === "listening" && "Lya vous écoute — parlez naturellement"}
-            {lyaState === "ready" && "Entretien en cours"}
-            {lyaState === "idle" && "En attente de connexion"}
-            {lyaState === "error" && "Erreur de connexion"}
-          </p>
+          <p className={s.questionText}>{stateLabel}</p>
         </div>
 
         <div className={s.controls}>
           {isRecording && (
             <button type="button" className={s.stopBtn} onClick={finishInterview}>
               <span className={s.stopIcon} />
-              Terminer l'entretien
+              Terminer
             </button>
           )}
-
           <button type="button" className={s.cancelBtn} onClick={handleCancel}>
             Quitter
           </button>
