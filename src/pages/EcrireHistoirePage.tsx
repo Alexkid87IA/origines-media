@@ -823,9 +823,9 @@ export default function EcrireHistoirePage() {
     setStep(0);
   }, [updateDraft]);
 
-  const handleLyaInterviewComplete = useCallback((blobs: Blob[], transcripts: { question: string; answer: string }[]) => {
+  const handleLyaInterviewComplete = useCallback((blobs: Blob[]) => {
     setVideoBlobs(blobs);
-    setVideoQuestionLabels(transcripts.map((t) => t.question));
+    setVideoQuestionLabels(["Entretien avec Lya"]);
     goNext();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1703,10 +1703,6 @@ export default function EcrireHistoirePage() {
                 <div className={s.videoRecorderWrap}>
                   <LyaInterviewSession
                     context={{ intention: draft.intention || "temoigner", sujet: draft.sujet || "autre" }}
-                    openingQuestion={{
-                      label: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).question,
-                      hint: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).hint,
-                    }}
                     onComplete={handleLyaInterviewComplete}
                     onCancel={handleVideoCancel}
                   />

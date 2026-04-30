@@ -4,27 +4,34 @@ import {
   SessionEvent,
   SessionState,
   AgentEventsEnum,
+  SessionInteractivityMode,
 } from "@heygen/liveavatar-web-sdk";
 
 export type LyaState = "idle" | "connecting" | "ready" | "speaking" | "listening" | "error";
 
+interface FetchTokenOpts {
+  intention?: string;
+  sujet?: string;
+}
+
 interface UseLyaSessionReturn {
   state: LyaState;
   error: string | null;
-  connect: (videoEl: HTMLVideoElement) => Promise<void>;
-  speak: (text: string) => void;
-  interrupt: () => void;
+  connect: (videoEl: HTMLVideoElement, opts?: FetchTokenOpts) => Promise<void>;
   disconnect: () => Promise<void>;
   isSpeaking: boolean;
 }
 
-async function fetchAccessToken(): Promise<string> {
+async function fetchAccessToken(opts?: FetchTokenOpts): Promise<string> {
   const { getAuthHeaders } = await import("@/lib/authFetch");
   const headers = await getAuthHeaders();
   const res = await fetch("/api/heygen/token", {
     method: "POST",
     headers,
-    body: JSON.stringify({}),
+    body: JSON.stringify({
+      intention: opts?.intention || "",
+      sujet: opts?.sujet || "",
+    }),
   });
   if (!res.ok) throw new Error("Failed to get LiveAvatar token");
   const data = await res.json();
@@ -36,7 +43,6 @@ export function useLyaSession(): UseLyaSessionReturn {
   const [error, setError] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const sessionRef = useRef<LiveAvatarSession | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const cleanup = useCallback(async () => {
     if (sessionRef.current) {
@@ -53,16 +59,17 @@ export function useLyaSession(): UseLyaSessionReturn {
     return () => { cleanup(); };
   }, [cleanup]);
 
-  const connect = useCallback(async (videoEl: HTMLVideoElement) => {
+  const connect = useCallback(async (videoEl: HTMLVideoElement, opts?: FetchTokenOpts) => {
     await cleanup();
     setState("connecting");
     setError(null);
-    videoRef.current = videoEl;
 
     try {
-      const token = await fetchAccessToken();
+      const token = await fetchAccessToken(opts);
       const session = new LiveAvatarSession(token, {
-        voiceChat: false,
+        voiceChat: {
+          mode: SessionInteractivityMode.CONVERSATIONAL,
+        },
       });
 
       session.on(SessionEvent.SESSION_STATE_CHANGED, (s: SessionState) => {
@@ -82,7 +89,7 @@ export function useLyaSession(): UseLyaSessionReturn {
 
       session.on(AgentEventsEnum.AVATAR_SPEAK_ENDED, () => {
         setIsSpeaking(false);
-        setState("ready");
+        setState("listening");
       });
 
       session.on(AgentEventsEnum.SESSION_STOPPED, () => {
@@ -91,18 +98,6 @@ export function useLyaSession(): UseLyaSessionReturn {
 
       sessionRef.current = session;
       await session.start();
-
-      // SDK bug: sendCommandEventToWebSocket silently drops AVATAR_SPEAK_TEXT.
-      // The 1st repeat() works because it races the WebSocket open,
-      // but all subsequent calls are lost. Force LiveKit data channel.
-      const ws = (session as unknown as { _sessionEventSocket: WebSocket | null })._sessionEventSocket;
-      if (ws) {
-        ws.onclose = null;
-        ws.onmessage = null;
-        ws.onerror = null;
-        ws.close();
-        (session as unknown as { _sessionEventSocket: WebSocket | null })._sessionEventSocket = null;
-      }
     } catch (err) {
       console.error("[LyaAvatar] Connection failed:", err);
       setError(err instanceof Error ? err.message : "Connexion échouée");
@@ -110,22 +105,11 @@ export function useLyaSession(): UseLyaSessionReturn {
     }
   }, [cleanup]);
 
-  const speak = useCallback((text: string) => {
-    if (!sessionRef.current || sessionRef.current.state !== SessionState.CONNECTED) return;
-    sessionRef.current.repeat(text);
-  }, []);
-
-  const interrupt = useCallback(() => {
-    if (!sessionRef.current) return;
-    sessionRef.current.interrupt();
-    setIsSpeaking(false);
-  }, []);
-
   const disconnect = useCallback(async () => {
     await cleanup();
     setState("idle");
     setIsSpeaking(false);
   }, [cleanup]);
 
-  return { state, error, connect, speak, interrupt, disconnect, isSpeaking };
+  return { state, error, connect, disconnect, isSpeaking };
 }

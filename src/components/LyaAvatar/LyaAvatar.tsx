@@ -4,14 +4,13 @@ import s from "./LyaAvatar.module.css";
 
 interface LyaAvatarProps {
   autoConnect?: boolean;
+  intention?: string;
+  sujet?: string;
   onStateChange?: (state: LyaState) => void;
-  onSpeakEnd?: () => void;
   className?: string;
 }
 
 export interface LyaAvatarHandle {
-  speak: (text: string) => void;
-  interrupt: () => void;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   state: LyaState;
@@ -20,32 +19,27 @@ export interface LyaAvatarHandle {
 
 export default function LyaAvatar({
   autoConnect = false,
+  intention,
+  sujet,
   onStateChange,
-  onSpeakEnd,
   className,
 }: LyaAvatarProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { state, error, connect, speak, interrupt, disconnect, isSpeaking } = useLyaSession();
+  const { state, error, connect, disconnect, isSpeaking } = useLyaSession();
 
   useEffect(() => {
     onStateChange?.(state);
   }, [state, onStateChange]);
 
   useEffect(() => {
-    if (state === "ready" && !isSpeaking) {
-      onSpeakEnd?.();
-    }
-  }, [state, isSpeaking, onSpeakEnd]);
-
-  useEffect(() => {
     if (autoConnect && videoRef.current && state === "idle") {
-      connect(videoRef.current);
+      connect(videoRef.current, { intention, sujet });
     }
-  }, [autoConnect, connect, state]);
+  }, [autoConnect, connect, state, intention, sujet]);
 
   const handleConnect = useCallback(async () => {
-    if (videoRef.current) await connect(videoRef.current);
-  }, [connect]);
+    if (videoRef.current) await connect(videoRef.current, { intention, sujet });
+  }, [connect, intention, sujet]);
 
   return (
     <div className={`${s.wrap} ${className || ""}`} data-state={state}>
@@ -93,60 +87,39 @@ export default function LyaAvatar({
           </span>
         </div>
       )}
-
-      {/* Imperative API exposed via ref pattern — parent uses lyaRef */}
-      <LyaImperativeApi speak={speak} interrupt={interrupt} connect={handleConnect} disconnect={disconnect} state={state} isSpeaking={isSpeaking} />
     </div>
   );
 }
-
-import { forwardRef, useImperativeHandle } from "react";
-
-const LyaImperativeApi = forwardRef<LyaAvatarHandle, Omit<LyaAvatarHandle, "connect"> & { connect: () => Promise<void> }>(
-  function LyaImperativeApi(_props, _ref) {
-    return null;
-  }
-);
-
-export { LyaImperativeApi };
 
 export function LyaAvatarWithRef(
   props: LyaAvatarProps & { lyaRef: React.MutableRefObject<LyaAvatarHandle | null> }
 ) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { state, error, connect, speak, interrupt, disconnect, isSpeaking } = useLyaSession();
-  const { lyaRef, autoConnect, onStateChange, onSpeakEnd, className } = props;
+  const { state, error, connect, disconnect, isSpeaking } = useLyaSession();
+  const { lyaRef, autoConnect, intention, sujet, onStateChange, className } = props;
 
   useEffect(() => {
     lyaRef.current = {
-      speak,
-      interrupt,
-      connect: async () => { if (videoRef.current) await connect(videoRef.current); },
+      connect: async () => { if (videoRef.current) await connect(videoRef.current, { intention, sujet }); },
       disconnect,
       state,
       isSpeaking,
     };
-  }, [lyaRef, speak, interrupt, connect, disconnect, state, isSpeaking]);
+  }, [lyaRef, connect, disconnect, state, isSpeaking, intention, sujet]);
 
   useEffect(() => {
     onStateChange?.(state);
   }, [state, onStateChange]);
 
   useEffect(() => {
-    if (state === "ready" && !isSpeaking) {
-      onSpeakEnd?.();
-    }
-  }, [state, isSpeaking, onSpeakEnd]);
-
-  useEffect(() => {
     if (autoConnect && videoRef.current && state === "idle") {
-      connect(videoRef.current);
+      connect(videoRef.current, { intention, sujet });
     }
-  }, [autoConnect, connect, state]);
+  }, [autoConnect, connect, state, intention, sujet]);
 
   const handleConnect = useCallback(async () => {
-    if (videoRef.current) await connect(videoRef.current);
-  }, [connect]);
+    if (videoRef.current) await connect(videoRef.current, { intention, sujet });
+  }, [connect, intention, sujet]);
 
   return (
     <div className={`${s.wrap} ${className || ""}`} data-state={state}>
