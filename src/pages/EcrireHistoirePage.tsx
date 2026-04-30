@@ -18,7 +18,7 @@ import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Breadcrumb from '@/components/ui/Breadcrumb';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2, Compass, Film, HeartHandshake, PenLine, Play, ShieldCheck, Users, Video, type LucideIcon } from "lucide-react";
 import s from "./EcrireHistoirePage.module.css";
 
@@ -498,6 +498,29 @@ const PROMPTS = [
 
 const STEPS_TEXT = ["Bienvenue", "Thématique", "Récit", "Identité", "Relecture"];
 const STEPS_VIDEO = ["Bienvenue", "Thématique", "Enregistrement", "Identité", "Relecture"];
+
+const LYA_STEP_MESSAGES: Record<number, { text: string; sub?: string }> = {
+  0: {
+    text: "Bonjour ! Je suis Lya, je vous accompagne tout au long de ce parcours. Prenez votre temps — il n'y a aucune pression.",
+    sub: "Plus de 200 témoignages recueillis — chaque histoire compte.",
+  },
+  1: {
+    text: "Ces deux choix m'aident à mieux vous guider. Il n'y a pas de mauvaise réponse — suivez votre instinct.",
+    sub: "Ça prend 10 secondes. Deux clics, c'est tout.",
+  },
+  2: {
+    text: "C'est le cœur du parcours. Racontez comme vous le sentez — je suis là si vous avez besoin d'un coup de pouce.",
+    sub: "Pas de jugement, pas de filtre. Votre voix, vos mots.",
+  },
+  3: {
+    text: "On y est presque ! Choisissez comment vous souhaitez apparaître. Tout est modifiable après.",
+    sub: "Votre anonymat est garanti à 100% si vous le souhaitez.",
+  },
+  4: {
+    text: "Relisez tranquillement. Rien ne sera publié sans votre accord explicite — vous gardez le contrôle total.",
+    sub: "L'équipe éditoriale relira votre texte avec le plus grand soin.",
+  },
+};
 
 /* ================================================================
    HERO + REASSURANCE DATA
@@ -1323,6 +1346,31 @@ export default function EcrireHistoirePage() {
           {/* ── Wizard ── */}
           {(
             <>
+              {/* ── Lya companion ── */}
+              <div className={s.lyaCompanion}>
+                <div className={s.lyaCompanionAvatar}>
+                  <span className={s.lyaCompanionDot} />
+                </div>
+                <div className={s.lyaCompanionContent}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={step}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p className={s.lyaCompanionText}>
+                        <AllyaTypewriter text={LYA_STEP_MESSAGES[step]?.text || ""} speed={18} />
+                      </p>
+                      {LYA_STEP_MESSAGES[step]?.sub && (
+                        <p className={s.lyaCompanionSub}>{LYA_STEP_MESSAGES[step].sub}</p>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+
               {/* ── Progress bar ── */}
               <div className={s.progressWrap}>
                 <div className={s.progressBar}>
@@ -1344,6 +1392,14 @@ export default function EcrireHistoirePage() {
               </div>
 
               <div className={s.stageWrap}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
 
           {/* ════════════════════════════════════════════════
              STEP 0 — Bienvenue
@@ -1551,6 +1607,18 @@ export default function EcrireHistoirePage() {
                 </div>
               </div>
 
+              {draft.intention && (
+                <motion.div
+                  className={s.reassuranceBadge}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                  <span>Parfait ! Encore une question et on passe à la suite.</span>
+                </motion.div>
+              )}
+
               {/* Sujets */}
               <div id="step1-sujet" className={s.sectionQuestion}>
                 <div className={s.sectionQuestionHeader}>
@@ -1593,6 +1661,18 @@ export default function EcrireHistoirePage() {
                 <p className={s.validationHint}>
                   {!draft.intention ? "Sélectionnez une intention ci-dessus pour continuer." : "Sélectionnez un sujet ci-dessus pour continuer."}
                 </p>
+              )}
+
+              {canProceed() && (
+                <motion.div
+                  className={s.reassuranceBadge}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                  <span>Vos choix restent confidentiels. Ils servent uniquement à personnaliser les questions.</span>
+                </motion.div>
               )}
 
               <div id="step1-nav" className={s.stepNav}>
@@ -2537,6 +2617,8 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
             </section>
           )}
 
+                </motion.div>
+              </AnimatePresence>
               </div>
             </>
           )}
