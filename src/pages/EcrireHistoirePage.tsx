@@ -13,6 +13,7 @@ import Card from "@/components/ui/Card";
 import { sanityFetch } from "@/lib/sanity";
 import { VIDEOS_SECTION_QUERY } from "@/lib/queries";
 import { useAuth } from "@/contexts/AuthContext";
+import { getAuthHeaders } from "@/lib/authFetch";
 import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -744,23 +745,25 @@ export default function EcrireHistoirePage() {
       await setDoc(draftRef, { submitted: true, updatedAt: serverTimestamp() });
 
       // Notify editorial team (fire and forget)
-      fetch("/api/interview/notify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.uid,
-          userEmail: user.email,
-          userName: user.displayName,
-          format: draft.format,
-          intention: draft.intention,
-          sujet: draft.sujet,
-          identite: draft.identite,
-          pseudonyme: resolvedPseudo,
-          videoCount: videoUrls.length,
-          wordCount,
-          videoUrls,
-        }),
-      }).catch(() => {});
+      getAuthHeaders().then(h =>
+        fetch("/api/interview/notify", {
+          method: "POST",
+          headers: h,
+          body: JSON.stringify({
+            userId: user.uid,
+            userEmail: user.email,
+            userName: user.displayName,
+            format: draft.format,
+            intention: draft.intention,
+            sujet: draft.sujet,
+            identite: draft.identite,
+            pseudonyme: resolvedPseudo,
+            videoCount: videoUrls.length,
+            wordCount,
+            videoUrls,
+          }),
+        })
+      ).catch(() => {});
 
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -848,9 +851,10 @@ export default function EcrireHistoirePage() {
       const jsonBody = JSON.stringify({ audio: base64, mimeType: blob.type });
       console.log("[VideoAI] Sending to /api/interview/transcribe, payload:", Math.round(jsonBody.length / 1024), "KB");
 
+      const authH = await getAuthHeaders();
       const transcribeRes = await fetch("/api/interview/transcribe", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authH,
         body: jsonBody,
       });
 
@@ -866,9 +870,10 @@ export default function EcrireHistoirePage() {
       videoHistoryRef.current.push({ question: questionLabel, answer: text });
       videoExchangeCount.current++;
 
+      const genH = await getAuthHeaders();
       const lyaRes = await fetch("/api/interview/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: genH,
         body: JSON.stringify({
           intention: draft.intention || "temoigner",
           sujet: draft.sujet || "autre",
@@ -947,9 +952,10 @@ export default function EcrireHistoirePage() {
       .map((a) => ({ question: a.question, answer: a.answer }));
 
     try {
+      const allyaHeaders = await getAuthHeaders();
       const res = await fetch("/api/interview/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: allyaHeaders,
         body: JSON.stringify({
           intention: draft.intention || "temoigner",
           sujet: draft.sujet || "autre",

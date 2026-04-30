@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { verifyAuth } from "../_lib/verifyAuth.js";
 
 export const config = {
   api: {
@@ -11,6 +12,11 @@ export const config = {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const user = await verifyAuth(req);
+  if (!user) {
+    return res.status(401).json({ error: "Authentication required" });
   }
 
   const apiKey = process.env.OPENAI_API_KEY;

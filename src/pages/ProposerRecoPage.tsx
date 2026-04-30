@@ -6,6 +6,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
+import { getAuthHeaders } from "@/lib/authFetch";
 import s from "./ProposerRecoPage.module.css";
 
 /* ================================================================
@@ -103,9 +104,10 @@ export default function ProposerRecoPage() {
     updateItem(id, { loading: true, lien: url });
 
     try {
+      const headers = await getAuthHeaders();
       const res = await fetch("/api/reco/enrich", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ url }),
       });
       if (res.ok) {
@@ -156,9 +158,10 @@ export default function ProposerRecoPage() {
     setError("");
 
     try {
+      const authHeaders = await getAuthHeaders();
       const res = await fetch("/api/reco/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           type: category,
           titre: titre.trim(),

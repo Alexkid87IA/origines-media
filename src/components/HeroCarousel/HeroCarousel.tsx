@@ -118,7 +118,7 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
             className={s.mainCol}
           >
             <img
-              src={video.thumbnail}
+              src={sanityImg(video.thumbnail, 1200)}
               alt={video.title}
               className={s.mainColImg}
               fetchpriority="high"

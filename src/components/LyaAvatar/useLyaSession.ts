@@ -19,9 +19,11 @@ interface UseLyaSessionReturn {
 }
 
 async function fetchAccessToken(): Promise<string> {
+  const { getAuthHeaders } = await import("@/lib/authFetch");
+  const headers = await getAuthHeaders();
   const res = await fetch("/api/heygen/token", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({}),
   });
   if (!res.ok) throw new Error("Failed to get LiveAvatar token");

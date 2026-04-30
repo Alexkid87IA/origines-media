@@ -8,7 +8,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const secret = req.headers['x-revalidate-secret'] || req.query.secret
-  if (REVALIDATE_SECRET && secret !== REVALIDATE_SECRET) {
+  if (!REVALIDATE_SECRET || secret !== REVALIDATE_SECRET) {
     return res.status(401).json({ error: 'Invalid secret' })
   }
 

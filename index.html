@@ -98,6 +98,29 @@
       .js-loaded { opacity: 1; transition: opacity 0.3s; }
     </style>
 
+    <!-- Preload LCP hero fallback (video thumbnail) so it renders before JS -->
+    <link rel="preload" as="image" href="/covers/cover-03.webp" fetchpriority="high" />
+
+    <!-- Prefetch hero data from Sanity so the CMS image URL is known early -->
+    <script>
+      (function(){
+        var q = encodeURIComponent('coalesce(*[_id=="siteSettings"][0].videoALaUne->{"imageUrl":coalesce(image.asset->url,imageUrl)},*[_type=="production"&&rubrique=="videos"&&defined(videoUrl)&&isOriginal==true]|order(datePublication desc)[0]{"imageUrl":coalesce(image.asset->url,imageUrl)})');
+        var isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        var base = isDev ? '/sanity-api' : 'https://r941i081.apicdn.sanity.io';
+        fetch(base+'/v2024-03-01/data/query/production?query='+q)
+          .then(function(r){return r.json()})
+          .then(function(d){
+            var url=d&&d.result&&d.result.imageUrl;
+            if(url){
+              var link=document.createElement('link');
+              link.rel='preload';link.as='image';link.fetchPriority='high';
+              link.href=url+'?fm=webp&w=1200&q=80&fit=max';
+              document.head.appendChild(link);
+            }
+          }).catch(function(){});
+      })();
+    </script>
+
     <!-- Preconnect to external domains for faster loading -->
     <link rel="preconnect" href="https://cdn.sanity.io" />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />

@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import Anthropic from "@anthropic-ai/sdk";
+import { verifyAuth } from "../_lib/verifyAuth.js";
 
 interface QAPair {
   question: string;
@@ -159,6 +160,11 @@ const SUJET_LABELS: Record<string, string> = {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const user = await verifyAuth(req);
+  if (!user) {
+    return res.status(401).json({ error: "Authentication required" });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;

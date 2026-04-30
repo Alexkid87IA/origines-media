@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { LyaAvatarWithRef, type LyaAvatarHandle } from "./LyaAvatar";
 import type { LyaState } from "./useLyaSession";
+import { getAuthHeaders } from "@/lib/authFetch";
 import s from "./LyaInterviewSession.module.css";
 
 interface Question {
@@ -130,9 +131,10 @@ export default function LyaInterviewSession({
 
     try {
       const base64 = await blobToBase64(blob);
+      const tHeaders = await getAuthHeaders();
       const transcribeRes = await fetch("/api/interview/transcribe", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: tHeaders,
         body: JSON.stringify({ audio: base64, mimeType: blob.type }),
       });
 
@@ -155,9 +157,10 @@ export default function LyaInterviewSession({
       const nextExchange = exchangeCount + 1;
       setExchangeCount(nextExchange);
 
+      const gHeaders = await getAuthHeaders();
       const generateRes = await fetch("/api/interview/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: gHeaders,
         body: JSON.stringify({
           intention: context.intention || "temoigner",
           sujet: context.sujet || "autre",

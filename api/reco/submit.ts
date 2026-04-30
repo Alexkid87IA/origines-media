@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { verifyAuth } from "../_lib/verifyAuth.js";
 
 interface RecoItem {
   titre: string;
@@ -51,9 +52,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!body.items || body.items.length < 1 || body.items.length > 5) {
     return res.status(400).json({ error: "1 to 5 items required" });
   }
-  if (!body.userId) {
+  const user = await verifyAuth(req);
+  if (!user) {
     return res.status(401).json({ error: "Authentication required" });
   }
+  if (body.userId && body.userId !== user.uid) {
+    return res.status(403).json({ error: "User ID mismatch" });
+  }
+  body.userId = user.uid;
+  body.userEmail = user.email || body.userEmail;
 
   try {
     getApp();

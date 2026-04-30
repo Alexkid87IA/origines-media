@@ -15,7 +15,7 @@ export default function VideoCta() {
       <a href="/programmes" className={s.band}>
         <div className={s.bandImg}>
           <img
-            src="/visages-origines.png"
+            src="/visages-origines.webp"
             alt="Les visages d'Origines"
             loading="lazy"
             decoding="async"

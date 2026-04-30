@@ -7,17 +7,18 @@ interface SWConfig {
   onError?: (error: Error) => void;
 }
 
+let updateInterval: ReturnType<typeof setInterval> | null = null;
+
 export function registerServiceWorker(config: SWConfig = {}): void {
   if ('serviceWorker' in navigator && import.meta.env.PROD) {
-    // Attendre que la page soit complètement chargée
     window.addEventListener('load', async () => {
       try {
         const registration = await navigator.serviceWorker.register('/sw.js', {
           scope: '/',
         });
 
-        // Vérifier les mises à jour périodiquement (toutes les heures)
-        setInterval(() => {
+        if (updateInterval) clearInterval(updateInterval);
+        updateInterval = setInterval(() => {
           registration.update();
         }, 60 * 60 * 1000);
 
