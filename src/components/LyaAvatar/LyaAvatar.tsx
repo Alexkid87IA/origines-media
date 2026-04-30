@@ -1,0 +1,199 @@
+import { useRef, useEffect, useCallback } from "react";
+import { useLyaSession, type LyaState } from "./useLyaSession";
+import s from "./LyaAvatar.module.css";
+
+interface LyaAvatarProps {
+  autoConnect?: boolean;
+  onStateChange?: (state: LyaState) => void;
+  onSpeakEnd?: () => void;
+  className?: string;
+}
+
+export interface LyaAvatarHandle {
+  speak: (text: string) => void;
+  interrupt: () => void;
+  connect: () => Promise<void>;
+  disconnect: () => Promise<void>;
+  state: LyaState;
+  isSpeaking: boolean;
+}
+
+export default function LyaAvatar({
+  autoConnect = false,
+  onStateChange,
+  onSpeakEnd,
+  className,
+}: LyaAvatarProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { state, error, connect, speak, interrupt, disconnect, isSpeaking } = useLyaSession();
+
+  useEffect(() => {
+    onStateChange?.(state);
+  }, [state, onStateChange]);
+
+  useEffect(() => {
+    if (state === "ready" && !isSpeaking) {
+      onSpeakEnd?.();
+    }
+  }, [state, isSpeaking, onSpeakEnd]);
+
+  useEffect(() => {
+    if (autoConnect && videoRef.current && state === "idle") {
+      connect(videoRef.current);
+    }
+  }, [autoConnect, connect, state]);
+
+  const handleConnect = useCallback(async () => {
+    if (videoRef.current) await connect(videoRef.current);
+  }, [connect]);
+
+  return (
+    <div className={`${s.wrap} ${className || ""}`} data-state={state}>
+      <video
+        ref={videoRef}
+        className={s.video}
+        autoPlay
+        playsInline
+        muted={false}
+      />
+
+      {state === "idle" && (
+        <button type="button" className={s.startBtn} onClick={handleConnect}>
+          <div className={s.startIcon}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
+            </svg>
+          </div>
+          <span className={s.startLabel}>Lancer l'entretien avec Lya</span>
+        </button>
+      )}
+
+      {state === "connecting" && (
+        <div className={s.overlay}>
+          <div className={s.spinner} />
+          <span className={s.overlayLabel}>Connexion à Lya…</span>
+        </div>
+      )}
+
+      {state === "error" && (
+        <div className={s.overlay}>
+          <span className={s.errorText}>{error || "Erreur de connexion"}</span>
+          <button type="button" className={s.retryBtn} onClick={handleConnect}>
+            Réessayer
+          </button>
+        </div>
+      )}
+
+      {(state === "speaking" || state === "ready" || state === "listening") && (
+        <div className={s.statusBar}>
+          <span className={`${s.statusDot} ${state === "speaking" ? s.statusDotActive : ""}`} />
+          <span className={s.statusLabel}>
+            {state === "speaking" ? "Lya parle…" : "Lya écoute"}
+          </span>
+        </div>
+      )}
+
+      {/* Imperative API exposed via ref pattern — parent uses lyaRef */}
+      <LyaImperativeApi speak={speak} interrupt={interrupt} connect={handleConnect} disconnect={disconnect} state={state} isSpeaking={isSpeaking} />
+    </div>
+  );
+}
+
+import { forwardRef, useImperativeHandle } from "react";
+
+const LyaImperativeApi = forwardRef<LyaAvatarHandle, Omit<LyaAvatarHandle, "connect"> & { connect: () => Promise<void> }>(
+  function LyaImperativeApi(_props, _ref) {
+    return null;
+  }
+);
+
+export { LyaImperativeApi };
+
+export function LyaAvatarWithRef(
+  props: LyaAvatarProps & { lyaRef: React.MutableRefObject<LyaAvatarHandle | null> }
+) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { state, error, connect, speak, interrupt, disconnect, isSpeaking } = useLyaSession();
+  const { lyaRef, autoConnect, onStateChange, onSpeakEnd, className } = props;
+
+  useEffect(() => {
+    lyaRef.current = {
+      speak,
+      interrupt,
+      connect: async () => { if (videoRef.current) await connect(videoRef.current); },
+      disconnect,
+      state,
+      isSpeaking,
+    };
+  }, [lyaRef, speak, interrupt, connect, disconnect, state, isSpeaking]);
+
+  useEffect(() => {
+    onStateChange?.(state);
+  }, [state, onStateChange]);
+
+  useEffect(() => {
+    if (state === "ready" && !isSpeaking) {
+      onSpeakEnd?.();
+    }
+  }, [state, isSpeaking, onSpeakEnd]);
+
+  useEffect(() => {
+    if (autoConnect && videoRef.current && state === "idle") {
+      connect(videoRef.current);
+    }
+  }, [autoConnect, connect, state]);
+
+  const handleConnect = useCallback(async () => {
+    if (videoRef.current) await connect(videoRef.current);
+  }, [connect]);
+
+  return (
+    <div className={`${s.wrap} ${className || ""}`} data-state={state}>
+      <video
+        ref={videoRef}
+        className={s.video}
+        autoPlay
+        playsInline
+        muted={false}
+      />
+
+      {state === "idle" && (
+        <button type="button" className={s.startBtn} onClick={handleConnect}>
+          <div className={s.startIcon}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
+            </svg>
+          </div>
+          <span className={s.startLabel}>Lancer l'entretien avec Lya</span>
+        </button>
+      )}
+
+      {state === "connecting" && (
+        <div className={s.overlay}>
+          <div className={s.spinner} />
+          <span className={s.overlayLabel}>Connexion à Lya…</span>
+        </div>
+      )}
+
+      {state === "error" && (
+        <div className={s.overlay}>
+          <span className={s.errorText}>{error || "Erreur de connexion"}</span>
+          <button type="button" className={s.retryBtn} onClick={handleConnect}>
+            Réessayer
+          </button>
+        </div>
+      )}
+
+      {(state === "speaking" || state === "ready" || state === "listening") && (
+        <div className={s.statusBar}>
+          <span className={`${s.statusDot} ${state === "speaking" ? s.statusDotActive : ""}`} />
+          <span className={s.statusLabel}>
+            {state === "speaking" ? "Lya parle…" : "Lya écoute"}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}

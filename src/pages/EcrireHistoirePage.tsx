@@ -7,6 +7,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import VideoRecorder from "@/components/VideoRecorder/VideoRecorder";
+import LyaInterviewSession from "@/components/LyaAvatar/LyaInterviewSession";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { sanityFetch } from "@/lib/sanity";
@@ -56,7 +57,7 @@ function AllyaTypewriter({ text, speed = 22 }: { text: string; speed?: number })
    ================================================================ */
 
 type StoryFormat = "texte" | "video";
-type WriteMode = "simple" | "guide";
+type WriteMode = "simple" | "guide" | "avatar";
 
 interface GuidedAnswer {
   questionId: string;
@@ -818,6 +819,12 @@ export default function EcrireHistoirePage() {
     updateDraft({ format: "texte" });
     setStep(0);
   }, [updateDraft]);
+
+  const handleLyaInterviewComplete = useCallback((blobs: Blob[], transcripts: { question: string; answer: string }[]) => {
+    setVideoBlobs(blobs);
+    setVideoQuestionLabels(transcripts.map((t) => t.question));
+    goNext();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const videoHistoryRef = useRef<{ question: string; answer: string }[]>([]);
   const videoExchangeCount = useRef(0);
@@ -1587,20 +1594,35 @@ export default function EcrireHistoirePage() {
               <div className={s.stepHeader}>
                 <span className={s.stepKicker}>Étape 3 sur 5</span>
                 <h2 className={s.stepTitle}>
-                  {draft.writeMode === "guide"
-                    ? <>Allya vous <em>guide.</em></>
-                    : <>Enregistrez votre <em>témoignage.</em></>
+                  {draft.writeMode === "avatar"
+                    ? <>Lya vous <em>interviewe.</em></>
+                    : draft.writeMode === "guide"
+                      ? <>Allya vous <em>guide.</em></>
+                      : <>Enregistrez votre <em>témoignage.</em></>
                   }
                 </h2>
                 <p className={s.stepDeck}>
-                  {draft.writeMode === "guide"
-                    ? "Notre journaliste IA Allya vous pose des questions en temps réel, adaptées à votre récit. Répondez face caméra — elle s'occupe du reste."
-                    : "6 questions s'affichent à l'écran, une par une. Répondez naturellement, comme si vous parliez à un ami. 2 minutes max par question. Prenez votre temps — les indications sous chaque question sont là pour vous aider."
+                  {draft.writeMode === "avatar"
+                    ? "Lya, notre journaliste IA, apparaît en vidéo et vous pose ses questions en direct. Répondez face caméra, naturellement."
+                    : draft.writeMode === "guide"
+                      ? "Notre journaliste IA Allya vous pose des questions en temps réel, adaptées à votre récit. Répondez face caméra — elle s'occupe du reste."
+                      : "6 questions s'affichent à l'écran, une par une. Répondez naturellement, comme si vous parliez à un ami. 2 minutes max par question. Prenez votre temps — les indications sous chaque question sont là pour vous aider."
                   }
                 </p>
               </div>
 
               <div className={s.modeToggle}>
+                <button
+                  className={`${s.modeBtn} ${draft.writeMode === "avatar" ? s.modeBtnActive : ""}`}
+                  onClick={() => updateDraft({ writeMode: "avatar" })}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
+                  </svg>
+                  Entretien avec Lya
+                  <span className={s.modeBadge}>Nouveau</span>
+                </button>
                 <button
                   className={`${s.modeBtn} ${draft.writeMode === "guide" ? s.modeBtnActive : ""}`}
                   onClick={() => updateDraft({ writeMode: "guide" })}
@@ -1625,6 +1647,29 @@ export default function EcrireHistoirePage() {
                 </button>
               </div>
 
+              {draft.writeMode === "avatar" && (
+                <div className={s.videoLyaPanel}>
+                  <div className={s.videoLyaPanelHeader}>
+                    <span className={s.videoLyaPanelKicker}>Entretien vidéo avec avatar IA</span>
+                    <strong>Lya vous pose ses questions en vidéo, face à face.</strong>
+                  </div>
+                  <div className={s.videoLyaPanelGrid}>
+                    <div className={s.videoLyaPanelItem}>
+                      <span>01</span>
+                      <p>Lya apparaît à l'écran et vous guide</p>
+                    </div>
+                    <div className={s.videoLyaPanelItem}>
+                      <span>02</span>
+                      <p>Questions adaptées en temps réel</p>
+                    </div>
+                    <div className={s.videoLyaPanelItem}>
+                      <span>03</span>
+                      <p>Vos réponses sont enregistrées face caméra</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {draft.writeMode === "guide" && (
                 <div className={s.videoLyaPanel}>
                   <div className={s.videoLyaPanelHeader}>
@@ -1648,17 +1693,31 @@ export default function EcrireHistoirePage() {
                 </div>
               )}
 
-              <div className={s.videoRecorderWrap}>
-                <VideoRecorder
-                  key={draft.writeMode}
-                  questions={draft.writeMode === "guide"
-                    ? [{ label: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).question, hint: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).hint }]
-                    : VIDEO_QUESTIONS}
-                  onComplete={handleVideoComplete}
-                  onCancel={handleVideoCancel}
-                  onAfterRecord={draft.writeMode === "guide" ? handleVideoAiRecord : undefined}
-                />
-              </div>
+              {draft.writeMode === "avatar" ? (
+                <div className={s.videoRecorderWrap}>
+                  <LyaInterviewSession
+                    context={{ intention: draft.intention || "temoigner", sujet: draft.sujet || "autre" }}
+                    openingQuestion={{
+                      label: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).question,
+                      hint: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).hint,
+                    }}
+                    onComplete={handleLyaInterviewComplete}
+                    onCancel={handleVideoCancel}
+                  />
+                </div>
+              ) : (
+                <div className={s.videoRecorderWrap}>
+                  <VideoRecorder
+                    key={draft.writeMode}
+                    questions={draft.writeMode === "guide"
+                      ? [{ label: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).question, hint: (VIDEO_LYA_OPENERS[draft.sujet || "autre"] || VIDEO_LYA_OPENERS.autre).hint }]
+                      : VIDEO_QUESTIONS}
+                    onComplete={handleVideoComplete}
+                    onCancel={handleVideoCancel}
+                    onAfterRecord={draft.writeMode === "guide" ? handleVideoAiRecord : undefined}
+                  />
+                </div>
+              )}
             </section>
           )}
 
