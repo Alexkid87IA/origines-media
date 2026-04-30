@@ -1625,6 +1625,11 @@ export default function EcrireHistoirePage() {
             <section className={s.thematic}>
               <div className={s.stepHeader}>
                 <span className={s.stepKicker}>Étape 2 sur 5</span>
+                <button type="button" className={s.formatBadge} onClick={() => setStep(0)} title="Changer de format">
+                  <span className={s.formatBadgeIcon}>{draft.format === "video" ? <Video size={13} /> : <PenLine size={13} />}</span>
+                  Format : {draft.format === "video" ? "Vidéo" : "Écrit"}
+                  <span className={s.formatBadgeChange}>modifier</span>
+                </button>
                 <h2 className={s.stepTitle}>Aidez-nous à comprendre votre <em>histoire.</em></h2>
                 <p className={s.stepDeck}>
                   Deux questions rapides pour mieux accompagner votre {draft.format === "video" ? "témoignage" : "récit"}.
@@ -1761,6 +1766,11 @@ export default function EcrireHistoirePage() {
             <section className={s.videoStep}>
               <div className={s.stepHeader}>
                 <span className={s.stepKicker}>Étape 3 sur 5</span>
+                <button type="button" className={s.formatBadge} onClick={() => setStep(0)} title="Changer de format">
+                  <span className={s.formatBadgeIcon}><Video size={13} /></span>
+                  Format : Vidéo
+                  <span className={s.formatBadgeChange}>modifier</span>
+                </button>
                 <h2 className={s.stepTitle}>
                   {draft.writeMode === "avatar"
                     ? <>Lya vous <em>interviewe.</em></>
@@ -1923,6 +1933,11 @@ export default function EcrireHistoirePage() {
             <section className={s.writing}>
               <div className={s.writingHeader}>
                 <span className={s.stepKicker}>Étape 3 sur 5</span>
+                <button type="button" className={s.formatBadge} onClick={() => setStep(0)} title="Changer de format">
+                  <span className={s.formatBadgeIcon}><PenLine size={13} /></span>
+                  Format : Écrit
+                  <span className={s.formatBadgeChange}>modifier</span>
+                </button>
                 <h2 className={s.stepTitle}>
                   {draft.writeMode === "guide" ? <>Racontez, on vous <em>guide.</em></> : <>Écrivez votre <em>récit.</em></>}
                 </h2>
@@ -2302,6 +2317,11 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
             <section className={s.identity}>
               <div className={s.stepHeader}>
                 <span className={s.stepKicker}>Étape 4 sur 5</span>
+                <button type="button" className={s.formatBadge} onClick={() => setStep(0)} title="Changer de format">
+                  <span className={s.formatBadgeIcon}>{draft.format === "video" ? <Video size={13} /> : <PenLine size={13} />}</span>
+                  Format : {draft.format === "video" ? "Vidéo" : "Écrit"}
+                  <span className={s.formatBadgeChange}>modifier</span>
+                </button>
                 <h2 className={s.stepTitle}>Comment souhaitez-vous <em>apparaître ?</em></h2>
                 <p className={s.stepDeck}>
                   Vous gardez le contrôle total. Rien ne sera publié sans votre accord.
@@ -2420,6 +2440,11 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
             <section className={s.review}>
               <div className={s.stepHeader}>
                 <span className={s.stepKicker}>Étape 5 sur 5</span>
+                <button type="button" className={s.formatBadge} onClick={() => setStep(0)} title="Changer de format">
+                  <span className={s.formatBadgeIcon}>{draft.format === "video" ? <Video size={13} /> : <PenLine size={13} />}</span>
+                  Format : {draft.format === "video" ? "Vidéo" : "Écrit"}
+                  <span className={s.formatBadgeChange}>modifier</span>
+                </button>
                 <h2 className={s.stepTitle}>
                   {draft.format === "video" ? <>Vérifiez votre <em>témoignage.</em></> : <>Relisez votre <em>récit.</em></>}
                 </h2>
