@@ -20,15 +20,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const resolvedAvatarId = avatarId || process.env.HEYGEN_AVATAR_ID || "";
 
   try {
-    const response = await fetch("https://api.liveavatar.com/v1/sessions/new_access_token", {
+    const response = await fetch("https://api.liveavatar.com/v1/sessions/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
+        "X-API-KEY": apiKey,
       },
       body: JSON.stringify({
         avatar_id: resolvedAvatarId,
         mode: "LITE",
+        is_sandbox: false,
       }),
     });
 
@@ -41,7 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const data = await response.json();
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({
-      accessToken: data.access_token || data.data?.access_token,
+      accessToken: data.data?.session_token || data.session_token,
       avatarId: resolvedAvatarId,
     });
   } catch (err) {
