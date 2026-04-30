@@ -24,7 +24,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const r = await fetch("https://api.liveavatar.com/v1/sessions/token", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-API-KEY": apiKey! },
-      body: JSON.stringify({ avatar_id: id, mode: "LITE", is_sandbox: false }),
+      body: JSON.stringify({
+        avatar_id: id,
+        mode: "FULL",
+        is_sandbox: false,
+        avatar_persona: {
+          system_prompt: "Tu es Lya, journaliste pour Origines Media. Réponds toujours en français.",
+          language: "fr",
+        },
+      }),
     });
     return r;
   }

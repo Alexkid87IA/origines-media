@@ -91,18 +91,6 @@ export function useLyaSession(): UseLyaSessionReturn {
 
       sessionRef.current = session;
       await session.start();
-
-      // SDK workaround: the WebSocket path silently drops AVATAR_SPEAK_TEXT.
-      // Close it so all commands go through LiveKit data channel instead.
-      const s = session as unknown as { _sessionEventSocket: WebSocket | null };
-      if (s._sessionEventSocket) {
-        const ws = s._sessionEventSocket;
-        ws.onclose = null;
-        ws.onerror = null;
-        ws.onmessage = null;
-        ws.close();
-        s._sessionEventSocket = null;
-      }
     } catch (err) {
       console.error("[LyaAvatar] Connection failed:", err);
       setError(err instanceof Error ? err.message : "Connexion échouée");
