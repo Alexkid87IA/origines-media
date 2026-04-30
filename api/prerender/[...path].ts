@@ -6,13 +6,16 @@ import {
 } from '../_lib/constants'
 import {
   articleSchema, videoSchema, breadcrumbSchema,
-  faqSchema, organizationSchema, jsonLdTag,
+  faqSchema, organizationSchema, itemListSchema, jsonLdTag,
 } from '../_lib/jsonLd'
 import {
   ARTICLE_FULL_QUERY, VIDEO_FULL_QUERY,
   PORTRAIT_FULL_QUERY, RECOMMENDATION_FULL_QUERY,
   SERIES_FULL_QUERY, DOSSIER_FULL_QUERY,
   SUBTOPIC_ARTICLES_QUERY, LIST_ARTICLES_QUERY,
+  LIST_VIDEOS_QUERY, LIST_PORTRAITS_QUERY,
+  LIST_RECOMMENDATIONS_QUERY, LIST_SERIES_QUERY,
+  LIST_DOSSIERS_QUERY,
   fetchSanity,
 } from '../_lib/queries'
 import { renderPortableText } from '../_lib/portableTextToHtml'
@@ -107,7 +110,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
     ogType: 'website',
   }
 
-  // Static pages
+  // Static pages (some enriched with dynamic content)
   const staticMeta = STATIC_PAGES[path]
   if (staticMeta) {
     const meta: ResolvedMeta = {
@@ -120,6 +123,43 @@ async function resolveMeta(path: string): Promise<ResolvedMeta> {
     if (path === '/') {
       meta.jsonLdBlocks = [jsonLdTag(organizationSchema())]
     }
+
+    // Enrich list pages with real Sanity content
+    const listConfig: Record<string, { query: string; prefix: string; label: string }> = {
+      '/articles': { query: LIST_ARTICLES_QUERY, prefix: '/article', label: 'Articles' },
+      '/videos': { query: LIST_VIDEOS_QUERY, prefix: '/video', label: 'Vidéos' },
+      '/histoires': { query: LIST_PORTRAITS_QUERY, prefix: '/histoire', label: 'Histoires' },
+      '/temoignages': { query: LIST_PORTRAITS_QUERY, prefix: '/histoire', label: 'Témoignages' },
+      '/recommandations': { query: LIST_RECOMMENDATIONS_QUERY, prefix: '/recommandations', label: 'Recommandations' },
+      '/series': { query: LIST_SERIES_QUERY, prefix: '/series', label: 'Séries' },
+      '/dossiers': { query: LIST_DOSSIERS_QUERY, prefix: '/dossiers', label: 'Dossiers' },
+    }
+
+    const lc = listConfig[path]
+    if (lc) {
+      const items = await fetchSanity<any[]>(lc.query)
+      if (items?.length) {
+        let body = `<h2>${lc.label} récents</h2><ul>`
+        for (const item of items) {
+          body += `<li><a href="${lc.prefix}/${item.slug}">${esc(item.title)}</a>${item.description ? ` — ${esc(item.description)}` : ''}</li>`
+        }
+        body += '</ul>'
+        meta.bodyHtml = body
+        meta.breadcrumbs = [
+          { name: 'Accueil', url: '/' },
+          { name: lc.label, url: path },
+        ]
+        meta.jsonLdBlocks = [
+          jsonLdTag(itemListSchema(items.map(item => ({
+            name: item.title,
+            url: `${lc.prefix}/${item.slug}`,
+            image: item.image,
+          })))),
+          jsonLdTag(breadcrumbSchema(meta.breadcrumbs)),
+        ]
+      }
+    }
+
     return meta
   }
 

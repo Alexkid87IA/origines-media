@@ -88,6 +88,52 @@ export const LIST_ARTICLES_QUERY = `
   }
 `
 
+export const LIST_VIDEOS_QUERY = `
+  *[_type == "production" && typeArticle == "video" && defined(slug.current)] | order(datePublication desc)[0...20] {
+    "title": titre,
+    "slug": slug.current,
+    "description": coalesce(description, extrait),
+    "image": coalesce(image.asset->url, imageUrl)
+  }
+`
+
+export const LIST_PORTRAITS_QUERY = `
+  *[_type == "portrait" && defined(slug.current)] | order(_createdAt desc)[0...20] {
+    "title": titre,
+    "slug": slug.current,
+    "description": coalesce(accroche, citation),
+    "image": coalesce(image.asset->url, imageUrl)
+  }
+`
+
+export const LIST_RECOMMENDATIONS_QUERY = `
+  *[_type == "recommendation" && defined(slug.current)] | order(_createdAt desc)[0...20] {
+    "title": titre,
+    "slug": slug.current,
+    "description": coalesce(accroche, type),
+    "image": coalesce(image.asset->url, imageUrl),
+    "type": type
+  }
+`
+
+export const LIST_SERIES_QUERY = `
+  *[_type == "serie" && defined(slug.current)] | order(_createdAt desc)[0...20] {
+    "title": titre,
+    "slug": slug.current,
+    "description": description,
+    "image": coalesce(poster.asset->url, imageUrl)
+  }
+`
+
+export const LIST_DOSSIERS_QUERY = `
+  *[_type == "questionDeLaSemaine" && defined(slug.current)] | order(_createdAt desc)[0...20] {
+    "title": question,
+    "slug": slug.current,
+    "description": chapeau,
+    "image": coalesce(image.asset->url, mainImage.asset->url)
+  }
+`
+
 export const SUBTOPIC_ARTICLES_QUERY = `
   *[_type == "production" && soustopic == $soustopic && defined(slug.current)] | order(datePublication desc)[0...20] {
     "title": titre,

@@ -84,6 +84,20 @@ export function faqSchema(faqs: Array<{ question: string; answer: string }>) {
   }
 }
 
+export function itemListSchema(items: Array<{ name: string; url: string; image?: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      url: `${BASE_URL}${item.url}`,
+      ...(item.image ? { image: item.image } : {}),
+    })),
+  }
+}
+
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',

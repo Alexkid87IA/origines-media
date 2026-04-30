@@ -33,6 +33,9 @@
     "api/interview/cleanup.ts": {
       "maxDuration": 30
     },
+    "api/revalidate.ts": {
+      "maxDuration": 10
+    },
     "api/reco/enrich.ts": {
       "maxDuration": 10
     },
@@ -379,6 +382,15 @@
     },
     {
       "source": "/api/subscribe",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/revalidate",
       "headers": [
         {
           "key": "Cache-Control",
