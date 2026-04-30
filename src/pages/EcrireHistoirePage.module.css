@@ -350,26 +350,47 @@
 .lyaCompanion {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(123, 92, 214, 0.06), rgba(214, 76, 144, 0.04));
-  border: 1px solid rgba(123, 92, 214, 0.12);
-  border-radius: 12px;
-  margin-top: 24px;
+  gap: 16px;
+  max-width: 640px;
+  margin: 28px auto 0;
+  padding: 22px 24px 20px;
+  background: #fff;
+  border: none;
+  border-radius: 16px;
+  box-shadow:
+    0 1px 2px rgba(10, 10, 10, 0.04),
+    0 4px 12px rgba(10, 10, 10, 0.06),
+    0 12px 36px -8px rgba(123, 92, 214, 0.12);
+  position: relative;
+  z-index: 1;
+  transform: translateY(0);
+  transition: box-shadow 0.3s ease;
+}
+
+.lyaCompanion::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(123, 92, 214, 0.25), rgba(214, 76, 144, 0.15), rgba(46, 148, 181, 0.1));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .lyaCompanionAvatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #7B5CD6, #D64C90);
-  border-radius: 50%;
+  background: linear-gradient(145deg, #7B5CD6, #9B6FE8);
+  border-radius: 12px;
   position: relative;
+  box-shadow: 0 4px 12px -2px rgba(123, 92, 214, 0.4);
 }
 
 .lyaCompanionDot {
@@ -377,17 +398,30 @@
   height: 10px;
   background: #fff;
   border-radius: 50%;
-  animation: lyaPulse 2s ease infinite;
+  animation: lyaPulse 2.5s ease infinite;
 }
 
 @keyframes lyaPulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.8); opacity: 0.6; }
+  50% { transform: scale(0.7); opacity: 0.5; }
+}
+
+.lyaCompanionAvatar::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  background: #5AA352;
+  border: 2.5px solid #fff;
+  border-radius: 50%;
 }
 
 .lyaCompanionContent {
   flex: 1;
   min-width: 0;
+  padding-top: 2px;
 }
 
 .lyaCompanionText {
@@ -395,7 +429,7 @@
   font-size: 14px;
   line-height: 1.55;
   color: var(--ink);
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 
 .lyaCompanionSub {
@@ -410,12 +444,14 @@
 
 @media (max-width: 768px) {
   .lyaCompanion {
-    margin: 16px 16px 0;
-    padding: 16px;
+    margin: 20px 16px 0;
+    padding: 16px 18px;
     gap: 12px;
+    border-radius: 14px;
   }
-  .lyaCompanionAvatar { width: 30px; height: 30px; }
+  .lyaCompanionAvatar { width: 34px; height: 34px; border-radius: 10px; }
   .lyaCompanionDot { width: 8px; height: 8px; }
+  .lyaCompanionAvatar::after { width: 10px; height: 10px; border-width: 2px; bottom: -2px; right: -2px; }
   .lyaCompanionText { font-size: 13px; }
 }
 
