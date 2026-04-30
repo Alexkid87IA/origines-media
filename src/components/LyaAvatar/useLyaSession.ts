@@ -99,8 +99,24 @@ export function useLyaSession(): UseLyaSessionReturn {
   }, [cleanup]);
 
   const speak = useCallback((text: string) => {
-    if (!sessionRef.current || sessionRef.current.state !== SessionState.CONNECTED) return;
-    sessionRef.current.repeat(text);
+    const session = sessionRef.current;
+    if (!session || session.state !== SessionState.CONNECTED) return;
+
+    // SDK bug: sendCommandEventToWebSocket doesn't handle AVATAR_SPEAK_TEXT,
+    // so repeat() is silently dropped when a WebSocket is open.
+    // Workaround: send directly via LiveKit data channel.
+    const room = (session as unknown as { room: { state: string; localParticipant: { publishData: (data: Uint8Array, opts: { reliable: boolean; topic: string }) => void } } }).room;
+    if (room?.state === "connected") {
+      const payload = new TextEncoder().encode(JSON.stringify({
+        event_id: crypto.randomUUID(),
+        event_type: "avatar.speak_text",
+        text,
+      }));
+      room.localParticipant.publishData(payload, {
+        reliable: true,
+        topic: "agent-control",
+      });
+    }
   }, []);
 
   const interrupt = useCallback(() => {
