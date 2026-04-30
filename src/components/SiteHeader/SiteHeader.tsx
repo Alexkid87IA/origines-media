@@ -71,7 +71,7 @@ const GALAXIE = [
     name: "Vidéos",
     tagline: "Reportages, documentaires et formats courts.",
     color: "#C2410C",
-    href: "/videos",
+    href: "/programmes",
     items: [
       { label: "Reportages", href: "/videos?format=reportages" },
       { label: "Documentaires", href: "/videos?format=documentaires" },
@@ -155,13 +155,13 @@ const SECONDARY: SecondaryNav[] = [
     ],
   },
   {
-    href: "/videos",
+    href: "/programmes",
     label: "Vidéos",
     num: "02",
     hoverColor: "#E67839",
     dropdownLabel: "Par format",
     allLabel: "Toutes les vidéos",
-    allHref: "/videos",
+    allHref: "/programmes",
     items: [
       { href: "/videos?format=reportages", label: "Reportages", color: "#2E94B5" },
       { href: "/videos?format=documentaires", label: "Documentaires", color: "#7B5CD6" },

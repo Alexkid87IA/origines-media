@@ -30,7 +30,7 @@ const categories = [
 // Liens secondaires pour le menu mobile
 const secondaryLinks = [
   { name: 'Articles', href: '/articles' },
-  { name: 'Vidéos', href: '/videos' },
+  { name: 'Vidéos', href: '/programmes' },
   { name: 'Histoires', href: '/histoires' },
   { name: 'Séries', href: '/series' },
   { name: 'Recos', href: '/recommandations' },
