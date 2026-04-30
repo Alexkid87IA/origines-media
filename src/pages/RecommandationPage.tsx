@@ -334,7 +334,7 @@ const ListItemCard = memo(function ListItemCard({
             <a
               href={item.lien}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener noreferrer nofollow sponsored"
               className={s.listItemCta}
             >
               {typeConfig.ctaLabel}

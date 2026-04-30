@@ -186,7 +186,7 @@ export const V2_SPOTLIGHT_QUERY = `
 
 // Articles pour le Feed (16 derniers, avec image)
 export const V2_FEED_QUERY = `
-  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides"] | order(datePublication desc) [0...50] {
+  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides"] | order(datePublication desc) {
     _id,
     titre,
     extrait,

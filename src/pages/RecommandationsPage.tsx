@@ -185,6 +185,7 @@ interface Recommendation {
   author?: string;
   coupDeCoeur?: boolean;
   imageUrl?: string;
+  datePublication?: string;
 }
 
 interface SanityReco {
@@ -197,6 +198,7 @@ interface SanityReco {
   accroche?: string;
   slug?: string;
   imageUrl?: string;
+  datePublication?: string;
 }
 
 const typeMapping: Record<string, RecommendationType> = {
@@ -230,6 +232,7 @@ const transformSanityReco = (reco: SanityReco): Recommendation => {
     author: reco.auteur,
     coupDeCoeur: reco.coupDeCoeur,
     imageUrl: reco.imageUrl,
+    datePublication: reco.datePublication,
   };
 };
 
@@ -238,88 +241,6 @@ const transformSanityReco = (reco: SanityReco): Recommendation => {
 /* ------------------------------------------------------------------ */
 
 const ITEMS_PER_PAGE = 9;
-const MAX_PER_TYPE_FIRST_PAGE = 2;
-
-/* ------------------------------------------------------------------ */
-/*  Shuffle with diversity: max 2 of each type per "page" of 9         */
-/* ------------------------------------------------------------------ */
-
-const shuffleWithDiversity = (recos: Recommendation[]): Recommendation[] => {
-  if (recos.length === 0) return [];
-
-  const byType: Record<string, Recommendation[]> = {};
-  recos.forEach((reco) => {
-    if (!byType[reco.type]) byType[reco.type] = [];
-    byType[reco.type].push(reco);
-  });
-
-  const shuffleArray = <T,>(arr: T[]): T[] => {
-    const shuffled = [...arr];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
-
-  Object.keys(byType).forEach((key) => {
-    byType[key] = shuffleArray(byType[key]);
-  });
-
-  const result: Recommendation[] = [];
-  const typeIndices: Record<string, number> = {};
-  const typeKeys = shuffleArray(Object.keys(byType));
-  typeKeys.forEach((key) => (typeIndices[key] = 0));
-
-  const totalRecos = recos.length;
-  const numPages = Math.ceil(totalRecos / ITEMS_PER_PAGE);
-
-  for (let page = 0; page < numPages; page++) {
-    const pageTypeCount: Record<string, number> = {};
-    let addedThisPage = 0;
-    let attempts = 0;
-    const maxAttempts = typeKeys.length * ITEMS_PER_PAGE;
-
-    while (
-      addedThisPage < ITEMS_PER_PAGE &&
-      result.length < totalRecos &&
-      attempts < maxAttempts
-    ) {
-      for (const typeKey of typeKeys) {
-        if (addedThisPage >= ITEMS_PER_PAGE || result.length >= totalRecos)
-          break;
-
-        const typeCount = pageTypeCount[typeKey] || 0;
-        if (typeCount >= MAX_PER_TYPE_FIRST_PAGE) continue;
-
-        if (typeIndices[typeKey] < byType[typeKey].length) {
-          result.push(byType[typeKey][typeIndices[typeKey]]);
-          typeIndices[typeKey]++;
-          pageTypeCount[typeKey] = typeCount + 1;
-          addedThisPage++;
-        }
-      }
-      attempts++;
-    }
-
-    // Fill remaining slots if page not full
-    if (addedThisPage < ITEMS_PER_PAGE && result.length < totalRecos) {
-      for (const typeKey of typeKeys) {
-        while (
-          typeIndices[typeKey] < byType[typeKey].length &&
-          result.length < totalRecos &&
-          addedThisPage < ITEMS_PER_PAGE
-        ) {
-          result.push(byType[typeKey][typeIndices[typeKey]]);
-          typeIndices[typeKey]++;
-          addedThisPage++;
-        }
-      }
-    }
-  }
-
-  return result;
-};
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -336,6 +257,7 @@ export default function RecommandationsPage() {
   >("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"recent" | "oldest">("recent");
 
   /* ── Set V2 body style ── */
   useEffect(() => {
@@ -394,16 +316,22 @@ export default function RecommandationsPage() {
     return Object.keys(recommendationTypes) as RecommendationType[];
   }, []);
 
-  /* ── Diversified shuffle ── */
-  const shuffledRecos = useMemo(() => {
-    return shuffleWithDiversity(allRecommendations);
-  }, [allRecommendations]);
+  /* ── Tri chronologique ── */
+  const sortedRecos = useMemo(() => {
+    return [...allRecommendations].sort((a, b) => {
+      const dateA = a.datePublication || "";
+      const dateB = b.datePublication || "";
+      return sortOrder === "recent"
+        ? dateB.localeCompare(dateA)
+        : dateA.localeCompare(dateB);
+    });
+  }, [allRecommendations, sortOrder]);
 
   /* ── Filtered ── */
   const filteredRecos = useMemo(() => {
-    if (activeFilter === "all") return shuffledRecos;
-    return recosByType[activeFilter] || [];
-  }, [activeFilter, shuffledRecos, recosByType]);
+    if (activeFilter === "all") return sortedRecos;
+    return sortedRecos.filter((r) => r.type === activeFilter);
+  }, [activeFilter, sortedRecos]);
 
   /* ── Pagination ── */
   const totalPages = Math.ceil(filteredRecos.length / ITEMS_PER_PAGE);
@@ -412,10 +340,10 @@ export default function RecommandationsPage() {
     return filteredRecos.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredRecos, currentPage]);
 
-  /* ── Reset page on filter change ── */
+  /* ── Reset page on filter/sort change ── */
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeFilter]);
+  }, [activeFilter, sortOrder]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -764,11 +692,45 @@ export default function RecommandationsPage() {
                       {activeFilter !== "all" &&
                         ` — ${recommendationTypes[activeFilter].label}`}
                     </span>
-                    {totalPages > 1 && (
-                      <span className={s.pageInfo}>
-                        Page {currentPage} / {totalPages}
-                      </span>
-                    )}
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <button
+                        onClick={() => setSortOrder("recent")}
+                        style={{
+                          padding: "4px 12px",
+                          borderRadius: "20px",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          border: "none",
+                          cursor: "pointer",
+                          backgroundColor: sortOrder === "recent" ? "#111" : "#f3f4f6",
+                          color: sortOrder === "recent" ? "#fff" : "#6b7280",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        Plus récent
+                      </button>
+                      <button
+                        onClick={() => setSortOrder("oldest")}
+                        style={{
+                          padding: "4px 12px",
+                          borderRadius: "20px",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          border: "none",
+                          cursor: "pointer",
+                          backgroundColor: sortOrder === "oldest" ? "#111" : "#f3f4f6",
+                          color: sortOrder === "oldest" ? "#fff" : "#6b7280",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        Plus ancien
+                      </button>
+                      {totalPages > 1 && (
+                        <span className={s.pageInfo} style={{ marginLeft: "8px" }}>
+                          Page {currentPage} / {totalPages}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Grid */}

@@ -1,4 +1,4 @@
-/* GuidesPage — dynamic guide catalog from Sanity */
+/* GuideCategoryPage — sub-page per guide type */
 
 .page {
   background: var(--paper);
@@ -25,6 +25,27 @@
 .cSep { opacity: 0.3; }
 .cLabel { opacity: 0.75; }
 
+.heroKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.heroKickerDot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+}
+
+.heroKickerLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stone700);
+}
+
 .heroTitle {
   font-family: var(--display);
   font-weight: 900;
@@ -35,310 +56,94 @@
   margin: 0 0 16px;
 }
 
-.heroTitle em {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-}
-
 .heroDeck {
   font-family: var(--body);
   font-size: 16px;
   line-height: 1.55;
   color: var(--stone700);
   max-width: 56ch;
-  margin: 0 0 32px;
+  margin: 0 0 24px;
 }
 
-/* ══════════════════════════════════════════════════════════
-   Filters
-   ══════════════════════════════════════════════════════════ */
-
-.filters {
-  display: flex;
+.backLink {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  padding-bottom: 4px;
-}
-
-.filterChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: none;
-  border: 1px solid rgba(10, 10, 10, 0.12);
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--stone500);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.filterChip:hover {
-  border-color: var(--ink);
-  color: var(--ink);
-}
-
-.filterChipActive {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
-}
-
-.filterChipActive:hover {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-.filterChipUnivers .filterChipDot {
-  width: 6px;
-  height: 6px;
-  background: var(--chip-color);
-  flex-shrink: 0;
-}
-
-.filterChipUnivers.filterChipActive .filterChipDot {
-  background: var(--paper);
-}
-
-.filterSep {
-  width: 1px;
-  height: 20px;
-  background: rgba(10, 10, 10, 0.12);
-  margin: 0 8px;
-}
-
-/* ══════════════════════════════════════════════════════════
-   Category promotion grid
-   ══════════════════════════════════════════════════════════ */
-
-.catSection {
-  padding: 40px 0 0;
-}
-
-.catGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid rgba(10, 10, 10, 0.1);
-  border-left: 1px solid rgba(10, 10, 10, 0.1);
-}
-
-.catCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 28px 24px 24px;
   text-decoration: none;
-  color: var(--ink);
-  border-right: 1px solid rgba(10, 10, 10, 0.1);
-  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
-  transition: background 0.2s ease;
-  overflow: hidden;
+  transition: color 0.2s ease;
 }
 
-.catCard:hover { background: rgba(10, 10, 10, 0.02); }
+.backLink:hover { color: var(--ink); }
 
-.catCardAccent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-}
-
-.catCardLabel {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.catCardDesc {
-  font-family: var(--body);
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--stone600);
-  margin: 0 0 auto;
-}
-
-.catCardFoot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(10, 10, 10, 0.06);
-}
-
-.catCardCount {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stone500);
-}
-
-.catCardSoon {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stone300);
-}
-
-.catCardFoot svg {
+.backLink svg {
   width: 16px;
   height: 16px;
-  color: var(--stone400);
-  transition: transform 0.3s ease, color 0.2s ease;
+  transition: transform 0.3s ease;
 }
 
-.catCard:hover .catCardFoot svg {
-  transform: translateX(4px);
-  color: var(--ink);
-}
+.backLink:hover svg { transform: translateX(-4px); }
 
 /* ══════════════════════════════════════════════════════════
-   Shared kicker
+   Magnet banner (kits only)
    ══════════════════════════════════════════════════════════ */
 
-.kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--stone700);
-  margin-bottom: 14px;
-}
-
-.kickerLight { color: rgba(247, 245, 240, 0.5); }
-
-.kickerDot {
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-}
-
-/* ══════════════════════════════════════════════════════════
-   LEAD MAGNET — email capture banner
-   ══════════════════════════════════════════════════════════ */
-
-.leadMagnet {
+.magnetBanner {
   background: var(--ink);
-  color: var(--paper);
-  padding: 64px 0;
-  margin-top: 40px;
+  padding: 36px 0;
+  margin-top: 32px;
   border-top: 3px solid #5AA352;
 }
 
-.magnetGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
+.magnetInner {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 40px;
 }
 
 .magnetTitle {
   font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(26px, 3.5vw, 42px);
-  line-height: 1.05;
-  letter-spacing: -0.04em;
+  font-weight: 800;
+  font-size: 20px;
   color: var(--paper);
-  margin: 0 0 14px;
+  margin: 0 0 4px;
 }
 
-.magnetTitle em {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-}
-
-.magnetDeck {
-  font-family: var(--body);
-  font-size: 15px;
-  line-height: 1.6;
-  color: rgba(247, 245, 240, 0.6);
-  max-width: 44ch;
-  margin: 0 0 28px;
-}
-
-.magnetKitsList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.magnetKit {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.magnetKitDot {
-  width: 5px;
-  height: 5px;
-  flex-shrink: 0;
-}
-
-.magnetKitTitle {
+.magnetDesc {
   font-family: var(--body);
   font-size: 13px;
-  color: rgba(247, 245, 240, 0.7);
-  line-height: 1.3;
+  color: rgba(247, 245, 240, 0.5);
+  margin: 0;
 }
 
-.magnetKitMore {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.35);
-  margin-top: 4px;
+.magnetDone {
+  font-family: var(--body);
+  font-size: 14px;
+  color: #5AA352;
+  margin: 0;
 }
 
-/* Email form */
-
-.magnetFormWrap {}
-
-.magnetForm {}
-
-.magnetLabel {
-  display: block;
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--paper);
-  margin-bottom: 20px;
-}
-
-.magnetInputRow {
+.magnetForm {
   display: flex;
-  border: 1px solid rgba(247, 245, 240, 0.15);
+  gap: 0;
 }
 
 .magnetInput {
-  flex: 1;
   min-width: 0;
-  padding: 16px 20px;
+  width: 260px;
+  padding: 14px 18px;
   background: rgba(247, 245, 240, 0.06);
-  border: none;
+  border: 1px solid rgba(247, 245, 240, 0.15);
+  border-right: none;
   color: var(--paper);
   font-family: var(--body);
-  font-size: 15px;
+  font-size: 14px;
   outline: none;
   transition: background 0.2s ease;
 }
@@ -347,15 +152,12 @@
 .magnetInput:focus { background: rgba(247, 245, 240, 0.1); }
 
 .magnetBtn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 28px;
+  padding: 14px 24px;
   background: #5AA352;
   color: #fff;
   font-family: var(--display);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   border: none;
   cursor: pointer;
   white-space: nowrap;
@@ -365,95 +167,17 @@
 .magnetBtn:hover { opacity: 0.9; }
 .magnetBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.magnetBtn svg {
-  width: 14px;
-  height: 14px;
-  transition: transform 0.3s ease;
-}
-
-.magnetBtn:hover svg { transform: translateX(4px); }
-
-.magnetNote {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.25);
-  margin: 14px 0 0;
-}
-
 .magnetError {
   font-family: var(--body);
   font-size: 13px;
   color: #ef4444;
   margin: 10px 0 0;
-}
-
-.magnetSuccess {
-  padding: 40px 32px;
-  border: 1px solid rgba(90, 163, 82, 0.3);
-  background: rgba(90, 163, 82, 0.08);
-  text-align: center;
-}
-
-.magnetSuccessIcon {
-  width: 36px;
-  height: 36px;
-  margin: 0 auto 16px;
-}
-
-.magnetSuccessTitle {
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 20px;
-  color: var(--paper);
-  margin: 0 0 8px;
-}
-
-.magnetSuccessDesc {
-  font-family: var(--body);
-  font-size: 14px;
-  color: rgba(247, 245, 240, 0.6);
-  margin: 0;
+  width: 100%;
 }
 
 /* ══════════════════════════════════════════════════════════
-   CATALOG
+   Catalog
    ══════════════════════════════════════════════════════════ */
-
-.catalogSection {
-  padding: 48px 0 0;
-}
-
-.catalogHeader {
-  margin-bottom: 32px;
-}
-
-.catalogTitle {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(26px, 3.5vw, 38px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  color: var(--ink);
-  margin: 0 0 10px;
-}
-
-.catalogTitle em {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-}
-
-.catalogDeck {
-  font-family: var(--body);
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--stone600);
-  max-width: 52ch;
-  margin: 0;
-}
 
 .catalog {
   padding: 48px 0 64px;
@@ -490,7 +214,7 @@
 
 .leadCard:hover .leadImg img { transform: scale(1.03); }
 
-.leadBadgeFree {
+.badgeFree {
   position: absolute;
   top: 16px;
   left: 16px;
@@ -499,6 +223,21 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #5AA352;
+  z-index: 2;
+}
+
+.badgeFreeSmall {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #fff;
   background: #5AA352;
@@ -524,15 +263,6 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-.leadType {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.4);
 }
 
 .leadTitle {
@@ -638,33 +368,11 @@
 
 .card:hover .cardImg img { transform: scale(1.03); }
 
-.cardBadgeFree {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 4px 10px;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #fff;
-  background: #5AA352;
-  z-index: 2;
-}
-
 .cardBody {
   display: flex;
   flex-direction: column;
   flex: 1;
   padding: 20px 22px 24px;
-}
-
-.cardMeta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
 }
 
 .cardUnivers {
@@ -673,15 +381,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-.cardType {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stone400);
+  margin-bottom: 8px;
 }
 
 .cardTitle {
@@ -737,6 +437,13 @@
   padding: 80px 0;
 }
 
+.emptyDot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-bottom: 20px;
+}
+
 .emptyTitle {
   font-family: var(--display);
   font-weight: 800;
@@ -750,6 +457,9 @@
   font-size: 14px;
   color: var(--stone500);
   margin: 0 0 24px;
+  max-width: 44ch;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .emptyBtn {
@@ -761,8 +471,7 @@
   font-family: var(--display);
   font-weight: 700;
   font-size: 13px;
-  border: none;
-  cursor: pointer;
+  text-decoration: none;
   transition: opacity 0.2s ease;
 }
 
@@ -813,50 +522,39 @@
 @media (max-width: 1024px) {
   .leadCard { grid-template-columns: 1fr 1fr; min-height: 340px; }
   .leadBody { padding: 32px 28px; }
-  .magnetGrid { gap: 48px; }
+  .magnetInner { gap: 32px; }
 }
 
 @media (max-width: 880px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
   .skeleton { grid-template-columns: repeat(2, 1fr); }
-  .magnetGrid { grid-template-columns: 1fr; gap: 40px; }
-  .catGrid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
   .leadCard { grid-template-columns: 1fr; min-height: unset; }
   .leadImg { aspect-ratio: 16 / 9; }
   .leadBody { padding: 28px 24px; }
+  .magnetInner { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .magnetForm { flex-direction: column; width: 100%; }
+  .magnetInput { width: 100%; border-right: 1px solid rgba(247, 245, 240, 0.15); border-bottom: none; }
 }
 
 @media (max-width: 640px) {
   .hero { padding: 32px 0 0; }
   .heroTitle { font-size: clamp(30px, 8vw, 44px); }
   .heroDeck { font-size: 14px; }
-
-  .filters { gap: 6px; }
-  .filterChip { padding: 6px 12px; font-size: 9px; }
-
-  .leadMagnet { padding: 48px 0; margin-top: 32px; }
-  .magnetTitle { font-size: clamp(24px, 6vw, 36px); }
-  .magnetInputRow { flex-direction: column; }
-  .magnetBtn { justify-content: center; }
-
   .catalog { padding: 32px 0 48px; }
-
   .grid { grid-template-columns: 1fr; }
   .skeleton { grid-template-columns: 1fr; }
-  .catGrid { grid-template-columns: 1fr 1fr; }
-
   .leadTitle { font-size: 20px; }
+  .magnetBanner { padding: 28px 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .leadImg img,
   .cardImg img,
-  .magnetBtn svg,
-  .leadCta svg,
-  .catCardFoot svg {
+  .backLink svg,
+  .leadCta svg {
     transition: none !important;
   }
   .skeletonImg,

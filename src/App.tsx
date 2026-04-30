@@ -88,6 +88,7 @@ const NewsletterPage = lazyRetry(() => import('./pages/NewsletterPage'));
 const LettreDuDimanchePage = lazyRetry(() => import('./pages/LettreDuDimanchePage'));
 const JoinPartnerPage = lazyRetry(() => import('./pages/JoinPartnerPage'));
 const GuidesPage = lazyRetry(() => import('./pages/GuidesPage'));
+const GuideCategoryPage = lazyRetry(() => import('./pages/GuideCategoryPage'));
 const MediaPage = lazyRetry(() => import('./pages/MediaPage'));
 const ProdPage = lazyRetry(() => import('./pages/ProdPage'));
 const TypePage = lazyRetry(() => import('./pages/TypePage'));
@@ -151,6 +152,7 @@ function App() {
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/actu" element={<ActuListPage />} />
         <Route path="/guides" element={<GuidesPage />} />
+        <Route path="/guides/:category" element={<GuideCategoryPage />} />
         <Route path="/histoire/:slug" element={<PortraitDetailPage />} />
         <Route path="/article/:slug" element={<ArticlePage />} />
         <Route path="/video/:slug" element={<VideoPage />} />

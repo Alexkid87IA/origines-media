@@ -52,7 +52,7 @@ const createLinkifyHelpers = () => {
             key={`url-${keyOffset}-${match.index}`}
             href={fullUrl}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer nofollow sponsored"
             className={s.link}
           >
             {fullUrl}
@@ -64,7 +64,7 @@ const createLinkifyHelpers = () => {
             key={`domain-${keyOffset}-${match.index}`}
             href={`https://${domain}`}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer nofollow sponsored"
             className={s.link}
           >
             {domain}
@@ -100,7 +100,7 @@ const createLinkifyHelpers = () => {
           key={`labeled-${parts.length}`}
           href={url}
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener noreferrer nofollow sponsored"
           className={s.link}
         >
           {label}
@@ -517,12 +517,13 @@ export const createPortableTextComponentsV2 = ({
       link: ({ children, value }: any) => {
         const href = value?.href || value?.url || "";
         if (!href) return <span className={s.strong}>{children}</span>;
+        const isExternal = href.startsWith("http");
         return (
           <a
             href={href}
             className={s.link}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer nofollow sponsored" : undefined}
           >
             {children}
           </a>
@@ -1278,12 +1279,15 @@ export const createPortableTextComponentsV2 = ({
       divider: () => <hr className={s.divider} />,
       break: () => <hr className={s.divider} />,
 
-      button: ({ value }: any) => (
+      button: ({ value }: any) => {
+        const btnHref = value.url || value.link;
+        const isExt = value.external || (typeof btnHref === "string" && btnHref.startsWith("http"));
+        return (
         <div className={s.btnWrap}>
           <a
-            href={value.url || value.link}
-            target={value.external ? "_blank" : undefined}
-            rel={value.external ? "noopener noreferrer" : undefined}
+            href={btnHref}
+            target={isExt ? "_blank" : undefined}
+            rel={isExt ? "noopener noreferrer nofollow sponsored" : undefined}
             className={s.btn}
           >
             {value.text || value.label}
@@ -1292,7 +1296,8 @@ export const createPortableTextComponentsV2 = ({
             </svg>
           </a>
         </div>
-      ),
+        );
+      },
 
       cta: ({ value }: any) => (
         <div className={s.ctaBlock}>
