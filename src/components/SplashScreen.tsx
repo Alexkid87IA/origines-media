@@ -263,7 +263,7 @@ const MagneticLogo: React.FC<{
 
         {/* Logo with chromatic effect on hover */}
         <motion.img
-          src="/logo-origines.png"
+          src="/logo-origines.webp"
           alt="Origines Media"
           className="h-32 sm:h-36 md:h-40 lg:h-44 w-auto"
           style={{

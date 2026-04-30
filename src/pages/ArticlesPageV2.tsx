@@ -5,6 +5,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
+import { sanityImg } from "@/lib/sanityImage";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
@@ -367,9 +368,10 @@ export default function ArticlesPageV2() {
                   <a href={`/article/${featuredArticle.slug}`} className={s.featuredLink}>
                     <div className={s.featuredImgWrap}>
                       <img
-                        src={featuredArticle.imageUrl}
+                        src={sanityImg(featuredArticle.imageUrl, 1200)}
                         alt={featuredArticle.titre}
                         className={s.featuredImg}
+                        fetchpriority="high"
                         loading="eager"
                         decoding="async"
                       />
@@ -653,7 +655,7 @@ export default function ArticlesPageV2() {
                             <a href={`/article/${article.slug}`} className={s.cardLink}>
                               <div className={s.cardImgWrap}>
                                 <img
-                                  src={article.imageUrl || "/placeholder.svg"}
+                                  src={sanityImg(article.imageUrl || "/placeholder.svg", 600)}
                                   alt={article.titre}
                                   className={s.cardImg}
                                   loading="lazy"

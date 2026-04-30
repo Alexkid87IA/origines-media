@@ -37,12 +37,12 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 
 // Images 16:9 par catégorie
 const CATEGORY_IMAGES: Record<string, string> = {
-  emotions: '/histoires/histoire_emotions_bienetre.png',
-  developpement: '/histoires/histoire_developpement.png',
-  parcours: '/histoires/histoire_parcours_resilience.png',
-  relations: '/histoires/histoire_relations_famille.png',
-  sante: '/histoires/histoire_sante_mentale.png',
-  epreuves: '/histoires/histoire_epreuves_inspiration.png'
+  emotions: '/histoires/histoire_emotions_bienetre.webp',
+  developpement: '/histoires/histoire_developpement.webp',
+  parcours: '/histoires/histoire_parcours_resilience.webp',
+  relations: '/histoires/histoire_relations_famille.webp',
+  sante: '/histoires/histoire_sante_mentale.webp',
+  epreuves: '/histoires/histoire_epreuves_inspiration.webp'
 };
 
 interface Tag {

@@ -567,10 +567,11 @@ export const createPortableTextComponentsV2 = ({
     },
     types: {
       image: ({ value }: any) => {
-        const imageUrl = value.asset?._ref
+        const rawUrl = value.asset?._ref
           ? getImageUrl(value.asset)
           : value.asset?.url || value.url;
-        if (!imageUrl) return null;
+        if (!rawUrl) return null;
+        const imageUrl = sanityImg(rawUrl, 900);
         return (
           <figure className={s.figure}>
             <img

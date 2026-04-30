@@ -328,7 +328,7 @@ export default function SiteHeader() {
         <div className={styles.row}>
           <a href="/" className={styles.logo} aria-label="Origines — Accueil">
             <img
-              src="/logos/logo-black.png"
+              src="/logos/logo-black.webp"
               alt="Origines Media"
               className={styles.logoImg}
             />
@@ -816,7 +816,7 @@ export default function SiteHeader() {
           {/* Close bar */}
           <div className={styles.mobileCloseBar}>
             <img
-              src="/logos/logo-black.png"
+              src="/logos/logo-black.webp"
               alt=""
               className={styles.mobileCloseLogo}
               aria-hidden="true"

@@ -5,7 +5,7 @@ export default function MonHistoire() {
     <section className={s.section} aria-labelledby="mon-histoire-heading">
       <div className={s.strip}>
         <img
-          src="/images/mosaic-origines.png"
+          src="/images/mosaic-origines.webp"
           alt="Visages de la communauté Origines"
           loading="lazy"
           decoding="async"

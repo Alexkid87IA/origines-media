@@ -1252,7 +1252,7 @@ export default function ArticlePageV2() {
         <div className={s.colophonSpectrum} aria-hidden="true" />
         <div className={s.colophonInner}>
           <img
-            src="/logos/logo-black.png"
+            src="/logos/logo-black.webp"
             alt=""
             className={s.colophonLogo}
             aria-hidden="true"

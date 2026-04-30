@@ -15,16 +15,16 @@ const DECK_URL = "/origines-partenariats-2026.pdf";
 const DECK_NAME = "Origines-media-kit-2026.pdf";
 
 const heroMosaicImages = [
-  "/partnerships/hero/portrait-01.jpg",
-  "/partnerships/hero/portrait-02.jpg",
-  "/partnerships/hero/portrait-06.jpg",
-  "/partnerships/hero/portrait-04.jpg",
-  "/partnerships/hero/portrait-05.jpg",
-  "/partnerships/hero/portrait-07.jpg",
-  "/partnerships/hero/portrait-08.jpg",
-  "/partnerships/hero/portrait-09.jpg",
-  "/partnerships/hero/portrait-03.jpg",
-  "/partnerships/hero/portrait-10.jpg",
+  "/partnerships/hero/portrait-01.webp",
+  "/partnerships/hero/portrait-02.webp",
+  "/partnerships/hero/portrait-06.webp",
+  "/partnerships/hero/portrait-04.webp",
+  "/partnerships/hero/portrait-05.webp",
+  "/partnerships/hero/portrait-07.webp",
+  "/partnerships/hero/portrait-08.webp",
+  "/partnerships/hero/portrait-09.webp",
+  "/partnerships/hero/portrait-03.webp",
+  "/partnerships/hero/portrait-10.webp",
 ];
 
 const partnerOpenings = [
@@ -279,7 +279,7 @@ const PartnershipsPage: React.FC = () => {
 
               <figure className={s.subjectPortrait}>
                 <img
-                  src="/partnerships/subject-origin.jpg"
+                  src="/partnerships/subject-origin.webp"
                   alt="Portrait éditorial Origines"
                   loading="lazy"
                   decoding="async"
@@ -494,7 +494,7 @@ const PartnershipsPage: React.FC = () => {
           <div className={s.downloadInner}>
             <Card variant="outlined" size="sm" className={s.downloadPreview}>
               <img
-                src="/origines-partenariats-preview.jpg"
+                src="/origines-partenariats-preview.webp"
                 alt="Aperçu du media kit partenariats Origines"
                 loading="lazy"
                 decoding="async"

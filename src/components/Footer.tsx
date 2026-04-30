@@ -184,7 +184,7 @@ const Footer: React.FC = () => {
         <div className="sm:hidden flex flex-col items-center mb-8">
           <Link to="/" className="inline-block mb-4">
             <img
-              src="/logo-origines.png"
+              src="/logo-origines.webp"
               alt="Origines Media"
               className="h-10 w-auto"
             />
@@ -215,7 +215,7 @@ const Footer: React.FC = () => {
           <div className="hidden sm:block lg:col-span-4">
             <Link to="/" className="inline-block mb-6">
               <img
-                src="/logo-origines.png"
+                src="/logo-origines.webp"
                 alt="Origines Media"
                 className="h-12 w-auto"
               />

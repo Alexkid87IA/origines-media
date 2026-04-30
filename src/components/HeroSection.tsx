@@ -95,19 +95,19 @@ const typeLabels: Record<string, string> = {
 };
 
 const categoryImages: Record<string, string> = {
-  'livres': '/recos/reco_livre.png',
-  'livre': '/recos/reco_livre.png',
-  'films-series': '/recos/reco_film_serie.png',
-  'film': '/recos/reco_film_serie.png',
-  'musique': '/recos/reco_musique.png',
-  'podcasts': '/recos/reco_podcast.png',
-  'podcast': '/recos/reco_podcast.png',
-  'youtube': '/recos/reco_youtube.png',
-  'reseaux-sociaux': '/recos/reco_social.png',
-  'activite': '/recos/reco_activite.png',
-  'destination': '/recos/reco_destination.png',
-  'culture': '/recos/reco_culture.png',
-  'produit': '/recos/reco_produit.png',
+  'livres': '/recos/reco_livre.webp',
+  'livre': '/recos/reco_livre.webp',
+  'films-series': '/recos/reco_film_serie.webp',
+  'film': '/recos/reco_film_serie.webp',
+  'musique': '/recos/reco_musique.webp',
+  'podcasts': '/recos/reco_podcast.webp',
+  'podcast': '/recos/reco_podcast.webp',
+  'youtube': '/recos/reco_youtube.webp',
+  'reseaux-sociaux': '/recos/reco_social.webp',
+  'activite': '/recos/reco_activite.webp',
+  'destination': '/recos/reco_destination.webp',
+  'culture': '/recos/reco_culture.webp',
+  'produit': '/recos/reco_produit.webp',
 };
 
 const HeroSection: React.FC<HeroSectionProps> = ({ portraits = [] }) => {

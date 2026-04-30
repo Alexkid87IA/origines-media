@@ -16,12 +16,12 @@ export const socialLinks: SocialLink[] = [
 
 // Séries pour le mega menu showcase
 export const seriesShowcase: SeriesItem[] = [
-  { title: 'Transmission', image: '/series/01_transmission_poster.jpg', href: '/series/transmission', episodes: 12, color: '#6366F1' },
-  { title: 'État d\'esprit', image: '/series/02_etat_esprit_poster.jpg', href: '/series/etat-d-esprit', episodes: 8, color: '#06B6D4' },
-  { title: 'Il était une fois', image: '/series/03_il_etait_une_fois_poster.jpg', href: '/series/il-etait-une-fois', episodes: 15, color: '#F59E0B' },
-  { title: 'Secrets pro', image: '/series/04_secrets_professionnels_poster.jpg', href: '/series/secrets-professionnels', episodes: 10, color: '#8B5CF6' },
-  { title: 'La lettre', image: '/series/05_la_lettre_poster.jpg', href: '/series/la-lettre', episodes: 6, color: '#10B981' },
-  { title: 'Imagine', image: '/series/06_imagine_poster.jpg', href: '/series/imagine', episodes: 9, color: '#EC4899' },
+  { title: 'Transmission', image: '/series/01_transmission_poster.webp', href: '/series/transmission', episodes: 12, color: '#6366F1' },
+  { title: 'État d\'esprit', image: '/series/02_etat_esprit_poster.webp', href: '/series/etat-d-esprit', episodes: 8, color: '#06B6D4' },
+  { title: 'Il était une fois', image: '/series/03_il_etait_une_fois_poster.webp', href: '/series/il-etait-une-fois', episodes: 15, color: '#F59E0B' },
+  { title: 'Secrets pro', image: '/series/04_secrets_professionnels_poster.webp', href: '/series/secrets-professionnels', episodes: 10, color: '#8B5CF6' },
+  { title: 'La lettre', image: '/series/05_la_lettre_poster.webp', href: '/series/la-lettre', episodes: 6, color: '#10B981' },
+  { title: 'Imagine', image: '/series/06_imagine_poster.webp', href: '/series/imagine', episodes: 9, color: '#EC4899' },
 ];
 
 // Contenus dynamiques par univers
@@ -76,21 +76,21 @@ export const universFeaturedByCategory: Record<string, FeaturedContent[]> = {
 export const seriesFeatured: FeaturedContent[] = [
   {
     title: 'Transmission - Ép. 1 : L\'héritage',
-    image: '/series/01_transmission.jpg',
+    image: '/series/01_transmission.webp',
     href: '/series/transmission/episode-1',
     tag: 'Nouveau',
     tagColor: '#6366F1'
   },
   {
     title: 'État d\'esprit - Ép. 3 : La résilience',
-    image: '/series/02_etat_esprit.jpg',
+    image: '/series/02_etat_esprit.webp',
     href: '/series/etat-d-esprit/episode-3',
     tag: 'Populaire',
     tagColor: '#EC4899'
   },
   {
     title: 'Il était une fois - Ép. 5 : Le destin',
-    image: '/series/03_il_etait_une_fois.jpg',
+    image: '/series/03_il_etait_une_fois.webp',
     href: '/series/il-etait-une-fois/episode-5',
     tag: 'Tendance',
     tagColor: '#F59E0B'

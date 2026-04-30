@@ -15,7 +15,7 @@ const academyProducts = [
     title: "Kit d'Introspection",
     subtitle: 'Votre voyage intérieur commence ici',
     description: '24 pages d\'exercices pour mieux vous connaître.',
-    image: '/kit-introspection.jpg',
+    image: '/kit-introspection.webp',
     price: 'Gratuit',
     originalPrice: null,
     color: '#06B6D4', // Cyan
@@ -29,7 +29,7 @@ const academyProducts = [
     title: 'Masterclass Storytelling',
     subtitle: "L'art de raconter votre histoire",
     description: 'Apprenez à captiver et structurer vos récits.',
-    image: '/academy/masterclass-storytelling.jpg',
+    image: '/academy/masterclass-storytelling.webp',
     price: '29€',
     originalPrice: '49€',
     color: '#F59E0B', // Amber
@@ -43,7 +43,7 @@ const academyProducts = [
     title: 'Guide Mindset',
     subtitle: 'Transformez votre mental',
     description: 'Développez un état d\'esprit de croissance.',
-    image: '/academy/guide-mindset.jpg',
+    image: '/academy/guide-mindset.webp',
     price: '19€',
     originalPrice: null,
     color: '#8B5CF6', // Violet
@@ -57,7 +57,7 @@ const academyProducts = [
     title: 'Programme Complet',
     subtitle: 'Accès illimité à vie',
     description: 'Toutes nos formations en un seul pass.',
-    image: '/academy/programme-complet.jpg',
+    image: '/academy/programme-complet.webp',
     price: '79€',
     originalPrice: '147€',
     color: '#EC4899', // Pink

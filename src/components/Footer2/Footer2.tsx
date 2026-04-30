@@ -931,7 +931,7 @@ export default function Footer2() {
         <div className={s.footerStrip}>
           <div className={s.left}>
             <img
-              src="/logos/logo-black.png"
+              src="/logos/logo-black.webp"
               alt="Origines"
               style={{ height: 28, width: "auto" }}
             />

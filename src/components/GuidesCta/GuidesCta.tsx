@@ -19,7 +19,7 @@ export default function GuidesCta() {
       <a href="/guides" className={s.band}>
         <div className={s.bandImg}>
           <img
-            src="/series/01_transmission_poster.jpg"
+            src="/series/01_transmission_poster.webp"
             alt="Immersion — Guides Origines"
             loading="lazy"
             decoding="async"

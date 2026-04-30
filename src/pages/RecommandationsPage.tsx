@@ -8,6 +8,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { sanityFetch } from "../lib/sanity";
+import { sanityImg } from "../lib/sanityImage";
 import { EXPLORER_RECOS_QUERY } from "../lib/queries";
 import { typo } from "../lib/typography";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
@@ -755,7 +756,7 @@ export default function RecommandationsPage() {
                             {reco.imageUrl && (
                               <div className={s.cardImgWrap}>
                                 <img
-                                  src={reco.imageUrl}
+                                  src={sanityImg(reco.imageUrl, 400)}
                                   alt={reco.title}
                                   className={s.cardImg}
                                   loading="lazy"

@@ -5,6 +5,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import { sanityFetch } from "@/lib/sanity";
+import { sanityImg } from "@/lib/sanityImage";
 import { typo } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
@@ -56,8 +57,8 @@ function getYouTubeThumbnail(url: string): string {
   return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : "/placeholder.svg";
 }
 
-function getThumb(v: Video): string {
-  return v.imageUrl || getYouTubeThumbnail(v.videoUrl);
+function getThumb(v: Video, w = 600): string {
+  return sanityImg(v.imageUrl, w) || getYouTubeThumbnail(v.videoUrl);
 }
 
 function formatDate(d: string): string {

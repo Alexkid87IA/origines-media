@@ -57,7 +57,7 @@ export default function PageTransition() {
       <div className={`${s.layer} ${s.primary}`} />
       <div className={`${s.layer} ${s.accent}`} />
       <div className={s.center}>
-        <img src="/logos/logo-white.png" alt="" className={s.logo} />
+        <img src="/logos/logo-white.webp" alt="" className={s.logo} />
         <span className={s.bar}>
           <span className={s.barFill} />
         </span>

@@ -104,7 +104,7 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="flex-shrink-0 w-[160px] flex items-center">
               <img
-                src="/logo-origines.png"
+                src="/logo-origines.webp"
                 alt="Origines Media"
                 className="h-9 lg:h-10 w-auto"
                 loading="eager"
@@ -244,7 +244,7 @@ const Navbar: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-5 h-14" style={{ borderBottom: '1px solid #E8E5DE' }}>
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
-                <img src="/logo-origines.png" alt="Origines Media" className="h-9 w-auto" loading="eager" />
+                <img src="/logo-origines.webp" alt="Origines Media" className="h-9 w-auto" loading="eager" />
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
