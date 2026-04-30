@@ -467,25 +467,27 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     }
   }
 
-  // /comprendre/:slug  /reflexions/:slug  /temoignages/:slug
+  // /comprendre/:slug  /reflexions/:slug  /temoignages/:slug — canonical vers /article/:slug
   if (segments.length === 2 && ['comprendre', 'reflexions', 'temoignages'].includes(segments[0])) {
     const slug = segments[1]
     const data = await fetchSanity<any>(ARTICLE_FULL_QUERY, { slug })
     if (data) {
+      const canonicalUrl = `${BASE_URL}/article/${slug}`
       const crumbs = [
         { name: 'Accueil', url: '/' },
-        { name: segments[0].charAt(0).toUpperCase() + segments[0].slice(1), url: `/${segments[0]}` },
-        { name: data.title || slug, url: `/${segments[0]}/${slug}` },
+        { name: 'Articles', url: '/articles' },
+        { name: data.title || slug, url: `/article/${slug}` },
       ]
       const schemas = [
         jsonLdTag(articleSchema({
           title: data.title, description: data.description || '', image: data.image || DEFAULT_OG_IMAGE,
-          url, publishedAt: data.publishedAt, modifiedAt: data.modifiedAt, author: data.author,
+          url: canonicalUrl, publishedAt: data.publishedAt, modifiedAt: data.modifiedAt, author: data.author,
         })),
         jsonLdTag(breadcrumbSchema(crumbs)),
       ]
       return {
         ...defaults,
+        url: canonicalUrl,
         title: data.title || defaults.title,
         description: data.description || defaults.description,
         image: data.image || DEFAULT_OG_IMAGE,

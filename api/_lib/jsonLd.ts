@@ -107,7 +107,7 @@ export function organizationSchema() {
     logo: `${BASE_URL}/logos/logo-black.png`,
     sameAs: [
       'https://www.youtube.com/@origines',
-      'https://twitter.com/originesmedia',
+      'https://x.com/originesmedia',
       'https://www.instagram.com/origines.media',
       'https://www.linkedin.com/company/origines-media',
     ],
