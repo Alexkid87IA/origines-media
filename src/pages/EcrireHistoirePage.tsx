@@ -777,7 +777,18 @@ export default function EcrireHistoirePage() {
   };
 
   const scrollToTool = () => {
-    document.getElementById("outil")?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      document.getElementById("outil")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  };
+
+  const scrollToEl = (id: string, delay = 320) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const y = el.getBoundingClientRect().top + window.scrollY - 24;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }, delay);
   };
 
   const goNext = () => {
@@ -1355,7 +1366,7 @@ export default function EcrireHistoirePage() {
                 <div className={s.formatChoice}>
                   <button
                     className={`${s.formatCard} ${draft.format === "texte" ? s.formatCardActive : ""}`}
-                    onClick={() => updateDraft({ format: "texte" })}
+                    onClick={() => { updateDraft({ format: "texte" }); scrollToEl("step0-cta"); }}
                   >
                     <div className={s.formatCardIcon}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -1382,7 +1393,7 @@ export default function EcrireHistoirePage() {
                   </button>
                   <button
                     className={`${s.formatCard} ${draft.format === "video" ? s.formatCardActive : ""}`}
-                    onClick={() => updateDraft({ format: "video" })}
+                    onClick={() => { updateDraft({ format: "video" }); scrollToEl("step0-cta"); }}
                   >
                     <div className={s.formatCardIcon}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -1469,16 +1480,18 @@ export default function EcrireHistoirePage() {
                     </>
                   )}
                 </div>
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="md"
-                  rightIcon={ArrowRight}
-                  onClick={goNext}
-                  className={s.welcomeCta}
-                >
-                  Continuer avec ce format
-                </Button>
+                <div id="step0-cta">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="md"
+                    rightIcon={ArrowRight}
+                    onClick={goNext}
+                    className={s.welcomeCta}
+                  >
+                    Continuer avec ce format
+                  </Button>
+                </div>
               </div>
             </section>
           )}
@@ -1518,7 +1531,7 @@ export default function EcrireHistoirePage() {
                       <button
                         key={item.id}
                         className={`${s.intentionCard} ${isActive ? s.intentionCardActive : ""}`}
-                        onClick={() => updateDraft({ intention: item.id })}
+                        onClick={() => { updateDraft({ intention: item.id }); scrollToEl("step1-sujet"); }}
                       >
                         <div className={s.intentionCardIcon}>
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d={item.icon} /></svg>
@@ -1539,7 +1552,7 @@ export default function EcrireHistoirePage() {
               </div>
 
               {/* Sujets */}
-              <div className={s.sectionQuestion}>
+              <div id="step1-sujet" className={s.sectionQuestion}>
                 <div className={s.sectionQuestionHeader}>
                   <span className={s.sectionQuestionNum}>2</span>
                   <div>
@@ -1560,7 +1573,10 @@ export default function EcrireHistoirePage() {
                         key={item.id}
                         className={`${s.sujetBtn} ${isActive ? s.sujetBtnActive : ""}`}
                         style={{ "--sujet-color": item.color } as React.CSSProperties}
-                        onClick={() => updateDraft({ sujet: item.id })}
+                        onClick={() => {
+                          updateDraft({ sujet: item.id });
+                          if (draft.intention) scrollToEl("step1-nav");
+                        }}
                       >
                         <span className={s.sujetDot} style={{ background: item.color }} />
                         {item.label}
@@ -1579,7 +1595,7 @@ export default function EcrireHistoirePage() {
                 </p>
               )}
 
-              <div className={s.stepNav}>
+              <div id="step1-nav" className={s.stepNav}>
                 <button className={s.navBack} onClick={goPrev}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
                   Retour
@@ -1620,7 +1636,7 @@ export default function EcrireHistoirePage() {
               <div className={s.modeToggle}>
                 <button
                   className={`${s.modeBtn} ${draft.writeMode === "avatar" ? s.modeBtnActive : ""}`}
-                  onClick={() => updateDraft({ writeMode: "avatar" })}
+                  onClick={() => { updateDraft({ writeMode: "avatar" }); scrollToEl("step2-recorder"); }}
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
                     <circle cx="12" cy="8" r="4" />
@@ -1631,7 +1647,7 @@ export default function EcrireHistoirePage() {
                 </button>
                 <button
                   className={`${s.modeBtn} ${draft.writeMode === "guide" ? s.modeBtnActive : ""}`}
-                  onClick={() => updateDraft({ writeMode: "guide" })}
+                  onClick={() => { updateDraft({ writeMode: "guide" }); scrollToEl("step2-recorder"); }}
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -1641,7 +1657,7 @@ export default function EcrireHistoirePage() {
                 </button>
                 <button
                   className={`${s.modeBtn} ${draft.writeMode === "simple" ? s.modeBtnActive : ""}`}
-                  onClick={() => updateDraft({ writeMode: "simple" })}
+                  onClick={() => { updateDraft({ writeMode: "simple" }); scrollToEl("step2-recorder"); }}
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -1700,7 +1716,7 @@ export default function EcrireHistoirePage() {
               )}
 
               {draft.writeMode === "avatar" ? (
-                <div className={s.videoRecorderWrap}>
+                <div id="step2-recorder" className={s.videoRecorderWrap}>
                   {!user ? (
                     <div className={s.avatarAuthGate}>
                       <div className={s.avatarAuthGateIcon}>
@@ -1742,7 +1758,7 @@ export default function EcrireHistoirePage() {
                   )}
                 </div>
               ) : (
-                <div className={s.videoRecorderWrap}>
+                <div id="step2-recorder" className={s.videoRecorderWrap}>
                   <VideoRecorder
                     key={draft.writeMode}
                     questions={draft.writeMode === "guide"
@@ -2161,6 +2177,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                         patch.pseudonyme = user?.displayName?.split(" ")[0] || "";
                       }
                       updateDraft(patch);
+                      scrollToEl(opt.value === "anonyme" ? "step3-nav" : "step3-details");
                     }}
                   >
                     <div className={s.identityCardIcon}>
@@ -2178,7 +2195,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
               </div>
 
               {draft.identite === "pseudo" && (
-                <div className={s.pseudoField}>
+                <div id="step3-details" className={s.pseudoField}>
                   <label className={s.fieldLabel}>Votre pseudonyme</label>
                   <input
                     type="text"
@@ -2192,7 +2209,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
               )}
 
               {draft.identite === "prenom" && (
-                <div className={s.pseudoField}>
+                <div id="step3-details" className={s.pseudoField}>
                   <label className={s.fieldLabel}>Votre prénom (ou surnom)</label>
                   <input
                     type="text"
@@ -2237,7 +2254,7 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
                 </div>
               </div>
 
-              <div className={s.stepNav}>
+              <div id="step3-nav" className={s.stepNav}>
                 <button className={s.navBack} onClick={goPrev}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
                   Retour
