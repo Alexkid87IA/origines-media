@@ -1,7 +1,7 @@
 // Hook pour l'inscription email via /api/subscribe
 import { useState, useCallback } from 'react'
 
-type Source = 'newsletter' | 'boutique' | 'article' | 'exit-intent' | 'homepage'
+type Source = 'newsletter' | 'boutique' | 'article' | 'exit-intent' | 'homepage' | 'guides'
 
 interface SubscribeOptions {
   source: Source

@@ -227,12 +227,21 @@ export default function ArticlesPageV2() {
     return result;
   }, [articles, searchQuery, activeUnivers, activeCategory, activeTag, sortBy]);
 
+  /* ── Featured ── */
+  const showFeatured = currentPage === 1 && !searchQuery && !activeUnivers && !activeTag && !activeCategory;
+  const featuredArticle = showFeatured ? filteredArticles.find(a => a.imageUrl) : undefined;
+
+  const gridArticles = useMemo(() => {
+    if (!featuredArticle) return filteredArticles;
+    return filteredArticles.filter(a => a._id !== featuredArticle._id);
+  }, [filteredArticles, featuredArticle]);
+
   /* ── Pagination ── */
-  const totalPages = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(gridArticles.length / ITEMS_PER_PAGE);
   const paginatedArticles = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredArticles.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredArticles, currentPage]);
+    return gridArticles.slice(start, start + ITEMS_PER_PAGE);
+  }, [gridArticles, currentPage]);
 
   /* ── Handlers ── */
   const handleSearch = useCallback(
@@ -311,7 +320,7 @@ export default function ArticlesPageV2() {
           { name: "Accueil", url: "/" },
           { name: "Articles", url: "/articles" },
         ]}
-        itemListData={articles.slice(0, 10).map((a) => ({
+        itemListData={articles.filter((a) => a.imageUrl).slice(0, 10).map((a) => ({
           name: a.titre,
           description: getExtrait(a),
           image: a.imageUrl,
@@ -347,6 +356,56 @@ export default function ArticlesPageV2() {
                 </p>
               </div>
             </header>
+
+            {/* À la une */}
+            {featuredArticle && (() => {
+              const uid = (featuredArticle.univpilar || "esprit") as UniversId;
+              const uData = UNIVERS_MAP[uid] || UNIVERS_MAP.esprit;
+              const rt = estimateReadingTimeFromText(featuredArticle.contenuTexte) || featuredArticle.tempsLecture;
+              return (
+                <section className={s.featured}>
+                  <a href={`/article/${featuredArticle.slug}`} className={s.featuredLink}>
+                    <div className={s.featuredImgWrap}>
+                      <img
+                        src={featuredArticle.imageUrl}
+                        alt={featuredArticle.titre}
+                        className={s.featuredImg}
+                        loading="eager"
+                        decoding="async"
+                      />
+                    </div>
+                    <div className={s.featuredBody}>
+                      <span className={s.featuredKicker}>
+                        <span className={s.featuredKickerDot} style={{ background: uData.color }} />
+                        &Agrave; la une &middot; {uData.name}
+                      </span>
+                      <h2 className={s.featuredTitle}>{featuredArticle.titre}</h2>
+                      <p className={s.featuredExcerpt}>{getExtrait(featuredArticle)}</p>
+                      <div className={s.featuredFoot}>
+                        <div className={s.featuredMeta}>
+                          <span>{featuredArticle.authorName || "Rédaction Origines"}</span>
+                          {featuredArticle.datePublication && (
+                            <>
+                              <span className={s.featuredMetaSep}>&middot;</span>
+                              <time dateTime={featuredArticle.datePublication}>
+                                {formatDate(featuredArticle.datePublication)}
+                              </time>
+                            </>
+                          )}
+                          {rt && (
+                            <>
+                              <span className={s.featuredMetaSep}>&middot;</span>
+                              <span>{rt} min</span>
+                            </>
+                          )}
+                        </div>
+                        <span className={s.featuredCta}>Lire l&rsquo;article &rarr;</span>
+                      </div>
+                    </div>
+                  </a>
+                </section>
+              );
+            })()}
 
             {/* Toolbar */}
             <div className={s.toolbar}>

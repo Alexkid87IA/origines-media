@@ -518,11 +518,10 @@ export default function ProductionDetailPage() {
   };
 
   const getRelativeTime = (date: string) => {
-    const now = new Date();
     const publishedDate = new Date(date);
-    const diffInHours = Math.floor(
-      (now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60)
-    );
+    const diff = Date.now() - publishedDate.getTime();
+    if (diff < 0) return publishedDate.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+    const diffInHours = Math.floor(diff / 3600000);
     const diffInDays = Math.floor(diffInHours / 24);
 
     if (diffInHours < 1) return "A l'instant";

@@ -118,13 +118,16 @@ function sanityToSlide(a: SanitySlide, index: number): Slide {
 
 function formatTimeLabel(dateStr?: string): string {
   if (!dateStr) return "";
-  const diff = Date.now() - new Date(dateStr).getTime();
+  const d = new Date(dateStr);
+  const diff = Date.now() - d.getTime();
+  if (diff < 0) return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
   const mins = Math.floor(diff / 60000);
   if (mins < 60) return `il y a ${mins} min`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `il y a ${hours} h`;
   const days = Math.floor(hours / 24);
-  return `il y a ${days} j`;
+  if (days < 30) return `il y a ${days} j`;
+  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
 
 function resolveUnivers(a: SanityFeedArticle): UniversId {

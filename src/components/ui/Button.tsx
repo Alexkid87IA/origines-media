@@ -18,6 +18,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   as?: 'button' | 'a' | 'link';
   href?: string;
   to?: string;
+  download?: string | boolean;
   children: React.ReactNode;
 }
 
@@ -35,6 +36,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       as = 'button',
       href,
       to,
+      download,
       disabled,
       className = '',
       children,
@@ -189,6 +191,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         <a
           href={href}
+          download={download}
           className={`group ${buttonClasses}`}
           style={getColorStyles()}
         >

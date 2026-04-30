@@ -5,6 +5,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import EmailCapture from "@/components/EmailCapture";
 import { sanityFetch } from "../lib/sanity";
 import { sanityImg } from "../lib/sanityImage";
 import { UNIVERS_COUNTS_QUERY, ARTICLES_BY_UNIVPILAR_QUERY } from "../lib/queries";
@@ -255,13 +256,15 @@ function UniversDetailPage({ universId }: { universId: string }) {
   const [articles, setArticles] = useState<ArticlePreview[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [faqExpanded, setFaqExpanded] = useState(false);
   const ITEMS_PER_PAGE = 12;
 
   const heroReveal = useReveal();
   const subtopicReveal = useReveal();
   const featuredReveal = useReveal();
+  const bandsReveal = useReveal();
   const gridReveal = useReveal();
-  const topicsReveal = useReveal();
+  const ctaReveal = useReveal();
   const faqReveal = useReveal();
   const relatedReveal = useReveal();
 
@@ -279,14 +282,15 @@ function UniversDetailPage({ universId }: { universId: string }) {
   if (!univers) {
     return (
       <><SiteHeader /><main><div className="v2-container" style={{ padding: "120px 0", textAlign: "center" }}>
-        <p style={{ fontFamily: "var(--body)", color: "var(--stone500)" }}>Univers non trouv&eacute;</p>
-        <Link to="/univers" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase" as const, color: "var(--ink)", marginTop: 20, display: "inline-block" }}>Retour &rarr;</Link>
+        <p style={{ fontFamily: "var(--body)", color: "var(--stone500)" }}>Univers non trouvé</p>
+        <Link to="/univers" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase" as const, color: "var(--ink)", marginTop: 20, display: "inline-block" }}>Retour →</Link>
       </div></main><Footer2 /></>
     );
   }
 
   const featuredArticle = articles.find((a) => a.imageUrl);
-  const otherArticles = articles.filter((a) => a !== featuredArticle);
+  const secondaryPicks = articles.filter((a) => a !== featuredArticle).slice(0, 3);
+  const otherArticles = articles.filter((a) => a !== featuredArticle && !secondaryPicks.includes(a));
   const totalPages = Math.ceil(otherArticles.length / ITEMS_PER_PAGE);
   const paginated = otherArticles.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
   const otherPillars = UNIVERS.filter((u) => u.id !== universId);
@@ -311,7 +315,15 @@ function UniversDetailPage({ universId }: { universId: string }) {
     return map;
   }, [articles]);
 
+  const rankedSubtopics = useMemo(() => {
+    return [...univers.subtopics]
+      .map((st) => ({ ...st, count: (articlesBySubtopic[st.slug] || []).length }))
+      .filter((st) => st.count > 0)
+      .sort((a, b) => b.count - a.count);
+  }, [univers.subtopics, articlesBySubtopic]);
+
   const color = univers.color;
+  const visibleFaqs = faqExpanded ? allFaqs : allFaqs.slice(0, 6);
 
   return (
     <>
@@ -336,141 +348,227 @@ function UniversDetailPage({ universId }: { universId: string }) {
 
       <main>
         {/* ═══ HERO ═══ */}
-        <section ref={heroReveal.ref} className={`${s.detailHero} ${heroReveal.className}`} style={{ "--pillar-color": color } as React.CSSProperties}>
+        <section ref={heroReveal.ref} className={`${s.dHero} ${heroReveal.className}`} style={{ "--pillar-color": color } as React.CSSProperties}>
+          <span className={s.dHeroAccent} />
           <div className="v2-container">
             <Breadcrumb items={[
               { name: "Accueil", url: "/" },
               { name: "Univers", url: "/univers" },
               { name: univers.name, url: `/univers/${universId}` },
             ]} />
-            <nav className={s.detailNav}>
-              <Link to="/univers" className={s.detailBack}><ArrowLeftIcon size={12} /> Univers</Link>
-            </nav>
-
-            <div className={s.detailHeroInner}>
-              <div className={s.detailHeroText}>
-                <span className={s.detailAccentBar} />
-                <h1 className={s.detailTitle}>{univers.name}<em>.</em></h1>
-                <p className={s.detailTagline}>{univers.tagline}</p>
-              </div>
-              <div className={s.detailStats}>
-                <div className={s.detailStat}>
-                  <span className={s.detailStatVal}>{articles.length}</span>
-                  <span className={s.detailStatLabel}>articles</span>
+            <div className={s.dHeroGrid}>
+              <div className={s.dHeroText}>
+                <nav className={s.dHeroNav}>
+                  <Link to="/univers" className={s.dHeroBack}><ArrowLeftIcon size={12} /> Tous les univers</Link>
+                </nav>
+                <div className={s.dHeroMeta}>
+                  <span className={s.dHeroDot} />
+                  <span>{articles.length} articles</span>
+                  <span className={s.dHeroMetaSep}>·</span>
+                  <span>{univers.subtopics.length} thèmes</span>
                 </div>
-                <span className={s.detailStatSep} />
-                <div className={s.detailStat}>
-                  <span className={s.detailStatVal}>{univers.subtopics.length}</span>
-                  <span className={s.detailStatLabel}>th&egrave;mes</span>
+                <h1 className={s.dHeroTitle}>{univers.name}<em>.</em></h1>
+                <p className={s.dHeroTagline}>{univers.tagline}</p>
+                <div className={s.dHeroSubtopics}>
+                  {univers.subtopics.slice(0, 5).map((st, i) => (
+                    <span key={st.slug}>{i > 0 && <span className={s.dHeroSubSep}>·</span>}{st.label}</span>
+                  ))}
+                  {univers.subtopics.length > 5 && <span className={s.dHeroSubMore}>+{univers.subtopics.length - 5}</span>}
                 </div>
               </div>
+              {featuredArticle?.imageUrl && (
+                <Link to={`/article/${featuredArticle.slug}`} className={s.dHeroFeatured}>
+                  <img src={sanityImg(featuredArticle.imageUrl, 800)} alt={featuredArticle.titre} className={s.dHeroFeaturedImg} />
+                  <div className={s.dHeroFeaturedOverlay} />
+                  <div className={s.dHeroFeaturedContent}>
+                    <span className={s.dHeroFeaturedLabel}>
+                      <span className={s.dHeroFeaturedLabelDot} />
+                      À la une
+                    </span>
+                    <h2 className={s.dHeroFeaturedTitle}>{typo(featuredArticle.titre)}</h2>
+                    <span className={s.dHeroFeaturedMeta}>
+                      {featuredArticle.authorName || "Origines"} · {featuredArticle.tempsLecture || 5} min
+                    </span>
+                  </div>
+                </Link>
+              )}
             </div>
           </div>
         </section>
 
-        {/* ═══ SUBTOPICS NAV ═══ */}
-        <section ref={subtopicReveal.ref} className={`${s.subtopicSection} ${subtopicReveal.className}`}>
-          <div className="v2-container">
-            <div className={s.subtopicScroll}>
-              {univers.subtopics.map((st) => (
-                <Link key={st.slug} to={`/univers/${universId}/${st.slug}`} className={s.subtopicChip} style={{ "--pillar-color": color } as React.CSSProperties}>
-                  <span className={s.subtopicDot} />
-                  {st.label}
-                  {articlesBySubtopic[st.slug] && <span className={s.subtopicCount}>{articlesBySubtopic[st.slug].length}</span>}
-                </Link>
-              ))}
+        {/* ═══ SUBTOPICS NAV (sticky) ═══ */}
+        <section ref={subtopicReveal.ref} className={`${s.dSubnav} ${subtopicReveal.className}`}>
+          <div className={s.dSubnavInner}>
+            <div className={s.dSubnavScroll}>
+              {univers.subtopics.map((st) => {
+                const count = (articlesBySubtopic[st.slug] || []).length;
+                return (
+                  <Link key={st.slug} to={`/univers/${universId}/${st.slug}`} className={s.dSubnavChip} style={{ "--pillar-color": color } as React.CSSProperties}>
+                    <span className={s.dSubnavDot} />
+                    {st.label}
+                    {count > 0 && <span className={s.dSubnavCount}>{count}</span>}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
 
         {loading && <div className={s.loadingWrap}><div className={s.spinner} /></div>}
 
-        {/* ═══ FEATURED ═══ */}
+        {/* ═══ FEATURED + SECONDARY PICKS ═══ */}
         {!loading && featuredArticle && (
-          <section ref={featuredReveal.ref} className={`${s.featuredSection} ${featuredReveal.className}`}>
+          <section ref={featuredReveal.ref} className={`${s.dFeatured} ${featuredReveal.className}`}>
             <div className="v2-container">
-              <Link to={`/article/${featuredArticle.slug}`} className={s.featuredCard} style={{ "--pillar-color": color } as React.CSSProperties}>
-                <div className={s.featuredImgWrap}>
-                  <img src={sanityImg(featuredArticle.imageUrl!, 1000)} alt={featuredArticle.titre} className={s.featuredImg} loading="eager" />
-                  <div className={s.featuredGradient} />
-                  <div className={s.featuredImgContent}>
-                    <span className={s.featuredLabel}>
-                      <span className={s.featuredLabelDot} />
-                      &Agrave; la une &middot; {univers.name}
-                    </span>
-                  </div>
+              <Link to={`/article/${featuredArticle.slug}`} className={s.dFeaturedCard} style={{ "--pillar-color": color } as React.CSSProperties}>
+                <div className={s.dFeaturedImgWrap}>
+                  <img src={sanityImg(featuredArticle.imageUrl!, 1000)} alt={featuredArticle.titre} className={s.dFeaturedImg} loading="eager" />
+                  <div className={s.dFeaturedGradient} />
                 </div>
-                <div className={s.featuredBody}>
+                <div className={s.dFeaturedBody}>
                   {featuredArticle.soustopic && (
-                    <span className={s.featuredCat}>{featuredArticle.soustopic.replace(/-/g, " ")}</span>
+                    <span className={s.dFeaturedCat}>{featuredArticle.soustopic.replace(/-/g, " ")}</span>
                   )}
-                  <h2 className={s.featuredTitle}>{typo(featuredArticle.titre)}</h2>
-                  <p className={s.featuredDesc}>{getExcerpt(featuredArticle)}</p>
-                  <div className={s.featuredFoot}>
-                    <div className={s.featuredFootLeft}>
-                      {featuredArticle.authorName && <span className={s.featuredAuthor}>{featuredArticle.authorName}</span>}
-                      <span className={s.featuredTime}>{featuredArticle.tempsLecture || 5} min de lecture</span>
+                  <h2 className={s.dFeaturedTitle}>{typo(featuredArticle.titre)}</h2>
+                  <p className={s.dFeaturedExcerpt}>{getExcerpt(featuredArticle)}</p>
+                  <div className={s.dFeaturedFoot}>
+                    <div className={s.dFeaturedFootLeft}>
+                      {featuredArticle.authorName && <span className={s.dFeaturedAuthor}>{featuredArticle.authorName}</span>}
+                      <span className={s.dFeaturedTime}>{featuredArticle.tempsLecture || 5} min de lecture</span>
                     </div>
-                    <span className={s.featuredCta}>Lire <ArrowIcon size={14} /></span>
+                    <span className={s.dFeaturedCta}>Lire <ArrowIcon size={14} /></span>
                   </div>
                 </div>
               </Link>
+
+              {secondaryPicks.length > 0 && (
+                <div className={s.dSecondary}>
+                  {secondaryPicks.map((art, i) => (
+                    <Link key={art._id} to={`/article/${art.slug}`} className={s.dSecondaryItem} style={{ "--i": i } as React.CSSProperties}>
+                      <div className={s.dSecondaryText}>
+                        <span className={s.dSecondaryMeta}>
+                          <span className={s.dSecondaryDot} style={{ backgroundColor: color }} />
+                          {art.soustopic ? art.soustopic.replace(/-/g, " ") : univers.name}
+                        </span>
+                        <h3 className={s.dSecondaryTitle}>{typo(art.titre)}</h3>
+                      </div>
+                      <span className={s.dSecondaryTime}>{art.tempsLecture || 5} min</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         )}
 
-        {/* ═══ THÈMES EN PROFONDEUR ═══ */}
-        {!loading && univers.subtopics.length > 0 && (
-          <section ref={topicsReveal.ref} className={`${s.topicsSection} ${topicsReveal.className}`}>
+        {/* ═══ PAR THÈME ═══ */}
+        {!loading && rankedSubtopics.length > 0 && (
+          <section ref={bandsReveal.ref} className={`${s.dBands} ${bandsReveal.className}`}>
             <div className="v2-container">
               <header className={s.sectionHead}>
-                <span className={s.sectionKicker}><span className={s.sectionKickerDot} style={{ backgroundColor: color }} />Th&eacute;matiques</span>
-                <h2 className={s.sectionTitle}>En <em>profondeur.</em></h2>
+                <span className={s.sectionKicker}><span className={s.sectionKickerDot} style={{ backgroundColor: color }} />Thématiques</span>
+                <h2 className={s.sectionTitle}>Explorer par <em>thème.</em></h2>
               </header>
-              <div className={s.topicsGrid}>
-                {univers.subtopics.map((st, i) => {
+              <div className={s.dBandsList}>
+                {rankedSubtopics.slice(0, 6).map((st, i) => {
                   const stArticles = articlesBySubtopic[st.slug] || [];
-                  const topArt = stArticles.find((a) => a.imageUrl);
                   return (
-                    <div key={st.slug} className={s.topicCard} style={{ "--i": i, "--pillar-color": color } as React.CSSProperties}>
-                      {topArt && topArt.imageUrl && (
-                        <Link to={`/article/${topArt.slug}`} className={s.topicCardThumb}>
-                          <img src={sanityImg(topArt.imageUrl, 400)} alt={topArt.titre} className={s.topicCardImg} loading="lazy" decoding="async" />
-                          <span className={s.topicCardOverlay} />
-                          <span className={s.topicCardImgTitle}>{typo(topArt.titre)}</span>
-                        </Link>
-                      )}
-                      <div className={s.topicCardBody}>
-                        <Link to={`/univers/${universId}/${st.slug}`} className={s.topicCardHead}>
-                          <span className={s.topicCardDot} />
-                          <h3 className={s.topicCardName}>{st.label}</h3>
-                          <span className={s.topicCardCount}>{stArticles.length}</span>
+                    <div key={st.slug} className={s.dBand} style={{ "--i": i, "--pillar-color": color } as React.CSSProperties}>
+                      <div className={s.dBandInfo}>
+                        <Link to={`/univers/${universId}/${st.slug}`} className={s.dBandHead}>
+                          <span className={s.dBandDot} />
+                          <h3 className={s.dBandName}>{st.label}</h3>
                           <ArrowIcon size={12} />
                         </Link>
-                        <p className={s.topicCardDesc}>{st.description?.slice(0, 120)}…</p>
+                        <p className={s.dBandDesc}>{st.description?.slice(0, 100)}</p>
+                        <span className={s.dBandCount}>{st.count} article{st.count > 1 ? "s" : ""}</span>
+                      </div>
+                      <div className={s.dBandCards}>
+                        {stArticles.slice(0, 3).map((art) => (
+                          <Link key={art._id} to={`/article/${art.slug}`} className={s.dBandCard}>
+                            {art.imageUrl ? (
+                              <div className={s.dBandCardImg}>
+                                <img src={sanityImg(art.imageUrl, 360)} alt={art.titre} loading="lazy" decoding="async" />
+                              </div>
+                            ) : (
+                              <div className={s.dBandCardPlaceholder} />
+                            )}
+                            <h4 className={s.dBandCardTitle}>{typo(art.titre)}</h4>
+                            <span className={s.dBandCardMeta}>{art.authorName || "Origines"} · {art.tempsLecture || 5} min</span>
+                          </Link>
+                        ))}
                       </div>
                     </div>
                   );
                 })}
               </div>
+              {univers.subtopics.length > 6 && (
+                <div className={s.dBandsFoot}>
+                  <Link to={`/univers/${universId}`} className={s.dBandsMore}>
+                    Voir les {univers.subtopics.length} thèmes <ArrowIcon size={14} />
+                  </Link>
+                </div>
+              )}
             </div>
           </section>
         )}
 
-        {/* ═══ ARTICLES GRID ═══ */}
+        {/* ═══ TOUS LES RÉCITS ═══ */}
         {!loading && otherArticles.length > 0 && (
-          <section ref={gridReveal.ref} className={`${s.gridSection} ${gridReveal.className}`}>
+          <section ref={gridReveal.ref} className={`${s.dGrid} ${gridReveal.className}`}>
             <div className="v2-container">
               <header className={s.sectionHead}>
                 <span className={s.sectionKicker}><span className={s.sectionKickerDot} style={{ backgroundColor: color }} />{univers.name}</span>
-                <h2 className={s.sectionTitle}>Tous les <em>r&eacute;cits.</em></h2>
+                <h2 className={s.sectionTitle}>Tous les <em>récits.</em></h2>
               </header>
               <div className={s.gridMeta}>
                 <span className={s.gridCount}>{otherArticles.length} articles</span>
                 {totalPages > 1 && <span className={s.gridPage}>Page {currentPage} / {totalPages}</span>}
               </div>
+
+              {currentPage === 1 && paginated.length >= 3 && (
+                <div className={s.dGridLead}>
+                  <Link to={`/article/${paginated[0].slug}`} className={s.dGridLeadCard} style={{ "--pillar-color": color } as React.CSSProperties}>
+                    <div className={s.dGridLeadImg}>
+                      {paginated[0].imageUrl ? (
+                        <img src={sanityImg(paginated[0].imageUrl, 600)} alt={paginated[0].titre} loading="lazy" decoding="async" />
+                      ) : (
+                        <div className={s.dGridLeadPlaceholder} />
+                      )}
+                    </div>
+                    <div className={s.dGridLeadBody}>
+                      <span className={s.dGridLeadMeta}>
+                        <span className={s.articleDot} style={{ backgroundColor: color }} />
+                        <span className={s.articleCat}>{paginated[0].soustopic?.replace(/-/g, " ") || univers.name}</span>
+                      </span>
+                      <h3 className={s.dGridLeadTitle}>{typo(paginated[0].titre)}</h3>
+                      <p className={s.dGridLeadExcerpt}>{getExcerpt(paginated[0])}</p>
+                      <span className={s.dGridLeadAuthor}>{paginated[0].authorName || "Origines"} · {paginated[0].tempsLecture || 5} min</span>
+                    </div>
+                  </Link>
+                  <div className={s.dGridLeadSide}>
+                    {paginated.slice(1, 3).map((art) => (
+                      <Link key={art._id} to={`/article/${art.slug}`} className={s.dGridLeadSideCard}>
+                        {art.imageUrl && (
+                          <div className={s.dGridLeadSideImg}>
+                            <img src={sanityImg(art.imageUrl, 400)} alt={art.titre} loading="lazy" decoding="async" />
+                          </div>
+                        )}
+                        <div className={s.dGridLeadSideBody}>
+                          <span className={s.dGridLeadSideMeta}>
+                            <span className={s.articleDot} style={{ backgroundColor: color }} />
+                            <span className={s.articleCat}>{art.soustopic?.replace(/-/g, " ") || univers.name}</span>
+                          </span>
+                          <h3 className={s.dGridLeadSideTitle}>{typo(art.titre)}</h3>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className={s.articlesGrid}>
-                {paginated.map((art, i) => (
+                {(currentPage === 1 ? paginated.slice(3) : paginated).map((art, i) => (
                   <Link key={art._id} to={`/article/${art.slug}`} className={s.articleCard} style={{ "--i": i } as React.CSSProperties}>
                     <div className={s.articleThumb}>
                       {art.imageUrl ? (
@@ -513,16 +611,25 @@ function UniversDetailPage({ universId }: { universId: string }) {
           </section>
         )}
 
+        {/* ═══ NEWSLETTER CTA ═══ */}
+        <section ref={ctaReveal.ref} className={`${s.dCta} ${ctaReveal.className}`} style={{ "--pillar-color": color } as React.CSSProperties}>
+          <div className={s.dCtaInner}>
+            <span className={s.dCtaAccent} />
+            <p className={s.dCtaLine}>Chaque dimanche, le meilleur de <em>{univers.name.replace(/^(L'|Le |Les )/, "").toLowerCase()}</em> dans votre boîte.</p>
+            <EmailCapture source="newsletter" variant="dark" placeholder="Votre email" buttonText="S'inscrire" accentColor={color} />
+          </div>
+        </section>
+
         {/* ═══ FAQ ═══ */}
         {allFaqs.length > 0 && (
-          <section ref={faqReveal.ref} className={`${s.faqSection} ${faqReveal.className}`}>
+          <section ref={faqReveal.ref} className={`${s.faqSection} ${faqReveal.className}`} style={{ "--pillar-color": color } as React.CSSProperties}>
             <div className="v2-container">
               <header className={s.sectionHead}>
-                <span className={s.sectionKicker}><span className={s.sectionKickerDot} style={{ backgroundColor: color }} />Questions fr&eacute;quentes</span>
+                <span className={s.sectionKicker}><span className={s.sectionKickerDot} style={{ backgroundColor: color }} />Questions fréquentes</span>
                 <h2 className={s.sectionTitle}>Comprendre <em>{univers.name.replace(/^(L'|Le |Les )/, "").toLowerCase()}.</em></h2>
               </header>
               <div className={s.faqList}>
-                {allFaqs.slice(0, 8).map((faq, i) => (
+                {visibleFaqs.map((faq, i) => (
                   <details key={i} className={s.faqItem}>
                     <summary className={s.faqQuestion}>
                       <span className={s.faqQ}>{faq.question}</span>
@@ -532,6 +639,11 @@ function UniversDetailPage({ universId }: { universId: string }) {
                   </details>
                 ))}
               </div>
+              {allFaqs.length > 6 && !faqExpanded && (
+                <button className={s.faqMore} onClick={() => setFaqExpanded(true)}>
+                  Voir toutes les questions ({allFaqs.length}) <ArrowIcon size={12} />
+                </button>
+              )}
             </div>
           </section>
         )}
@@ -541,13 +653,13 @@ function UniversDetailPage({ universId }: { universId: string }) {
           <div className="v2-container">
             <header className={s.sectionHead}>
               <span className={s.sectionKicker}><span className={s.sectionKickerDot} />Continuez</span>
-              <h2 className={s.sectionTitle}>D&rsquo;autres <em>univers.</em></h2>
+              <h2 className={s.sectionTitle}>D'autres <em>univers.</em></h2>
             </header>
             <div className={s.relatedGrid}>
               {otherPillars.map((u, i) => (
                 <Link key={u.id} to={`/univers/${u.id}`} className={s.relatedCard} style={{ "--pillar-color": u.color, "--i": i } as React.CSSProperties}>
                   <span className={s.relatedAccent} />
-                  <span className={s.relatedKicker}><span className={s.relatedDot} />{u.subtopics.length} th&egrave;mes</span>
+                  <span className={s.relatedKicker}><span className={s.relatedDot} />{u.subtopics.length} thèmes</span>
                   <h3 className={s.relatedName}>{u.name}</h3>
                   <p className={s.relatedTagline}>{u.tagline}</p>
                   <span className={s.relatedArrow}><ArrowIcon size={14} /></span>

@@ -161,10 +161,13 @@ function normalize(str: string): string {
 export default function Feed({ cmsItems }: FeedProps) {
   const allItems = useMemo(() => cmsItems || FEED_ITEMS, [cmsItems]);
 
+  const ITEMS_PER_LOAD = 8;
+
   const [activeFilter, setActiveFilter] = useState("all");
   const [sortMode, setSortMode] = useState<SortMode>("recent");
   const [showAllFilters, setShowAllFilters] = useState(false);
   const [enteringIds, setEnteringIds] = useState<Set<number>>(new Set());
+  const [visibleLimit, setVisibleLimit] = useState(ITEMS_PER_LOAD);
   const prevFilterRef = useRef("all");
 
   /* ── Filters rebuilt from actual items by sous-topic ── */
@@ -221,15 +224,18 @@ export default function Feed({ cmsItems }: FeedProps) {
   }, [sortMode, allItems]);
 
   /* ── Filter logic ── */
-  const visibleItems = useMemo(() => {
-    const filtered =
-      activeFilter === "all"
-        ? sortedItems
-        : sortedItems.filter((item) => (item.soustopic || "autres") === activeFilter);
-    return filtered.slice(0, 5);
+  const filteredItems = useMemo(() => {
+    return activeFilter === "all"
+      ? sortedItems
+      : sortedItems.filter((item) => (item.soustopic || "autres") === activeFilter);
   }, [sortedItems, activeFilter]);
 
-  const visibleCount = visibleItems.length;
+  const visibleItems = useMemo(() => {
+    return filteredItems.slice(0, visibleLimit);
+  }, [filteredItems, visibleLimit]);
+
+  const hasMore = visibleLimit < filteredItems.length;
+  const visibleCount = filteredItems.length;
 
   /* ── Filter label ── */
   const filterLabelText = useMemo(() => {
@@ -245,6 +251,7 @@ export default function Feed({ cmsItems }: FeedProps) {
       const prev = activeFilter;
       prevFilterRef.current = prev;
       setActiveFilter(filterKey);
+      setVisibleLimit(ITEMS_PER_LOAD);
 
       // Mark items that are newly entering (were hidden, now shown)
       const prevVisible = new Set(
@@ -593,6 +600,22 @@ export default function Feed({ cmsItems }: FeedProps) {
             </li>
           );
         })}
+
+        {/* Voir plus */}
+        {hasMore && (
+          <li className={s.feedLoadMore}>
+            <button
+              type="button"
+              className={s.feedLoadMoreBtn}
+              onClick={() => setVisibleLimit((v) => v + ITEMS_PER_LOAD)}
+            >
+              Voir plus ({filteredItems.length - visibleLimit} restants)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+          </li>
+        )}
 
         {/* CTA cassure — bande encre + pastilles univers */}
         <li className={s.feedGridCta}>

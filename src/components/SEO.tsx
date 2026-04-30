@@ -147,23 +147,31 @@ const generateVideoSchema = (props: {
 
 const generateItemListSchema = (items: Array<{
   name: string;
-  description: string;
-  image: string;
+  description?: string;
+  image?: string | null;
   url?: string;
 }>) => ({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  itemListElement: items.map((item, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    item: {
-      '@type': 'CreativeWork',
-      name: item.name,
-      description: item.description,
-      image: item.image.startsWith('http') ? item.image : `${SITE_URL}${item.image}`,
-      ...(item.url ? { url: item.url.startsWith('http') ? item.url : `${SITE_URL}${item.url}` } : {}),
-    }
-  }))
+  itemListElement: items.filter(i => i.name).map((item, index) => {
+    const img = item.image && typeof item.image === 'string'
+      ? (item.image.startsWith('http') ? item.image : `${SITE_URL}${item.image}`)
+      : undefined;
+    const href = item.url && typeof item.url === 'string'
+      ? (item.url.startsWith('http') ? item.url : `${SITE_URL}${item.url}`)
+      : undefined;
+    return {
+      '@type': 'ListItem' as const,
+      position: index + 1,
+      item: {
+        '@type': 'CreativeWork' as const,
+        name: item.name,
+        ...(item.description ? { description: item.description } : {}),
+        ...(img ? { image: img } : {}),
+        ...(href ? { url: href } : {}),
+      }
+    };
+  })
 });
 
 const generateFAQSchema = (faqs: Array<{ question: string; answer: string }>) => ({

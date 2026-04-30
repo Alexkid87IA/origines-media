@@ -451,6 +451,38 @@
   background: rgba(247, 245, 240, 0.25);
 }
 
+/* ── Load more ── */
+
+.feedLoadMore {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+  list-style: none;
+}
+
+.feedLoadMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.feedLoadMoreBtn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
 /* ── In-grid CTA — cassure encre + pastilles univers ── */
 .feedGridCta {
   grid-column: 1 / -1;

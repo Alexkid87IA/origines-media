@@ -78,9 +78,9 @@ const ALL_KEY = "all";
 
 function formatTimeLabel(dateStr?: string): string {
   if (!dateStr) return "";
-  const now = new Date();
   const d = new Date(dateStr);
-  const diffMs = now.getTime() - d.getTime();
+  const diffMs = Date.now() - d.getTime();
+  if (diffMs < 0) return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
   const diffH = Math.floor(diffMs / 3600000);
   if (diffH < 1) return "il y a quelques min";
   if (diffH < 24) return `il y a ${diffH} h`;
