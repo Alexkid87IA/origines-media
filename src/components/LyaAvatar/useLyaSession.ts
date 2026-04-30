@@ -91,6 +91,18 @@ export function useLyaSession(): UseLyaSessionReturn {
 
       sessionRef.current = session;
       await session.start();
+
+      // SDK workaround: the WebSocket path silently drops AVATAR_SPEAK_TEXT.
+      // Close it so all commands go through LiveKit data channel instead.
+      const s = session as unknown as { _sessionEventSocket: WebSocket | null };
+      if (s._sessionEventSocket) {
+        const ws = s._sessionEventSocket;
+        ws.onclose = null;
+        ws.onerror = null;
+        ws.onmessage = null;
+        ws.close();
+        s._sessionEventSocket = null;
+      }
     } catch (err) {
       console.error("[LyaAvatar] Connection failed:", err);
       setError(err instanceof Error ? err.message : "Connexion échouée");
@@ -99,24 +111,8 @@ export function useLyaSession(): UseLyaSessionReturn {
   }, [cleanup]);
 
   const speak = useCallback((text: string) => {
-    const session = sessionRef.current;
-    if (!session || session.state !== SessionState.CONNECTED) return;
-
-    // SDK bug: sendCommandEventToWebSocket doesn't handle AVATAR_SPEAK_TEXT,
-    // so repeat() is silently dropped when a WebSocket is open.
-    // Workaround: send directly via LiveKit data channel.
-    const room = (session as unknown as { room: { state: string; localParticipant: { publishData: (data: Uint8Array, opts: { reliable: boolean; topic: string }) => void } } }).room;
-    if (room?.state === "connected") {
-      const payload = new TextEncoder().encode(JSON.stringify({
-        event_id: crypto.randomUUID(),
-        event_type: "avatar.speak_text",
-        text,
-      }));
-      room.localParticipant.publishData(payload, {
-        reliable: true,
-        topic: "agent-control",
-      });
-    }
+    if (!sessionRef.current || sessionRef.current.state !== SessionState.CONNECTED) return;
+    sessionRef.current.repeat(text);
   }, []);
 
   const interrupt = useCallback(() => {

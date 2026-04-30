@@ -44,6 +44,8 @@ export default function LyaInterviewSession({
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const audioRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const videoPreviewRef = useRef<HTMLVideoElement>(null);
   const historyRef = useRef<{ question: string; answer: string }[]>([]);
@@ -95,19 +97,29 @@ export default function LyaInterviewSession({
   function startRecording() {
     if (!streamRef.current) return;
     chunksRef.current = [];
+    audioChunksRef.current = [];
     setTimer(0);
 
-    const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")
+    const videoMime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")
       ? "video/webm;codecs=vp9,opus"
       : MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")
         ? "video/webm;codecs=vp8,opus"
         : "video/webm";
 
-    const recorder = new MediaRecorder(streamRef.current, { mimeType });
+    const recorder = new MediaRecorder(streamRef.current, { mimeType: videoMime });
     recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-    recorder.onstop = () => handleRecordingDone();
     recorderRef.current = recorder;
     recorder.start(1000);
+
+    const audioStream = new MediaStream(streamRef.current.getAudioTracks());
+    const audioMime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+      ? "audio/webm;codecs=opus"
+      : "audio/webm";
+    const audioRec = new MediaRecorder(audioStream, { mimeType: audioMime });
+    audioRec.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+    audioRec.onstop = () => handleRecordingDone();
+    audioRecorderRef.current = audioRec;
+    audioRec.start(1000);
 
     timerRef.current = setInterval(() => {
       setTimer((t) => {
@@ -119,23 +131,23 @@ export default function LyaInterviewSession({
 
   function stopRecording() {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
-    if (recorderRef.current?.state === "recording") {
-      recorderRef.current.stop();
-    }
+    if (recorderRef.current?.state === "recording") recorderRef.current.stop();
+    if (audioRecorderRef.current?.state === "recording") audioRecorderRef.current.stop();
   }
 
   async function handleRecordingDone() {
     setPhase("processing");
-    const blob = new Blob(chunksRef.current, { type: chunksRef.current[0]?.type || "video/webm" });
-    setRecordings((prev) => [...prev, blob]);
+    const videoBlob = new Blob(chunksRef.current, { type: chunksRef.current[0]?.type || "video/webm" });
+    const audioBlob = new Blob(audioChunksRef.current, { type: audioChunksRef.current[0]?.type || "audio/webm" });
+    setRecordings((prev) => [...prev, videoBlob]);
 
     try {
-      const base64 = await blobToBase64(blob);
+      const base64 = await blobToBase64(audioBlob);
       const tHeaders = await getAuthHeaders();
       const transcribeRes = await fetch("/api/interview/transcribe", {
         method: "POST",
         headers: tHeaders,
-        body: JSON.stringify({ audio: base64, mimeType: blob.type }),
+        body: JSON.stringify({ audio: base64, mimeType: audioBlob.type }),
       });
 
       let text = "";
@@ -190,7 +202,7 @@ export default function LyaInterviewSession({
         setPhase("done");
         setTimeout(() => {
           onComplete(
-            [...recordings, blob],
+            [...recordings, videoBlob],
             [...historyRef.current],
           );
         }, 4000);
