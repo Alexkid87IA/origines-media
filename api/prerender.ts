@@ -447,6 +447,16 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     return null
   }
 
+  // /boutique/:guideSlug
+  if (segments.length === 2 && segments[0] === 'boutique') {
+    const label = segments[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    return {
+      ...defaults,
+      title: `${label} — Boutique Origines Media`,
+      description: `Découvrez ${label} dans la boutique Origines Media : guides, ateliers et contenus premium.`,
+    }
+  }
+
   // /format/:formatId
   if (segments.length === 2 && segments[0] === 'format') {
     const label = segments[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())

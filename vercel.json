@@ -88,6 +88,41 @@
       "source": "/portraits",
       "destination": "/temoignages",
       "permanent": true
+    },
+    {
+      "source": "/esprit",
+      "destination": "/univers/esprit",
+      "permanent": true
+    },
+    {
+      "source": "/corps",
+      "destination": "/univers/corps",
+      "permanent": true
+    },
+    {
+      "source": "/liens",
+      "destination": "/univers/liens",
+      "permanent": true
+    },
+    {
+      "source": "/monde",
+      "destination": "/univers/monde",
+      "permanent": true
+    },
+    {
+      "source": "/avenir",
+      "destination": "/univers/avenir",
+      "permanent": true
+    },
+    {
+      "source": "/racontez-votre-histoire",
+      "destination": "/ecrire-mon-histoire",
+      "permanent": true
+    },
+    {
+      "source": "/partager-son-histoire",
+      "destination": "/ecrire-mon-histoire",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -457,17 +492,6 @@
         }
       ],
       "destination": "/api/prerender?p=/rejoindre"
-    },
-    {
-      "source": "/racontez-votre-histoire",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
-        }
-      ],
-      "destination": "/api/prerender?p=/racontez-votre-histoire"
     },
     {
       "source": "/mentions-legales",
