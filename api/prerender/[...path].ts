@@ -603,8 +603,8 @@ function renderHTML(meta: ResolvedMeta): string {
 // Handler
 // ---------------------------------------------------------------------------
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const pathParam = req.query.path
-  const pathStr = Array.isArray(pathParam) ? `/${pathParam.join('/')}` : `/${pathParam || ''}`
+  const rawUrl = (req.url || '/').split('?')[0]
+  const pathStr = rawUrl.replace(/^\/api\/prerender\/?/, '/') || '/'
   const path = pathStr === '/' ? '/' : pathStr.replace(/\/+$/, '')
 
   try {
