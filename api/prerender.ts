@@ -3,11 +3,11 @@ import {
   BASE_URL, DEFAULT_OG_IMAGE, SITE_NAME,
   DEFAULT_TITLE, DEFAULT_DESCRIPTION,
   UNIVERS_MAP, UNIVERS_DATA,
-} from '../_lib/constants.js'
+} from './_lib/constants.js'
 import {
   articleSchema, videoSchema, breadcrumbSchema,
   faqSchema, organizationSchema, itemListSchema, jsonLdTag,
-} from '../_lib/jsonLd.js'
+} from './_lib/jsonLd.js'
 import {
   ARTICLE_FULL_QUERY, VIDEO_FULL_QUERY,
   PORTRAIT_FULL_QUERY, RECOMMENDATION_FULL_QUERY,
@@ -17,8 +17,8 @@ import {
   LIST_RECOMMENDATIONS_QUERY, LIST_SERIES_QUERY,
   LIST_DOSSIERS_QUERY,
   fetchSanity,
-} from '../_lib/queries.js'
-import { renderPortableText } from '../_lib/portableTextToHtml.js'
+} from './_lib/queries.js'
+import { renderPortableText } from './_lib/portableTextToHtml.js'
 
 // ---------------------------------------------------------------------------
 // Static page meta
@@ -603,8 +603,8 @@ function renderHTML(meta: ResolvedMeta): string {
 // Handler
 // ---------------------------------------------------------------------------
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const rawUrl = (req.url || '/').split('?')[0]
-  const pathStr = rawUrl.replace(/^\/api\/prerender\/?/, '/') || '/'
+  const p = req.query.p
+  const pathStr = typeof p === 'string' ? p : '/'
   const path = pathStr === '/' ? '/' : pathStr.replace(/\/+$/, '')
 
   try {

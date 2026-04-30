@@ -6,9 +6,6 @@
     }
   ],
   "functions": {
-    "api/prerender/[...path].ts": {
-      "maxDuration": 10
-    },
     "api/sitemap.ts": {
       "maxDuration": 30
     },
@@ -41,18 +38,57 @@
     },
     "api/reco/submit.ts": {
       "maxDuration": 10
+    },
+    "api/prerender.ts": {
+      "maxDuration": 10
     }
   },
   "redirects": [
-    { "source": "/academie", "destination": "/boutique", "permanent": true },
-    { "source": "/academy", "destination": "/boutique", "permanent": true },
-    { "source": "/communaute", "destination": "/ensemble", "permanent": true },
-    { "source": "/production/:slug", "destination": "/article/:slug", "permanent": true },
-    { "source": "/recit/:slug", "destination": "/article/:slug", "permanent": true },
-    { "source": "/recommandation/:slug", "destination": "/recommandations/:slug", "permanent": true },
-    { "source": "/comprendre", "destination": "/articles", "permanent": true },
-    { "source": "/reflexions", "destination": "/articles", "permanent": true },
-    { "source": "/portraits", "destination": "/temoignages", "permanent": true }
+    {
+      "source": "/academie",
+      "destination": "/boutique",
+      "permanent": true
+    },
+    {
+      "source": "/academy",
+      "destination": "/boutique",
+      "permanent": true
+    },
+    {
+      "source": "/communaute",
+      "destination": "/ensemble",
+      "permanent": true
+    },
+    {
+      "source": "/production/:slug",
+      "destination": "/article/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/recit/:slug",
+      "destination": "/article/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/recommandation/:slug",
+      "destination": "/recommandations/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/comprendre",
+      "destination": "/articles",
+      "permanent": true
+    },
+    {
+      "source": "/reflexions",
+      "destination": "/articles",
+      "permanent": true
+    },
+    {
+      "source": "/portraits",
+      "destination": "/temoignages",
+      "permanent": true
+    }
   ],
   "rewrites": [
     {
@@ -61,218 +97,476 @@
     },
     {
       "source": "/article/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/article/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/article/:slug"
     },
     {
       "source": "/article/:slug/",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/article/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/article/:slug"
     },
     {
       "source": "/",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/"
     },
     {
       "source": "/articles",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/articles"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/articles"
     },
     {
       "source": "/videos",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/videos"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/videos"
     },
     {
       "source": "/histoires",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/histoires"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/histoires"
     },
     {
       "source": "/recommandations",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/recommandations"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/recommandations"
     },
     {
       "source": "/dossiers",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/dossiers"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/dossiers"
     },
     {
       "source": "/newsletter",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/newsletter"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/newsletter"
     },
     {
       "source": "/a-propos",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/a-propos"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/a-propos"
     },
     {
       "source": "/ensemble",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/ensemble"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/ensemble"
     },
     {
       "source": "/histoire/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/histoire/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/histoire/:slug"
     },
     {
       "source": "/video/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/video/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/video/:slug"
     },
     {
       "source": "/recommandations/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/recommandations/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/recommandations/:slug"
     },
     {
       "source": "/series/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/series/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/series/:slug"
     },
     {
       "source": "/dossiers/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/dossiers/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/dossiers/:slug"
     },
     {
       "source": "/portraits/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/portraits/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/portraits/:slug"
     },
     {
       "source": "/comprendre/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/comprendre/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/comprendre/:slug"
     },
     {
       "source": "/reflexions/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/reflexions/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/reflexions/:slug"
     },
     {
       "source": "/temoignages/:slug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/temoignages/:slug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/temoignages/:slug"
     },
     {
       "source": "/univers",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/univers"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/univers"
     },
     {
       "source": "/univers/:universId",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/univers/:universId"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/univers/:universId"
     },
     {
       "source": "/univers/:universId/:soustopic",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/univers/:universId/:soustopic"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/univers/:universId/:soustopic"
     },
     {
       "source": "/series",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/series"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/series"
     },
     {
       "source": "/bibliotheque",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/bibliotheque"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/bibliotheque"
     },
     {
       "source": "/programmes",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/programmes"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/programmes"
     },
     {
       "source": "/guides",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/guides"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/guides"
     },
     {
       "source": "/boutique",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/boutique"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/boutique"
     },
     {
       "source": "/temoignages",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/temoignages"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/temoignages"
     },
     {
       "source": "/contact",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/contact"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/contact"
     },
     {
       "source": "/partenariats",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/partenariats"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/partenariats"
     },
     {
       "source": "/media",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/media"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/media"
     },
     {
       "source": "/rejoindre",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/rejoindre"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/rejoindre"
     },
     {
       "source": "/racontez-votre-histoire",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/racontez-votre-histoire"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/racontez-votre-histoire"
     },
     {
       "source": "/mentions-legales",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/mentions-legales"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/mentions-legales"
     },
     {
       "source": "/plan-du-site",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/plan-du-site"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/plan-du-site"
     },
     {
       "source": "/ecrire-mon-histoire",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/ecrire-mon-histoire"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/ecrire-mon-histoire"
     },
     {
       "source": "/cgu",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/cgu"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/cgu"
     },
     {
       "source": "/cgv",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/cgv"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/cgv"
     },
     {
       "source": "/confidentialite",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/confidentialite"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/confidentialite"
     },
     {
       "source": "/cookies",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/cookies"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/cookies"
     },
     {
       "source": "/format/:formatId",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/format/:formatId"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/format/:formatId"
     },
     {
       "source": "/boutique/:guideSlug",
-      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/prerender/boutique/:guideSlug"
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/boutique/:guideSlug"
     },
     {
       "source": "/((?!api|assets|static|_next|favicon.ico|robots.txt|sitemap.xml|kit-media-origines.pdf|.*\\..*).*)",
