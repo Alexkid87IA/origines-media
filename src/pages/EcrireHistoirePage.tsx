@@ -805,12 +805,17 @@ export default function EcrireHistoirePage() {
     }, 80);
   };
 
-  const scrollToEl = (id: string, delay = 320) => {
+  const scrollToEl = (id: string, delay = 350) => {
     setTimeout(() => {
       const el = document.getElementById(id);
       if (!el) return;
-      const y = el.getBoundingClientRect().top + window.scrollY - 24;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      const rect = el.getBoundingClientRect();
+      const viewH = window.innerHeight;
+      const elH = rect.height;
+      const offset = elH < viewH * 0.6
+        ? rect.top + window.scrollY - viewH * 0.35
+        : rect.top + window.scrollY - 80;
+      window.scrollTo({ top: Math.max(0, offset), behavior: "smooth" });
     }, delay);
   };
 
@@ -1347,29 +1352,46 @@ export default function EcrireHistoirePage() {
           {(
             <>
               {/* ── Lya companion ── */}
-              <div className={s.lyaCompanion}>
-                <div className={s.lyaCompanionAvatar}>
+              <motion.div
+                className={s.lyaCompanion}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <motion.div
+                  className={s.lyaCompanionAvatar}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3, duration: 0.5, type: "spring", stiffness: 200, damping: 15 }}
+                >
                   <span className={s.lyaCompanionDot} />
-                </div>
+                </motion.div>
                 <div className={s.lyaCompanionContent}>
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={step}
-                      initial={{ opacity: 0, y: 6 }}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
-                      transition={{ duration: 0.3 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.35 }}
                     >
                       <p className={s.lyaCompanionText}>
                         <AllyaTypewriter text={LYA_STEP_MESSAGES[step]?.text || ""} speed={18} />
                       </p>
                       {LYA_STEP_MESSAGES[step]?.sub && (
-                        <p className={s.lyaCompanionSub}>{LYA_STEP_MESSAGES[step].sub}</p>
+                        <motion.p
+                          className={s.lyaCompanionSub}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 1.5, duration: 0.4 }}
+                        >
+                          {LYA_STEP_MESSAGES[step].sub}
+                        </motion.p>
                       )}
                     </motion.div>
                   </AnimatePresence>
                 </div>
-              </div>
+              </motion.div>
 
               {/* ── Progress bar ── */}
               <div className={s.progressWrap}>
@@ -1407,22 +1429,45 @@ export default function EcrireHistoirePage() {
           {step === 0 && (
             <section className={s.welcome}>
               <div className={s.welcomeInner}>
-                <span className={s.welcomeKicker}>Racontez votre histoire</span>
-                <h2 className={s.welcomeTitle}>
+                <motion.span
+                  className={s.welcomeKicker}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  Racontez votre histoire
+                </motion.span>
+                <motion.h2
+                  className={s.welcomeTitle}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                >
                   Écrivez ou filmez-vous.<br />
                   <em>On s'occupe du reste.</em>
-                </h2>
-                <p className={s.welcomeDeck}>
+                </motion.h2>
+                <motion.p
+                  className={s.welcomeDeck}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                >
                   Votre témoignage pourra devenir un article Origines, une vidéo sur
                   nos réseaux, ou le début d'un projet éditorial plus grand — podcast,
                   documentaire, série. Choisissez simplement le format qui vous convient.
-                </p>
+                </motion.p>
 
                 {/* Format choice */}
                 <div className={s.formatChoice}>
-                  <button
+                  <motion.button
                     className={`${s.formatCard} ${draft.format === "texte" ? s.formatCardActive : ""}`}
                     onClick={() => { updateDraft({ format: "texte" }); scrollToEl("step0-cta"); }}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                    whileTap={{ scale: 0.98 }}
+                    layout
                   >
                     <div className={s.formatCardIcon}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -1442,14 +1487,25 @@ export default function EcrireHistoirePage() {
                       {draft.format === "texte" ? "Format sélectionné" : "Choisir ce format"}
                     </span>
                     {draft.format === "texte" && (
-                      <span className={s.formatCardCheck}>
+                      <motion.span
+                        className={s.formatCardCheck}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6L9 17l-5-5" /></svg>
-                      </span>
+                      </motion.span>
                     )}
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
                     className={`${s.formatCard} ${draft.format === "video" ? s.formatCardActive : ""}`}
                     onClick={() => { updateDraft({ format: "video" }); scrollToEl("step0-cta"); }}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                    whileTap={{ scale: 0.98 }}
+                    layout
                   >
                     <div className={s.formatCardIcon}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -1466,11 +1522,16 @@ export default function EcrireHistoirePage() {
                       {draft.format === "video" ? "Format sélectionné" : "Choisir ce format"}
                     </span>
                     {draft.format === "video" && (
-                      <span className={s.formatCardCheck}>
+                      <motion.span
+                        className={s.formatCardCheck}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6L9 17l-5-5" /></svg>
-                      </span>
+                      </motion.span>
                     )}
-                  </button>
+                  </motion.button>
                 </div>
 
                 <div className={s.welcomePromises}>
@@ -1536,7 +1597,12 @@ export default function EcrireHistoirePage() {
                     </>
                   )}
                 </div>
-                <div id="step0-cta">
+                <motion.div
+                  id="step0-cta"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
                   <Button
                     type="button"
                     variant="primary"
@@ -1547,7 +1613,7 @@ export default function EcrireHistoirePage() {
                   >
                     Continuer avec ce format
                   </Button>
-                </div>
+                </motion.div>
               </div>
             </section>
           )}
