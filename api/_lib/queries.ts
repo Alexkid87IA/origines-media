@@ -3,7 +3,7 @@ import { SANITY_URL } from './constants.js'
 export const ARTICLE_FULL_QUERY = `
   *[_type == "production" && slug.current == $slug][0] {
     "title": titre,
-    "description": coalesce(description, extrait, chapeau),
+    "description": coalesce(description, extrait, chapeau, deck),
     "image": coalesce(image.asset->url, imageUrl),
     "publishedAt": datePublication,
     "modifiedAt": coalesce(dateModification, _updatedAt),
@@ -65,7 +65,7 @@ export const SERIES_FULL_QUERY = `
     "title": titre,
     "description": description,
     "image": coalesce(poster.asset->url, imageUrl),
-    "episodes": episodes[]->{ "title": titre, "slug": slug.current, "description": coalesce(description, extrait) }
+    "episodes": episodes[]->{ "title": titre, "slug": slug.current, "description": coalesce(description, extrait, deck) }
   }
 `
 
@@ -74,7 +74,7 @@ export const DOSSIER_FULL_QUERY = `
     "title": question,
     "description": chapeau,
     "image": coalesce(image.asset->url, mainImage.asset->url),
-    "articles": articles[]->{ "title": titre, "slug": slug.current, "description": coalesce(description, extrait) }
+    "articles": articles[]->{ "title": titre, "slug": slug.current, "description": coalesce(description, extrait, deck) }
   }
 `
 
@@ -82,7 +82,7 @@ export const LIST_ARTICLES_QUERY = `
   *[_type == "production" && defined(slug.current)] | order(datePublication desc)[0...20] {
     "title": titre,
     "slug": slug.current,
-    "description": coalesce(description, extrait),
+    "description": coalesce(description, extrait, chapeau, deck),
     "image": coalesce(image.asset->url, imageUrl),
     "type": coalesce(typeArticle, "article")
   }
@@ -92,7 +92,7 @@ export const LIST_VIDEOS_QUERY = `
   *[_type == "production" && typeArticle == "video" && defined(slug.current)] | order(datePublication desc)[0...20] {
     "title": titre,
     "slug": slug.current,
-    "description": coalesce(description, extrait),
+    "description": coalesce(description, extrait, chapeau, deck),
     "image": coalesce(image.asset->url, imageUrl)
   }
 `
@@ -138,7 +138,7 @@ export const SUBTOPIC_ARTICLES_QUERY = `
   *[_type == "production" && soustopic == $soustopic && defined(slug.current)] | order(datePublication desc)[0...20] {
     "title": titre,
     "slug": slug.current,
-    "description": coalesce(description, extrait),
+    "description": coalesce(description, extrait, chapeau, deck),
     "type": coalesce(typeArticle, "article")
   }
 `
