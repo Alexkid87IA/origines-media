@@ -100,7 +100,7 @@ export function useLyaSession(): UseLyaSessionReturn {
 
   const speak = useCallback((text: string) => {
     if (!sessionRef.current || sessionRef.current.state !== SessionState.CONNECTED) return;
-    sessionRef.current.message(text);
+    sessionRef.current.repeat(text);
   }, []);
 
   const interrupt = useCallback(() => {
