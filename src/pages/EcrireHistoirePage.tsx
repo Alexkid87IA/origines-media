@@ -1701,11 +1701,45 @@ export default function EcrireHistoirePage() {
 
               {draft.writeMode === "avatar" ? (
                 <div className={s.videoRecorderWrap}>
-                  <LyaInterviewSession
-                    context={{ intention: draft.intention || "temoigner", sujet: draft.sujet || "autre" }}
-                    onComplete={handleLyaInterviewComplete}
-                    onCancel={handleVideoCancel}
-                  />
+                  {!user ? (
+                    <div className={s.avatarAuthGate}>
+                      <div className={s.avatarAuthGateIcon}>
+                        <ShieldCheck aria-hidden="true" />
+                      </div>
+                      <h3 className={s.avatarAuthGateTitle}>Connectez-vous pour lancer l'entretien</h3>
+                      <p className={s.avatarAuthGateText}>
+                        L'entretien avec Lya nécessite un compte. Connectez-vous en un clic pour démarrer.
+                      </p>
+                      {authGateError && <p className={s.authGateError}>{authGateError}</p>}
+                      <div className={s.avatarAuthGateActions}>
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="lg"
+                          rightIcon={ArrowRight}
+                          isLoading={authGateGoogleLoading}
+                          onClick={handleAuthGateGoogle}
+                        >
+                          Continuer avec Google
+                        </Button>
+                        <Button
+                          as="link"
+                          to="/connexion"
+                          variant="outline"
+                          size="lg"
+                          color="#F5F5F5"
+                        >
+                          Se connecter
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <LyaInterviewSession
+                      context={{ intention: draft.intention || "temoigner", sujet: draft.sujet || "autre" }}
+                      onComplete={handleLyaInterviewComplete}
+                      onCancel={handleVideoCancel}
+                    />
+                  )}
                 </div>
               ) : (
                 <div className={s.videoRecorderWrap}>
