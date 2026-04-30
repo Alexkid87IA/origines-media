@@ -150,6 +150,13 @@
   left: 0;
   right: 0;
   height: 3px;
+  background: var(--ink);
+  opacity: 0.15;
+  transition: opacity 0.2s ease;
+}
+
+.catCard:hover .catCardAccent {
+  opacity: 0.4;
 }
 
 .catCardLabel {
@@ -158,6 +165,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   margin-bottom: 10px;
+  color: var(--ink);
 }
 
 .catCardDesc {

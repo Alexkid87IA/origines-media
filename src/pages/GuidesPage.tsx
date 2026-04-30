@@ -48,21 +48,15 @@ const GUIDES_QUERY = `
   }
 `;
 
-const UNIVERS_COLORS: Record<string, string> = {
-  esprit: "#7B5CD6",
-  corps: "#5AA352",
-  liens: "#E67839",
-  monde: "#2E9B74",
-  avenir: "#2E94B5",
-};
+import { UNIVERS } from "@/data/univers";
 
-const UNIVERS_LABELS: Record<string, string> = {
-  esprit: "Esprit",
-  corps: "Corps",
-  liens: "Liens",
-  monde: "Monde",
-  avenir: "Avenir",
-};
+const UNIVERS_COLORS: Record<string, string> = Object.fromEntries(
+  UNIVERS.map((u) => [u.id, u.color])
+);
+
+const UNIVERS_LABELS: Record<string, string> = Object.fromEntries(
+  UNIVERS.map((u) => [u.id, u.name.replace(/^(L'|Le |Les |La )/, "")])
+);
 
 const CATEGORY_LABELS: Record<string, string> = {
   "kits-gratuits": "Kit gratuit",
@@ -219,14 +213,14 @@ export default function GuidesPage() {
           <section className={s.catSection}>
             <div className={s.catGrid}>
               {([
-                { key: "masterclass", label: "Masterclass", desc: "Des parcours vidéo complets, guidés par des experts.", color: "#D64C90", icon: "play" },
-                { key: "ateliers", label: "Ateliers", desc: "Sessions courtes et ciblées pour apprendre une compétence.", color: "#5A66D6", icon: "tool" },
-                { key: "programmes", label: "Parcours", desc: "Des guides structurés sur plusieurs semaines.", color: "#2E9B74", icon: "map" },
-                { key: "kits-gratuits", label: "Kits gratuits", desc: "Ressources gratuites pour commencer à explorer.", color: "#5AA352", icon: "gift" },
+                { key: "masterclass", label: "Masterclass", desc: "Des parcours vidéo complets, guidés par des experts." },
+                { key: "ateliers", label: "Ateliers", desc: "Sessions courtes et ciblées pour apprendre une compétence." },
+                { key: "programmes", label: "Parcours", desc: "Des guides structurés sur plusieurs semaines." },
+                { key: "kits-gratuits", label: "Kits gratuits", desc: "Ressources gratuites pour commencer à explorer." },
               ] as const).map((cat) => (
                 <Link key={cat.key} to={`/guides/${cat.key}`} className={s.catCard}>
-                  <span className={s.catCardAccent} style={{ background: cat.color }} />
-                  <span className={`${s.catCardLabel} mono`} style={{ color: cat.color }}>
+                  <span className={s.catCardAccent} />
+                  <span className={`${s.catCardLabel} mono`}>
                     {cat.label}
                   </span>
                   <p className={s.catCardDesc}>{cat.desc}</p>
