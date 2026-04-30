@@ -1,4 +1,4 @@
-import { BASE_URL, SITE_NAME } from './constants'
+import { BASE_URL, SITE_NAME } from './constants.js'
 
 const LOGO_URL = `${BASE_URL}/logos/logo-publisher.png`
 

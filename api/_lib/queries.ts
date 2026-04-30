@@ -1,4 +1,4 @@
-import { SANITY_URL } from './constants'
+import { SANITY_URL } from './constants.js'
 
 export const ARTICLE_FULL_QUERY = `
   *[_type == "production" && slug.current == $slug][0] {
