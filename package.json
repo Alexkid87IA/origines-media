@@ -12,7 +12,6 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.91.1",
     "@portabletext/react": "^3.2.1",
-    "@portabletext/to-html": "^5.0.2",
     "@sanity/client": "^7.6.0",
     "@sanity/image-url": "^1.1.0",
     "@tanstack/react-query": "^5.90.19",

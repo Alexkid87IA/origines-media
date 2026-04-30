@@ -1,4 +1,6 @@
-import { toHTML } from '@portabletext/to-html'
+function esc(t: string): string {
+  return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
 
 function extractText(blocks: unknown): string {
   if (typeof blocks === 'string') return blocks
@@ -17,139 +19,167 @@ function sanityImgUrl(ref: string | undefined, url: string | undefined, width = 
   return `https://cdn.sanity.io/images/r941i081/production/${id}-${dims}.${ext}?w=${width}&q=80&fm=webp`
 }
 
+const SKIP_TYPES = new Set([
+  'youtube', 'videoEmbed', 'video', 'audio',
+  'newsletterCta', 'button', 'cta',
+  'socialEmbed', 'tweet', 'affiliateBlock', 'relatedArticles',
+])
+
+function renderSpan(span: any, markDefs: any[]): string {
+  let text = esc(span.text || '')
+  if (!span.marks?.length) return text
+
+  for (const mark of span.marks) {
+    switch (mark) {
+      case 'strong': text = `<strong>${text}</strong>`; break
+      case 'em': text = `<em>${text}</em>`; break
+      case 'underline': text = `<u>${text}</u>`; break
+      case 'code': text = `<code>${text}</code>`; break
+      default: {
+        const def = markDefs.find((d: any) => d._key === mark)
+        if (def?._type === 'link') {
+          const href = def.href || '#'
+          const ext = href.startsWith('http')
+          text = `<a href="${esc(href)}"${ext ? ' target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`
+        } else if (def?._type === 'internalLink') {
+          const slug = def.slug?.current || def.slug || ''
+          text = `<a href="/article/${esc(slug)}">${text}</a>`
+        }
+      }
+    }
+  }
+  return text
+}
+
+function renderBlock(block: any): string {
+  const children = (block.children || []).map((s: any) => renderSpan(s, block.markDefs || [])).join('')
+  if (!children) return ''
+
+  switch (block.style) {
+    case 'h1': case 'h2': return `<h2>${children}</h2>`
+    case 'h3': return `<h3>${children}</h3>`
+    case 'h4': return `<h4>${children}</h4>`
+    case 'h5': return `<h5>${children}</h5>`
+    case 'blockquote': return `<blockquote>${children}</blockquote>`
+    default: return `<p>${children}</p>`
+  }
+}
+
+function renderCustomType(block: any): string {
+  const type = block._type
+  if (SKIP_TYPES.has(type)) return ''
+
+  switch (type) {
+    case 'image': {
+      const url = sanityImgUrl(block.asset?._ref, block.asset?.url || block.url)
+      if (!url) return ''
+      const alt = esc(block.alt || block.caption || '')
+      const caption = block.caption ? `<figcaption>${esc(block.caption)}</figcaption>` : ''
+      return `<figure><img src="${url}" alt="${alt}" loading="lazy" />${caption}</figure>`
+    }
+    case 'callout': {
+      const raw = block.text || block.content || block.body || ''
+      const content = typeof raw === 'string' ? raw : extractText(raw)
+      if (!content) return ''
+      const title = block.title ? `<strong>${esc(block.title)}</strong> ` : ''
+      return `<aside>${title}${esc(content)}</aside>`
+    }
+    case 'styledQuote': case 'quote': {
+      const raw = block.quote || block.text || block.content || block.citation || block.body || ''
+      const text = typeof raw === 'string' ? raw : extractText(raw)
+      if (!text) return ''
+      const author = block.author || block.auteur || ''
+      return `<blockquote><p>${esc(text)}</p>${author ? `<footer>— ${esc(author)}</footer>` : ''}</blockquote>`
+    }
+    case 'keyTakeaways': {
+      const items = block.items || block.points || block.takeaways || block.list || []
+      if (!Array.isArray(items) || items.length === 0) return ''
+      const title = block.title || 'Points clés'
+      const lis = items.map((item: any) => {
+        const t = item.title || item.heading || ''
+        const raw = item.content || item.body || item.description || item.text || ''
+        const c = typeof raw === 'string' ? raw : extractText(raw)
+        return `<li>${t ? `<strong>${esc(t)}</strong> ` : ''}${esc(c)}</li>`
+      }).join('')
+      return `<section><h3>${esc(title)}</h3><ul>${lis}</ul></section>`
+    }
+    case 'accordion': {
+      const items = block.items || []
+      if (!Array.isArray(items) || items.length === 0) return ''
+      const dts = items.map((item: any) => {
+        const q = item.title || item.question || ''
+        const raw = item.content || item.body || item.answer || ''
+        const a = typeof raw === 'string' ? raw : extractText(raw)
+        return `<dt>${esc(q)}</dt><dd>${esc(a)}</dd>`
+      }).join('')
+      return `<dl>${dts}</dl>`
+    }
+    case 'imageGallery': {
+      const images = block.images || []
+      if (!Array.isArray(images) || images.length === 0) return ''
+      const figs = images.map((img: any) => {
+        const url = sanityImgUrl(undefined, img.imageUrl || img.asset?.url, 600)
+        const alt = esc(img.caption || img.alt || '')
+        return url ? `<figure><img src="${url}" alt="${alt}" loading="lazy" /></figure>` : ''
+      }).join('')
+      return `<div>${figs}</div>`
+    }
+    case 'table': {
+      const rows = block.rows || []
+      if (!Array.isArray(rows) || rows.length === 0) return ''
+      const trs = rows.map((row: any, i: number) => {
+        const cells = (row.cells || []).map((cell: string) => {
+          const tag = i === 0 ? 'th' : 'td'
+          return `<${tag}>${esc(cell)}</${tag}>`
+        }).join('')
+        return `<tr>${cells}</tr>`
+      }).join('')
+      return `<table>${trs}</table>`
+    }
+    case 'code': {
+      const code = block.code || block.text || ''
+      return code ? `<pre><code>${esc(code)}</code></pre>` : ''
+    }
+    default: return ''
+  }
+}
+
 export function renderPortableText(blocks: unknown): string {
   if (!blocks || !Array.isArray(blocks) || blocks.length === 0) return ''
 
   try {
-    return toHTML(blocks, {
-      components: {
-        block: {
-          h1: ({ children }) => `<h2>${children}</h2>`,
-          h2: ({ children }) => `<h2>${children}</h2>`,
-          h3: ({ children }) => `<h3>${children}</h3>`,
-          h4: ({ children }) => `<h4>${children}</h4>`,
-          h5: ({ children }) => `<h5>${children}</h5>`,
-          normal: ({ children }) => {
-            if (!children || children === '') return ''
-            return `<p>${children}</p>`
-          },
-          blockquote: ({ children }) => `<blockquote>${children}</blockquote>`,
-        },
-        marks: {
-          strong: ({ children }) => `<strong>${children}</strong>`,
-          em: ({ children }) => `<em>${children}</em>`,
-          underline: ({ children }) => `<u>${children}</u>`,
-          code: ({ children }) => `<code>${children}</code>`,
-          link: ({ children, value }) => {
-            const href = value?.href || '#'
-            const isExternal = href.startsWith('http')
-            const rel = isExternal ? ' rel="noopener noreferrer"' : ''
-            const target = isExternal ? ' target="_blank"' : ''
-            return `<a href="${href}"${target}${rel}>${children}</a>`
-          },
-          internalLink: ({ children, value }) => {
-            const slug = value?.slug?.current || value?.slug || ''
-            return `<a href="/article/${slug}">${children}</a>`
-          },
-        },
-        list: {
-          bullet: ({ children }) => `<ul>${children}</ul>`,
-          number: ({ children }) => `<ol>${children}</ol>`,
-        },
-        listItem: {
-          bullet: ({ children }) => `<li>${children}</li>`,
-          number: ({ children }) => `<li>${children}</li>`,
-        },
-        types: {
-          image: ({ value }) => {
-            const url = sanityImgUrl(value?.asset?._ref, value?.asset?.url || value?.url)
-            if (!url) return ''
-            const alt = value?.alt || value?.caption || ''
-            const caption = value?.caption ? `<figcaption>${value.caption}</figcaption>` : ''
-            return `<figure><img src="${url}" alt="${alt}" loading="lazy" />${caption}</figure>`
-          },
-          callout: ({ value }) => {
-            const text = value?.text || value?.content || value?.body || ''
-            const content = typeof text === 'string' ? text : extractText(text)
-            const title = value?.title ? `<strong>${value.title}</strong> ` : ''
-            return content ? `<aside>${title}${content}</aside>` : ''
-          },
-          styledQuote: ({ value }) => {
-            const quote = value?.quote || value?.text || value?.content || value?.citation || ''
-            const text = typeof quote === 'string' ? quote : extractText(quote)
-            const author = value?.author ? ` — ${value.author}` : ''
-            return text ? `<blockquote><p>${text}</p>${author ? `<footer>${author}</footer>` : ''}</blockquote>` : ''
-          },
-          quote: ({ value }) => {
-            const raw = value?.quote || value?.text || value?.content || value?.citation || value?.body || ''
-            const text = typeof raw === 'string' ? raw : extractText(raw)
-            const author = value?.author || value?.auteur || ''
-            return text ? `<blockquote><p>${text}</p>${author ? `<footer>— ${author}</footer>` : ''}</blockquote>` : ''
-          },
-          keyTakeaways: ({ value }) => {
-            const items = value?.items || value?.points || value?.takeaways || value?.list || []
-            if (!Array.isArray(items) || items.length === 0) return ''
-            const title = value?.title || 'Points clés'
-            const lis = items.map((item: any) => {
-              const t = item?.title || item?.heading || ''
-              const c = item?.content || item?.body || item?.description || item?.text || ''
-              const content = typeof c === 'string' ? c : extractText(c)
-              return `<li>${t ? `<strong>${t}</strong> ` : ''}${content}</li>`
-            }).join('')
-            return `<section><h3>${title}</h3><ul>${lis}</ul></section>`
-          },
-          accordion: ({ value }) => {
-            const items = value?.items || []
-            if (!Array.isArray(items) || items.length === 0) return ''
-            const dts = items.map((item: any) => {
-              const q = item?.title || item?.question || ''
-              const raw = item?.content || item?.body || item?.answer || ''
-              const a = typeof raw === 'string' ? raw : extractText(raw)
-              return `<dt>${q}</dt><dd>${a}</dd>`
-            }).join('')
-            return `<dl>${dts}</dl>`
-          },
-          // Skip interactive/non-content types
-          youtube: () => '',
-          videoEmbed: () => '',
-          video: () => '',
-          audio: () => '',
-          newsletterCta: () => '',
-          button: () => '',
-          cta: () => '',
-          socialEmbed: () => '',
-          tweet: () => '',
-          affiliateBlock: () => '',
-          relatedArticles: () => '',
-          imageGallery: ({ value }) => {
-            const images = value?.images || []
-            if (!Array.isArray(images) || images.length === 0) return ''
-            const figs = images.map((img: any) => {
-              const url = sanityImgUrl(undefined, img?.imageUrl || img?.asset?.url, 600)
-              const alt = img?.caption || img?.alt || ''
-              return url ? `<figure><img src="${url}" alt="${alt}" loading="lazy" /></figure>` : ''
-            }).join('')
-            return `<div>${figs}</div>`
-          },
-          table: ({ value }) => {
-            const rows = value?.rows || []
-            if (!Array.isArray(rows) || rows.length === 0) return ''
-            const trs = rows.map((row: any, i: number) => {
-              const cells = (row?.cells || []).map((cell: string) => {
-                const tag = i === 0 ? 'th' : 'td'
-                return `<${tag}>${cell}</${tag}>`
-              }).join('')
-              return `<tr>${cells}</tr>`
-            }).join('')
-            return `<table>${trs}</table>`
-          },
-          code: ({ value }) => {
-            const code = value?.code || value?.text || ''
-            return code ? `<pre><code>${code}</code></pre>` : ''
-          },
-        },
-      },
-    })
+    const out: string[] = []
+    let listType: string | null = null
+
+    for (const block of blocks) {
+      if (block._type === 'block' && block.listItem) {
+        const tag = block.listItem === 'number' ? 'ol' : 'ul'
+        if (listType !== tag) {
+          if (listType) out.push(`</${listType}>`)
+          out.push(`<${tag}>`)
+          listType = tag
+        }
+        const children = (block.children || []).map((s: any) => renderSpan(s, block.markDefs || [])).join('')
+        out.push(`<li>${children}</li>`)
+        continue
+      }
+
+      if (listType) {
+        out.push(`</${listType}>`)
+        listType = null
+      }
+
+      if (block._type === 'block') {
+        const html = renderBlock(block)
+        if (html) out.push(html)
+      } else {
+        const html = renderCustomType(block)
+        if (html) out.push(html)
+      }
+    }
+
+    if (listType) out.push(`</${listType}>`)
+    return out.join('\n')
   } catch (err) {
     console.error('[prerender] Portable Text render error:', err)
     const fallback = extractText(blocks)
