@@ -480,7 +480,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
                           <h3 className={s.dBandName}>{st.label}</h3>
                           <ArrowIcon size={12} />
                         </Link>
-                        <p className={s.dBandDesc}>{st.description?.slice(0, 100)}</p>
+                        <p className={s.dBandDesc}>{st.description}</p>
                         <span className={s.dBandCount}>{st.count} article{st.count > 1 ? "s" : ""}</span>
                       </div>
                       <div className={s.dBandCards}>

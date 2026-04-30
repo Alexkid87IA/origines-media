@@ -633,7 +633,7 @@
   /* Section head */
   .sectionHead { margin-bottom: 14px; padding-bottom: 10px; gap: 0; }
   .sectionTitle { font-size: 22px; }
-  .sectionDeck { font-size: 12px; margin-top: 6px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .sectionDeck { font-size: 12px; margin-top: 6px; }
   .sectionAll { display: none; }
   .sectionKicker { font-size: 9px; margin-bottom: 8px; }
 

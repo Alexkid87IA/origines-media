@@ -1,7 +1,7 @@
 // src/pages/PartnershipsPage.tsx
 
 import React from "react";
-import { ArrowRight, Check, Download, Eye, Film, Mail, Mic2, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Download, Eye, Film, Mail, Mic2 } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
@@ -48,27 +48,27 @@ const partnerOpenings = [
 const editorialFormats = [
   {
     code: "01",
-    name: "L'épisode présenté",
-    line: "Votre marque ouvre une histoire forte, sans prendre la place du sujet.",
-    scene: "Idéal pour s'associer à une conversation de société, un portrait ou une transmission.",
+    name: "Épisode présenté",
+    line: "Une histoire existe déjà. Votre marque lui donne accès, contexte ou visibilité sans en devenir le sujet.",
+    scene: "Pour ouvrir un portrait, un témoignage ou une conversation de société avec une place lisible.",
   },
   {
     code: "02",
-    name: "La série co-produite",
-    line: "Un territoire de marque devient une collection éditoriale identifiable.",
-    scene: "Savoir-faire, héritage, santé, famille, mobilité, mémoire : on construit un monde.",
+    name: "Série éditoriale",
+    line: "Un territoire légitime devient une collection : plusieurs récits, un même fil, une esthétique identifiable.",
+    scene: "Pour explorer un thème dans la durée : transmission, soin, mémoire, corps, famille, avenir.",
   },
   {
     code: "03",
-    name: "Le geste éditorial",
-    line: "Un lieu, un objet ou une expertise entre naturellement dans le récit.",
-    scene: "Jamais un placement plaqué. Toujours une présence qui enrichit la scène.",
+    name: "Geste intégré",
+    line: "Un lieu, un objet, une archive ou une expertise entre dans la scène parce qu'il rend le récit plus précis.",
+    scene: "Pour une présence subtile, nommée, utile : jamais un placement plaqué.",
   },
   {
     code: "04",
-    name: "Le rendez-vous vivant",
-    line: "Projection, rencontre, masterclass ou tournage : la communauté se réunit autour d'une histoire.",
-    scene: "Le partenaire devient hôte d'un moment, pas sponsor d'un affichage.",
+    name: "Rendez-vous vivant",
+    line: "Le récit sort de l'écran : projection, rencontre, tournage ouvert, masterclass ou conversation privée.",
+    scene: "Pour devenir hôte d'un moment éditorial, pas sponsor d'un affichage.",
   },
 ];
 
@@ -91,17 +91,17 @@ const worlds = [
 ];
 
 const promises = [
-  "Un angle qui protège la crédibilité",
-  "Une intégration validée par la rédaction",
-  "Une esthétique immédiatement reconnaissable",
-  "Une diffusion pensée pour durer",
+  "Le sujet reste devant",
+  "Le rôle de la marque est nommé",
+  "La rédaction garde la main",
+  "Chaque format a une raison d'exister",
 ];
 
 const flow = [
-  { title: "On trouve le point juste", text: "Le sujet, la tension, la raison d'être ensemble." },
-  { title: "On choisit le format", text: "Vidéo longue, série, social, newsletter, podcast ou événement." },
-  { title: "On produit avec tact", text: "Écriture, tournage, montage et cadre éditorial Origines." },
-  { title: "On accompagne la sortie", text: "Diffusion, contexte, relais et lecture de la performance." },
+  { title: "Question", text: "Quelle histoire votre marque permet-elle vraiment d'approcher ?" },
+  { title: "Cadre", text: "On définit la place, les limites et ce que l'audience doit comprendre." },
+  { title: "Production", text: "Écriture, image, montage et diffusion restent au service du récit." },
+  { title: "Trace", text: "On pense ce qui reste après la sortie : article, film, rencontre, série ou archive." },
 ];
 
 const heroActs = [
@@ -152,6 +152,18 @@ const subjectChecks = [
 ];
 
 const PartnershipsPage: React.FC = () => {
+  React.useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+
+    if (!hash) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      document.getElementById(hash)?.scrollIntoView({ block: "start" });
+    });
+  }, []);
+
   return (
     <div className={s.page}>
       <SEO
@@ -364,114 +376,162 @@ const PartnershipsPage: React.FC = () => {
           </div>
         </section>
 
-        <section className={s.formats}>
+        <section className={s.formats} id="formats">
           <div className={s.inner}>
             <div className={s.sectionHead}>
-              <div className={s.chapter}>CH.03 / Formats</div>
-              <h2>
-                Des formats pensés pour être <em>désirés.</em>
-              </h2>
+              <div>
+                <div className={s.chapter}>CH.03 / Formats</div>
+                <h2>
+                  D'abord le récit. <em>Ensuite le format.</em>
+                </h2>
+              </div>
               <p>
-                Chaque proposition garde la même exigence : la marque est présente parce qu'elle
-                ajoute du sens, jamais parce qu'elle interrompt l'histoire.
+                On ne part pas d'un inventaire média. On part d'un récit à protéger, puis on choisit
+                la forme qui lui donne le plus de force.
               </p>
             </div>
 
-            <div className={s.formatGrid}>
-              {editorialFormats.map((format) => (
-                <Card variant="outlined" size="sm" className={s.formatCard} key={format.code}>
-                  <div className={s.formatTop}>
-                    <span>{format.code}</span>
-                    <Sparkles aria-hidden="true" />
-                  </div>
-                  <h3>{format.name}</h3>
-                  <p>{format.line}</p>
-                  <small>{format.scene}</small>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
+            <div className={s.formatStudio}>
+              <Card variant="outlined" size="sm" className={s.formatManifesto}>
+                <p className={s.cardLabel}>Studio éditorial</p>
+                <h3>Un récit peut devenir plusieurs objets. Jamais plusieurs placements.</h3>
+                <p>
+                  Une vidéo peut ouvrir un dossier. Un article peut préparer une rencontre. Une
+                  série peut devenir un podcast, un film ou un livre. Le format est choisi parce
+                  qu'il prolonge l'histoire, pas parce qu'il remplit un plan média.
+                </p>
+                <div className={s.formatGuards}>
+                  {promises.map((promise) => (
+                    <span key={promise}>{promise}</span>
+                  ))}
+                </div>
+              </Card>
 
-        <section className={s.showcase}>
-          <div className={s.inner}>
-            <div className={s.showcaseGrid}>
-              <div>
-                <p className={s.kicker}>Ce que voit l'audience</p>
-                <h2>
-                  Une histoire Origines. Pas une publicité déguisée.
-                </h2>
-              </div>
-              <div className={s.promiseList}>
-                {promises.map((promise) => (
-                  <span key={promise}>
-                    <Check aria-hidden="true" />
-                    {promise}
-                  </span>
+              <div className={s.formatList}>
+                {editorialFormats.map((format) => (
+                  <Card variant="outlined" size="sm" className={s.formatRow} key={format.code}>
+                    <span>{format.code}</span>
+                    <div>
+                      <h3>{format.name}</h3>
+                      <p>{format.line}</p>
+                    </div>
+                    <small>{format.scene}</small>
+                  </Card>
                 ))}
               </div>
             </div>
           </div>
         </section>
 
-        <section className={s.process}>
+        <section className={s.showcase} id="place-partenaire">
+          <div className={s.inner}>
+            <div className={s.showcaseGrid}>
+              <div className={s.showcaseCopy}>
+                <p className={s.kicker}>Ce que voit l'audience</p>
+                <h2>
+                  Une marque présente, mais jamais au premier plan.
+                </h2>
+                <p>
+                  L'audience doit sentir une cohérence avant de voir une opération. Si la présence
+                  du partenaire rend le récit plus clair, plus incarné ou plus durable, elle devient
+                  acceptable. Sinon, elle disparaît.
+                </p>
+              </div>
+
+              <Card variant="outlined" size="sm" className={s.showcaseFrame}>
+                <div className={s.storyStrip} aria-hidden="true">
+                  {heroMosaicImages.slice(0, 4).map((image) => (
+                    <img src={image} alt="" loading="lazy" decoding="async" key={image} />
+                  ))}
+                </div>
+                <blockquote>
+                  « La bonne place d'une marque n'est pas de signer l'histoire. C'est de permettre
+                  qu'elle existe mieux. »
+                </blockquote>
+                <div className={s.promiseList}>
+                  {promises.map((promise) => (
+                    <span key={promise}>
+                      <Check aria-hidden="true" />
+                      {promise}
+                    </span>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        <section className={s.process} id="methode">
           <div className={s.inner}>
             <div className={s.sectionHead}>
-              <div className={s.chapter}>CH.04 / Méthode</div>
-              <h2>
-                De l'intuition au dispositif <em>exact.</em>
-              </h2>
+              <div>
+                <div className={s.chapter}>CH.04 / Méthode</div>
+                <h2>
+                  Une méthode courte. <em>Un cadre exigeant.</em>
+                </h2>
+              </div>
               <p>
-                Le cadre est premium parce qu'il est sélectif. On refuse ce qui force, on affine ce
-                qui tient, on produit seulement quand l'accord éditorial est évident.
+                On avance vite quand la place est juste. Le travail consiste à enlever ce qui force,
+                préciser ce qui sert le récit, puis produire avec une exigence de média.
               </p>
             </div>
-            <div className={s.processGrid}>
+            <div className={s.processTrack}>
               {flow.map((step, index) => (
-                <Card variant="outlined" size="sm" className={s.processCard} key={step.title}>
+                <Card variant="outlined" size="sm" className={s.processStep} key={step.title}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.text}</p>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.text}</p>
+                  </div>
+                  <small>{index === 0 ? "Point de départ" : "Validation éditoriale"}</small>
                 </Card>
               ))}
             </div>
           </div>
         </section>
 
-        <section className={s.download}>
+        <section className={s.download} id="media-kit">
           <div className={s.downloadInner}>
-            <div>
+            <Card variant="outlined" size="sm" className={s.downloadPreview}>
+              <img
+                src="/origines-partenariats-preview.jpg"
+                alt="Aperçu du media kit partenariats Origines"
+                loading="lazy"
+                decoding="async"
+              />
+            </Card>
+            <div className={s.downloadCopy}>
               <p className={s.kicker}>Media kit</p>
               <h2>
                 Ouvrir le dossier <em>partenaires.</em>
               </h2>
               <p>
-                La version complète présente l'univers, l'audience, les formats et le cadre de
-                collaboration. Pour les projets sur-mesure, parlons directement du sujet.
+                Le PDF sert de point d'entrée. Le vrai sujet se construit ensuite à deux : quelle
+                histoire peut-on porter, avec quelle place, et quelle trace veut-on laisser ?
               </p>
-            </div>
-            <div className={s.downloadActions}>
-              <Button
-                as="a"
-                href={DECK_URL}
-                download={DECK_NAME}
-                variant="primary"
-                size="lg"
-                leftIcon={Download}
-                className={s.lightButton}
-              >
-                Télécharger le PDF
-              </Button>
-              <Button
-                as="a"
-                href="mailto:partenariats@origines.media?subject=Partenariat%20Origines"
-                variant="outline"
-                size="lg"
-                rightIcon={Mail}
-                className={s.lightOutline}
-              >
-                partenariats@origines.media
-              </Button>
+              <div className={s.downloadActions}>
+                <Button
+                  as="a"
+                  href={DECK_URL}
+                  download={DECK_NAME}
+                  variant="primary"
+                  size="lg"
+                  leftIcon={Download}
+                  className={s.lightButton}
+                >
+                  Télécharger le media kit
+                </Button>
+                <Button
+                  as="a"
+                  href="mailto:partenariats@origines.media?subject=Partenariat%20Origines"
+                  variant="outline"
+                  size="lg"
+                  rightIcon={Mail}
+                  className={s.lightOutline}
+                >
+                  Écrire à l'équipe
+                </Button>
+              </div>
             </div>
           </div>
         </section>
