@@ -700,12 +700,12 @@
    ══════════════════════════════════════════════════════════ */
 
 .welcome {
-  padding: 64px 0 80px;
+  padding: 48px 0 64px;
 }
 
 .welcomeInner {
   text-align: center;
-  max-width: 560px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
@@ -734,11 +734,11 @@
 .welcomeTitle {
   font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(30px, 5vw, 44px);
+  font-size: clamp(28px, 5vw, 40px);
   line-height: 1.1;
   letter-spacing: -0.04em;
   color: var(--ink);
-  margin: 0 0 16px;
+  margin: 0 0 14px;
 }
 
 .welcomeTitle em {
@@ -750,100 +750,108 @@
 
 .welcomeDeck {
   font-family: var(--body);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
-  color: var(--stone600);
-  margin: 0 0 40px;
+  color: var(--stone500);
+  margin: 0 0 36px;
+  max-width: 48ch;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+/* ── Promises — horizontal pill badges ── */
 
 .welcomePromises {
   display: flex;
-  flex-direction: column;
-  gap: 0;
-  border: 1px solid var(--stone200);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 36px;
+  border: none;
   text-align: left;
-  margin-bottom: 40px;
 }
 
 .welcomePromise {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--stone100);
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(247, 245, 240, 0.8);
+  border: 1px solid var(--stone100);
+  border-radius: 100px;
 }
 
 .welcomePromise:last-child { border-bottom: none; }
 
 .welcomePromiseIcon {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--stone50);
+  background: rgba(90, 163, 82, 0.1);
+  border-radius: 50%;
 }
 
 .welcomePromiseIcon svg {
-  width: 18px;
-  height: 18px;
-  color: var(--stone500);
+  width: 14px;
+  height: 14px;
+  color: #5AA352;
 }
 
 .welcomePromise strong {
   display: block;
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 14px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 12px;
   color: var(--ink);
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 .welcomePromise span {
-  font-family: var(--body);
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--stone500);
+  display: none;
 }
 
+/* ── CTA button ── */
+
 .welcomeCta {
-  min-height: 36px !important;
-  padding: 0 18px !important;
-  gap: 6px !important;
-  background: linear-gradient(135deg, #7B5CD6, #E67839, #D64C90, #2E94B5, #34A853) !important;
-  background-size: 250% 100% !important;
-  animation: ctaShift 8s ease infinite;
-  color: #fff !important;
+  min-height: 44px !important;
+  padding: 0 28px !important;
+  gap: 8px !important;
+  background: var(--ink) !important;
+  color: var(--paper) !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 100px !important;
   box-shadow: none !important;
-  font-family: var(--mono) !important;
-  font-weight: 600 !important;
-  font-size: 10px !important;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-family: var(--display) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  letter-spacing: -0.01em;
+  text-transform: none;
   white-space: nowrap;
-  transition: filter 0.3s ease, box-shadow 0.3s ease !important;
+  transition: transform 0.2s ease, box-shadow 0.3s ease !important;
 }
 
 .welcomeCta:hover {
-  background: linear-gradient(135deg, #7B5CD6, #E67839, #D64C90, #2E94B5, #34A853) !important;
-  background-size: 250% 100% !important;
-  color: #fff !important;
+  background: var(--ink) !important;
+  color: var(--paper) !important;
   opacity: 1 !important;
-  filter: brightness(1.1);
-  transform: none !important;
-  box-shadow: 0 2px 14px -2px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 20px -4px rgba(10, 10, 10, 0.3) !important;
+}
+
+.welcomeCta:active {
+  transform: translateY(0) !important;
 }
 
 .welcomeCta svg {
-  width: 14px;
-  height: 14px;
-  transition: transform 0.3s ease;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
 }
 
-.welcomeCta:hover svg { transform: translateX(4px); }
+.welcomeCta:hover svg { transform: translateX(3px); }
 
 /* ══════════════════════════════════════════════════════════
    STEP 1 — Intention & Sujet
@@ -1875,89 +1883,86 @@
 .formatChoice {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 14px;
   border: none;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .formatCard {
-  --format-color: #7B5CD6;
-  --format-soft: rgba(123, 92, 214, 0.055);
+  --format-color: var(--ink);
+  --format-bg: transparent;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 13px;
-  padding: 40px 28px 32px;
-  background: rgba(247, 245, 240, 0.72);
-  border: 1px solid var(--stone200);
-  border-radius: 8px;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px 22px;
+  background: var(--format-bg);
+  border: 1.5px solid var(--stone200);
+  border-radius: 12px;
   cursor: pointer;
-  text-align: center;
-  box-shadow: 6px 6px 0 var(--stone100);
-  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
   position: relative;
   overflow: hidden;
-  min-height: 270px;
 }
 
 .formatCard:nth-child(2) {
-  --format-color: #2E94B5;
-  --format-soft: rgba(46, 148, 181, 0.055);
+  --format-color: var(--ink);
 }
 
 .formatCard::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: var(--format-color);
-  opacity: 0.58;
+  display: none;
 }
 
 .formatCard:first-child {
-  border-right: 1px solid var(--stone200);
+  border-right: 1.5px solid var(--stone200);
 }
 
 .formatCard:hover {
-  transform: translateY(-4px);
-  border-color: var(--format-color);
-  background: linear-gradient(180deg, var(--format-soft), rgba(247, 245, 240, 0.9));
-  box-shadow: 8px 8px 0 rgba(10, 10, 10, 0.075);
+  border-color: var(--stone400);
+  transform: translateY(-2px);
 }
 
 .formatCardActive {
-  border-color: var(--format-color);
-  background: linear-gradient(180deg, var(--format-soft), rgba(247, 245, 240, 0.96));
-  box-shadow: 8px 8px 0 rgba(10, 10, 10, 0.08);
+  --format-bg: var(--ink);
+  border-color: var(--ink);
+}
+
+.formatCardActive .formatCardTitle,
+.formatCardActive .formatCardDesc {
+  color: var(--paper);
 }
 
 .formatCardIcon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--stone200);
-  color: var(--stone400);
-  transition: border-color 0.2s ease, color 0.2s ease;
+  border-radius: 10px;
+  color: var(--stone500);
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
 .formatCardActive .formatCardIcon {
-  border-color: var(--format-color);
-  color: var(--format-color);
-  background: rgba(255, 255, 255, 0.44);
+  border-color: rgba(247, 245, 240, 0.2);
+  color: var(--paper);
+  background: rgba(247, 245, 240, 0.1);
 }
 
 .formatCardIcon svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .formatCardTitle {
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: 800;
+  font-size: 17px;
   color: var(--ink);
+  letter-spacing: -0.02em;
+  transition: color 0.25s ease;
 }
 
 .formatCardDesc {
@@ -1965,49 +1970,55 @@
   font-size: 13px;
   line-height: 1.5;
   color: var(--stone500);
-  max-width: 220px;
+  transition: color 0.25s ease;
 }
 
 .formatCardAction {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 30px;
+  min-height: 28px;
   margin-top: auto;
-  padding: 0 14px;
-  border: 1px solid rgba(10, 10, 10, 0.12);
-  color: var(--stone500);
+  padding: 0 12px;
+  border: 1px solid var(--stone200);
+  border-radius: 100px;
+  color: var(--stone400);
   font-family: var(--mono);
   font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
-.formatCard:hover .formatCardAction,
 .formatCardActive .formatCardAction {
-  border-color: var(--format-color);
-  background: var(--format-color);
-  color: #fff;
+  border-color: rgba(247, 245, 240, 0.3);
+  background: rgba(247, 245, 240, 0.15);
+  color: var(--paper);
+}
+
+.formatCard:not(.formatCardActive):hover .formatCardAction {
+  border-color: var(--stone400);
+  color: var(--ink);
 }
 
 .formatCardCheck {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 22px;
-  height: 22px;
-  background: var(--format-color);
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  background: var(--paper);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .formatCardCheck svg {
-  width: 12px;
-  height: 12px;
-  color: var(--paper);
+  width: 14px;
+  height: 14px;
+  color: var(--ink);
 }
 
 /* ── Video step wrapper ── */
@@ -2186,8 +2197,10 @@
 
 @media (max-width: 640px) {
   .formatChoice { grid-template-columns: 1fr; }
-  .formatCard:first-child { border-right: none; border-bottom: 1px solid var(--stone100); }
-  .formatCard { padding: 28px 20px 24px; }
+  .formatCard:first-child { border-right: 1.5px solid var(--stone200); }
+  .formatCard { padding: 20px 18px; }
+  .welcomePromise { padding: 8px 12px; }
+  .welcomePromise strong { font-size: 11px; }
 
   .videoLyaPanelGrid { grid-template-columns: 1fr; }
   .videoLyaPanelItem {
