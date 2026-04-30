@@ -91,6 +91,18 @@ export function useLyaSession(): UseLyaSessionReturn {
 
       sessionRef.current = session;
       await session.start();
+
+      // SDK bug: sendCommandEventToWebSocket silently drops AVATAR_SPEAK_TEXT.
+      // The 1st repeat() works because it races the WebSocket open,
+      // but all subsequent calls are lost. Force LiveKit data channel.
+      const ws = (session as unknown as { _sessionEventSocket: WebSocket | null })._sessionEventSocket;
+      if (ws) {
+        ws.onclose = null;
+        ws.onmessage = null;
+        ws.onerror = null;
+        ws.close();
+        (session as unknown as { _sessionEventSocket: WebSocket | null })._sessionEventSocket = null;
+      }
     } catch (err) {
       console.error("[LyaAvatar] Connection failed:", err);
       setError(err instanceof Error ? err.message : "Connexion échouée");
