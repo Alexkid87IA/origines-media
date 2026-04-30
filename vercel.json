@@ -6,9 +6,6 @@
     }
   ],
   "functions": {
-    "api/article/[slug].ts": {
-      "maxDuration": 10
-    },
     "api/prerender/[...path].ts": {
       "maxDuration": 10
     },
@@ -62,12 +59,12 @@
     {
       "source": "/article/:slug",
       "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/article/:slug"
+      "destination": "/api/prerender/article/:slug"
     },
     {
       "source": "/article/:slug/",
       "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
-      "destination": "/api/article/:slug"
+      "destination": "/api/prerender/article/:slug"
     },
     {
       "source": "/",
@@ -168,6 +165,11 @@
       "source": "/univers/:universId",
       "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
       "destination": "/api/prerender/univers/:universId"
+    },
+    {
+      "source": "/univers/:universId/:soustopic",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*" }],
+      "destination": "/api/prerender/univers/:universId/:soustopic"
     },
     {
       "source": "/series",
