@@ -657,6 +657,24 @@
       ]
     },
     {
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=900, stale-while-revalidate=3600"
+        }
+      ]
+    },
+    {
+      "source": "/api/sitemap",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=900, stale-while-revalidate=3600"
+        }
+      ]
+    },
+    {
       "source": "/api/(.*)",
       "headers": [
         {
