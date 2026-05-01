@@ -578,6 +578,12 @@ export default function Feed({ cmsItems }: FeedProps) {
                     >
                       <span itemProp="name">{item.author}</span>
                     </span>
+                    {item.timeLabel && (
+                      <>
+                        <span className={s.feedSep} aria-hidden="true">·</span>
+                        <time dateTime={item.date} className={s.feedDate}>{item.timeLabel}</time>
+                      </>
+                    )}
                     <span className={s.feedSep} aria-hidden="true">
                       ·
                     </span>

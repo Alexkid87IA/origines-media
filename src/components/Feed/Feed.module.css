@@ -838,6 +838,9 @@
   text-transform: uppercase;
   color: var(--stone500);
 }
+.feedDate {
+  color: var(--stone400);
+}
 .feedFootRead {
   margin-left: auto;
   color: var(--cat-dark, var(--stone500));
