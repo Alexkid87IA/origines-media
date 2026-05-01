@@ -479,7 +479,7 @@ export default function Feed({ cmsItems }: FeedProps) {
                     </h3>
                     <span className={s.feedCineExcerpt}>{item.excerpt}</span>
                     <span className={s.feedCineFoot}>
-                      {item.author} · {item.readTime}
+                      {item.author}{item.timeLabel ? ` · ${item.timeLabel}` : ""} · {item.readTime}
                       <SaveBookmark
                         inline
                         type={item.isVideo ? "video" : "article"}
