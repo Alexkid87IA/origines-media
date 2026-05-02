@@ -1126,9 +1126,12 @@
   left: 0;
   right: 0;
   z-index: 50;
-  padding: 8px 16px calc(12px + env(safe-area-inset-bottom));
-  background: linear-gradient(to top, var(--paper), var(--paper) 80%, transparent);
+  padding: 8px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--paper);
+  border-top: 1px solid var(--stone100);
   display: none;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .mobileBarInner {
@@ -1385,7 +1388,7 @@
   }
 
   .mobileBar {
-    display: block;
+    display: flex;
   }
 
   .articleBody {
