@@ -30,3 +30,14 @@
   color: var(--stone600);
   font-weight: 600;
 }
+
+.lastSep {
+  composes: sep;
+}
+
+@media (max-width: 768px) {
+  .current,
+  .lastSep {
+    display: none;
+  }
+}

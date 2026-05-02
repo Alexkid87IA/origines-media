@@ -19,7 +19,7 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
         const isLast = i === items.length - 1;
         return (
           <span key={item.url} style={{ display: 'contents' }}>
-            {i > 0 && <span className={s.sep}>/</span>}
+            {i > 0 && <span className={isLast ? s.lastSep : s.sep}>/</span>}
             {isLast ? (
               <span className={s.current}>{item.name}</span>
             ) : (
