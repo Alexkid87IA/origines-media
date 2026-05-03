@@ -66,7 +66,7 @@ function getUniversInfo(uid?: string) {
 }
 
 function getReadTime(a: SanityArticle): number {
-  return estimateReadingTimeFromText(a.contenuTexte) || a.tempsLecture || 5;
+  return a.tempsLecture || estimateReadingTimeFromText(a.contenuTexte) || 5;
 }
 
 function imgSrc(url?: string, w = 800): string | undefined {

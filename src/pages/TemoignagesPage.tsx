@@ -288,8 +288,8 @@ export default function TemoignagesPage() {
                         <p className={s.featuredDeck}>{typo(featured.deck)}</p>
                       )}
                       <div className={s.featuredMeta}>
-                        {(estimateReadingTimeFromText(featured.contenuTexte) || featured.tempsLecture) && (
-                          <span>{estimateReadingTimeFromText(featured.contenuTexte) || featured.tempsLecture} min de lecture</span>
+                        {(featured.tempsLecture || estimateReadingTimeFromText(featured.contenuTexte)) && (
+                          <span>{featured.tempsLecture || estimateReadingTimeFromText(featured.contenuTexte)} min de lecture</span>
                         )}
                         {featured.datePublication && (
                           <>
@@ -340,8 +340,8 @@ export default function TemoignagesPage() {
                             <p className={s.cardDeck}>{typo(t.deck)}</p>
                           )}
                           <div className={s.cardMeta}>
-                            {(estimateReadingTimeFromText(t.contenuTexte) || t.tempsLecture) && (
-                              <span>{estimateReadingTimeFromText(t.contenuTexte) || t.tempsLecture} min</span>
+                            {(t.tempsLecture || estimateReadingTimeFromText(t.contenuTexte)) && (
+                              <span>{t.tempsLecture || estimateReadingTimeFromText(t.contenuTexte)} min</span>
                             )}
                             {t.datePublication && (
                               <>

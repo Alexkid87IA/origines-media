@@ -116,7 +116,7 @@ function buildArticleItem(a: SanityExploreArticle): ArticleItem {
     headlineSuffix: ".",
     excerpt: smartExcerpt(excerpt || a.contenuTexte || "", 160),
     author: a.authorName || "Rédaction Origines",
-    readTime: `${estimateReadingTimeFromText(a.contenuTexte) || a.tempsLecture || 5} min`,
+    readTime: `${a.tempsLecture || estimateReadingTimeFromText(a.contenuTexte) || 5} min`,
     isVideo,
     category: u.name,
   };

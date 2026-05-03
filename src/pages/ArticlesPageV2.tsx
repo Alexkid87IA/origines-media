@@ -362,7 +362,7 @@ export default function ArticlesPageV2() {
             {featuredArticle && (() => {
               const uid = (featuredArticle.univpilar || "esprit") as UniversId;
               const uData = UNIVERS_MAP[uid] || UNIVERS_MAP.esprit;
-              const rt = estimateReadingTimeFromText(featuredArticle.contenuTexte) || featuredArticle.tempsLecture;
+              const rt = featuredArticle.tempsLecture || estimateReadingTimeFromText(featuredArticle.contenuTexte);
               return (
                 <section className={s.featured}>
                   <a href={`/article/${featuredArticle.slug}`} className={s.featuredLink}>
@@ -669,7 +669,7 @@ export default function ArticlesPageV2() {
                                     {categoryLabel}
                                   </span>
                                   {(() => {
-                                    const rt = estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture;
+                                    const rt = article.tempsLecture || estimateReadingTimeFromText(article.contenuTexte);
                                     return rt ? (
                                       <>
                                         <span className={s.cardSep}>&middot;</span>

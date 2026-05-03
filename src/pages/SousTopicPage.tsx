@@ -414,11 +414,11 @@ export default function SousTopicPage() {
                           >
                             {subtopic.label}
                           </span>
-                          {(estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture) && (
+                          {(article.tempsLecture || estimateReadingTimeFromText(article.contenuTexte)) && (
                             <>
                               <span className={s.cardSep}>&middot;</span>
                               <span className={s.cardTime}>
-                                {estimateReadingTimeFromText(article.contenuTexte) || article.tempsLecture} min
+                                {article.tempsLecture || estimateReadingTimeFromText(article.contenuTexte)} min
                               </span>
                             </>
                           )}
