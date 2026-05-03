@@ -182,8 +182,7 @@
 .heroImg {
   width: 100%;
   display: block;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .heroCaption {
