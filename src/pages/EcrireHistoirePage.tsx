@@ -606,6 +606,7 @@ export default function EcrireHistoirePage() {
   const [submitted, setSubmitted] = useState(false);
   const [authGateGoogleLoading, setAuthGateGoogleLoading] = useState(false);
   const [authGateError, setAuthGateError] = useState<string | null>(null);
+  const [showAuthGate, setShowAuthGate] = useState(false);
   const [draftLoaded, setDraftLoaded] = useState(false);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [wordCount, setWordCount] = useState(0);
@@ -657,6 +658,15 @@ export default function EcrireHistoirePage() {
       if (!redirecting) setAuthGateGoogleLoading(false);
     }
   }, [loginWithGoogle]);
+
+  useEffect(() => {
+    if (user && showAuthGate) {
+      setShowAuthGate(false);
+      saveDraft(draft);
+      setStep((s) => Math.min(s + 1, 4));
+      scrollToTool();
+    }
+  }, [user, showAuthGate]);
 
   useEffect(() => {
     (async () => {
@@ -820,6 +830,10 @@ export default function EcrireHistoirePage() {
   };
 
   const goNext = () => {
+    if (step === 1 && !user) {
+      setShowAuthGate(true);
+      return;
+    }
     saveDraft(draft);
     setStep((s) => Math.min(s + 1, 4));
     scrollToTool();
@@ -2994,6 +3008,70 @@ Prenez le temps qu'il vous faut. Votre brouillon est sauvegardé automatiquement
 
       <Footer2 />
       <ScrollToTopV2 />
+
+      {/* ═══ Auth gate modal ═══ */}
+      <AnimatePresence>
+        {showAuthGate && (
+          <motion.div
+            className={s.authOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setShowAuthGate(false)}
+          >
+            <motion.div
+              className={s.authModal}
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.97 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={s.authModalIcon}>
+                <ShieldCheck aria-hidden="true" />
+              </div>
+              <h3 className={s.authModalTitle}>Connectez-vous pour continuer</h3>
+              <p className={s.authModalText}>
+                Votre témoignage sera sauvegardé et vous pourrez le retrouver à tout moment.
+                Rien ne sera publié sans votre accord.
+              </p>
+              {authGateError && <p className={s.authGateError}>{authGateError}</p>}
+              <div className={s.authModalActions}>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="lg"
+                  rightIcon={ArrowRight}
+                  isLoading={authGateGoogleLoading}
+                  onClick={handleAuthGateGoogle}
+                >
+                  Continuer avec Google
+                </Button>
+                <Button
+                  as="link"
+                  to="/connexion"
+                  variant="outline"
+                  size="lg"
+                >
+                  Se connecter
+                </Button>
+              </div>
+              <p className={s.authModalSub}>
+                Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
+              </p>
+              <button
+                type="button"
+                className={s.authModalClose}
+                onClick={() => setShowAuthGate(false)}
+                aria-label="Fermer"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
