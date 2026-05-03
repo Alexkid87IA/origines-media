@@ -1,18 +1,14 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, Component, type ReactNode, type ErrorInfo } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import PageTransition from './components/PageTransition/PageTransition';
 
 function lazyRetry(factory: () => Promise<{ default: React.ComponentType<any> }>) {
   return lazy(() =>
-    factory().catch(() => {
-      const reloaded = sessionStorage.getItem('chunk-retry');
-      if (!reloaded) {
-        sessionStorage.setItem('chunk-retry', '1');
-        window.location.reload();
-      }
-      sessionStorage.removeItem('chunk-retry');
-      return factory();
-    })
+    factory().catch(() =>
+      new Promise<{ default: React.ComponentType<any> }>((resolve) =>
+        setTimeout(() => resolve(factory()), 1500)
+      )
+    )
   );
 }
 
@@ -124,11 +120,34 @@ const LoadingFallback = () => (
   </div>
 );
 
+class ChunkErrorBoundary extends Component<{ location: string; children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("[ChunkError]", error.message, info.componentStack);
+  }
+  componentDidUpdate(prev: { location: string }) {
+    if (prev.location !== this.props.location && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+  render() {
+    if (this.state.hasError) return <LoadingFallback />;
+    return this.props.children;
+  }
+}
+
+function RouteBoundary({ children }: { children: ReactNode }) {
+  const { pathname } = useLocation();
+  return <ChunkErrorBoundary location={pathname}>{children}</ChunkErrorBoundary>;
+}
+
 function App() {
   return (
     <>
       <ScrollToTop />
       <PageTransition />
+      <RouteBoundary>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         <Route path="/" element={<HomePage />} />
@@ -207,6 +226,7 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
+      </RouteBoundary>
       <Suspense fallback={null}><CookieConsent /></Suspense>
       <Suspense fallback={null}><ExitIntentPopup /></Suspense>
     </>
