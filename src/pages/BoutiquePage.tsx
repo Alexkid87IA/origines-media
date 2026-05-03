@@ -34,78 +34,50 @@ interface Product {
 }
 
 /* ================================================================
-   DATA
+   DATA — 16 kits thématiques par univers
    ================================================================ */
 
 const products: Product[] = [
-  // ── Digital: E-books ──
-  { id: "ebook-resilience", title: "L’Art de la Résilience", subtitle: "Rebondir face aux épreuves", description: "Un guide complet pour développer votre capacité à surmonter les difficultés.", price: "14,90 €", badge: "Nouveau", badgeColor: "#8B5CF6", color: "#8B5CF6", features: ["120 pages", "Exercices pratiques", "Témoignages"], format: "E-book PDF", category: "digital", subcategory: "ebooks", image: "/boutique/ebook-resilience.webp" },
-  { id: "ebook-confiance", title: "Construire sa Confiance", subtitle: "Le guide de l’estime de soi", description: "Découvrez les clés pour bâtir une confiance solide et durable.", price: "14,90 €", badgeColor: "#8B5CF6", color: "#8B5CF6", features: ["100 pages", "30 exercices", "Plan d’action"], format: "E-book PDF", category: "digital", subcategory: "ebooks", image: "/boutique/ebook-confiance.webp" },
-  { id: "ebook-relations", title: "Relations Authentiques", subtitle: "Créer des liens profonds", description: "Apprenez à cultiver des relations sincères et épanouissantes.", price: "14,90 €", badgeColor: "#8B5CF6", color: "#8B5CF6", features: ["90 pages", "Outils communication", "Cas pratiques"], format: "E-book PDF", category: "digital", subcategory: "ebooks", image: "/boutique/ebook-relations.webp" },
-  // ── Digital: Workbooks ──
-  { id: "workbook-introspection-digital", title: "Journal d’Introspection", subtitle: "90 jours de réflexion", description: "Un journal guidé pour explorer votre monde intérieur.", price: "19,90 €", badge: "Best-seller", badgeColor: "#111827", color: "#EC4899", features: ["90 prompts", "À imprimer", "Suivi progression"], format: "Workbook PDF", category: "digital", subcategory: "workbooks", popular: true, featured: true, image: "/boutique/workbook-introspection.webp" },
-  { id: "workbook-gratitude-digital", title: "Carnet de Gratitude", subtitle: "30 jours pour changer", description: "Transformez votre quotidien grâce à la pratique de la gratitude.", price: "12,90 €", badgeColor: "#EC4899", color: "#EC4899", features: ["30 jours", "Prompts quotidiens", "Citations"], format: "Workbook PDF", category: "digital", subcategory: "workbooks", image: "/boutique/workbook-gratitude.webp" },
-  { id: "workbook-objectifs-digital", title: "Planificateur d’Objectifs", subtitle: "De la vision à l’action", description: "Un système complet pour définir et atteindre vos objectifs.", price: "16,90 €", badgeColor: "#EC4899", color: "#EC4899", features: ["Vision board", "Plans mensuels", "Tracker habitudes"], format: "Workbook PDF", category: "digital", subcategory: "workbooks", image: "/boutique/workbook-objectifs.webp" },
-  // ── Digital: Audio ──
-  { id: "audio-meditation-pack", title: "Pack Méditations Guidées", subtitle: "10 séances pour se recentrer", description: "Une collection de méditations guidées pour cultiver le calme.", price: "24,90 €", badge: "Audio HD", badgeColor: "#0891B2", color: "#0891B2", features: ["10 méditations", "5h d’audio", "MP3 HD"], format: "Audio MP3", category: "digital", subcategory: "audio", featured: true, image: "/boutique/audio-meditation.webp" },
-  { id: "audio-affirmations", title: "Affirmations Positives", subtitle: "Reprogrammez votre mental", description: "Des affirmations puissantes pour renforcer votre confiance.", price: "9,90 €", badgeColor: "#0891B2", color: "#0891B2", features: ["100 affirmations", "2h d’audio", "Musique relaxante"], format: "Audio MP3", category: "digital", subcategory: "audio", image: "/boutique/audio-affirmations.webp" },
-  { id: "audio-sommeil", title: "Histoires pour Dormir", subtitle: "Retrouvez un sommeil paisible", description: "Des récits apaisants pour vous accompagner vers le sommeil.", price: "14,90 €", badgeColor: "#0891B2", color: "#0891B2", features: ["8 histoires", "4h d’audio", "Sons nature"], format: "Audio MP3", category: "digital", subcategory: "audio", image: "/boutique/audio-sommeil.webp" },
-  // ── Digital: Formations ──
-  { id: "masterclass-storytelling", title: "Masterclass Storytelling", subtitle: "Racontez votre histoire", description: "Apprenez l’art de raconter votre histoire de manière captivante.", price: "49 €", originalPrice: "79 €", badge: "−38 %", badgeColor: "#DC2626", color: "#F59E0B", features: ["12 vidéos HD", "Workbook 50p", "Accès à vie"], format: "Formation vidéo", category: "digital", subcategory: "formations", popular: true, featured: true, image: "/boutique/masterclass-storytelling.webp" },
-  { id: "formation-mindset", title: "Formation Mindset", subtitle: "Transformez votre mental", description: "Développez un état d’esprit de croissance.", price: "69 €", originalPrice: "99 €", badge: "−30 %", badgeColor: "#DC2626", color: "#F59E0B", features: ["8 modules", "6h de vidéo", "Communauté privée"], format: "Formation vidéo", category: "digital", subcategory: "formations", image: "/boutique/formation-mindset.webp" },
-  { id: "formation-emotions", title: "Maîtrise Émotionnelle", subtitle: "Comprendre et gérer ses émotions", description: "Développez votre intelligence émotionnelle.", price: "59 €", originalPrice: "89 €", badge: "−34 %", badgeColor: "#DC2626", color: "#F59E0B", features: ["10 modules", "8h de vidéo", "Certificat"], format: "Formation vidéo", category: "digital", subcategory: "formations", image: "/boutique/formation-emotions.webp" },
-  // ── Physical: Carnets ──
-  { id: "carnet-vie-en-clair", title: "Ma Vie en Clair", subtitle: "Planner annuel complet", description: "Organisez votre année avec intention.", price: "29 €", badge: "Exclusif", badgeColor: "#111827", color: "#10B981", features: ["Format A5", "240 pages", "Couverture rigide"], format: "Carnet relié", category: "physical", subcategory: "carnets", popular: true, featured: true, image: "/boutique/carnet-vie-en-clair.webp" },
-  { id: "journal-intime-guide", title: "Journal Intime Guidé", subtitle: "365 prompts pour se découvrir", description: "Une question par jour pendant un an.", price: "24 €", badgeColor: "#10B981", color: "#10B981", features: ["365 prompts", "Papier premium", "Reliure cousue"], format: "Journal relié", category: "physical", subcategory: "carnets", image: "/boutique/journal-intime-guide.webp" },
-  { id: "carnet-rituels-matin", title: "Rituels du Matin", subtitle: "90 jours de routine matinale", description: "Structurez vos matins pour des journées intentionnelles.", price: "19 €", badgeColor: "#10B981", color: "#10B981", features: ["90 jours", "Routine structurée", "Format compact"], format: "Carnet relié", category: "physical", subcategory: "carnets", image: "/boutique/carnet-rituels-matin.webp" },
-  { id: "agenda-intentionnel", title: "Agenda Intentionnel", subtitle: "Semainier avec réflexion", description: "Planifiez vos semaines avec intentions.", price: "34 €", badge: "Premium", badgeColor: "#8B5CF6", color: "#10B981", features: ["52 semaines", "Check-in émotionnel", "Couverture cuir"], format: "Agenda relié", category: "physical", subcategory: "carnets", image: "/boutique/agenda-intentionnel.webp" },
-  { id: "bilan-de-vie", title: "Mon Bilan de Vie", subtitle: "Faire le point sur tous les domaines", description: "Un workbook pour évaluer chaque aspect de votre vie.", price: "22 €", badgeColor: "#10B981", color: "#10B981", features: ["10 domaines", "Exercices guidés", "100 pages"], format: "Workbook relié", category: "physical", subcategory: "carnets", image: "/boutique/bilan-de-vie.webp" },
-  // ── Physical: Cartes ──
-  { id: "cartes-introspection", title: "52 Cartes Introspection", subtitle: "Une question par semaine", description: "Tirez une carte chaque semaine pour une réflexion profonde.", price: "19 €", badge: "Populaire", badgeColor: "#111827", color: "#EC4899", features: ["52 cartes", "Boîte premium", "Finition mate"], format: "Deck de cartes", category: "physical", subcategory: "cartes", popular: true, image: "/boutique/cartes-introspection.webp" },
-  { id: "cartes-conversations", title: "Conversations Profondes", subtitle: "50 cartes pour se connecter", description: "Des questions pour des discussions authentiques.", price: "24 €", badgeColor: "#EC4899", color: "#EC4899", features: ["50 cartes", "Couple & amis", "Livret inclus"], format: "Deck de cartes", category: "physical", subcategory: "cartes", featured: true, image: "/boutique/cartes-conversations.webp" },
-  { id: "cartes-affirmations", title: "Cartes Affirmations", subtitle: "30 affirmations illustrées", description: "Tirez une carte chaque matin.", price: "15 €", badgeColor: "#EC4899", color: "#EC4899", features: ["30 cartes", "Illustrations", "Format voyage"], format: "Deck de cartes", category: "physical", subcategory: "cartes", image: "/boutique/cartes-affirmations-deck.webp" },
-  { id: "cartes-et-si", title: 'Cartes "Ét si…"', subtitle: "40 questions pour imaginer", description: "Des questions pour explorer vos rêves.", price: "17 €", badgeColor: "#EC4899", color: "#EC4899", features: ["40 cartes", "Imagination", "Coaching inclus"], format: "Deck de cartes", category: "physical", subcategory: "cartes", image: "/boutique/cartes-et-si.webp" },
-  // ── Physical: Posters ──
-  { id: "poster-vision-board", title: "Poster Vision Board", subtitle: "Grand format à compléter", description: "Visualisez vos rêves sur ce poster à personnaliser.", price: "15 €", badgeColor: "#F59E0B", color: "#F59E0B", features: ["Format A2", "Papier épais", "Zones à remplir"], format: "Poster", category: "physical", subcategory: "posters", image: "/boutique/poster-vision-board.webp" },
-  { id: "set-affiches-citations", title: "Set 5 Affiches Citations", subtitle: "Typographie soignée", description: "Cinq citations inspirantes en affiches décoratives.", price: "25 €", badge: "Set complet", badgeColor: "#F59E0B", color: "#F59E0B", features: ["5 affiches A4", "Papier premium", "Design épuré"], format: "Set d’affiches", category: "physical", subcategory: "posters", image: "/boutique/set-affiches-citations.webp" },
-  { id: "calendrier-inspirant", title: "Calendrier Mural Inspirant", subtitle: "12 mois, 12 thèmes", description: "Un calendrier avec un exercice chaque mois.", price: "22 €", badgeColor: "#F59E0B", color: "#F59E0B", features: ["Format A3", "12 exercices", "Illustrations"], format: "Calendrier mural", category: "physical", subcategory: "posters", image: "/boutique/calendrier-inspirant.webp" },
-  // ── Physical: Coffrets ──
-  { id: "coffret-nouveau-depart", title: 'Coffret "Nouveau Départ"', subtitle: "Tout pour commencer", description: "Le kit complet pour démarrer votre transformation.", price: "59 €", originalPrice: "85 €", badge: "−30 %", badgeColor: "#DC2626", color: "#8B5CF6", features: ["Carnet + Cartes + Poster", "Guide digital", "Boîte cadeau"], format: "Coffret", category: "physical", subcategory: "coffrets", popular: true, featured: true, image: "/boutique/coffret-nouveau-depart.webp" },
-  { id: "kit-rituels-soir", title: "Kit Rituels du Soir", subtitle: "Pour des nuits apaisées", description: "Journal, cartes et méditations pour bien finir la journée.", price: "45 €", originalPrice: "62 €", badge: "−27 %", badgeColor: "#DC2626", color: "#8B5CF6", features: ["Journal + Cartes", "Méditations audio", "Pochette coton"], format: "Kit", category: "physical", subcategory: "coffrets", image: "/boutique/kit-rituels-soir.webp" },
-  { id: "box-couple-connecte", title: "Box Couple Connecté", subtitle: "Renforcez votre relation", description: "Cartes conversation, journal partagé et guide.", price: "49 €", originalPrice: "68 €", badge: "−28 %", badgeColor: "#DC2626", color: "#8B5CF6", features: ["Cartes + Journal duo", "Guide relation", "Emballage cadeau"], format: "Box", category: "physical", subcategory: "coffrets", image: "/boutique/box-couple-connecte.webp" },
-  // ── Packs ──
-  { id: "pack-decouverte", title: "Pack Découverte Digital", subtitle: "Pour bien démarrer", description: "L’essentiel en digital : e-book + workbook + méditations.", price: "29,90 €", originalPrice: "49,70 €", badge: "−40 %", badgeColor: "#DC2626", color: "#6366F1", features: ["1 e-book", "1 workbook", "5 méditations"], format: "Pack digital", category: "packs", subcategory: "packs", image: "/boutique/pack-decouverte.webp" },
-  { id: "pack-transformation", title: "Pack Transformation", subtitle: "Le programme complet", description: "Tout notre catalogue digital.", price: "149 €", originalPrice: "297 €", badge: "−50 %", badgeColor: "#DC2626", color: "#6366F1", features: ["Toutes les formations", "Tous les e-books", "Tous les audios"], format: "Pack complet", category: "packs", subcategory: "packs", popular: true, image: "/boutique/pack-transformation.webp" },
-  { id: "abonnement-premium", title: "Abonnement Premium", subtitle: "Accès illimité mensuel", description: "Accédez à tout notre catalogue digital.", price: "9,90 €/mois", badge: "Illimité", badgeColor: "#8B5CF6", color: "#6366F1", features: ["Tout le catalogue", "Nouveautés incluses", "Sans engagement"], format: "Abonnement", category: "packs", subcategory: "packs", image: "/boutique/abonnement-premium.webp" },
+  // ── Esprit ──
+  { id: "kit-meditation", title: "Kit Méditation", subtitle: "Trouver le calme intérieur", description: "Carnet de pratique, cartes de respiration et workbook pour installer une routine méditative durable.", price: "39 €", badge: "Populaire", badgeColor: "#111827", color: "#7B5CD6", features: ["Carnet 90 jours", "30 cartes guidées", "Workbook introspection"], format: "Kit complet", category: "esprit", subcategory: "esprit", popular: true, featured: true, image: "/boutique/boutique-gpt2-meditation.png" },
+  { id: "kit-therapie", title: "Kit Thérapie", subtitle: "Cheminer vers soi", description: "Un coffret pour accompagner un travail thérapeutique : journal émotionnel, exercices et outils de suivi.", price: "39 €", badgeColor: "#7B5CD6", color: "#7B5CD6", features: ["Journal émotionnel", "Cartes introspection", "Workbook exercices"], format: "Kit complet", category: "esprit", subcategory: "esprit", image: "/boutique/boutique-gpt2-therapie.png" },
+  { id: "kit-art-therapie", title: "Kit Art-Thérapie", subtitle: "Créer pour se libérer", description: "Explorez vos émotions par le dessin, le collage et l’écriture créative.", price: "39 €", badgeColor: "#7B5CD6", color: "#7B5CD6", features: ["Carnet créatif", "Prompts artistiques", "Guide techniques"], format: "Kit complet", category: "esprit", subcategory: "esprit", image: "/boutique/boutique-gpt2-art-therapie.png" },
+  // ── Corps ──
+  { id: "kit-sport", title: "Kit Sport", subtitle: "Reprendre en douceur", description: "Programme progressif de 8 semaines avec carnet de suivi et cartes d’exercices illustrées.", price: "39 €", badge: "Best-seller", badgeColor: "#111827", color: "#5AA352", features: ["Programme 8 semaines", "Cartes exercices", "Carnet de suivi"], format: "Kit complet", category: "corps", subcategory: "corps", popular: true, featured: true, image: "/boutique/boutique-gpt2-sport.png" },
+  { id: "kit-alimentation", title: "Kit Alimentation", subtitle: "Nourrir corps et esprit", description: "Un guide nutrition, des recettes et un planificateur de repas pour une alimentation consciente.", price: "39 €", badgeColor: "#5AA352", color: "#5AA352", features: ["Guide nutrition", "40 recettes", "Planificateur repas"], format: "Kit complet", category: "corps", subcategory: "corps", image: "/boutique/boutique-gpt2-alimentation.png" },
+  { id: "kit-sommeil", title: "Kit Sommeil", subtitle: "Retrouver des nuits profondes", description: "Rituels du soir, journal de sommeil et exercices de relaxation pour des nuits réparatrices.", price: "39 €", badgeColor: "#5AA352", color: "#5AA352", features: ["Journal de sommeil", "Rituels du soir", "Exercices relaxation"], format: "Kit complet", category: "corps", subcategory: "corps", image: "/boutique/boutique-gpt2-sommeil.png" },
+  { id: "kit-respiration", title: "Kit Respiration", subtitle: "Le souffle comme ancre", description: "Techniques respiratoires, cartes de pratique et programme anti-anxiété en 21 jours.", price: "39 €", badgeColor: "#5AA352", color: "#5AA352", features: ["21 jours programme", "Cartes techniques", "Audio guidé"], format: "Kit complet", category: "corps", subcategory: "corps", image: "/boutique/boutique-gpt2-respiration.png" },
+  // ── Liens ──
+  { id: "kit-couple", title: "Kit Couple", subtitle: "Se retrouver à deux", description: "Cartes conversation, journal partagé et exercices pour raviver la connexion dans votre relation.", price: "39 €", badge: "Idée cadeau", badgeColor: "#E67839", color: "#E67839", features: ["Cartes conversation", "Journal duo", "Exercices à deux"], format: "Kit complet", category: "liens", subcategory: "liens", popular: true, featured: true, image: "/boutique/boutique-gpt2-couple.png" },
+  { id: "kit-education", title: "Kit Éducation", subtitle: "Grandir ensemble", description: "Outils de communication bienveillante, cartes émotions et activités parent-enfant.", price: "39 €", badgeColor: "#E67839", color: "#E67839", features: ["Cartes émotions", "Guide bienveillance", "Activités famille"], format: "Kit complet", category: "liens", subcategory: "liens", image: "/boutique/boutique-gpt2-education.png" },
+  // ── Monde ──
+  { id: "kit-photo-bien-etre", title: "Kit Photo & Bien-être", subtitle: "Voir le beau au quotidien", description: "Apprenez à utiliser la photographie comme outil de pleine conscience et de gratitude.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Guide photo mindful", "30 défis créatifs", "Carnet visuel"], format: "Kit complet", category: "monde", subcategory: "monde", image: "/boutique/boutique-gpt2-photo-bien-etre.png" },
+  { id: "kit-photo-therapeutique", title: "Kit Photo Thérapeutique", subtitle: "Se raconter en images", description: "Utilisez l’autoportrait et le reportage personnel comme vecteurs de transformation.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Exercices autoportrait", "Journal photographique", "Guide narratif"], format: "Kit complet", category: "monde", subcategory: "monde", featured: true, image: "/boutique/boutique-gpt2-photo-therapeutique.png" },
+  { id: "kit-instrument", title: "Kit Instrument", subtitle: "La musique comme thérapie", description: "Initiez-vous à un instrument avec un programme pensé pour le bien-être, pas la performance.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Programme débutant", "Exercices quotidiens", "Playlist guidée"], format: "Kit complet", category: "monde", subcategory: "monde", image: "/boutique/boutique-gpt2-instrument.png" },
+  { id: "kit-mobilite", title: "Kit Mobilité", subtitle: "Bouger pour s’ouvrir", description: "Un programme mêlant mouvement, découverte et connexion au monde extérieur.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Programme mobilité", "Cartes exploration", "Journal de route"], format: "Kit complet", category: "monde", subcategory: "monde", image: "/boutique/boutique-gpt2-mobilite.png" },
+  // ── Avenir ──
+  { id: "kit-entrepreneuriat", title: "Kit Entrepreneuriat", subtitle: "Lancer son projet", description: "Workbook stratégique, cartes décision et planner pour passer de l’idée à l’action.", price: "39 €", badge: "Pro", badgeColor: "#2E94B5", color: "#2E94B5", features: ["Workbook stratégie", "Cartes décision", "Planner 12 semaines"], format: "Kit complet", category: "avenir", subcategory: "avenir", popular: true, image: "/boutique/boutique-gpt2-entrepreneuriat.png" },
+  { id: "kit-finances", title: "Kit Finances", subtitle: "Reprendre le contrôle", description: "Budget conscient, journal financier et méthodes pour une relation saine à l’argent.", price: "39 €", badgeColor: "#2E94B5", color: "#2E94B5", features: ["Planner budget", "Journal financier", "Guide investissement"], format: "Kit complet", category: "avenir", subcategory: "avenir", image: "/boutique/boutique-gpt2-finances.png" },
+  { id: "kit-innovation", title: "Kit Innovation", subtitle: "Penser autrement", description: "Outils de créativité, cartes de brainstorming et méthodes pour résoudre des problèmes complexes.", price: "39 €", badgeColor: "#2E94B5", color: "#2E94B5", features: ["Cartes brainstorming", "Méthodes créatives", "Workbook idéation"], format: "Kit complet", category: "avenir", subcategory: "avenir", image: "/boutique/boutique-gpt2-innovation.png" },
 ];
 
 const featuredProducts = products.filter((p) => p.featured);
-const digitalProducts = products.filter((p) => p.category === "digital");
-const physicalProducts = products.filter((p) => p.category === "physical");
-const packProducts = products.filter((p) => p.category === "packs");
 
-const digitalSubcategories = [
-  { id: "all", label: "Tous", color: "#111827" },
-  { id: "ebooks", label: "E-books", color: "#8B5CF6" },
-  { id: "workbooks", label: "Workbooks", color: "#EC4899" },
-  { id: "audio", label: "Audio", color: "#0891B2" },
-  { id: "formations", label: "Formations", color: "#F59E0B" },
-];
-
-const physicalSubcategories = [
-  { id: "all", label: "Tous", color: "#111827" },
-  { id: "carnets", label: "Carnets", color: "#10B981" },
-  { id: "cartes", label: "Cartes", color: "#EC4899" },
-  { id: "posters", label: "Posters", color: "#F59E0B" },
-  { id: "coffrets", label: "Coffrets", color: "#8B5CF6" },
+const universCategories = [
+  { id: "all", label: "Tous les kits", color: "#111827" },
+  { id: "esprit", label: "Esprit", color: "#7B5CD6" },
+  { id: "corps", label: "Corps", color: "#5AA352" },
+  { id: "liens", label: "Liens", color: "#E67839" },
+  { id: "monde", label: "Monde", color: "#2E9B74" },
+  { id: "avenir", label: "Avenir", color: "#2E94B5" },
 ];
 
 const faqItems = [
-  { question: "Quand la boutique sera-t-elle disponible ?", answer: "Nous préparons soigneusement chaque produit. Inscrivez-vous à la newsletter pour être informé du lancement." },
-  { question: "Comment accéder à mes achats digitaux ?", answer: "Après votre achat, vous recevrez un email avec un lien de téléchargement immédiat." },
-  { question: "Livrez-vous en Europe ?", answer: "Oui, nous livrons en France métropolitaine et dans toute l’Europe." },
-  { question: "Quelle est votre politique de remboursement ?", answer: "Garantie satisfait ou remboursé de 14 jours sur tous nos produits, sans question." },
-  { question: "Proposez-vous le paiement en plusieurs fois ?", answer: "Oui, pour les achats à partir de 50 €, paiement en 3 fois sans frais disponible." },
+  { question: "Quand la boutique sera-t-elle disponible ?", answer: "Nous préparons soigneusement chaque kit. Inscrivez-vous à la newsletter pour être informé du lancement." },
+  { question: "Que contient chaque kit ?", answer: "Chaque kit comprend un carnet thématique, un jeu de cartes et un workbook d’exercices, le tout autour d’un même thème." },
+  { question: "Livrez-vous en Europe ?", answer: "Oui, nous livrons en France métropolitaine et dans toute l’Europe." },
+  { question: "Quelle est votre politique de remboursement ?", answer: "Garantie satisfait ou remboursé de 14 jours sur tous nos produits, sans question." },
+  { question: "Proposez-vous le paiement en plusieurs fois ?", answer: "Oui, pour les achats à partir de 50 €, paiement en 3 fois sans frais disponible." },
 ];
 
 const TRUST = [
@@ -196,15 +168,15 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
                           {status === "loading" ? "Envoi…" : "Être notifié"}
                         </button>
                       </div>
-                      <p className={s.notifyHint}>Recevez un email d&egrave;s que ce produit sera disponible</p>
-                      {status === "error" && <p className={s.notifyError}>Une erreur est survenue. R&eacute;essayez.</p>}
+                      <p className={s.notifyHint}>Recevez un email dès que ce kit sera disponible</p>
+                      {status === "error" && <p className={s.notifyError}>Une erreur est survenue. Réessayez.</p>}
                     </form>
                   ) : (
                     <div className={s.notifyOk}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
                       <div>
-                        <p className={s.notifyOkTitle}>Vous &ecirc;tes inscrit&nbsp;!</p>
-                        <p className={s.notifyOkText}>Nous vous pr&eacute;viendrons d&egrave;s que ce produit sera disponible.</p>
+                        <p className={s.notifyOkTitle}>Vous êtes inscrit&nbsp;!</p>
+                        <p className={s.notifyOkText}>Nous vous préviendrons dès que ce kit sera disponible.</p>
                       </div>
                     </div>
                   )}
@@ -236,7 +208,7 @@ function ProductCard({ product, index, onClick }: { product: Product; index: num
         <img src={product.image} alt={product.title} loading="lazy" decoding="async" />
         <span className={s.cardGrad} />
         {product.badge && <span className={s.cardBadge} style={{ background: product.badgeColor }}>{product.badge}</span>}
-        <span className={s.cardSoon}>Bient&ocirc;t disponible</span>
+        <span className={s.cardSoon}>Bientôt disponible</span>
       </div>
       <div className={s.cardBody}>
         <span className={s.cardFormat} style={{ color: product.color }}>{product.format}</span>
@@ -263,7 +235,7 @@ function ProductCard({ product, index, onClick }: { product: Product; index: num
 
 function FilterTabs({ categories, active, setActive, items }: { categories: { id: string; label: string; color: string }[]; active: string; setActive: (id: string) => void; items: Product[] }) {
   return (
-    <nav className={s.filters} aria-label="Filtrer par type">
+    <nav className={s.filters} aria-label="Filtrer par univers">
       {categories.map((cat) => {
         const count = cat.id === "all" ? items.length : items.filter((p) => p.subcategory === cat.id).length;
         return (
@@ -312,10 +284,10 @@ function GridCta() {
       <span className={s.gridCtaIcon}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
       </span>
-      <p className={s.gridCtaTitle}>D&rsquo;autres produits arrivent</p>
-      <p className={s.gridCtaSub}>Soyez pr&eacute;venu d&egrave;s leur sortie</p>
+      <p className={s.gridCtaTitle}>D’autres kits arrivent</p>
+      <p className={s.gridCtaSub}>Soyez prévenu dès leur sortie</p>
       <span className={s.gridCtaBtn}>
-        &Ecirc;tre notifi&eacute;
+        Être notifié
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
       </span>
     </Link>
@@ -327,22 +299,20 @@ function GridCta() {
    ================================================================ */
 
 export default function BoutiquePage() {
-  const [activeDigi, setActiveDigi] = useState("all");
-  const [activePhys, setActivePhys] = useState("all");
+  const [activeFilter, setActiveFilter] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const open = (p: Product) => { setSelectedProduct(p); setModalOpen(true); };
   const close = () => { setModalOpen(false); setTimeout(() => setSelectedProduct(null), 300); };
 
-  const filteredDigi = activeDigi === "all" ? digitalProducts : digitalProducts.filter((p) => p.subcategory === activeDigi);
-  const filteredPhys = activePhys === "all" ? physicalProducts : physicalProducts.filter((p) => p.subcategory === activePhys);
+  const filteredProducts = activeFilter === "all" ? products : products.filter((p) => p.category === activeFilter);
 
   return (
     <div className={s.page}>
       <SEO
-        title="Boutique — E-books, carnets et formations"
-        description="Découvrez nos e-books, workbooks, carnets, cartes et formations pour votre développement personnel."
+        title="Boutique — Kits thématiques pour grandir"
+        description="16 kits thématiques alliant carnet, cartes et workbook pour votre développement personnel. Méditation, sport, couple, entrepreneuriat et plus."
         url="/boutique"
         type="website"
         itemListData={products.map((p) => ({ name: p.title, description: p.description, image: p.image }))}
@@ -370,34 +340,34 @@ export default function BoutiquePage() {
             </div>
 
             <div className={s.heroGrid}>
-              <div className={s.heroText}>
+              <div>
                 <span className={s.heroKicker}>
                   <span className={s.heroKickerDot} aria-hidden="true" />
-                  Boutique &middot; {products.length} produits
+                  Boutique &middot; {products.length} kits
                 </span>
                 <h1 className={s.heroTitle}>
-                  Des ressources<br />pour <em>grandir.</em>
+                  Des kits pour<br />se <em>transformer.</em>
                 </h1>
                 <p className={s.heroDeck}>
-                  E-books, workbooks, formations et objets soigneusement con&ccedil;us
-                  pour accompagner votre d&eacute;veloppement personnel.
+                  Carnet + cartes + workbook : chaque kit réunit les outils
+                  essentiels autour d’un thème pour accompagner votre évolution.
                 </p>
                 <div className={s.heroStats}>
                   <div className={s.heroStat}>
                     <span className={s.heroStatVal}>{products.length}</span>
-                    <span className={s.heroStatLbl}>Produits</span>
+                    <span className={s.heroStatLbl}>Kits</span>
                   </div>
                   <div className={s.heroStat}>
-                    <span className={s.heroStatVal}>4.9</span>
-                    <span className={s.heroStatLbl}>Satisfaction</span>
+                    <span className={s.heroStatVal}>5</span>
+                    <span className={s.heroStatLbl}>Univers</span>
                   </div>
                   <div className={s.heroStat}>
-                    <span className={s.heroStatVal}>2.5k+</span>
-                    <span className={s.heroStatLbl}>Clients</span>
+                    <span className={s.heroStatVal}>39 €</span>
+                    <span className={s.heroStatLbl}>Par kit</span>
                   </div>
                 </div>
                 <Link to="/newsletter" className={s.heroCta}>
-                  <span>&Ecirc;tre notifi&eacute; au lancement</span>
+                  <span>Être notifié au lancement</span>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                 </Link>
               </div>
@@ -407,7 +377,7 @@ export default function BoutiquePage() {
                   <div key={p.id} className={s.mosaicCard} onClick={() => open(p)}>
                     <img src={p.image} alt={p.title} loading="lazy" decoding="async" />
                     <span className={s.mosaicGrad} />
-                    <span className={s.cardSoon}>Bient&ocirc;t disponible</span>
+                    <span className={s.cardSoon}>Bientôt disponible</span>
                     <span className={s.mosaicBadge} style={{ background: p.color }}>{p.format.split(" ")[0]}</span>
                     <div className={s.mosaicInfo}>
                       <span className={s.mosaicName}>{p.title}</span>
@@ -435,16 +405,16 @@ export default function BoutiquePage() {
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
                   <span className={s.sectionKickerDot} aria-hidden="true" />
-                  S&eacute;lection
+                  Sélection
                 </span>
                 <h2 className={s.sectionTitle}>Nos coups <em>de cœur.</em></h2>
                 <p className={s.sectionDeck}>
-                  Les produits les plus populaires, s&eacute;lectionn&eacute;s pour leur impact
+                  Les kits les plus attendus, sélectionnés pour leur impact
                   transformateur sur votre quotidien.
                 </p>
               </div>
               <Link className={s.sectionAll} to="/newsletter" aria-label="Être notifié">
-                &Ecirc;tre notifi&eacute;
+                Être notifié
                 <span className={s.sectionAllArrow} aria-hidden="true">&rarr;</span>
               </Link>
             </header>
@@ -455,51 +425,25 @@ export default function BoutiquePage() {
             </div>
           </section>
 
-          {/* ═══ DIGITAL ═══ */}
+          {/* ═══ ALL KITS ═══ */}
           <section className={s.section}>
             <header className={s.sectionHead}>
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
                   <span className={s.sectionKickerDot} aria-hidden="true" />
-                  T&eacute;l&eacute;charger
+                  Catalogue
                 </span>
-                <h2 className={s.sectionTitle}>Produits <em>digitaux.</em></h2>
+                <h2 className={s.sectionTitle}>Tous les <em>kits.</em></h2>
                 <p className={s.sectionDeck}>
-                  E-books, workbooks, m&eacute;ditations et formations vid&eacute;o.
-                  T&eacute;l&eacute;chargez et commencez imm&eacute;diatement.
+                  16 kits thématiques organisés par univers. Chaque kit contient
+                  un carnet, des cartes et un workbook d’exercices.
                 </p>
               </div>
             </header>
-            <FilterTabs categories={digitalSubcategories} active={activeDigi} setActive={setActiveDigi} items={digitalProducts} />
+            <FilterTabs categories={universCategories} active={activeFilter} setActive={setActiveFilter} items={products} />
             <AnimatePresence mode="wait">
-              <motion.div key={activeDigi} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className={s.grid4}>
-                {filteredDigi.map((p, i) => (
-                  <ProductCard key={p.id} product={p} index={i} onClick={() => open(p)} />
-                ))}
-                <GridCta />
-              </motion.div>
-            </AnimatePresence>
-          </section>
-
-          {/* ═══ PHYSICAL ═══ */}
-          <section className={s.section}>
-            <header className={s.sectionHead}>
-              <div className={s.sectionLabel}>
-                <span className={s.sectionKicker}>
-                  <span className={s.sectionKickerDot} aria-hidden="true" />
-                  Commander
-                </span>
-                <h2 className={s.sectionTitle}>Produits <em>physiques.</em></h2>
-                <p className={s.sectionDeck}>
-                  Carnets, planners, cartes et coffrets. Des objets beaux et utiles
-                  pour votre quotidien.
-                </p>
-              </div>
-            </header>
-            <FilterTabs categories={physicalSubcategories} active={activePhys} setActive={setActivePhys} items={physicalProducts} />
-            <AnimatePresence mode="wait">
-              <motion.div key={activePhys} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className={s.grid4}>
-                {filteredPhys.map((p, i) => (
+              <motion.div key={activeFilter} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className={s.grid4}>
+                {filteredProducts.map((p, i) => (
                   <ProductCard key={p.id} product={p} index={i} onClick={() => open(p)} />
                 ))}
                 <GridCta />
@@ -508,72 +452,20 @@ export default function BoutiquePage() {
           </section>
         </div>
 
-        {/* ═══ PACKS — dark section ═══ */}
-        <section className={s.packs}>
-          <div className="v2-container">
-            <div className={`${s.chapterMark} ${s.chapterMarkLight} mono`}>
-              <span className={s.cNum}>&Eacute;conomiser</span>
-              <span className={s.cSep}>/</span>
-              <span className={s.cLabel}>Packs &amp; Abonnements</span>
-            </div>
-            <header className={s.packsHead}>
-              <h2 className={s.packsTitle}>
-                Acc&eacute;dez &agrave; tout.<br /><em>Pour moins.</em>
-              </h2>
-              <p className={s.packsDeck}>
-                &Eacute;conomisez jusqu&rsquo;&agrave; 50&nbsp;% avec nos offres group&eacute;es.
-                Acc&eacute;dez &agrave; tout notre catalogue digital.
-              </p>
-            </header>
-            <div className={s.packsGrid}>
-              {packProducts.map((p, i) => (
-                <div key={p.id} className={`${s.packCard} ${i === 1 ? s.packCardFeatured : ""}`} onClick={() => open(p)}>
-                  <div className={s.packImgWrap}>
-                    <img src={p.image} alt={p.title} loading="lazy" />
-                    <span className={s.packImgGrad} />
-                    <span className={s.cardSoon}>Bient&ocirc;t disponible</span>
-                  </div>
-                  <div className={s.packBody}>
-                    {p.badge && <span className={s.packBadge} style={{ background: p.badgeColor }}>{p.badge}</span>}
-                    <h3 className={s.packName}>{typo(p.title)}</h3>
-                    <p className={s.packSub}>{p.subtitle}</p>
-                    <div className={s.packPriceRow}>
-                      <span className={s.packPrice}>{p.price}</span>
-                      {p.originalPrice && <span className={s.packOld}>{p.originalPrice}</span>}
-                    </div>
-                    <ul className={s.packFeats}>
-                      {p.features.map((f, j) => (
-                        <li key={j}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                    <span className={s.packCta}>
-                      &Ecirc;tre notifi&eacute;
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ═══ NEWSLETTER CTA ═══ */}
         <section className={s.nlCta}>
           <div className="v2-container">
             <div className={s.nlInner}>
-              <h2 className={s.nlTitle}>Soyez les premiers <em>inform&eacute;s.</em></h2>
+              <h2 className={s.nlTitle}>Soyez les premiers <em>informés.</em></h2>
               <p className={s.nlDeck}>
-                Inscrivez-vous pour &ecirc;tre pr&eacute;venu d&egrave;s le lancement et
-                b&eacute;n&eacute;ficier d&rsquo;offres exclusives r&eacute;serv&eacute;es aux early adopters.
+                Inscrivez-vous pour être prévenu dès le lancement et
+                bénéficier d’offres exclusives réservées aux early adopters.
               </p>
               <Link to="/newsletter" className={s.nlBtn}>
-                S&rsquo;inscrire &agrave; la newsletter
+                S’inscrire à la newsletter
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
               </Link>
-              <p className={s.nlDisclaimer}>Rejoignez 2,500+ abonn&eacute;s &middot; Pas de spam</p>
+              <p className={s.nlDisclaimer}>Rejoignez 2,500+ abonnés &middot; Pas de spam</p>
             </div>
           </div>
         </section>
@@ -584,7 +476,7 @@ export default function BoutiquePage() {
             <header className={s.faqHead}>
               <span className={s.sectionKicker}>
                 <span className={s.sectionKickerDot} aria-hidden="true" />
-                Questions fr&eacute;quentes
+                Questions fréquentes
               </span>
               <h2 className={s.sectionTitle}>Tout ce que vous <em>devez savoir.</em></h2>
             </header>
@@ -595,22 +487,22 @@ export default function BoutiquePage() {
             </div>
             <div className={s.faqContact}>
               <Link to="/contact" className={s.faqContactLink}>
-                D&rsquo;autres questions&nbsp;? Contactez-nous
+                D’autres questions&nbsp;? Contactez-nous
                 <span>&rarr;</span>
               </Link>
             </div>
           </section>
         </div>
 
-        {/* ═══ CLOSING — transition to footer ═══ */}
+        {/* ═══ CLOSING ═══ */}
         <section className={s.closing}>
           <div className="v2-container">
             <div className={s.closingInner}>
               <div className={s.closingRule} />
               <p className={s.closingLogo}>Origines Media</p>
               <p className={s.closingText}>
-                Des ressources pens&eacute;es pour ceux qui veulent avancer,
-                comprendre, et prendre soin d&rsquo;eux-m&ecirc;mes.
+                Des ressources pensées pour ceux qui veulent avancer,
+                comprendre, et prendre soin d’eux-mêmes.
               </p>
               <div className={s.closingLinks}>
                 <Link to="/" className={s.closingLink}>Accueil</Link>
