@@ -1,10 +1,10 @@
 // Service Worker pour Origines Media
 // Stratégie: Cache-First pour assets statiques, Network-First pour API
 
-const CACHE_NAME = 'origines-media-v3';
-const STATIC_CACHE = 'origines-static-v3';
-const DYNAMIC_CACHE = 'origines-dynamic-v3';
-const IMAGE_CACHE = 'origines-images-v3';
+const CACHE_NAME = 'origines-media-v4';
+const STATIC_CACHE = 'origines-static-v4';
+const DYNAMIC_CACHE = 'origines-dynamic-v4';
+const IMAGE_CACHE = 'origines-images-v4';
 
 // Assets statiques à pré-cacher
 const STATIC_ASSETS = [
@@ -21,7 +21,8 @@ const CACHE_PATTERNS = {
   static: /\.(js|css|woff2?|ttf|eot)$/,
   images: /\.(png|jpg|jpeg|gif|webp|avif|svg|ico)$/,
   api: /\/api\//,
-  sanity: /cdn\.sanity\.io/,
+  sanityImages: /cdn\.sanity\.io\/images\//,
+  sanityApi: /apicdn\.sanity\.io/,
   youtube: /youtube\.com|ytimg\.com/,
 };
 
@@ -125,13 +126,20 @@ self.addEventListener('fetch', (event) => {
 
   // Ignorer les requêtes vers d'autres origines (sauf CDN autorisés)
   if (url.origin !== self.location.origin &&
-      !CACHE_PATTERNS.sanity.test(url.href) &&
+      !CACHE_PATTERNS.sanityImages.test(url.href) &&
+      !CACHE_PATTERNS.sanityApi.test(url.href) &&
       !CACHE_PATTERNS.youtube.test(url.href)) {
     return;
   }
 
-  // Images Sanity - Cache First avec durée longue
-  if (CACHE_PATTERNS.sanity.test(url.href)) {
+  // Sanity API (GROQ queries) - Network First so new articles appear immediately
+  if (CACHE_PATTERNS.sanityApi.test(url.href)) {
+    event.respondWith(networkFirstStrategy(request, DYNAMIC_CACHE));
+    return;
+  }
+
+  // Images Sanity - Cache First (images don't change)
+  if (CACHE_PATTERNS.sanityImages.test(url.href)) {
     event.respondWith(cacheFirstStrategy(request, IMAGE_CACHE));
     return;
   }
