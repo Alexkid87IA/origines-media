@@ -1851,15 +1851,19 @@
 
 .avatarAuthGateActions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 12px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.avatarAuthGateActions > * {
+  width: 100%;
 }
 
 @media (max-width: 768px) {
   .avatarAuthGate { padding: 28px 20px; }
-  .avatarAuthGateActions { flex-direction: column; align-items: stretch; }
 }
 
 /* ── Auth gate modal ── */
