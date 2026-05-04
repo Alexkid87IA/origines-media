@@ -6,6 +6,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { typo, estimateReadingTimeFromText } from "../lib/typography";
 import { sanityFetch } from "@/lib/sanity";
+import { RT } from "@/lib/queries";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { TAG_CATEGORIES, CATEGORY_ORDER, getTagCategory, countStoriesByCategory, filterStoriesByCategory } from "@/lib/tagCategories";
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -43,7 +44,7 @@ const QUERY = `
     deck,
     "slug": slug.current,
     datePublication,
-    tempsLecture,
+    ${RT},
     "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
     univpilar,
     category,

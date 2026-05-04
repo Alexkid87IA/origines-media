@@ -389,7 +389,7 @@ export default function ArticlePageV2() {
   const description = article.description || article.excerpt || "";
   const imageUrl = article.imageUrl || article.mainImage?.asset?.url || (typeof article.mainImage === "string" ? article.mainImage : "") || "";
   const date = article.datePublication || article.publishedAt;
-  const readTime = estimateReadingTime(article.contenu || article.body) || article.tempsLecture || article.readTime || 1;
+  const readTime = article.tempsLecture || estimateReadingTime(article.contenu || article.body) || 1;
   const fullContent = article.contenu || article.body || [];
   const firstParaIndex = fullContent.findIndex(
     (b: any) => b._type === "block" && (b.style === "normal" || !b.style)
@@ -1152,8 +1152,8 @@ export default function ArticlePageV2() {
                             decoding="async"
                           />
                           <div className={s.relCardImgOverlay} />
-                          {related.readingTime && (
-                            <span className={s.relCardTime}>{related.readingTime}&nbsp;min</span>
+                          {related.tempsLecture && (
+                            <span className={s.relCardTime}>{related.tempsLecture}&nbsp;min</span>
                           )}
                         </div>
                         <div className={s.relCardBody}>
@@ -1164,10 +1164,10 @@ export default function ArticlePageV2() {
                                 <span className={s.relCardVert}>{catLabel}</span>
                               </>
                             )}
-                            {related.readingTime && (
+                            {related.tempsLecture && (
                               <>
                                 {catLabel && <span className={s.relCardMetaSep} aria-hidden="true" />}
-                                <span className={s.relCardReadTime}>{related.readingTime} min</span>
+                                <span className={s.relCardReadTime}>{related.tempsLecture} min</span>
                               </>
                             )}
                           </div>

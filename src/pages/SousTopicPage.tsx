@@ -5,6 +5,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
+import { RT } from "@/lib/queries";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
@@ -68,7 +69,7 @@ function buildQuery(soustopic: string): string {
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
       "slug": slug.current,
-      datePublication, tempsLecture,
+      datePublication, ${RT},
       "vues": coalesce(vues, 0),
       univpilar, soustopic, category,
       typeArticle, rubrique, videoUrl,

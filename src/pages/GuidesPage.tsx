@@ -5,6 +5,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { sanityFetch } from "@/lib/sanity";
+import { RT } from "@/lib/queries";
 import { smartExcerpt } from "@/lib/typography";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { useSubscribe } from "../hooks/useSubscribe";
@@ -44,7 +45,7 @@ const GUIDES_QUERY = `
     soustopic,
     "authorName": coalesce(author->name, author),
     datePublication,
-    tempsLecture
+    ${RT}
   }
 `;
 

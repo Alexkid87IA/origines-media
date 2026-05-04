@@ -36,6 +36,11 @@ function RedirectToRecommandation() {
   return <Navigate to={`/recommandations/${slug}`} replace />;
 }
 
+function RedirectToHistoire() {
+  const { slug } = useParams();
+  return <Navigate to={`/histoire/${slug}`} replace />;
+}
+
 const RecommandationTypePage = lazyRetry(() => import('./pages/RecommandationTypePage'));
 
 const RECO_TYPE_KEYS = new Set([
@@ -89,14 +94,8 @@ const MediaPage = lazyRetry(() => import('./pages/MediaPage'));
 const ProdPage = lazyRetry(() => import('./pages/ProdPage'));
 const TypePage = lazyRetry(() => import('./pages/TypePage'));
 const ActuListPage = lazyRetry(() => import('./pages/ActuListPage'));
-const ComprendreListPage = lazyRetry(() => import('./pages/ComprendreListPage'));
-const ComprendreArticlePage = lazyRetry(() => import('./pages/ComprendreArticlePage'));
-const ReflexionsListPage = lazyRetry(() => import('./pages/ReflexionsListPage'));
-const ReflexionsArticlePage = lazyRetry(() => import('./pages/ReflexionsArticlePage'));
 const TemoignagesPage = lazyRetry(() => import('./pages/TemoignagesPage'));
 const EcrireHistoirePage = lazyRetry(() => import('./pages/EcrireHistoirePage'));
-const TemoignagesArticlePage = lazyRetry(() => import('./pages/TemoignagesArticlePage'));
-const PortraitsArticlePage = lazyRetry(() => import('./pages/PortraitsArticlePage'));
 const DossiersPage = lazyRetry(() => import('./pages/DossiersPage'));
 const DossierDetailPage = lazyRetry(() => import('./pages/DossierDetailPage'));
 const ComptePage = lazyRetry(() => import('./pages/ComptePage'));
@@ -197,15 +196,15 @@ function App() {
         <Route path="/academy" element={<Navigate to="/boutique" replace />} />
         <Route path="/communaute" element={<Navigate to="/ensemble" replace />} />
         <Route path="/ensemble" element={<EnsemblePage />} />
-        <Route path="/comprendre" element={<ComprendreListPage />} />
-        <Route path="/comprendre/:slug" element={<ComprendreArticlePage />} />
-        <Route path="/reflexions" element={<ReflexionsListPage />} />
-        <Route path="/reflexions/:slug" element={<ReflexionsArticlePage />} />
+        <Route path="/comprendre" element={<Navigate to="/articles" replace />} />
+        <Route path="/comprendre/:slug" element={<RedirectToArticle />} />
+        <Route path="/reflexions" element={<Navigate to="/articles" replace />} />
+        <Route path="/reflexions/:slug" element={<RedirectToArticle />} />
         <Route path="/temoignages" element={<TemoignagesPage />} />
         <Route path="/ecrire-mon-histoire" element={<EcrireHistoirePage />} />
-        <Route path="/temoignages/:slug" element={<TemoignagesArticlePage />} />
+        <Route path="/temoignages/:slug" element={<RedirectToArticle />} />
         <Route path="/portraits" element={<Navigate to="/temoignages" replace />} />
-        <Route path="/portraits/:slug" element={<PortraitsArticlePage />} />
+        <Route path="/portraits/:slug" element={<RedirectToHistoire />} />
         <Route path="/dossiers" element={<DossiersPage />} />
         <Route path="/dossiers/:slug" element={<DossierDetailPage />} />
         <Route path="/mentions-legales" element={<LegalPage />} />

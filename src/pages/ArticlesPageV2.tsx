@@ -5,6 +5,7 @@ import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import { sanityFetch } from "@/lib/sanity";
+import { RT } from "@/lib/queries";
 import { sanityImg } from "@/lib/sanityImage";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
@@ -50,7 +51,7 @@ const ARTICLES_V2_QUERY = `
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
     "slug": slug.current,
     datePublication,
-    tempsLecture,
+    ${RT},
     "vues": coalesce(stats.views, views, vues, 0),
     tags,
     univpilar,

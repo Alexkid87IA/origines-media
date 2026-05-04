@@ -208,7 +208,9 @@ const SEO: React.FC<SEOProps> = ({
   faqData,
 }) => {
   const fullTitle = title ? `${title} — ${DEFAULT_TITLE}` : DEFAULT_TITLE;
-  const canonicalUrl = url ? `${SITE_URL}${url}` : (typeof window !== 'undefined' ? `${SITE_URL}${window.location.pathname}` : SITE_URL);
+  const rawPath = url || (typeof window !== 'undefined' ? window.location.pathname : '/');
+  const cleanPath = rawPath === '/' ? '/' : rawPath.replace(/\/+$/, '');
+  const canonicalUrl = `${SITE_URL}${cleanPath}`;
   const safeImage = (typeof image === 'string' ? image : '') || DEFAULT_IMAGE;
   const rawImageUrl = safeImage.startsWith('http') ? safeImage : `${SITE_URL}${safeImage}`;
   const imageUrl = sanityOgImg(rawImageUrl) || rawImageUrl;

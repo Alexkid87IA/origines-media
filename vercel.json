@@ -46,7 +46,33 @@
       "maxDuration": 10
     }
   },
+  "trailingSlash": false,
   "redirects": [
+    {
+      "source": "/dossiers/:dossierSlug/:articleSlug",
+      "destination": "/article/:articleSlug",
+      "permanent": true
+    },
+    {
+      "source": "/comprendre/:slug",
+      "destination": "/article/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/reflexions/:slug",
+      "destination": "/article/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/temoignages/:slug",
+      "destination": "/article/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/portraits/:slug",
+      "destination": "/histoire/:slug",
+      "permanent": true
+    },
     {
       "source": "/academie",
       "destination": "/boutique",

@@ -2,6 +2,9 @@
 // Requêtes Sanity GROQ - Nettoyé le 18/01/2026
 // Seules les queries utilisées sont conservées
 
+// Temps de lecture calculé côté GROQ : priorité au champ Sanity, fallback estimation par caractères (~1380 chars/min)
+export const RT = `"tempsLecture": coalesce(tempsLecture, round(length(array::join(contenu[_type == "block"].children[].text, " ")) / 1380))`;
+
 // ========================================
 // HOME PAGE V2
 // ========================================
@@ -79,7 +82,7 @@ export const V2_DOSSIER_DETAIL_QUERY = `
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
       "slug": slug.current,
       datePublication,
-      "tempsLecture": coalesce(tempsLecture, readTime),
+      ${RT},
       univpilar,
       soustopic,
       tags,
@@ -105,7 +108,7 @@ export const V2_HERO_MAIN_QUERY = `
       typeArticle, category,
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
-      datePublication, tempsLecture, univpilar,
+      datePublication, ${RT}, univpilar,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name
@@ -116,7 +119,7 @@ export const V2_HERO_MAIN_QUERY = `
       typeArticle, category,
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
-      datePublication, tempsLecture, univpilar,
+      datePublication, ${RT}, univpilar,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name
@@ -134,7 +137,7 @@ export const V2_HERO_SECONDARY_QUERY = `
     "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
-    tempsLecture,
+    ${RT},
     univpilar,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
@@ -150,7 +153,7 @@ export const MEDIA_HERO_SLIDES_QUERY = `
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       "imageUrl": image.asset->url,
       "slug": slug.current,
-      tempsLecture, univpilar,
+      ${RT}, univpilar,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name
@@ -160,7 +163,7 @@ export const MEDIA_HERO_SLIDES_QUERY = `
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       "imageUrl": image.asset->url,
       "slug": slug.current,
-      tempsLecture, univpilar,
+      ${RT}, univpilar,
       "verticaleSlug": verticale->slug.current,
       "verticaleNom": verticale->nom,
       "authorName": author->name
@@ -176,7 +179,7 @@ export const V2_SPOTLIGHT_QUERY = `
     typeArticle,
     "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
     "slug": slug.current,
-    datePublication, tempsLecture, univpilar,
+    datePublication, ${RT}, univpilar,
     videoUrl, duree,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
@@ -196,7 +199,7 @@ export const V2_FEED_QUERY = `
     "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
     "slug": slug.current,
     datePublication,
-    tempsLecture,
+    ${RT},
     videoUrl,
     duree,
     univpilar,
@@ -219,7 +222,7 @@ export const V2_EDITORIAL_QUERY = `
     "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
-    tempsLecture,
+    ${RT},
     univpilar,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
@@ -234,7 +237,7 @@ export const V2_EXPLORE_QUERY = `
     "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
-    datePublication, tempsLecture, univpilar, soustopic,
+    datePublication, ${RT}, univpilar, soustopic,
     typeArticle, videoUrl,
     "verticaleNom": verticale->nom,
     "authorName": author->name
@@ -271,7 +274,7 @@ export const UNIVERS_COUNTS_QUERY = `
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
       univpilar, soustopic, category,
-      datePublication, tempsLecture,
+      datePublication, ${RT},
       "authorName": author->name
     }
   }
@@ -283,7 +286,7 @@ export const ARTICLES_BY_UNIVPILAR_QUERY = `
     _id, titre, description, extrait,
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
-    datePublication, tempsLecture,
+    datePublication, ${RT},
     univpilar, soustopic, category,
     "authorName": author->name
   }
@@ -350,7 +353,7 @@ export const V2_IMMERSIONS_QUERY = `
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "slug": slug.current,
     datePublication,
-    tempsLecture,
+    ${RT},
     univpilar,
     "verticaleSlug": verticale->slug.current,
     "verticaleNom": verticale->nom,
@@ -411,7 +414,7 @@ export const FEATURED_ARTICLES_QUERY = `
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
       datePublication,
-      tempsLecture
+      ${RT}
     },
     _id,
     nom,
@@ -582,7 +585,7 @@ export const VERTICALE_DETAIL_QUERY = `
       "slug": slug.current,
       "imageUrl": coalesce(image.asset->url, imageUrl, "/placeholder.svg"),
       datePublication,
-      tempsLecture,
+      ${RT},
       "univers": univers->{nom, "slug": slug.current, couleur}
     }
   }
@@ -602,7 +605,7 @@ export const EXPLORER_ARTICLES_QUERY = `
     "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
     "datePublication": coalesce(datePublication, _createdAt),
-    tempsLecture,
+    ${RT},
     "vues": coalesce(stats.views, views, vues, 0),
     "verticale": verticale->{
       _id,
@@ -806,7 +809,7 @@ export const ARTICLES_PAGE_QUERY = `
     "imageUrl": coalesce(image.asset->url, imageUrl),
     "slug": slug.current,
     datePublication,
-    tempsLecture,
+    ${RT},
     "univers": univers->{
       _id,
       nom,
@@ -890,7 +893,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
     authorDetails,
 
     // Métadonnées
-    readingTime,
+    tempsLecture,
     "difficulty": niveau,
     format,
     views,
@@ -957,7 +960,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
         }
       },
       "excerpt": description,
-      readingTime,
+      ${RT},
       categories[]-> {
         title
       }
@@ -984,7 +987,7 @@ export const RELATED_ARTICLES_QUERY = `
     },
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     "excerpt": coalesce(description, chapeau, sousTitre),
-    readingTime,
+    ${RT},
     "publishedAt": datePublication,
     "author": coalesce(author->name, auteur->nom),
     categories[0]-> {
