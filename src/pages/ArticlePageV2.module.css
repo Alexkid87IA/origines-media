@@ -1415,8 +1415,8 @@
 
 .mobileBarBtnActive {
   composes: mobileBarBtn;
-  background: var(--ink);
-  color: var(--paper);
+  background: transparent;
+  color: var(--ink);
   border-color: var(--ink);
 }
 

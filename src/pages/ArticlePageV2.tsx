@@ -20,6 +20,8 @@ import {
 } from "@/components/article/SocialIcons";
 import GuideBanner from "@/components/article/GuideBanner";
 import SaveButton from "@/components/SaveButton/SaveButton";
+import { useAuth } from "@/contexts/AuthContext";
+import LoginModal from "@/components/LoginModal/LoginModal";
 import type {
   Heading,
   Article,
@@ -74,6 +76,7 @@ const SOUSTOPIC_UNIVERS_COLOR: Record<string, string> = {
 export default function ArticlePageV2() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
@@ -81,6 +84,7 @@ export default function ArticlePageV2() {
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -1301,7 +1305,7 @@ export default function ArticlePageV2() {
           )}
 
           <button
-            onClick={() => setIsLiked(!isLiked)}
+            onClick={() => user ? setIsLiked(!isLiked) : setShowLoginModal(true)}
             className={isLiked ? s.mobileBarBtnActive : s.mobileBarBtn}
             aria-label={isLiked ? "Retirer le j'aime" : "J'aime"}
           >
@@ -1334,7 +1338,7 @@ export default function ArticlePageV2() {
           </button>
 
           <button
-            onClick={() => setIsBookmarked(!isBookmarked)}
+            onClick={() => user ? setIsBookmarked(!isBookmarked) : setShowLoginModal(true)}
             className={
               isBookmarked ? s.mobileBarBtnActive : s.mobileBarBtn
             }
@@ -1351,6 +1355,8 @@ export default function ArticlePageV2() {
           </button>
         </div>
       </div>
+
+      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
 
       {/* ═══ Mobile TOC modal ═══ */}
       {showMobileToc && (
