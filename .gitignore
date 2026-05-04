@@ -27,3 +27,5 @@ dist-ssr
 .next
 .claude/worktrees
 origines-arbitrage
+.lighthouse-reports/
+.lighthouse-reports-after/
