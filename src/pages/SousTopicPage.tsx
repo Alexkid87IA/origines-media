@@ -9,7 +9,19 @@ import { RT } from "@/lib/queries";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
+import SponsorSkin, { type SponsorConfig } from "@/components/SponsorSkin/SponsorSkin";
 import s from "./SousTopicPage.module.css";
+
+const SPONSORS: Record<string, SponsorConfig> = {
+  parentalite: {
+    name: "Petit Héros",
+    url: "https://www.petit-heros.com",
+    cta: "Découvrir",
+    bgColor: "#1a1a2e",
+    bgImage: "/sponsors/petit-heros-skin.jpg",
+    bannerBg: "#1a1a2e",
+  },
+};
 
 interface Article {
   _id: string;
@@ -218,6 +230,10 @@ export default function SousTopicPage() {
   }
 
   const color = univers.color;
+  const sponsor = soustopic ? SPONSORS[soustopic] : undefined;
+  const Wrap = sponsor
+    ? ({ children }: { children: React.ReactNode }) => <SponsorSkin sponsor={sponsor}>{children}</SponsorSkin>
+    : ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
   return (
     <>
@@ -243,6 +259,7 @@ export default function SousTopicPage() {
         }))}
         faqData={subtopic.faq}
       />
+      <Wrap>
       <SiteHeader />
 
       <main id="main" role="main">
@@ -589,6 +606,7 @@ export default function SousTopicPage() {
 
       <Footer2 />
       <ScrollToTopV2 />
+      </Wrap>
     </>
   );
 }

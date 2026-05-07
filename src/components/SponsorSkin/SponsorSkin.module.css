@@ -1,0 +1,129 @@
+/* ====== Habillage publicitaire (Sponsor Skin) ====== */
+
+/* Fond cliquable — couvre tout le viewport derrière le contenu */
+.skinBg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  cursor: pointer;
+  background-color: var(--skin-color, #1a1a2e);
+  background-image: var(--skin-image);
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+}
+
+/* Bandeau sponsor entre le header et le contenu */
+.banner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 24px;
+  background: var(--skin-banner-bg, #111);
+  color: var(--skin-banner-color, #fff);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.banner:hover { opacity: 0.9; }
+
+.bannerLabel {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.bannerLogo {
+  height: 18px;
+  width: auto;
+  object-fit: contain;
+}
+
+.bannerName {
+  color: #fff;
+  font-weight: 700;
+}
+
+.bannerCta {
+  margin-left: 8px;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.banner:hover .bannerCta {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Le contenu principal rétrécit pour laisser voir le skin */
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 980px;
+  margin: 0 auto;
+  background: var(--paper);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.15);
+  min-height: 100vh;
+}
+
+/* Les marges latérales cliquables visibles sur desktop */
+.skinClickLeft,
+.skinClickRight {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+.skinClickLeft {
+  left: 0;
+  right: calc(50% + 490px);
+}
+.skinClickRight {
+  left: calc(50% + 490px);
+  right: 0;
+}
+
+/* Le header doit rester dans le contenu rétréci */
+.content :global(.site-header),
+.content :global(header) {
+  max-width: 100%;
+}
+
+/* Override le v2-container pour qu'il reste dans les 980px */
+.content :global(.v2-container) {
+  max-width: 100%;
+  padding: 0 clamp(16px, 3vw, 36px);
+}
+
+/* ── Responsive — pas d'habillage sur mobile/tablette ── */
+@media (max-width: 1200px) {
+  .skinBg,
+  .skinClickLeft,
+  .skinClickRight {
+    display: none;
+  }
+
+  .banner { display: flex; }
+
+  .content {
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  .content :global(.v2-container) {
+    max-width: var(--max);
+    padding: 0 var(--side);
+  }
+}
