@@ -3,7 +3,7 @@ import type { SponsorConfig } from "@/components/SponsorSkin/SponsorSkin";
 export const SPONSORS: Record<string, SponsorConfig> = {
   parentalite: {
     name: "Petit Héros",
-    url: "https://www.petit-heros.com",
+    url: "https://www.lepetitheros.com/",
     cta: "Découvrir",
     bgColor: "#4B1B7F",
     bgImageLeft: "/sponsors/petit-heros-left.jpg",
