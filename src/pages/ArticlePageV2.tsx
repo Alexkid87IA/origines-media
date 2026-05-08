@@ -1293,8 +1293,8 @@ export default function ArticlePageV2() {
         </div>
       </div>
 
-      </Wrap>
       <Footer2 />
+      </Wrap>
 
       {/* ═══ Mobile floating action bar ═══ */}
       <div className={s.mobileBar}>

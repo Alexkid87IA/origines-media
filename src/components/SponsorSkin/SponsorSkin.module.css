@@ -175,6 +175,11 @@
   padding: 0 clamp(16px, 3vw, 36px);
 }
 
+/* Footer : tabs compacts dans le skin 980px */
+.content :global(footer) :global(.v2-container) {
+  padding: 0 clamp(12px, 2vw, 24px);
+}
+
 /* ── Responsive — pas d'habillage sur mobile/tablette ── */
 @media (max-width: 1200px) {
   .skinBg,

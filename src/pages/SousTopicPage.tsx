@@ -597,8 +597,8 @@ export default function SousTopicPage() {
         </div>
       </main>
 
-      </Wrap>
       <Footer2 />
+      </Wrap>
       <ScrollToTopV2 />
     </>
   );
