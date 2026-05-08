@@ -9,19 +9,9 @@ import { RT } from "@/lib/queries";
 import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
-import SponsorSkin, { type SponsorConfig } from "@/components/SponsorSkin/SponsorSkin";
+import SponsorSkin from "@/components/SponsorSkin/SponsorSkin";
+import { SPONSORS } from "@/data/sponsors";
 import s from "./SousTopicPage.module.css";
-
-const SPONSORS: Record<string, SponsorConfig> = {
-  parentalite: {
-    name: "Petit Héros",
-    url: "https://www.petit-heros.com",
-    cta: "Découvrir",
-    bgColor: "#1a1a2e",
-    bgImage: "/sponsors/petit-heros-skin.jpg",
-    bannerBg: "#1a1a2e",
-  },
-};
 
 interface Article {
   _id: string;
@@ -232,8 +222,12 @@ export default function SousTopicPage() {
   const color = univers.color;
   const sponsor = soustopic ? SPONSORS[soustopic] : undefined;
   const Wrap = sponsor
-    ? ({ children }: { children: React.ReactNode }) => <SponsorSkin sponsor={sponsor}>{children}</SponsorSkin>
-    : ({ children }: { children: React.ReactNode }) => <>{children}</>;
+    ? ({ children }: { children: React.ReactNode }) => (
+        <SponsorSkin sponsor={sponsor} header={<SiteHeader />}>{children}</SponsorSkin>
+      )
+    : ({ children }: { children: React.ReactNode }) => (
+        <><SiteHeader />{children}</>
+      );
 
   return (
     <>
@@ -260,7 +254,6 @@ export default function SousTopicPage() {
         faqData={subtopic.faq}
       />
       <Wrap>
-      <SiteHeader />
 
       <main id="main" role="main">
         <div className="v2-container">
@@ -604,9 +597,9 @@ export default function SousTopicPage() {
         </div>
       </main>
 
+      </Wrap>
       <Footer2 />
       <ScrollToTopV2 />
-      </Wrap>
     </>
   );
 }

@@ -35,6 +35,8 @@ import {
 } from "@/lib/queries";
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { UNIVERS } from "@/data/univers";
+import SponsorSkin from "@/components/SponsorSkin/SponsorSkin";
+import { SPONSORS } from "@/data/sponsors";
 import s from "./ArticlePageV2.module.css";
 
 const SOUSTOPIC_LABELS: Record<string, string> = {
@@ -453,6 +455,15 @@ export default function ArticlePageV2() {
   }
   breadcrumbItems.push({ name: title, url: `/article/${slug}` });
 
+  const sponsor = soustopic ? SPONSORS[soustopic] : undefined;
+  const Wrap = sponsor
+    ? ({ children }: { children: React.ReactNode }) => (
+        <SponsorSkin sponsor={sponsor} header={<SiteHeader />}>{children}</SponsorSkin>
+      )
+    : ({ children }: { children: React.ReactNode }) => (
+        <><SiteHeader />{children}</>
+      );
+
   return (
     <div className={s.page} style={{ "--theme": themeColor } as React.CSSProperties}>
       <SEO
@@ -475,7 +486,7 @@ export default function ArticlePageV2() {
         style={{ width: `${scrollProgress}%` }}
       />
 
-      <SiteHeader />
+      <Wrap>
 
       <main>
         <div className="v2-container">
@@ -1282,6 +1293,7 @@ export default function ArticlePageV2() {
         </div>
       </div>
 
+      </Wrap>
       <Footer2 />
 
       {/* ═══ Mobile floating action bar ═══ */}

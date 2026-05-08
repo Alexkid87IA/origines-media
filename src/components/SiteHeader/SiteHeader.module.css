@@ -184,6 +184,7 @@
   gap: 2px;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .megaTrigger {
@@ -1005,9 +1006,12 @@
   .accountBtn { width: 36px; padding: 0; justify-content: center; }
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1200px) {
   .cta { display: none; }
   .ctaIcon { display: inline-flex; }
+}
+
+@media (max-width: 1080px) {
   .row { gap: 12px; }
   .navLink { padding: 7px 8px; font-size: 12px; }
   .num { display: none; }
