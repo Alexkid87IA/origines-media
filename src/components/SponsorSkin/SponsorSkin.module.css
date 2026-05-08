@@ -61,9 +61,9 @@
   max-width: 980px;
   margin: 0 auto;
   background: var(--paper);
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
   min-height: 100vh;
-  isolation: isolate;
 }
 
 /* Les marges latérales cliquables visibles sur desktop */
