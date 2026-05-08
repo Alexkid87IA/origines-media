@@ -626,6 +626,94 @@
       "destination": "/api/prerender?p=/boutique/:guideSlug"
     },
     {
+      "source": "/actu",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/actu"
+    },
+    {
+      "source": "/lettre-du-dimanche",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/lettre-du-dimanche"
+    },
+    {
+      "source": "/join-partner",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/join-partner"
+    },
+    {
+      "source": "/proposer-une-reco",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/proposer-une-reco"
+    },
+    {
+      "source": "/recommandations/produits",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/recommandations/produits"
+    },
+    {
+      "source": "/recommandations/produits/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/recommandations/produits/:slug"
+    },
+    {
+      "source": "/guides/:category",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/guides/:category"
+    },
+    {
+      "source": "/recherche",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/recherche"
+    },
+    {
       "source": "/((?!api|assets|static|_next|favicon.ico|robots.txt|sitemap.xml|kit-media-origines.pdf|.*\\..*).*)",
       "destination": "/index.html"
     }

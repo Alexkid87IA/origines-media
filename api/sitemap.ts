@@ -93,6 +93,10 @@ const STATIC_PAGES = [
   { url: '/format/etat-esprit', priority: 0.6, changefreq: 'weekly' },
   { url: '/format/apparence', priority: 0.6, changefreq: 'weekly' },
   { url: '/format/je-suis', priority: 0.6, changefreq: 'weekly' },
+  { url: '/actu', priority: 0.7, changefreq: 'daily' },
+  { url: '/lettre-du-dimanche', priority: 0.6, changefreq: 'weekly' },
+  { url: '/ecrire-mon-histoire', priority: 0.6, changefreq: 'monthly' },
+  { url: '/recommandations/produits', priority: 0.6, changefreq: 'weekly' },
 ]
 
 // GROQ queries pour récupérer tous les contenus dynamiques

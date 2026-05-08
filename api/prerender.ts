@@ -61,6 +61,11 @@ const STATIC_PAGES: Record<string, PageMeta> = {
   '/cookies': { title: 'Cookies — Origines Media', description: 'Politique de cookies du site Origines Media.' },
   '/mentions-legales': { title: 'Mentions Légales — Origines Media', description: 'Mentions légales du site Origines Media.' },
   '/plan-du-site': { title: 'Plan du Site — Origines Media', description: 'Retrouvez toutes les pages du site Origines Media.' },
+  '/actu': { title: 'Actualités — Origines Media', description: 'Toute l\'actualité Origines Media : dernières publications, brèves et mises à jour.' },
+  '/lettre-du-dimanche': { title: 'La Lettre du Dimanche — Origines Media', description: 'Notre lettre hebdomadaire : chaque dimanche, le meilleur d\'Origines dans votre boîte mail.' },
+  '/join-partner': { title: 'Devenir partenaire — Origines Media', description: 'Rejoignez le réseau de partenaires Origines Media et touchez une audience engagée.' },
+  '/proposer-une-reco': { title: 'Proposer une recommandation — Origines Media', description: 'Partagez vos coups de cœur avec la communauté Origines : livres, films, podcasts et plus.' },
+  '/recommandations/produits': { title: 'Produits recommandés — Origines Media', description: 'Suppléments, livres, outils, apps : les produits testés et recommandés par notre rédaction.' },
 }
 
 // ---------------------------------------------------------------------------
@@ -464,6 +469,26 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       ...defaults,
       title: `${label} — Origines Media`,
       description: `Découvrez nos contenus au format ${label} sur Origines Media.`,
+    }
+  }
+
+  // /recommandations/produits/:slug
+  if (segments.length === 3 && segments[0] === 'recommandations' && segments[1] === 'produits') {
+    const label = segments[2].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    return {
+      ...defaults,
+      title: `${label} — Produits recommandés · Origines Media`,
+      description: `Découvrez ${label} : avis, test et liens d'achat sur Origines Media.`,
+    }
+  }
+
+  // /guides/:category
+  if (segments.length === 2 && segments[0] === 'guides') {
+    const label = segments[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    return {
+      ...defaults,
+      title: `Guides ${label} — Origines Media`,
+      description: `Nos guides pratiques sur ${label.toLowerCase()} : conseils, méthodes et ressources.`,
     }
   }
 
