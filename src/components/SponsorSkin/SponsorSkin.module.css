@@ -11,7 +11,8 @@
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* Bandeau sponsor entre le header et le contenu */
@@ -75,9 +76,9 @@
   max-width: 980px;
   margin: 0 auto;
   background: var(--paper);
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
   min-height: 100vh;
-  will-change: transform;
+  isolation: isolate;
 }
 
 /* Les marges latérales cliquables visibles sur desktop */
@@ -93,7 +94,8 @@
   justify-content: center;
   text-decoration: none;
   color: #fff;
-  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .skinClickLeft {
   left: 0;
