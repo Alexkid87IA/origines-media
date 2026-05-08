@@ -1,20 +1,5 @@
 /* ====== Habillage publicitaire (Sponsor Skin) ====== */
 
-/* Fond cliquable — couvre tout le viewport derrière le contenu */
-.skinBg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  cursor: pointer;
-  background-color: var(--skin-color, #1a1a2e);
-  background-image: var(--skin-image);
-  background-size: cover;
-  background-position: top center;
-  background-repeat: no-repeat;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
 /* Bandeau sponsor entre le header et le contenu */
 .banner {
   position: relative;
@@ -94,8 +79,7 @@
   justify-content: center;
   text-decoration: none;
   color: #fff;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  overflow: hidden;
 }
 .skinClickLeft {
   left: 0;
@@ -106,18 +90,13 @@
   right: 0;
 }
 
-/* Images distinctes gauche/droite */
-.skinClickImg.skinClickLeft {
-  background-image: var(--skin-image-left);
-  background-size: cover;
-  background-position: right top;
-  background-repeat: no-repeat;
-}
-.skinClickImg.skinClickRight {
-  background-image: var(--skin-image-right);
-  background-size: cover;
-  background-position: left top;
-  background-repeat: no-repeat;
+.skinPanelImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
 }
 
 /* CTA sur les bannières latérales */
@@ -186,7 +165,6 @@
 
 /* ── Responsive — pas d'habillage sur mobile/tablette ── */
 @media (max-width: 1200px) {
-  .skinBg,
   .skinClickLeft,
   .skinClickRight {
     display: none;

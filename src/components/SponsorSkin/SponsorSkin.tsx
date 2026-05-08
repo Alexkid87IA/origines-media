@@ -29,10 +29,6 @@ export default function SponsorSkin({ sponsor, header, children }: SponsorSkinPr
     };
   }, [sponsor.bgColor]);
 
-  function handleSkinClick() {
-    window.open(sponsor.url, "_blank", "noopener,noreferrer");
-  }
-
   const hasLeftRight = sponsor.bgImageLeft && sponsor.bgImageRight;
 
   const bgStyle = {
@@ -46,22 +42,16 @@ export default function SponsorSkin({ sponsor, header, children }: SponsorSkinPr
 
   return (
     <div style={bgStyle}>
-      {/* Fond cliquable */}
-      <div
-        className={s.skinBg}
-        onClick={handleSkinClick}
-        role="link"
-        tabIndex={-1}
-        aria-label={`Visiter ${sponsor.name}`}
-      />
-
-      {/* Zones cliquables latérales au-dessus du contenu */}
+      {/* Zones cliquables latérales */}
       <a
         href={sponsor.url}
         target="_blank"
         rel="sponsored noopener"
-        className={`${s.skinClickLeft}${hasLeftRight ? ` ${s.skinClickImg}` : ""}`}
+        className={s.skinClickLeft}
       >
+        {sponsor.bgImageLeft && (
+          <img src={sponsor.bgImageLeft} alt="" className={s.skinPanelImg} style={{ objectPosition: "right top" }} />
+        )}
         <div className={s.skinCta}>
           <span className={s.skinCtaLabel}>{sponsor.name}</span>
           <span className={s.skinCtaTitle}>Créez un livre personnalisé avec votre enfant en héros</span>
@@ -72,8 +62,11 @@ export default function SponsorSkin({ sponsor, header, children }: SponsorSkinPr
         href={sponsor.url}
         target="_blank"
         rel="sponsored noopener"
-        className={`${s.skinClickRight}${hasLeftRight ? ` ${s.skinClickImg}` : ""}`}
+        className={s.skinClickRight}
       >
+        {sponsor.bgImageRight && (
+          <img src={sponsor.bgImageRight} alt="" className={s.skinPanelImg} style={{ objectPosition: "left top" }} />
+        )}
         <div className={s.skinCta}>
           <span className={s.skinCtaLabel}>Offrez-lui son histoire</span>
           <span className={s.skinCtaTitle}>Des livres uniques où votre enfant est le héros</span>
