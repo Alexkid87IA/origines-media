@@ -10,7 +10,7 @@ import { smartExcerpt, estimateReadingTimeFromText } from "@/lib/typography";
 import { UNIVERS, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import SaveBookmark from "@/components/SaveButton/SaveBookmark";
 import SponsorSkin from "@/components/SponsorSkin/SponsorSkin";
-import { SPONSORS } from "@/data/sponsors";
+import { SPONSORS, SPONSOR_ADS } from "@/data/sponsors";
 import s from "./SousTopicPage.module.css";
 
 interface Article {
@@ -548,6 +548,22 @@ export default function SousTopicPage() {
                 Retour &agrave; {univers.name} &rarr;
               </Link>
             </div>
+          )}
+
+          {/* Sponsor mobile ad */}
+          {sponsor && soustopic && SPONSOR_ADS[soustopic] && (
+            <a
+              href={sponsor.url}
+              target="_blank"
+              rel="sponsored noopener"
+              className={s.sponsorMobile}
+            >
+              <img
+                src={SPONSOR_ADS[soustopic].mobile}
+                alt={sponsor.name}
+                className={s.sponsorMobileImg}
+              />
+            </a>
           )}
 
           {/* FAQ */}

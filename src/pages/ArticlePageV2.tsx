@@ -36,7 +36,7 @@ import {
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { UNIVERS } from "@/data/univers";
 import SponsorSkin from "@/components/SponsorSkin/SponsorSkin";
-import { SPONSORS } from "@/data/sponsors";
+import { SPONSORS, SPONSOR_ADS } from "@/data/sponsors";
 import s from "./ArticlePageV2.module.css";
 
 const SOUSTOPIC_LABELS: Record<string, string> = {
@@ -596,10 +596,36 @@ export default function ArticlePageV2() {
             {/* Article body */}
             <div ref={contentRef} className={isGuide ? s.articleBodyGuide : s.articleBody}>
               <div className={isGuide ? s.proseGuide : s.prose}>
-                <PortableText
-                  value={content}
-                  components={portableTextComponents}
-                />
+                {sponsor && SPONSOR_ADS[soustopic!] ? (() => {
+                  let paraCount = 0;
+                  let splitIdx = -1;
+                  for (let i = 0; i < content.length; i++) {
+                    if (content[i]._type === "block" && (!content[i].style || content[i].style === "normal")) {
+                      paraCount++;
+                      if (paraCount === 3) {
+                        splitIdx = i + 1;
+                        break;
+                      }
+                    }
+                  }
+                  if (splitIdx === -1) splitIdx = content.length;
+                  const before = content.slice(0, splitIdx);
+                  const after = content.slice(splitIdx);
+                  return (
+                    <>
+                      <PortableText value={before} components={portableTextComponents} />
+                      <div className={s.sponsorInline}>
+                        <span className={s.sponsorInlineLabel}>En partenariat avec {sponsor.name}</span>
+                        <a href={sponsor.url} target="_blank" rel="sponsored noopener" className={s.sponsorInlineLink}>
+                          <img src={SPONSOR_ADS[soustopic!].mobile} alt={sponsor.name} className={s.sponsorInlineImg} />
+                        </a>
+                      </div>
+                      <PortableText value={after} components={portableTextComponents} />
+                    </>
+                  );
+                })() : (
+                  <PortableText value={content} components={portableTextComponents} />
+                )}
               </div>
 
               {/* Author box */}
@@ -1118,7 +1144,22 @@ export default function ArticlePageV2() {
                 </Link>
 
                 {/* 9. Ad */}
-                <AdPlaceholder format="rectangle" />
+                {sponsor && SPONSOR_ADS[soustopic!] ? (
+                  <a
+                    href={sponsor.url}
+                    target="_blank"
+                    rel="sponsored noopener"
+                    className={s.sponsorAd}
+                  >
+                    <img
+                      src={SPONSOR_ADS[soustopic!].sidebar}
+                      alt={sponsor.name}
+                      className={s.sponsorAdImg}
+                    />
+                  </a>
+                ) : (
+                  <AdPlaceholder format="rectangle" />
+                )}
               </div>
             </aside>}
           </div>

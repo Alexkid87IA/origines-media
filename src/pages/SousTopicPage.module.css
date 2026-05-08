@@ -937,3 +937,25 @@
     background: var(--stone100);
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   Sponsor mobile ad
+   ══════════════════════════════════════════════════════════ */
+
+.sponsorMobile {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sponsorMobile {
+    display: block;
+    margin: 32px auto;
+    max-width: 400px;
+  }
+  .sponsorMobileImg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+}

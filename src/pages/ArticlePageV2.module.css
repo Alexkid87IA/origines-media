@@ -2078,3 +2078,54 @@
     animation: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   Sponsor ad slots
+   ══════════════════════════════════════════════════════════ */
+
+.sponsorAd {
+  display: block;
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  transition: opacity 0.2s ease;
+}
+.sponsorAd:hover { opacity: 0.92; }
+
+.sponsorAdImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sponsorInline {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sponsorInline {
+    display: block;
+    margin: 40px 0;
+    padding: 20px 0;
+    border-top: 1px solid rgba(10, 10, 10, 0.08);
+    border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+  }
+  .sponsorInlineLabel {
+    display: block;
+    font-family: var(--font-jetbrains, 'JetBrains Mono', monospace);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone500, #888);
+    margin-bottom: 12px;
+  }
+  .sponsorInlineLink {
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+  .sponsorInlineLink:hover { opacity: 0.92; }
+  .sponsorInlineImg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+}
