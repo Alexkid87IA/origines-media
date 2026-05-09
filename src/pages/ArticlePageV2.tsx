@@ -87,7 +87,7 @@ export default function ArticlePageV2() {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const progressRef = useRef<HTMLDivElement>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [headings, setHeadings] = useState<Heading[]>([]);
@@ -136,22 +136,38 @@ export default function ArticlePageV2() {
   }, [article]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const progress =
-        docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setScrollProgress(Math.min(progress, 100));
+    let ticking = false;
+    let lastActiveId = "";
 
-      headings.forEach((heading) => {
-        const element = document.getElementById(heading.id);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150 && rect.bottom >= 0) {
-            setActiveHeading(heading.id);
-          }
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollTop = window.scrollY;
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const progress =
+          docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (progressRef.current) {
+          progressRef.current.style.width = `${Math.min(progress, 100)}%`;
         }
+
+        let found = "";
+        headings.forEach((heading) => {
+          const element = document.getElementById(heading.id);
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            if (rect.top <= 150 && rect.bottom >= 0) {
+              found = heading.id;
+            }
+          }
+        });
+        if (found && found !== lastActiveId) {
+          lastActiveId = found;
+          setActiveHeading(found);
+        }
+
+        ticking = false;
       });
     };
 
@@ -482,8 +498,9 @@ export default function ArticlePageV2() {
 
       {/* Progress Bar */}
       <div
+        ref={progressRef}
         className={s.progressBar}
-        style={{ width: `${scrollProgress}%` }}
+        style={{ width: "0%" }}
       />
 
       <Wrap>
