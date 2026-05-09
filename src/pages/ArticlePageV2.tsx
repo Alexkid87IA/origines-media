@@ -100,7 +100,6 @@ export default function ArticlePageV2() {
   const sidebarContainerRef = useRef<HTMLDivElement>(null);
   const lastSidebarStateRef = useRef<string>("");
 
-  const [sidebarStyle, setSidebarStyle] = useState<React.CSSProperties>({});
 
   useEffect(() => {
     document.body.style.background = "var(--paper)";
@@ -176,44 +175,55 @@ export default function ArticlePageV2() {
   }, [headings]);
 
   useEffect(() => {
+    let sidebarTicking = false;
+
+    const applySidebarStyle = (el: HTMLElement, pos: string, top: string, bottom: string, width: string) => {
+      el.style.position = pos;
+      el.style.top = top;
+      el.style.bottom = bottom;
+      el.style.width = width;
+    };
+
     const handleSidebarScroll = () => {
-      if (!sidebarRef.current || !sidebarContainerRef.current) return;
+      if (sidebarTicking) return;
+      sidebarTicking = true;
+      requestAnimationFrame(() => {
+        if (!sidebarRef.current || !sidebarContainerRef.current) {
+          sidebarTicking = false;
+          return;
+        }
 
-      const container = sidebarContainerRef.current;
-      const sidebar = sidebarRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const sidebarHeight = sidebar.offsetHeight;
-      const viewportHeight = window.innerHeight;
-      const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
+        const container = sidebarContainerRef.current;
+        const sidebar = sidebarRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const sidebarHeight = sidebar.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
 
-      let newState: string;
-      let newStyle: React.CSSProperties;
+        let newState: string;
 
-      if (sidebarBottomIfRelative > viewportHeight) {
-        newState = "relative";
-        newStyle = { position: "relative", top: 0 };
-      } else if (containerRect.bottom > sidebarHeight) {
-        const topPosition = viewportHeight - sidebarHeight;
-        newState = `fixed-${Math.round(topPosition)}-${container.offsetWidth}`;
-        newStyle = {
-          position: "fixed",
-          top: topPosition,
-          width: container.offsetWidth,
-        };
-      } else {
-        newState = "absolute";
-        newStyle = {
-          position: "absolute",
-          bottom: 0,
-          top: "auto",
-          width: "100%",
-        };
-      }
+        if (sidebarBottomIfRelative > viewportHeight) {
+          newState = "relative";
+        } else if (containerRect.bottom > sidebarHeight) {
+          newState = `fixed-${Math.round(viewportHeight - sidebarHeight)}-${container.offsetWidth}`;
+        } else {
+          newState = "absolute";
+        }
 
-      if (lastSidebarStateRef.current !== newState) {
-        lastSidebarStateRef.current = newState;
-        setSidebarStyle(newStyle);
-      }
+        if (lastSidebarStateRef.current !== newState) {
+          lastSidebarStateRef.current = newState;
+          if (newState === "relative") {
+            applySidebarStyle(sidebar, "relative", "0px", "auto", "");
+          } else if (newState === "absolute") {
+            applySidebarStyle(sidebar, "absolute", "auto", "0px", "100%");
+          } else {
+            const topPos = viewportHeight - sidebarHeight;
+            applySidebarStyle(sidebar, "fixed", `${topPos}px`, "auto", `${container.offsetWidth}px`);
+          }
+        }
+
+        sidebarTicking = false;
+      });
     };
 
     window.addEventListener("scroll", handleSidebarScroll, { passive: true });
@@ -715,7 +725,6 @@ export default function ArticlePageV2() {
               <div
                 ref={sidebarRef}
                 className={s.sidebarInner}
-                style={sidebarStyle}
               >
                 {/* 0. Featured "À lire ensuite" */}
                 {relatedArticles.length > 0 && relatedArticles[0].slug?.current && (
