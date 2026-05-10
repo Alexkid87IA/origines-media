@@ -36,7 +36,7 @@ import {
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { UNIVERS } from "@/data/univers";
 import SponsorSkin from "@/components/SponsorSkin/SponsorSkin";
-import { SPONSORS, SPONSOR_ADS } from "@/data/sponsors";
+import { SPONSORS, SPONSOR_ADS, DEFAULT_SIDEBAR_AD } from "@/data/sponsors";
 import s from "./ArticlePageV2.module.css";
 
 const SOUSTOPIC_LABELS: Record<string, string> = {
@@ -1162,22 +1162,18 @@ export default function ArticlePageV2() {
                 </Link>
 
                 {/* 9. Ad */}
-                {sponsor && SPONSOR_ADS[soustopic!] ? (
-                  <a
-                    href={sponsor.url}
-                    target="_blank"
-                    rel="sponsored noopener"
-                    className={s.sponsorAd}
-                  >
-                    <img
-                      src={SPONSOR_ADS[soustopic!].sidebar}
-                      alt={sponsor.name}
-                      className={s.sponsorAdImg}
-                    />
-                  </a>
-                ) : (
-                  <AdPlaceholder format="rectangle" />
-                )}
+                <a
+                  href={sponsor?.url || DEFAULT_SIDEBAR_AD.url}
+                  target="_blank"
+                  rel="sponsored noopener"
+                  className={s.sponsorAd}
+                >
+                  <img
+                    src={(soustopic && SPONSOR_ADS[soustopic]?.sidebar) || DEFAULT_SIDEBAR_AD.image}
+                    alt={sponsor?.name || DEFAULT_SIDEBAR_AD.name}
+                    className={s.sponsorAdImg}
+                  />
+                </a>
               </div>
             </aside>}
           </div>
