@@ -106,6 +106,20 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
+      await new Promise<void>((resolve) => {
+        if (pc.iceGatheringState === "complete") {
+          resolve();
+        } else {
+          const check = () => {
+            if (pc.iceGatheringState === "complete") {
+              pc.removeEventListener("icegatheringstatechange", check);
+              resolve();
+            }
+          };
+          pc.addEventListener("icegatheringstatechange", check);
+        }
+      });
+
       const { getAuthHeaders } = await import("@/lib/authFetch");
       const headers = await getAuthHeaders();
       headers["Content-Type"] = "application/json";
@@ -116,7 +130,7 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
         body: JSON.stringify({
           intention,
           sujet,
-          sdp: offer.sdp,
+          sdp: pc.localDescription!.sdp,
         }),
       });
 
