@@ -85,7 +85,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-realtime-preview",
+        model: "gpt-realtime-2",
         voice: "shimmer",
         instructions: buildSystemPrompt(intention || "temoigner", sujet || "autre"),
         input_audio_transcription: {
