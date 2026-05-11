@@ -614,7 +614,10 @@ export default function ArticlePageV2() {
             {/* Article body */}
             <div ref={contentRef} className={isGuide ? s.articleBodyGuide : s.articleBody}>
               <div className={isGuide ? s.proseGuide : s.prose}>
-                {sponsor && SPONSOR_ADS[soustopic!] ? (() => {
+                {!isGuide ? (() => {
+                  const adImage = (soustopic && SPONSOR_ADS[soustopic]?.mobile) || DEFAULT_SIDEBAR_AD.mobile;
+                  const adUrl = sponsor?.url || DEFAULT_SIDEBAR_AD.url;
+                  const adName = sponsor?.name || DEFAULT_SIDEBAR_AD.name;
                   let paraCount = 0;
                   let splitIdx = -1;
                   for (let i = 0; i < content.length; i++) {
@@ -633,9 +636,9 @@ export default function ArticlePageV2() {
                     <>
                       <PortableText value={before} components={portableTextComponents} />
                       <div className={s.sponsorInline}>
-                        <span className={s.sponsorInlineLabel}>En partenariat avec {sponsor.name}</span>
-                        <a href={sponsor.url} target="_blank" rel="sponsored noopener" className={s.sponsorInlineLink}>
-                          <img src={SPONSOR_ADS[soustopic!].mobile} alt={sponsor.name} className={s.sponsorInlineImg} />
+                        <span className={s.sponsorInlineLabel}>En partenariat avec {adName}</span>
+                        <a href={adUrl} target="_blank" rel="sponsored noopener" className={s.sponsorInlineLink}>
+                          <img src={adImage} alt={adName} className={s.sponsorInlineImg} />
                         </a>
                       </div>
                       <PortableText value={after} components={portableTextComponents} />

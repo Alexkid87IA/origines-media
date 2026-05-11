@@ -28,4 +28,5 @@ export const DEFAULT_SIDEBAR_AD = {
   name: "Petit Héros",
   url: "https://www.lepetitheros.com/",
   image: "/sponsors/petit-heros-sidebar.jpg",
+  mobile: "/sponsors/petit-heros-mobile.jpg",
 };
