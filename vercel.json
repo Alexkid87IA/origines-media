@@ -44,6 +44,9 @@
     },
     "api/prerender.ts": {
       "maxDuration": 10
+    },
+    "api/realtime/session.ts": {
+      "maxDuration": 10
     }
   },
   "trailingSlash": false,

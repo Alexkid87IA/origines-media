@@ -7,7 +7,7 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "@/components/SEO";
 import VideoRecorder from "@/components/VideoRecorder/VideoRecorder";
-import LyaInterviewSession from "@/components/LyaAvatar/LyaInterviewSession";
+import LyaRealtimeSession from "@/components/LyaRealtime/LyaRealtimeSession";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { sanityFetch } from "@/lib/sanity";
@@ -830,7 +830,7 @@ export default function EcrireHistoirePage() {
   };
 
   const goNext = () => {
-    if (step === 1 && !user) {
+    if (step === 1 && !user && !import.meta.env.DEV) {
       setShowAuthGate(true);
       return;
     }
@@ -1887,7 +1887,7 @@ export default function EcrireHistoirePage() {
 
               {draft.writeMode === "avatar" ? (
                 <div id="step2-recorder" className={s.videoRecorderWrap}>
-                  {!user ? (
+                  {!user && !import.meta.env.DEV ? (
                     <div className={s.avatarAuthGate}>
                       <div className={s.avatarAuthGateIcon}>
                         <ShieldCheck aria-hidden="true" />
@@ -1920,7 +1920,7 @@ export default function EcrireHistoirePage() {
                       </div>
                     </div>
                   ) : (
-                    <LyaInterviewSession
+                    <LyaRealtimeSession
                       context={{ intention: draft.intention || "temoigner", sujet: draft.sujet || "autre" }}
                       onComplete={handleLyaInterviewComplete}
                       onCancel={handleVideoCancel}
