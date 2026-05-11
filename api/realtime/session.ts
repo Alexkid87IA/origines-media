@@ -85,8 +85,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const sessionConfig = JSON.stringify({
     type: "realtime",
     model: "gpt-realtime-2",
-    voice: "shimmer",
     instructions: buildSystemPrompt(intention || "temoigner", sujet || "autre"),
+    audio: {
+      output: {
+        voice: "shimmer",
+      },
+    },
   });
 
   try {
