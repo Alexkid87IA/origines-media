@@ -101,8 +101,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const formData = new FormData();
-    formData.append("sdp", new Blob([sdp], { type: "application/sdp" }), "offer.sdp");
-    formData.append("session", new Blob([sessionConfig], { type: "application/json" }), "session.json");
+    formData.append("sdp", sdp);
+    formData.append("session", sessionConfig);
 
     const response = await fetch("https://api.openai.com/v1/realtime/calls", {
       method: "POST",
