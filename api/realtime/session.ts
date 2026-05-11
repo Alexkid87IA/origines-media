@@ -72,48 +72,56 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: "OPENAI_API_KEY not configured" });
   }
 
-  const { intention, sujet } = req.body as {
+  const { intention, sujet, sdp } = req.body as {
     intention?: string;
     sujet?: string;
+    sdp?: string;
   };
 
+  if (!sdp) {
+    return res.status(400).json({ error: "SDP offer is required" });
+  }
+
+  const sessionConfig = JSON.stringify({
+    type: "realtime",
+    model: "gpt-realtime-2",
+    voice: "shimmer",
+    instructions: buildSystemPrompt(intention || "temoigner", sujet || "autre"),
+    input_audio_transcription: {
+      model: "gpt-4o-mini-transcribe",
+      language: "fr",
+    },
+    turn_detection: {
+      type: "server_vad",
+      threshold: 0.5,
+      prefix_padding_ms: 300,
+      silence_duration_ms: 500,
+    },
+  });
+
   try {
-    const response = await fetch("https://api.openai.com/v1/realtime/sessions", {
+    const formData = new FormData();
+    formData.append("sdp", new Blob([sdp], { type: "application/sdp" }), "offer.sdp");
+    formData.append("session", new Blob([sessionConfig], { type: "application/json" }), "session.json");
+
+    const response = await fetch("https://api.openai.com/v1/realtime/calls", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "gpt-realtime-2",
-        voice: "shimmer",
-        instructions: buildSystemPrompt(intention || "temoigner", sujet || "autre"),
-        input_audio_transcription: {
-          model: "gpt-4o-mini-transcribe",
-          language: "fr",
-        },
-        turn_detection: {
-          type: "server_vad",
-          threshold: 0.5,
-          prefix_padding_ms: 300,
-          silence_duration_ms: 500,
-        },
-      }),
+      body: formData,
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("OpenAI Realtime session error:", response.status, errText);
-      return res.status(502).json({ error: "Failed to create realtime session", detail: errText });
+      console.error("OpenAI Realtime call error:", response.status, errText);
+      return res.status(502).json({ error: "Failed to create realtime call", detail: errText });
     }
 
-    const data = await response.json();
+    const answerSdp = await response.text();
     res.setHeader("Cache-Control", "no-store");
-    return res.status(200).json({
-      clientSecret: data.client_secret?.value,
-      expiresAt: data.client_secret?.expires_at,
-      sessionId: data.id,
-    });
+    res.setHeader("Content-Type", "application/sdp");
+    return res.status(200).send(answerSdp);
   } catch (err) {
     console.error("Realtime session error:", err);
     return res.status(500).json({ error: "Failed to create session" });

@@ -58,22 +58,6 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
     setTranscript([]);
 
     try {
-      const { getAuthHeaders } = await import("@/lib/authFetch");
-      const headers = await getAuthHeaders();
-      const tokenRes = await fetch("/api/realtime/session", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ intention, sujet }),
-      });
-
-      if (!tokenRes.ok) {
-        const err = await tokenRes.json().catch(() => ({ error: "Erreur réseau" }));
-        throw new Error(err.detail || err.error || "Impossible de créer la session");
-      }
-
-      const { clientSecret } = await tokenRes.json();
-      if (!clientSecret) throw new Error("Token manquant");
-
       const pc = new RTCPeerConnection();
       pcRef.current = pc;
 
@@ -107,19 +91,24 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
-      const sdpRes = await fetch(
-        `https://api.openai.com/v1/realtime?model=gpt-realtime-2`,
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${clientSecret}`,
-            "Content-Type": "application/sdp",
-          },
-          body: offer.sdp,
-        }
-      );
+      const { getAuthHeaders } = await import("@/lib/authFetch");
+      const headers = await getAuthHeaders();
+      headers["Content-Type"] = "application/json";
 
-      if (!sdpRes.ok) throw new Error("SDP exchange failed");
+      const sdpRes = await fetch("/api/realtime/session", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          intention,
+          sujet,
+          sdp: offer.sdp,
+        }),
+      });
+
+      if (!sdpRes.ok) {
+        const errData = await sdpRes.text();
+        throw new Error(errData || "SDP exchange failed");
+      }
 
       const answerSdp = await sdpRes.text();
       await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
