@@ -1,0 +1,195 @@
+/* ====== Dernières vidéos — Cards cinématiques ====== */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section {
+  margin-top: 72px;
+  position: relative;
+}
+
+/* ── Chapter header ── */
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.1s;
+}
+.cNum { font-weight: 600; color: var(--ink); }
+.cSep { opacity: 0.3; }
+.cLabel { color: var(--stone700); }
+
+.seeAll {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+.seeAll:hover { color: var(--ink); }
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.seeAll:hover .arrow { transform: translateX(4px); }
+
+/* ── Grid 4 colonnes ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(10, 10, 10, 0.1);
+  border: 1px solid rgba(10, 10, 10, 0.1);
+  overflow: hidden;
+}
+
+/* ── Card vidéo ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--paper);
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards calc(0.2s + var(--i, 0) * 0.1s);
+}
+
+.cardVisual {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+}
+.card:hover .cardImg {
+  transform: scale(1.05);
+  opacity: 0.8;
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.6) 0%,
+    rgba(10, 10, 10, 0) 50%
+  );
+  transition: opacity 0.3s ease;
+}
+.card:hover .cardOverlay { opacity: 0.4; }
+
+/* Play button */
+.playBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #fff;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.card:hover .playBtn {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.playIcon {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
+
+/* Duration badge */
+.duration {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+
+/* Card body */
+.cardBody {
+  padding: 20px 20px 24px;
+}
+
+.cardKicker {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.cardTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card:hover .cardTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .section { margin-top: 48px; }
+  .grid { grid-template-columns: 1fr; }
+  .cardBody { padding: 16px 18px 20px; }
+  .playBtn { width: 48px; height: 48px; }
+  .playIcon { width: 18px; height: 18px; }
+}

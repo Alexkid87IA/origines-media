@@ -6,7 +6,9 @@ import Ticker from "@/components/Ticker/Ticker";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Welcome from "@/components/Welcome/Welcome";
 import HeroCarousel from "@/components/HeroCarousel/HeroCarousel";
-import LatestContent from "@/components/LatestContent/LatestContent";
+import LatestArticles from "@/components/LatestArticles/LatestArticles";
+import LatestVideos from "@/components/LatestVideos/LatestVideos";
+import LatestGuides from "@/components/LatestGuides/LatestGuides";
 import Edito from "@/components/Edito/Edito";
 import Pillars from "@/components/Pillars/Pillars";
 import Marquee from "@/components/Marquee/Marquee";
@@ -85,7 +87,9 @@ export default function HomePageV2() {
             cmsQuestion={cmsQuestion}
             cmsVideo={cmsHeroVideo}
           />
-          <LatestContent />
+          <LatestArticles />
+          <LatestVideos />
+          <LatestGuides />
           <Edito />
           <Pillars />
           <Marquee />

@@ -1,0 +1,203 @@
+/* ====== Nos guides — Cards horizontales avec accent coloré ====== */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section {
+  margin-top: 72px;
+  position: relative;
+}
+
+/* ── Chapter header ── */
+.chapterMark {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.1s;
+}
+.cNum { font-weight: 600; color: var(--ink); }
+.cSep { opacity: 0.3; }
+.cLabel { color: var(--stone700); }
+
+.seeAll {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone500);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+.seeAll:hover { color: var(--ink); }
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.seeAll:hover .arrow { transform: translateX(4px); }
+
+/* ── Liste verticale ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: rgba(10, 10, 10, 0.1);
+  border: 1px solid rgba(10, 10, 10, 0.1);
+  overflow: hidden;
+}
+
+/* ── Card guide horizontale ── */
+.card {
+  display: grid;
+  grid-template-columns: 4px 200px 1fr;
+  gap: 0;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--paper);
+  overflow: hidden;
+  transition: background 0.2s ease;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards calc(0.2s + var(--i, 0) * 0.1s);
+}
+.card:hover { background: var(--stone50, #F0EDE6); }
+
+/* Barre accent colorée */
+.cardAccent {
+  background: var(--accent, var(--stone300));
+  transition: width 0.3s ease;
+}
+
+.cardImgWrap {
+  position: relative;
+  overflow: hidden;
+}
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  aspect-ratio: 4 / 3;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:hover .cardImg { transform: scale(1.04); }
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cardUnivers {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cardSep {
+  font-size: 10px;
+  color: var(--stone300);
+}
+
+.cardTime {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--stone500);
+}
+
+.cardTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  text-wrap: balance;
+}
+.card:hover .cardTitle {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.cardDeck {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--stone600);
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardCta {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent, var(--stone500));
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ctaArrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.card:hover .ctaArrow { transform: translateX(4px); }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .card { grid-template-columns: 4px 160px 1fr; }
+  .cardBody { padding: 20px 24px; }
+}
+
+@media (max-width: 640px) {
+  .section { margin-top: 48px; }
+  .card {
+    grid-template-columns: 4px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .cardImgWrap {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .cardImg { aspect-ratio: 16 / 9; }
+  .cardBody {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 16px 18px 20px;
+  }
+  .cardAccent {
+    grid-row: 1 / -1;
+  }
+}
