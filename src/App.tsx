@@ -94,6 +94,7 @@ const MediaPage = lazyRetry(() => import('./pages/MediaPage'));
 const ProdPage = lazyRetry(() => import('./pages/ProdPage'));
 const TypePage = lazyRetry(() => import('./pages/TypePage'));
 const ActuListPage = lazyRetry(() => import('./pages/ActuListPage'));
+const DiscoverPage = lazyRetry(() => import('./pages/DiscoverPage'));
 const TemoignagesPage = lazyRetry(() => import('./pages/TemoignagesPage'));
 const EcrireHistoirePage = lazyRetry(() => import('./pages/EcrireHistoirePage'));
 const DossiersPage = lazyRetry(() => import('./pages/DossiersPage'));
@@ -111,6 +112,7 @@ const ConfidentialitePage = lazyRetry(() => import('./pages/ConfidentialitePage'
 const CookiesPage = lazyRetry(() => import('./pages/CookiesPage'));
 const PlanDuSitePage = lazyRetry(() => import('./pages/PlanDuSitePage'));
 const SousTopicPage = lazyRetry(() => import('./pages/SousTopicPage'));
+const ArcanesPage = lazyRetry(() => import('./pages/ArcanesPage'));
 const NotFoundPage = lazyRetry(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
@@ -169,6 +171,7 @@ function App() {
         <Route path="/histoires" element={<HistoiresPage />} />
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/actu" element={<ActuListPage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/guides" element={<GuidesPage />} />
         <Route path="/guides/:category" element={<GuideCategoryPage />} />
         <Route path="/histoire/:slug" element={<PortraitDetailPage />} />
@@ -222,6 +225,7 @@ function App() {
         <Route path="/compte/parametres" element={<ParametresPage />} />
         <Route path="/deconnexion" element={<DeconnexionPage />} />
         <Route path="/recherche" element={<RecherchePage />} />
+        <Route path="/arcanes" element={<ArcanesPage />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>

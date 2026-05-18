@@ -184,7 +184,7 @@
   gap: 2px;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .megaTrigger {
@@ -243,6 +243,7 @@
 
 .navItem {
   position: relative;
+  z-index: 41;
 }
 
 .navLink {
