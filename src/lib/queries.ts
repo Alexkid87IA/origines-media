@@ -860,9 +860,15 @@ export const ARTICLE_BY_SLUG_QUERY = `
         ...,
         "articles": articles[]->{
           _id,
+          titre,
           "title": titre,
-          "slug": slug.current,
+          slug,
+          deck,
           "imageUrl": coalesce(image.asset->url, imageUrl),
+          category,
+          univpilar,
+          "readTime": tempsLecture,
+          "authorName": author->name,
           "verticale": verticale->{nom, couleurDominante}
         }
       }

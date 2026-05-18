@@ -1386,42 +1386,72 @@ export const createPortableTextComponentsV2 = ({
       ),
 
       relatedArticles: ({ value }: any) => {
+        const UNIVERS_COLORS: Record<string, string> = {
+          esprit: "#7B5CD6", corps: "#5AA352", liens: "#E67839",
+          monde: "#2E9B74", trajectoires: "#2E94B5",
+        };
         const articles = value.articles || value.items || [];
         if (!articles.length) return null;
 
         return (
           <div className={s.inlineRelated}>
+            <div className={s.inlineRelatedSep} />
             <h4 className={s.inlineRelatedTitle}>
-              {value.title || "Articles recommandés"}
+              {value.title || "À lire aussi"}
             </h4>
-            {articles.slice(0, 3).map((article: any, index: number) => {
-              const slug = article.slug?.current || article.slug;
-              const title = article.title || article.titre;
-              const image =
-                article.imageUrl || article.mainImage?.asset?.url;
-              if (!slug || !title) return null;
+            <div className={s.inlineRelatedGrid}>
+              {articles.slice(0, 3).map((a: any, index: number) => {
+                const slug = a.slug?.current || a.slug;
+                const title = a.title || a.titre;
+                const image = a.imageUrl || a.mainImage?.asset?.url;
+                const catLabel = a.verticale?.nom || a.category || "";
+                const catColor = a.verticale?.couleurDominante
+                  || (a.univpilar && UNIVERS_COLORS[a.univpilar])
+                  || "var(--stone500)";
+                if (!slug || !title) return null;
 
-              return (
-                <Link
-                  key={index}
-                  to={`/article/${slug}`}
-                  className={s.inlineRelatedItem}
-                >
-                  {image && (
-                    <img
-                      src={image}
-                      alt={title}
-                      className={s.inlineRelatedImg}
-                      loading="lazy"
-                    />
-                  )}
-                  <h5 className={s.inlineRelatedItemTitle}>{title}</h5>
-                  <svg className={s.inlineRelatedArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <path d="M5 12h14M13 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              );
-            })}
+                return (
+                  <Link
+                    key={a._id || index}
+                    to={`/article/${slug}`}
+                    className={s.inlineRelatedCard}
+                  >
+                    {image && (
+                      <div className={s.inlineRelatedImgWrap}>
+                        <img
+                          src={sanityImg(image, 480)}
+                          alt={title}
+                          className={s.inlineRelatedImg}
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+                    <div className={s.inlineRelatedCardBody}>
+                      {catLabel && (
+                        <span
+                          className={s.inlineRelatedCat}
+                          style={{ color: catColor }}
+                        >
+                          {catLabel}
+                        </span>
+                      )}
+                      <h5 className={s.inlineRelatedCardTitle}>{title}</h5>
+                      <div className={s.inlineRelatedMeta}>
+                        {a.authorName && (
+                          <span className={s.inlineRelatedAuthor}>{a.authorName}</span>
+                        )}
+                        {a.authorName && a.readTime && (
+                          <span className={s.inlineRelatedMetaDot} />
+                        )}
+                        {a.readTime && (
+                          <span className={s.inlineRelatedReadTime}>{a.readTime} min</span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         );
       },
