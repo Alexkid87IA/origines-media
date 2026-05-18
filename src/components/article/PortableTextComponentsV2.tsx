@@ -1396,6 +1396,39 @@ export const createPortableTextComponentsV2 = ({
         const articles = value.articles || value.items || [];
         if (!articles.length) return null;
 
+        if (value.layout === "inline") {
+          return (
+            <div className={s.suggestBlock}>
+              <div className={s.suggestSep} />
+              <h4 className={s.suggestTitle}>Sur le même sujet</h4>
+              <div className={s.suggestList}>
+                {articles.slice(0, 5).map((a: any, index: number) => {
+                  const slug = a.slug?.current || a.slug;
+                  const title = a.title || a.titre;
+                  const hoverColor = a.univpilar
+                    ? UNIVERS_MAP[a.univpilar]?.color || undefined
+                    : undefined;
+                  if (!slug || !title) return null;
+                  return (
+                    <Link
+                      key={a._id || index}
+                      to={`/article/${slug}`}
+                      className={s.suggestItem}
+                      style={hoverColor ? { "--suggest-hover": hoverColor } as React.CSSProperties : undefined}
+                    >
+                      <span className={s.suggestItemTitle}>{title}</span>
+                      <svg className={s.suggestArrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M5 12h14M13 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className={s.suggestSep} />
+            </div>
+          );
+        }
+
         return (
           <div className={s.inlineRelated}>
             <div className={s.inlineRelatedSep} />

@@ -1388,6 +1388,70 @@
    Related articles (inline)
    ────────────────────────────────────────────────────────── */
 
+/* ── Suggest (inline layout) ── */
+
+.suggestBlock {
+  margin: 2.5rem 0;
+}
+
+.suggestSep {
+  height: 1px;
+  background: var(--stone200, #D6D3CC);
+}
+
+.suggestTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone400);
+  margin: 20px 0 4px;
+}
+
+.suggestList {
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  text-decoration: none;
+  color: var(--stone800);
+  transition: color 0.2s ease;
+}
+
+.suggestItem:hover {
+  color: var(--suggest-hover, var(--stone800));
+}
+
+.suggestItemTitle {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.suggestArrow {
+  width: 16px;
+  height: 16px;
+  color: var(--stone300);
+  flex-shrink: 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.suggestItem:hover .suggestArrow {
+  color: var(--suggest-hover, var(--stone400));
+  transform: translateX(2px);
+}
+
+/* ── Cards (default layout) ── */
+
 .inlineRelated {
   margin: 56px 0 44px;
 }
@@ -1775,6 +1839,8 @@
   .btn,
   .file,
   .fileArrow,
+  .suggestItem,
+  .suggestArrow,
   .inlineRelatedCard,
   .inlineRelatedImg {
     transition: none !important;
