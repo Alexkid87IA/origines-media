@@ -1386,9 +1386,12 @@ export const createPortableTextComponentsV2 = ({
       ),
 
       relatedArticles: ({ value }: any) => {
-        const UNIVERS_COLORS: Record<string, string> = {
-          esprit: "#7B5CD6", corps: "#5AA352", liens: "#E67839",
-          monde: "#2E9B74", trajectoires: "#2E94B5",
+        const UNIVERS_MAP: Record<string, { label: string; color: string }> = {
+          esprit: { label: "L'Esprit", color: "#7B5CD6" },
+          corps: { label: "Le Corps", color: "#5AA352" },
+          liens: { label: "Les Liens", color: "#E67839" },
+          monde: { label: "Le Monde", color: "#2E9B74" },
+          avenir: { label: "L'Avenir", color: "#2E94B5" },
         };
         const articles = value.articles || value.items || [];
         if (!articles.length) return null;
@@ -1404,10 +1407,9 @@ export const createPortableTextComponentsV2 = ({
                 const slug = a.slug?.current || a.slug;
                 const title = a.title || a.titre;
                 const image = a.imageUrl || a.mainImage?.asset?.url;
-                const catLabel = a.verticale?.nom || a.category || "";
-                const catColor = a.verticale?.couleurDominante
-                  || (a.univpilar && UNIVERS_COLORS[a.univpilar])
-                  || "var(--stone500)";
+                const univ = a.univpilar ? UNIVERS_MAP[a.univpilar] : null;
+                const catLabel = univ?.label || "";
+                const catColor = univ?.color || "var(--stone500)";
                 if (!slug || !title) return null;
 
                 return (
