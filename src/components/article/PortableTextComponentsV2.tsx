@@ -567,6 +567,11 @@ export const createPortableTextComponentsV2 = ({
     },
     types: {
       image: ({ value }: any) => {
+        const idx = content.findIndex((b: any) => b._key === value._key);
+        if (idx >= 0 && idx < content.length - 1) {
+          const next = content[idx + 1];
+          if (next?._type === "youtube" || next?._type === "videoEmbed") return null;
+        }
         const rawUrl = value.asset?._ref
           ? getImageUrl(value.asset)
           : value.asset?.url || value.url;
