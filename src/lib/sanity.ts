@@ -5,14 +5,10 @@ const PROJECT_ID = 'r941i081'
 const DATASET = 'production'
 const API_VERSION = '2024-03-01'
 
-// Détection de l'environnement de développement
-const isDev = import.meta.env.DEV
-
-// Configuration du client Sanity avec proxy en développement
 export const client = createClient({
   projectId: PROJECT_ID,
   dataset: DATASET,
-  useCdn: !isDev, // CDN activé en production, désactivé en dev
+  useCdn: !import.meta.env.DEV,
   apiVersion: API_VERSION,
 })
 
@@ -60,31 +56,10 @@ async function fetchWithRetry<T>(
   throw lastError || new Error('Unknown error in fetchWithRetry')
 }
 
-// Fonction de fetch qui utilise le proxy en développement
 export async function sanityFetch<T>(query: string, params: Record<string, unknown> = {}): Promise<T> {
-  if (isDev) {
-    // En développement, utiliser le proxy Vite pour éviter CORS
-    return fetchWithRetry(async () => {
-      const encodedQuery = encodeURIComponent(query)
-      const paramString = Object.entries(params)
-        .map(([key, value]) => `$${key}=${encodeURIComponent(JSON.stringify(value))}`)
-        .join('&')
-
-      const url = `/sanity-api/v${API_VERSION}/data/query/${DATASET}?query=${encodedQuery}${paramString ? '&' + paramString : ''}`
-
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Sanity fetch error: ${response.status} ${response.statusText}`)
-      }
-      const data = await response.json()
-      return data.result as T
-    })
-  } else {
-    // En production, utiliser le client Sanity directement avec retry
-    return fetchWithRetry(async () => {
-      return client.fetch<T>(query, params)
-    })
-  }
+  return fetchWithRetry(async () => {
+    return client.fetch<T>(query, params)
+  })
 }
 
 // Fonction helper pour récupérer des données
