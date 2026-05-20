@@ -6,6 +6,7 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { typo } from "../lib/typography";
 import { sanityFetch } from "@/lib/sanity";
+import { sanityImg } from "@/lib/sanityImage";
 import { RT } from "@/lib/queries";
 import { UNIVERS } from "@/data/univers";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -45,6 +46,14 @@ const UNIVERS_COLORS: Record<string, string> = {
   avenir: "#2E94B5",
 };
 
+function formatDate(dateString: string): string {
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(dateString));
+}
+
 function relativeTime(dateString: string): string {
   const diffMs = Date.now() - new Date(dateString).getTime();
   const diffMin = Math.floor(diffMs / 60_000);
@@ -54,11 +63,11 @@ function relativeTime(dateString: string): string {
   if (diffH < 24) return `il y a ${diffH} h`;
   const diffD = Math.floor(diffH / 24);
   if (diffD < 7) return `il y a ${diffD} j`;
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(dateString));
+  return formatDate(dateString);
+}
+
+function isoDate(dateString: string): string {
+  return new Date(dateString).toISOString();
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -110,6 +119,9 @@ export default function DiscoverPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const universName = (id: string) =>
+    UNIVERS.find((u) => u.id === id)?.name;
+
   return (
     <div className={s.page}>
       <SEO
@@ -138,25 +150,25 @@ export default function DiscoverPage() {
             ]}
           />
 
-          <section className={s.header}>
+          {/* ── Header ── */}
+          <header className={s.header}>
             <div className={s.titleRow}>
               <h1 className={s.pageTitle}>
-                <span className={s.pulseDot} />
+                <span className={s.pulseDot} aria-hidden="true" />
                 Discover
               </h1>
-              <span className={s.subtitle}>Le radar d&rsquo;Origines Media</span>
+              <p className={s.subtitle}>Le radar d&rsquo;Origines Media</p>
             </div>
 
-            <div className={s.headerMeta}>
-              <span>
-                <strong>{articles.length}</strong> articles
-              </span>
-            </div>
+            <p className={s.headerMeta}>
+              <strong>{articles.length}</strong> articles publi&eacute;s
+            </p>
 
-            <div className={s.filters}>
+            <nav className={s.filters} aria-label="Filtrer par univers">
               <button
                 className={`${s.filterBtn} ${!activeUnivers ? s.filterBtnActive : ""}`}
                 onClick={() => handleFilter(null)}
+                aria-pressed={!activeUnivers}
               >
                 Tous
                 <span className={s.filterCount}>{articles.length}</span>
@@ -170,101 +182,142 @@ export default function DiscoverPage() {
                     className={`${s.filterBtn} ${activeUnivers === u.id ? s.filterBtnActive : ""}`}
                     style={{ "--filter-color": u.color } as React.CSSProperties}
                     onClick={() => handleFilter(u.id)}
+                    aria-pressed={activeUnivers === u.id}
                   >
-                    <span className={s.filterDot} style={{ background: u.color }} />
+                    <span className={s.filterDot} style={{ background: u.color }} aria-hidden="true" />
                     {u.name}
                     <span className={s.filterCount}>{count}</span>
                   </button>
                 );
               })}
-            </div>
-          </section>
+            </nav>
+          </header>
 
-          <div className={s.divider} />
+          <hr className={s.divider} />
 
+          {/* ── Loading ── */}
           {loading && (
-            <div className={s.loadingWrap}>
+            <div className={s.loadingWrap} role="status" aria-label="Chargement des articles">
               <div className={s.spinner} />
             </div>
           )}
 
+          {/* ── Empty ── */}
           {!loading && filtered.length === 0 && (
             <div className={s.emptyState}>
-              <p>Aucun article trouv&eacute;.</p>
+              <p>Aucun article trouv&eacute; dans cette cat&eacute;gorie.</p>
             </div>
           )}
 
+          {/* ── Featured article ── */}
           {!loading && featured && (
-            <section className={s.featuredSection}>
-              <Link to={`/article/${featured.slug}`} className={s.featuredCard}>
+            <article className={s.featured} itemScope itemType="https://schema.org/NewsArticle">
+              <Link to={`/article/${featured.slug}`} className={s.featuredLink}>
                 <div className={s.featuredImgWrap}>
                   <img
-                    src={featured.imageUrl || ""}
+                    src={sanityImg(featured.imageUrl, 1200)}
                     alt={featured.titre}
                     className={s.featuredImg}
                     loading="eager"
+                    width={1200}
+                    height={750}
+                    itemProp="image"
                   />
-                </div>
-                <div className={s.featuredBody}>
                   {featured.univpilar && (
                     <span
-                      className={s.featuredUnivers}
-                      style={{ color: UNIVERS_COLORS[featured.univpilar] }}
+                      className={s.badge}
+                      style={{ backgroundColor: UNIVERS_COLORS[featured.univpilar] }}
                     >
-                      <span
-                        className={s.featuredDot}
-                        style={{ background: UNIVERS_COLORS[featured.univpilar] }}
-                      />
-                      {UNIVERS.find((u) => u.id === featured.univpilar)?.name}
+                      {universName(featured.univpilar)}
                     </span>
                   )}
-                  <h2 className={s.featuredTitle}>{typo(featured.titre)}</h2>
-                  {featured.deck && (
-                    <p className={s.featuredDeck}>{featured.deck}</p>
-                  )}
+                </div>
+                <div className={s.featuredBody}>
                   <div className={s.featuredMeta}>
-                    <span>{relativeTime(featured.datePublication)}</span>
+                    <time dateTime={isoDate(featured.datePublication)} itemProp="datePublished">
+                      {relativeTime(featured.datePublication)}
+                    </time>
                     {featured.authorName && (
                       <>
-                        <span className={s.dot} />
-                        <span>{featured.authorName}</span>
+                        <span className={s.dot} aria-hidden="true" />
+                        <span itemProp="author">{featured.authorName}</span>
+                      </>
+                    )}
+                    {featured.tempsLecture && (
+                      <>
+                        <span className={s.dot} aria-hidden="true" />
+                        <span>{featured.tempsLecture} min de lecture</span>
                       </>
                     )}
                   </div>
+                  <h2 className={s.featuredTitle} itemProp="headline">
+                    {typo(featured.titre)}
+                  </h2>
+                  {featured.deck && (
+                    <p className={s.featuredDeck} itemProp="description">
+                      {typo(featured.deck)}
+                    </p>
+                  )}
+                  <span className={s.readMore} aria-hidden="true">Lire l&rsquo;article &rarr;</span>
                 </div>
               </Link>
-            </section>
+            </article>
           )}
 
+          {/* ── Grid "À la une" ── */}
           {!loading && gridArticles.length > 0 && (
-            <section className={s.gridSection}>
-              <h3 className={s.sectionLabel}>&Agrave; la une</h3>
+            <section className={s.gridSection} aria-label="À la une">
+              <h2 className={s.sectionLabel}>&Agrave; la une</h2>
               <div className={s.grid}>
                 {gridArticles.map((a) => (
-                  <article key={a._id} className={s.gridCard}>
+                  <article key={a._id} className={s.gridCard} itemScope itemType="https://schema.org/NewsArticle">
                     <Link to={`/article/${a.slug}`} className={s.gridCardLink}>
                       <div className={s.gridImgWrap}>
                         <img
-                          src={a.imageUrl || ""}
+                          src={sanityImg(a.imageUrl, 600)}
                           alt={a.titre}
                           className={s.gridImg}
                           loading="lazy"
                           decoding="async"
+                          width={600}
+                          height={375}
+                          itemProp="image"
                         />
                         {a.univpilar && (
                           <span
-                            className={s.gridBadge}
+                            className={s.badge}
                             style={{ backgroundColor: UNIVERS_COLORS[a.univpilar] }}
                           >
-                            {UNIVERS.find((u) => u.id === a.univpilar)?.name}
+                            {universName(a.univpilar)}
                           </span>
                         )}
                       </div>
                       <div className={s.gridCardBody}>
-                        <h4 className={s.gridCardTitle}>{typo(a.titre)}</h4>
-                        <span className={s.gridCardTime}>
-                          {relativeTime(a.datePublication)}
-                        </span>
+                        <h3 className={s.gridCardTitle} itemProp="headline">
+                          {typo(a.titre)}
+                        </h3>
+                        {a.deck && (
+                          <p className={s.gridCardDeck} itemProp="description">
+                            {typo(a.deck)}
+                          </p>
+                        )}
+                        <footer className={s.gridCardMeta}>
+                          <time dateTime={isoDate(a.datePublication)} itemProp="datePublished">
+                            {relativeTime(a.datePublication)}
+                          </time>
+                          {a.authorName && (
+                            <>
+                              <span className={s.dot} aria-hidden="true" />
+                              <span itemProp="author">{a.authorName}</span>
+                            </>
+                          )}
+                          {a.tempsLecture && (
+                            <>
+                              <span className={s.dot} aria-hidden="true" />
+                              <span>{a.tempsLecture} min</span>
+                            </>
+                          )}
+                        </footer>
                       </div>
                     </Link>
                   </article>
@@ -273,48 +326,99 @@ export default function DiscoverPage() {
             </section>
           )}
 
+          {/* ── Fil (dense list) ── */}
           {!loading && filArticles.length > 0 && (
-            <section className={s.filSection}>
-              <h3 className={s.sectionLabel}>Fil</h3>
+            <section className={s.filSection} aria-label="Tous les articles">
+              <h2 className={s.sectionLabel}>Fil</h2>
               <div className={s.filList}>
                 {filArticles.map((a) => (
-                  <Link
-                    key={a._id}
-                    to={`/article/${a.slug}`}
-                    className={s.filRow}
-                  >
-                    <div className={s.filThumb}>
-                      <img
-                        src={a.imageUrl || ""}
-                        alt=""
-                        className={s.filThumbImg}
-                        loading="lazy"
-                      />
-                    </div>
-                    <span className={s.filTitle}>{typo(a.titre)}</span>
-                    <span className={s.filTime}>
-                      {relativeTime(a.datePublication)}
-                    </span>
-                  </Link>
+                  <article key={a._id} className={s.filRow} itemScope itemType="https://schema.org/NewsArticle">
+                    <Link to={`/article/${a.slug}`} className={s.filLink}>
+                      <div className={s.filThumb}>
+                        <img
+                          src={sanityImg(a.imageUrl, 160)}
+                          alt=""
+                          className={s.filThumbImg}
+                          loading="lazy"
+                          decoding="async"
+                          width={160}
+                          height={160}
+                          itemProp="image"
+                        />
+                      </div>
+                      <div className={s.filContent}>
+                        <h3 className={s.filTitle} itemProp="headline">{typo(a.titre)}</h3>
+                        {a.deck && (
+                          <p className={s.filDeck} itemProp="description">{typo(a.deck)}</p>
+                        )}
+                        <footer className={s.filMeta}>
+                          <time dateTime={isoDate(a.datePublication)} itemProp="datePublished">
+                            {relativeTime(a.datePublication)}
+                          </time>
+                          {a.authorName && (
+                            <>
+                              <span className={s.dot} aria-hidden="true" />
+                              <span itemProp="author">{a.authorName}</span>
+                            </>
+                          )}
+                          {a.tempsLecture && (
+                            <>
+                              <span className={s.dot} aria-hidden="true" />
+                              <span>{a.tempsLecture} min</span>
+                            </>
+                          )}
+                        </footer>
+                      </div>
+                      {a.univpilar && (
+                        <span
+                          className={s.filBadge}
+                          style={{ backgroundColor: `${UNIVERS_COLORS[a.univpilar]}18`, color: UNIVERS_COLORS[a.univpilar] }}
+                          aria-label={`Univers : ${universName(a.univpilar)}`}
+                        >
+                          {universName(a.univpilar)}
+                        </span>
+                      )}
+                    </Link>
+                  </article>
                 ))}
               </div>
             </section>
           )}
 
+          {/* ── Pagination ── */}
           {!loading && totalPages > 1 && (
             <nav className={s.pagination} aria-label="Pagination">
+              <button
+                className={s.pageArrow}
+                onClick={() => handlePage(page - 1)}
+                disabled={page === 1}
+                aria-label="Page précédente"
+              >
+                &larr;
+              </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
                   className={`${s.pageBtn} ${page === p ? s.pageBtnActive : ""}`}
                   onClick={() => handlePage(p)}
+                  aria-label={`Page ${p}`}
+                  aria-current={page === p ? "page" : undefined}
                 >
                   {p}
                 </button>
               ))}
+              <button
+                className={s.pageArrow}
+                onClick={() => handlePage(page + 1)}
+                disabled={page === totalPages}
+                aria-label="Page suivante"
+              >
+                &rarr;
+              </button>
             </nav>
           )}
 
+          {/* ── Closing CTA ── */}
           <section className={s.closingCta}>
             <p className={s.closingText}>Explorer d&rsquo;autres formats</p>
             <div className={s.closingLinks}>
