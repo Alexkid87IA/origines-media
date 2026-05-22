@@ -30,6 +30,7 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const dcRef = useRef<RTCDataChannel | null>(null);
   const audioElRef = useRef<HTMLAudioElement | null>(null);
+  const connectionIdRef = useRef(0);
 
   const cleanup = useCallback(() => {
     if (dcRef.current) {
@@ -53,9 +54,12 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
 
   const connect = useCallback(async (intention: string, sujet: string) => {
     cleanup();
+    const thisId = ++connectionIdRef.current;
     setState("connecting");
     setError(null);
     setTranscript([]);
+
+    const isStale = () => thisId !== connectionIdRef.current;
 
     try {
       const pc = new RTCPeerConnection();
@@ -69,14 +73,30 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
         audioEl.srcObject = e.streams[0];
       };
 
+      pc.onconnectionstatechange = () => {
+        if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
+          if (!isStale()) {
+            setError("Connexion perdue");
+            setState("error");
+            cleanup();
+          }
+        }
+      };
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const audioTrack = stream.getAudioTracks()[0];
-      pc.addTrack(audioTrack, stream);
+
+      if (isStale() || pc.signalingState === "closed") {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+
+      pc.addTrack(stream.getAudioTracks()[0], stream);
 
       const dc = pc.createDataChannel("oai-events");
       dcRef.current = dc;
 
       dc.onopen = () => {
+        if (isStale()) return;
         setState("ready");
         dc.send(JSON.stringify({
           type: "session.update",
@@ -103,22 +123,33 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
         } catch {}
       };
 
+      if (isStale() || pc.signalingState === "closed") return;
+
       const offer = await pc.createOffer();
+      if (isStale() || pc.signalingState === "closed") return;
+
       await pc.setLocalDescription(offer);
 
-      await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve, reject) => {
         if (pc.iceGatheringState === "complete") {
           resolve();
-        } else {
-          const check = () => {
-            if (pc.iceGatheringState === "complete") {
-              pc.removeEventListener("icegatheringstatechange", check);
-              resolve();
-            }
-          };
-          pc.addEventListener("icegatheringstatechange", check);
+          return;
         }
+        const timeout = setTimeout(() => {
+          pc.removeEventListener("icegatheringstatechange", check);
+          resolve();
+        }, 5000);
+        const check = () => {
+          if (pc.iceGatheringState === "complete") {
+            clearTimeout(timeout);
+            pc.removeEventListener("icegatheringstatechange", check);
+            resolve();
+          }
+        };
+        pc.addEventListener("icegatheringstatechange", check);
       });
+
+      if (isStale() || pc.signalingState === "closed") return;
 
       const { getAuthHeaders } = await import("@/lib/authFetch");
       const headers = await getAuthHeaders();
@@ -134,15 +165,21 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
         }),
       });
 
+      if (isStale()) return;
+
       if (!sdpRes.ok) {
         const errData = await sdpRes.text();
         throw new Error(errData || "SDP exchange failed");
       }
 
       const answerSdp = await sdpRes.text();
+
+      if (isStale() || pc.signalingState === "closed") return;
+
       await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });
 
     } catch (err) {
+      if (isStale()) return;
       console.error("[LyaRealtime] Connection failed:", err);
       setError(err instanceof Error ? err.message : "Connexion échouée");
       setState("error");
@@ -191,6 +228,7 @@ export function useLyaRealtime(): UseLyaRealtimeReturn {
   }, []);
 
   const disconnect = useCallback(() => {
+    connectionIdRef.current++;
     cleanup();
     setState("idle");
   }, [cleanup]);
