@@ -725,9 +725,11 @@
   left: 0;
   right: 0;
   z-index: 50;
-  padding: 8px 16px calc(12px + env(safe-area-inset-bottom));
+  padding: 8px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
   background: linear-gradient(to top, var(--paper), var(--paper) 80%, transparent);
   display: none;
+  transition: padding-bottom 0.1s ease;
 }
 
 .mobileBarInner {

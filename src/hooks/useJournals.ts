@@ -41,12 +41,19 @@ export function useJournals() {
         return;
       }
       const col = collection(db, "users", user.uid, "journals");
-      unsub = onSnapshot(col, (snap) => {
-        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as JournalEntry));
-        list.sort((a, b) => b.date.localeCompare(a.date));
-        setEntries(list);
-        setLoading(false);
-      });
+      unsub = onSnapshot(
+        col,
+        (snap) => {
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as JournalEntry));
+          list.sort((a, b) => b.date.localeCompare(a.date));
+          setEntries(list);
+          setLoading(false);
+        },
+        () => {
+          setEntries([]);
+          setLoading(false);
+        }
+      );
     });
 
     return () => {

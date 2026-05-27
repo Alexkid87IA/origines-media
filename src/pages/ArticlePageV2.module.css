@@ -1378,11 +1378,13 @@
   z-index: 50;
   display: none;
   justify-content: center;
-  padding: 8px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
   background: var(--paper);
   border-top: 1px solid var(--stone100);
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+  transition: padding-bottom 0.1s ease;
 }
 
 .mobileBarInner {

@@ -22,7 +22,7 @@ export const MobileActionBar: React.FC<MobileActionBarProps> = ({
   onShareClick
 }) => {
   return (
-    <div className="fixed bottom-4 left-4 right-4 lg:hidden z-50">
+    <div className="fixed left-4 right-4 lg:hidden z-50" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)" }}>
       <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
         <button
           onClick={onLikeToggle}

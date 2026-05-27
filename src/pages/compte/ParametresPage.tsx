@@ -31,9 +31,13 @@ export default function ParametresPage() {
     getFirebaseDb().then((db) => {
       if (cancelled || !db) return;
       const ref = doc(db, "users", user.uid, "settings", "preferences");
-      unsub = onSnapshot(ref, (snap) => {
-        if (snap.exists()) setSettings({ ...DEFAULTS, ...snap.data() } as Settings);
-      });
+      unsub = onSnapshot(
+        ref,
+        (snap) => {
+          if (snap.exists()) setSettings({ ...DEFAULTS, ...snap.data() } as Settings);
+        },
+        () => {}
+      );
     });
     return () => { cancelled = true; unsub?.(); };
   }, [user]);

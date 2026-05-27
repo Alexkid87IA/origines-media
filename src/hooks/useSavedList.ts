@@ -40,12 +40,19 @@ export function useSavedList() {
         return;
       }
       const col = collection(db, "users", user.uid, "savedItems");
-      unsub = onSnapshot(col, (snap) => {
-        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavedItem));
-        list.sort((a, b) => (b.savedAt?.seconds ?? 0) - (a.savedAt?.seconds ?? 0));
-        setItems(list);
-        setLoading(false);
-      });
+      unsub = onSnapshot(
+        col,
+        (snap) => {
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavedItem));
+          list.sort((a, b) => (b.savedAt?.seconds ?? 0) - (a.savedAt?.seconds ?? 0));
+          setItems(list);
+          setLoading(false);
+        },
+        () => {
+          setItems([]);
+          setLoading(false);
+        }
+      );
     });
 
     return () => {
