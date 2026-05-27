@@ -100,6 +100,7 @@ export default function ArticlePageV2() {
   const sidebarContainerRef = useRef<HTMLDivElement>(null);
   const lastSidebarStateRef = useRef<string>("");
 
+  const [sidebarStyle, setSidebarStyle] = useState<React.CSSProperties>({});
 
 
   useEffect(() => {
@@ -187,35 +188,33 @@ export default function ArticlePageV2() {
       const sidebarBottomIfRelative = containerRect.top + sidebarHeight;
 
       let newState: string;
+      let newStyle: React.CSSProperties;
 
       if (sidebarBottomIfRelative > viewportHeight) {
         newState = "relative";
-        if (lastSidebarStateRef.current !== newState) {
-          sidebar.style.position = "relative";
-          sidebar.style.top = "0";
-          sidebar.style.bottom = "";
-          sidebar.style.width = "";
-        }
+        newStyle = { position: "relative", top: 0 };
       } else if (containerRect.bottom > sidebarHeight) {
         const topPosition = viewportHeight - sidebarHeight;
         newState = `fixed-${Math.round(topPosition)}-${container.offsetWidth}`;
-        if (lastSidebarStateRef.current !== newState) {
-          sidebar.style.position = "fixed";
-          sidebar.style.top = `${topPosition}px`;
-          sidebar.style.bottom = "";
-          sidebar.style.width = `${container.offsetWidth}px`;
-        }
+        newStyle = {
+          position: "fixed",
+          top: topPosition,
+          width: container.offsetWidth,
+        };
       } else {
         newState = "absolute";
-        if (lastSidebarStateRef.current !== newState) {
-          sidebar.style.position = "absolute";
-          sidebar.style.top = "auto";
-          sidebar.style.bottom = "0";
-          sidebar.style.width = "100%";
-        }
+        newStyle = {
+          position: "absolute",
+          bottom: 0,
+          top: "auto",
+          width: "100%",
+        };
       }
 
-      lastSidebarStateRef.current = newState;
+      if (lastSidebarStateRef.current !== newState) {
+        lastSidebarStateRef.current = newState;
+        setSidebarStyle(newStyle);
+      }
     };
 
     window.addEventListener("scroll", handleSidebarScroll, { passive: true });
@@ -720,7 +719,7 @@ export default function ArticlePageV2() {
               <div
                 ref={sidebarRef}
                 className={s.sidebarInner}
-                style={{ position: "relative" }}
+                style={sidebarStyle}
               >
                 {/* 0. Featured "À lire ensuite" */}
                 {relatedArticles.length > 0 && relatedArticles[0].slug?.current && (
