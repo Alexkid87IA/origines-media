@@ -45,6 +45,7 @@ export default function LatestVideos() {
 
   return (
     <section className={s.section}>
+      <div className={s.grain} />
       <div className={s.inner}>
         <div className={s.chapterMark}>
           <span className={s.cNum}>Ch.03</span>
@@ -95,7 +96,7 @@ export default function LatestVideos() {
                 key={v._id}
                 to={`/article/${v.slug}`}
                 className={s.card}
-                style={{ "--i": i } as React.CSSProperties}
+                style={{ "--i": i, "--glow": `${uColor(v.univpilar)}33` } as React.CSSProperties}
               >
                 <div className={s.cardVisual}>
                   <img

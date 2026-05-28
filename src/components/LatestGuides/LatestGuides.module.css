@@ -56,8 +56,8 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
-  background: rgba(10, 10, 10, 0.1);
-  border: 1px solid rgba(10, 10, 10, 0.1);
+  background: var(--stone200);
+  border: 1px solid var(--stone200);
   overflow: hidden;
 }
 
@@ -70,16 +70,23 @@
   color: var(--ink);
   background: var(--paper);
   overflow: hidden;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
   opacity: 0;
   animation: fadeUp 0.5s ease forwards calc(0.2s + var(--i, 0) * 0.1s);
 }
-.card:hover { background: var(--stone50, #F0EDE6); }
+.card:hover {
+  background: var(--stone50, #F0EDE6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
 
 /* Barre accent colorée */
 .cardAccent {
   background: var(--accent, var(--stone300));
-  transition: width 0.3s ease;
+  transition: filter 0.3s ease;
+}
+.card:hover .cardAccent {
+  filter: brightness(1.3);
 }
 
 .cardImgWrap {
@@ -90,7 +97,7 @@
 .cardImg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -146,7 +153,8 @@
 }
 
 .cardDeck {
-  font-family: var(--body);
+  font-family: var(--serif);
+  font-style: italic;
   font-size: 14px;
   line-height: 1.5;
   color: var(--stone600);
@@ -201,4 +209,18 @@
   .cardAccent {
     grid-row: 1 / -1;
   }
+}
+
+.ctaDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent, var(--stone500));
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
 }

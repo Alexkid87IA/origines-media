@@ -5,19 +5,68 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes meshDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.1); }
+}
+
+@keyframes meshDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-25px, 15px) scale(1.05); }
+}
+
 .section {
   margin-top: 72px;
   position: relative;
   background: #0A0A0A;
-  margin-left: calc(-1 * var(--side, 24px));
-  margin-right: calc(-1 * var(--side, 24px));
-  padding: 0 var(--side, 24px);
+  overflow: hidden;
+}
+
+.section::before,
+.section::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section::before {
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  right: 10%;
+  background: radial-gradient(circle, rgba(123, 92, 214, 0.12) 0%, transparent 70%);
+  animation: meshDrift1 12s ease-in-out infinite;
+}
+
+.section::after {
+  width: 350px;
+  height: 350px;
+  bottom: -80px;
+  left: 15%;
+  background: radial-gradient(circle, rgba(46, 148, 181, 0.10) 0%, transparent 70%);
+  animation: meshDrift2 14s ease-in-out infinite;
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.4;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
 }
 
 .inner {
+  position: relative;
+  z-index: 2;
   max-width: var(--max, 1280px);
   margin: 0 auto;
-  padding: 48px 0 56px;
+  padding: 48px var(--side, 24px) 0;
 }
 
 /* ── Chapter header (light on dark) ── */
@@ -36,6 +85,7 @@
   opacity: 0;
   animation: fadeUp 0.5s ease forwards 0.1s;
 }
+
 .cNum { font-weight: 600; color: #fff; }
 .cSep { opacity: 0.3; }
 .cLabel { color: rgba(255, 255, 255, 0.6); }
@@ -107,9 +157,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   color: #fff;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, border-color 0.3s ease;
   z-index: 2;
@@ -156,8 +209,9 @@
 }
 
 .heroDeck {
-  font-family: var(--body);
-  font-size: 14px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.65);
   margin: 0 0 16px;
@@ -259,7 +313,10 @@
   bottom: 10px;
   right: 10px;
   padding: 3px 8px;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
@@ -299,6 +356,10 @@
   text-underline-offset: 3px;
 }
 
+.card:hover {
+  box-shadow: 0 0 20px 2px var(--glow, rgba(123, 92, 214, 0.2));
+}
+
 /* ── Responsive ── */
 @media (max-width: 1024px) {
   .hero { aspect-ratio: 16 / 9; }
@@ -319,4 +380,9 @@
   .hero { aspect-ratio: 4 / 3; }
   .heroPlay { width: 52px; height: 52px; }
   .heroPlayIcon { width: 20px; height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section::before,
+  .section::after { animation: none; }
 }

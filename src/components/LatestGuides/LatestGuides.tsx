@@ -90,7 +90,8 @@ export default function LatestGuides() {
                 <p className={s.cardDeck}>{g.description}</p>
               )}
               <span className={s.cardCta}>
-                Lire le guide <span className={s.ctaArrow}>→</span>
+                <span className={s.ctaDot} />
+                Lire le guide <span className={s.ctaArrow}>&rarr;</span>
               </span>
             </div>
           </Link>

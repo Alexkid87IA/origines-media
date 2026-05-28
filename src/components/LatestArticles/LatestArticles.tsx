@@ -70,6 +70,7 @@ export default function LatestArticles() {
           <div className={s.heroBody}>
             {uLabel(hero.univpilar) && (
               <span className={s.heroKicker} style={{ color: uColor(hero.univpilar) }}>
+                <span className={s.kickerDot} />
                 {uLabel(hero.univpilar)}
               </span>
             )}
@@ -105,6 +106,7 @@ export default function LatestArticles() {
                 <div className={s.cardMeta}>
                   {uLabel(a.univpilar) && (
                     <span className={s.cardUnivers} style={{ color: uColor(a.univpilar) }}>
+                      <span className={s.cardDot} />
                       {uLabel(a.univpilar)}
                     </span>
                   )}
