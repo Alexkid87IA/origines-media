@@ -90,6 +90,7 @@ const LettreDuDimanchePage = lazyRetry(() => import('./pages/LettreDuDimanchePag
 const JoinPartnerPage = lazyRetry(() => import('./pages/JoinPartnerPage'));
 const GuidesPage = lazyRetry(() => import('./pages/GuidesPage'));
 const GuideCategoryPage = lazyRetry(() => import('./pages/GuideCategoryPage'));
+const GalaxiePage = lazyRetry(() => import('./pages/GalaxiePage'));
 const MediaPage = lazyRetry(() => import('./pages/MediaPage'));
 const ProdPage = lazyRetry(() => import('./pages/ProdPage'));
 const TypePage = lazyRetry(() => import('./pages/TypePage'));
@@ -115,8 +116,18 @@ const SousTopicPage = lazyRetry(() => import('./pages/SousTopicPage'));
 const NotFoundPage = lazyRetry(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
-  <div className="min-h-screen bg-white flex items-center justify-center">
-    <div className="text-gray-400 text-lg">Chargement...</div>
+  <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex items-center justify-center px-4">
+    <div className="flex flex-col items-center gap-4">
+      <div className="h-12 w-12 border border-[var(--ink)] flex items-center justify-center font-black text-[10px] leading-[0.9] tracking-normal">
+        ORI<br />GINES
+      </div>
+      <div className="h-px w-44 overflow-hidden bg-[var(--stone100)]">
+        <span className="block h-px w-20 bg-[var(--ink)] animate-pulse" />
+      </div>
+      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--stone500)]">
+        Chargement du récit
+      </p>
+    </div>
   </div>
 );
 
@@ -151,6 +162,7 @@ function App() {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/galaxie" element={<GalaxiePage />} />
         <Route path="/media" element={<MediaPage />} />
         <Route path="/univers" element={<UniversPage />} />
         <Route path="/univers/:universId" element={<UniversPage />} />

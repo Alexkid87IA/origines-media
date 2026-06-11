@@ -1,0 +1,617 @@
+.page {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.hero {
+  padding: 56px 0 80px;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 48px;
+  align-items: center;
+  padding-top: 24px;
+}
+
+.heroText {
+  max-width: 620px;
+}
+
+.kicker,
+.sectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  color: rgba(247, 245, 240, 0.58);
+  margin-bottom: 22px;
+}
+
+.heroTitle,
+.sectionTitle,
+.mapTitle {
+  font-family: var(--display);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.96;
+  margin: 0;
+}
+
+.heroTitle {
+  max-width: 9ch;
+  font-size: clamp(48px, 7vw, 96px);
+  margin-bottom: 24px;
+}
+
+.heroDeck {
+  max-width: 58ch;
+  margin: 0;
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.7;
+  color: rgba(247, 245, 240, 0.66);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.heroVisual {
+  position: relative;
+  min-height: 540px;
+}
+
+.heroImageFrame {
+  position: absolute;
+  inset: 0 0 72px 72px;
+  overflow: hidden;
+  border: 1px solid rgba(247, 245, 240, 0.18);
+  background: rgba(247, 245, 240, 0.05);
+}
+
+.heroImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.03);
+}
+
+.heroImageFrame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(110deg, rgba(10, 10, 10, 0.22), transparent 46%),
+    linear-gradient(to top, rgba(10, 10, 10, 0.72), transparent 56%);
+  pointer-events: none;
+}
+
+.orbitPanel {
+  position: absolute;
+  left: 0;
+  right: 48px;
+  bottom: 0;
+  display: grid;
+  gap: 1px;
+  border: 1px solid rgba(247, 245, 240, 0.14);
+  background: rgba(247, 245, 240, 0.14);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.35);
+}
+
+.orbitRow {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  min-height: 66px;
+  padding: 0 22px;
+  background: rgba(10, 10, 10, 0.88);
+  color: var(--paper);
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.orbitRow:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.orbitIndex,
+.orbitVerb,
+.pillarTopline,
+.latestMeta,
+.mapLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.orbitIndex {
+  color: rgba(247, 245, 240, 0.38);
+}
+
+.orbitName {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 0;
+}
+
+.orbitVerb {
+  color: rgba(247, 245, 240, 0.56);
+}
+
+.pillarsSection,
+.intentSection,
+.latestSection {
+  padding: 80px 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 34px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.sectionKicker {
+  color: var(--stone500);
+}
+
+.sectionTitle {
+  font-size: clamp(30px, 4vw, 54px);
+}
+
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  border: 1px solid var(--stone100);
+  background: var(--stone100);
+}
+
+.pillarCard {
+  display: flex !important;
+  flex-direction: column;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+.pillarMedia {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgba(10, 10, 10, 0.05);
+}
+
+.pillarMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s ease;
+}
+
+.pillarCard:hover .pillarMedia img {
+  transform: scale(1.05);
+}
+
+.pillarEyebrow {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(10, 10, 10, 0.78);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pillarBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+}
+
+.pillarTopline {
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.pillarTitle {
+  margin: 0 0 12px;
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.pillarText {
+  margin: 0 0 22px;
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--stone500);
+}
+
+.pillarLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: auto 0 24px;
+}
+
+.pillarLink {
+  display: inline-flex;
+  padding: 7px 10px;
+  border: 1px solid var(--stone100);
+  color: var(--stone600);
+  text-decoration: none;
+  font-family: var(--body);
+  font-size: 12px;
+  transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.pillarLink:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+  background: rgba(10, 10, 10, 0.02);
+}
+
+.intentSection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.intentSection .sectionHead {
+  border-bottom-color: rgba(247, 245, 240, 0.14);
+}
+
+.intentSection .sectionKicker {
+  color: rgba(247, 245, 240, 0.48);
+}
+
+.intentGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  border: 1px solid rgba(247, 245, 240, 0.12);
+  background: rgba(247, 245, 240, 0.12);
+}
+
+.intentCard {
+  display: flex !important;
+  min-height: 260px;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #111 !important;
+  color: var(--paper) !important;
+  padding: 26px !important;
+}
+
+.intentIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(247, 245, 240, 0.18);
+  color: rgba(247, 245, 240, 0.68);
+}
+
+.intentTitle {
+  margin: 0 0 12px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 850;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.intentText {
+  margin: 0 0 24px;
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(247, 245, 240, 0.58);
+}
+
+.intentCard a {
+  margin-top: auto;
+}
+
+.mapSection {
+  padding: 86px 0;
+  border-bottom: 1px solid var(--stone100);
+  background: var(--paper);
+}
+
+.mapGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.mapIntro .kicker {
+  color: var(--stone500);
+}
+
+.mapTitle {
+  max-width: 12ch;
+  font-size: clamp(34px, 4.8vw, 62px);
+  margin-bottom: 20px;
+}
+
+.mapText {
+  max-width: 48ch;
+  margin: 0;
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--stone500);
+}
+
+.mapColumns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.mapColumn {
+  border-top: 1px solid var(--ink);
+}
+
+.mapLabel {
+  display: block;
+  padding: 14px 0;
+  color: var(--stone500);
+}
+
+.mapItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  border-top: 1px solid var(--stone100);
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0;
+  transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.mapItem svg {
+  margin-left: auto;
+  color: var(--stone300);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.mapItem:hover {
+  color: var(--accent, var(--ink));
+  padding-left: 8px;
+}
+
+.mapItem:hover svg {
+  color: currentColor;
+  transform: translateX(4px);
+}
+
+.mapDot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+}
+
+.latestSection {
+  background: var(--paper);
+}
+
+.latestGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  border: 1px solid var(--stone100);
+  background: var(--stone100);
+}
+
+.latestCard {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.latestCard:hover {
+  background: rgba(10, 10, 10, 0.025);
+}
+
+.latestImage {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgba(10, 10, 10, 0.05);
+}
+
+.latestImage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.latestCard:hover .latestImage img {
+  transform: scale(1.04);
+}
+
+.latestBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.latestMeta {
+  color: var(--stone400);
+  margin-bottom: 10px;
+}
+
+.latestTitle {
+  margin: 0 0 12px;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 850;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.latestExcerpt {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--stone500);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 1180px) {
+  .heroGrid,
+  .mapGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroVisual {
+    min-height: 480px;
+  }
+
+  .pillarsGrid,
+  .intentGrid,
+  .latestGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    padding: 38px 0 58px;
+  }
+
+  .heroTitle {
+    font-size: clamp(42px, 14vw, 68px);
+  }
+
+  .heroDeck {
+    font-size: 15px;
+  }
+
+  .heroActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .heroVisual {
+    min-height: auto;
+  }
+
+  .heroImageFrame,
+  .orbitPanel {
+    position: relative;
+    inset: auto;
+    right: auto;
+    left: auto;
+  }
+
+  .heroImageFrame {
+    aspect-ratio: 16 / 9;
+    margin-bottom: 1px;
+  }
+
+  .orbitRow {
+    grid-template-columns: 44px 1fr;
+    min-height: 58px;
+  }
+
+  .orbitVerb {
+    display: none;
+  }
+
+  .sectionHead {
+    display: block;
+  }
+
+  .sectionKicker {
+    margin-bottom: 14px;
+  }
+
+  .pillarsSection,
+  .intentSection,
+  .latestSection,
+  .mapSection {
+    padding: 58px 0;
+  }
+
+  .pillarsGrid,
+  .intentGrid,
+  .latestGrid,
+  .mapColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .pillarBody,
+  .intentCard {
+    padding: 22px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pillarMedia img,
+  .latestImage img,
+  .mapItem,
+  .mapItem svg,
+  .orbitRow {
+    transition: none;
+  }
+}
