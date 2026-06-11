@@ -3,13 +3,14 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const SANITY_PROJECT_ID = 'r941i081'
 const SANITY_DATASET = 'production'
-const SANITY_API_VERSION = '2024-01-01'
+const SANITY_API_VERSION = '2024-03-01'
 const SANITY_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}`
 const BASE_URL = 'https://www.origines.media'
 
 // Pages statiques du site
 const STATIC_PAGES = [
   { url: '/', priority: 1.0, changefreq: 'daily' },
+  { url: '/galaxie', priority: 0.9, changefreq: 'weekly' },
   { url: '/articles', priority: 0.9, changefreq: 'daily' },
   { url: '/media', priority: 0.9, changefreq: 'daily' },
   { url: '/programmes', priority: 0.8, changefreq: 'weekly' },
@@ -321,7 +322,6 @@ function generateSitemapXML(content: SanityContent | null): string {
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">

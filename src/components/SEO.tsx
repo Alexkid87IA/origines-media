@@ -4,6 +4,7 @@ import { sanityOgImg } from '@/lib/sanityImage';
 
 interface SEOProps {
   title?: string;
+  absoluteTitle?: string;
   description?: string;
   image?: string;
   url?: string;
@@ -16,7 +17,7 @@ interface SEOProps {
   noindex?: boolean;
   twitterCreator?: string;
   // Structured Data props
-  jsonLd?: 'organization' | 'article' | 'person' | 'breadcrumb' | 'video';
+  jsonLd?: 'organization' | 'newsMedia' | 'website' | 'home' | 'article' | 'person' | 'breadcrumb' | 'video';
   breadcrumbs?: Array<{ name: string; url: string }>;
   videoUrl?: string;
   duration?: string; // ISO 8601 format for video
@@ -37,26 +38,103 @@ const DEFAULT_TITLE = 'Origines Media';
 const DEFAULT_DESCRIPTION = 'Origines Media explore ce qui nous construit : psychologie, bien-être, relations, culture et avenir. Articles, vidéos, histoires et recommandations pour ceux qui cherchent la profondeur.';
 const DEFAULT_IMAGE = 'https://www.origines.media/og-image.png';
 const SITE_URL = 'https://www.origines.media';
+const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+const WEBSITE_ID = `${SITE_URL}/#website`;
+
+const MAIN_NAVIGATION = [
+  { name: 'Galaxie', url: '/galaxie', description: 'La carte des formats Origines Media : articles, vidéos, guides et boutique' },
+  { name: 'Articles', url: '/articles', description: 'Analyses, récits et réflexions Origines Media' },
+  { name: 'Vidéos', url: '/videos', description: 'Documentaires, interviews et formats vidéo' },
+  { name: 'Guides', url: '/guides', description: 'Guides pratiques et parcours éditoriaux' },
+  { name: 'Univers', url: '/univers', description: 'Les grands univers éditoriaux Origines Media' },
+  { name: 'Histoires', url: '/histoires', description: 'Témoignages et récits de vie' },
+  { name: 'Recommandations', url: '/recommandations', description: 'Livres, films, podcasts et ressources recommandées' },
+  { name: 'Boutique', url: '/boutique', description: 'Guides et ressources premium Origines Media' },
+  { name: 'À propos', url: '/a-propos', description: 'La mission et la rédaction Origines Media' },
+];
+
+const withoutContext = (schema: Record<string, unknown>) => {
+  const rest = { ...schema };
+  delete rest['@context'];
+  return rest;
+};
 
 // Structured Data JSON-LD generators
 const generateOrganizationSchema = () => ({
   '@context': 'https://schema.org',
-  '@type': 'Organization',
+  '@type': 'NewsMediaOrganization',
+  '@id': ORGANIZATION_ID,
   name: 'Origines Media',
+  alternateName: ['Origines', 'origines.media'],
   url: SITE_URL,
-  logo: `${SITE_URL}/logos/logo-black.png`,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/logos/logo-black.png`,
+    width: 512,
+    height: 512,
+  },
+  image: DEFAULT_IMAGE,
   description: DEFAULT_DESCRIPTION,
+  publishingPrinciples: `${SITE_URL}/a-propos`,
   sameAs: [
     'https://www.youtube.com/@origines',
-    'https://twitter.com/originesmedia',
+    'https://x.com/originesmedia',
     'https://www.instagram.com/origines.media',
     'https://www.linkedin.com/company/origines-media'
   ],
   contactPoint: {
     '@type': 'ContactPoint',
-    contactType: 'customer service',
+    contactType: 'editorial',
     email: 'contact@origines.media'
   }
+});
+
+const generateWebsiteSchema = () => ({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': WEBSITE_ID,
+  name: 'Origines Media',
+  alternateName: ['Origines', 'origines.media'],
+  url: SITE_URL,
+  description: DEFAULT_DESCRIPTION,
+  inLanguage: 'fr-FR',
+  publisher: { '@id': ORGANIZATION_ID },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${SITE_URL}/recherche?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+});
+
+const generateHomeGraphSchema = () => ({
+  '@context': 'https://schema.org',
+  '@graph': [
+    withoutContext(generateOrganizationSchema()),
+    withoutContext(generateWebsiteSchema()),
+    {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/#webpage`,
+      url: SITE_URL,
+      name: 'Origines Media',
+      description: DEFAULT_DESCRIPTION,
+      inLanguage: 'fr-FR',
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': ORGANIZATION_ID },
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: DEFAULT_IMAGE,
+      },
+    },
+    ...MAIN_NAVIGATION.map(item => ({
+      '@type': 'SiteNavigationElement',
+      name: item.name,
+      description: item.description,
+      url: `${SITE_URL}${item.url}`,
+    })),
+  ],
 });
 
 const generateArticleSchema = (props: {
@@ -68,22 +146,27 @@ const generateArticleSchema = (props: {
   modifiedTime?: string;
   author?: string;
   section?: string;
+  tags?: string[];
 }) => ({
   '@context': 'https://schema.org',
   '@type': 'Article',
+  '@id': `${props.url}#article`,
   headline: props.title,
   description: props.description,
-  image: props.image,
+  image: [props.image],
   url: props.url,
   datePublished: props.publishedTime,
   dateModified: props.modifiedTime || props.publishedTime,
+  inLanguage: 'fr-FR',
+  isAccessibleForFree: true,
   author: {
     '@type': props.author ? 'Person' : 'Organization',
     name: props.author || 'Origines Media',
-    url: props.author ? undefined : SITE_URL
+    ...(props.author ? {} : { '@id': ORGANIZATION_ID, url: SITE_URL })
   },
   publisher: {
-    '@type': 'Organization',
+    '@type': 'NewsMediaOrganization',
+    '@id': ORGANIZATION_ID,
     name: 'Origines Media',
     logo: {
       '@type': 'ImageObject',
@@ -92,11 +175,13 @@ const generateArticleSchema = (props: {
       height: 60
     }
   },
+  isPartOf: { '@id': WEBSITE_ID },
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': props.url
   },
-  articleSection: props.section
+  articleSection: props.section,
+  ...(props.tags?.length ? { keywords: props.tags.join(', ') } : {})
 });
 
 const generatePersonSchema = (props: {
@@ -142,7 +227,21 @@ const generateVideoSchema = (props: {
   contentUrl: props.videoUrl,
   embedUrl: props.videoUrl,
   duration: props.duration,
-  url: props.url
+  url: props.url,
+  inLanguage: 'fr-FR',
+  isFamilyFriendly: true,
+  publisher: {
+    '@type': 'NewsMediaOrganization',
+    '@id': ORGANIZATION_ID,
+    name: 'Origines Media',
+    logo: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}/logos/logo-publisher.png`,
+      width: 255,
+      height: 60
+    }
+  },
+  isPartOf: { '@id': WEBSITE_ID }
 });
 
 const generateItemListSchema = (items: Array<{
@@ -189,6 +288,7 @@ const generateFAQSchema = (faqs: Array<{ question: string; answer: string }>) =>
 
 const SEO: React.FC<SEOProps> = ({
   title,
+  absoluteTitle,
   description = DEFAULT_DESCRIPTION,
   image,
   url,
@@ -207,7 +307,9 @@ const SEO: React.FC<SEOProps> = ({
   itemListData,
   faqData,
 }) => {
-  const fullTitle = title ? `${title} — ${DEFAULT_TITLE}` : DEFAULT_TITLE;
+  const fullTitle = absoluteTitle || (title
+    ? title.includes(DEFAULT_TITLE) ? title : `${title} — ${DEFAULT_TITLE}`
+    : DEFAULT_TITLE);
   const rawPath = url || (typeof window !== 'undefined' ? window.location.pathname : '/');
   const cleanPath = rawPath === '/' ? '/' : rawPath.replace(/\/+$/, '');
   const canonicalUrl = `${SITE_URL}${cleanPath}`;
@@ -219,7 +321,12 @@ const SEO: React.FC<SEOProps> = ({
   const getJsonLd = () => {
     switch (jsonLd) {
       case 'organization':
+      case 'newsMedia':
         return generateOrganizationSchema();
+      case 'website':
+        return generateWebsiteSchema();
+      case 'home':
+        return generateHomeGraphSchema();
       case 'article':
         return generateArticleSchema({
           title: title || DEFAULT_TITLE,
@@ -229,7 +336,8 @@ const SEO: React.FC<SEOProps> = ({
           publishedTime,
           modifiedTime,
           author,
-          section
+          section,
+          tags
         });
       case 'person':
         return generatePersonSchema({
@@ -264,7 +372,12 @@ const SEO: React.FC<SEOProps> = ({
       <title>{fullTitle}</title>
       <meta name="title" content={fullTitle} />
       <meta name="description" content={description} />
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
+      <meta
+        name="robots"
+        content={noindex
+          ? "noindex, nofollow"
+          : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"}
+      />
 
       {/* Canonical URL */}
       <link rel="canonical" href={canonicalUrl} />
@@ -303,7 +416,7 @@ const SEO: React.FC<SEOProps> = ({
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={canonicalUrl} />
-      <meta name="twitter:title" content={title || DEFAULT_TITLE} />
+      <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
       <meta name="twitter:site" content="@originesmedia" />

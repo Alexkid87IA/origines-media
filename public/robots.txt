@@ -61,3 +61,4 @@ Disallow: /
 
 # Sitemap
 Sitemap: https://www.origines.media/sitemap.xml
+Sitemap: https://www.origines.media/sitemap-news.xml

@@ -9,6 +9,9 @@
     "api/sitemap.ts": {
       "maxDuration": 30
     },
+    "api/sitemap-news.ts": {
+      "maxDuration": 30
+    },
     "api/auth/verify.ts": {
       "maxDuration": 5
     },
@@ -167,6 +170,10 @@
       "destination": "/api/sitemap?v=2"
     },
     {
+      "source": "/sitemap-news.xml",
+      "destination": "/api/sitemap-news"
+    },
+    {
       "source": "/article/:slug",
       "has": [
         {
@@ -209,6 +216,17 @@
         }
       ],
       "destination": "/api/prerender?p=/articles"
+    },
+    {
+      "source": "/galaxie",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/galaxie"
     },
     {
       "source": "/videos",
@@ -814,11 +832,29 @@
       ]
     },
     {
+      "source": "/sitemap-news.xml",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=300, stale-while-revalidate=900"
+        }
+      ]
+    },
+    {
       "source": "/api/sitemap",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, s-maxage=900, stale-while-revalidate=3600"
+        }
+      ]
+    },
+    {
+      "source": "/api/sitemap-news",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=300, stale-while-revalidate=900"
         }
       ]
     },

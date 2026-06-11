@@ -12,6 +12,32 @@ export const client = createClient({
   apiVersion: API_VERSION,
 })
 
+const DEV_SANITY_PROXY = `/sanity-api/v${API_VERSION}/data/query/${DATASET}`
+
+async function fetchViaDevProxy<T>(query: string, params: Record<string, unknown>): Promise<T> {
+  const searchParams = new URLSearchParams({ query })
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined) {
+      searchParams.set(`$${key}`, JSON.stringify(value))
+    }
+  })
+
+  const response = await fetch(`${DEV_SANITY_PROXY}?${searchParams.toString()}`)
+
+  if (!response.ok) {
+    throw new Error(`Sanity proxy error ${response.status}: ${response.statusText}`)
+  }
+
+  const payload = await response.json()
+
+  if (payload.error) {
+    throw new Error(payload.error.description || payload.error.message || 'Sanity query error')
+  }
+
+  return payload.result as T
+}
+
 // Fonction utilitaire pour retry avec exponential backoff
 async function fetchWithRetry<T>(
   fetchFn: () => Promise<T>,
@@ -58,18 +84,21 @@ async function fetchWithRetry<T>(
 
 export async function sanityFetch<T>(query: string, params: Record<string, unknown> = {}): Promise<T> {
   return fetchWithRetry(async () => {
+    if (import.meta.env.DEV) {
+      return fetchViaDevProxy<T>(query, params)
+    }
+
     return client.fetch<T>(query, params)
   })
 }
 
 // Fonction helper pour récupérer des données
 export async function fetchFromSanity(query: string, params = {}) {
-  try {
-    const data = await client.fetch(query, params)
-    return data
-  } catch (error) {
-    throw error
+  if (import.meta.env.DEV) {
+    return fetchViaDevProxy(query, params)
   }
+
+  return client.fetch(query, params)
 }
 
 // Type pour les sources d'images

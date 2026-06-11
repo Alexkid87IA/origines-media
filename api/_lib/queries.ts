@@ -134,12 +134,25 @@ export const LIST_DOSSIERS_QUERY = `
   }
 `
 
+export const UNIVERS_ARTICLES_QUERY = `
+  *[_type == "production" && univpilar == $univpilar && defined(slug.current)] | order(datePublication desc)[0...20] {
+    "title": titre,
+    "slug": slug.current,
+    "description": coalesce(description, extrait, chapeau, deck),
+    "image": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
+    "type": coalesce(typeArticle, "article"),
+    videoUrl
+  }
+`
+
 export const SUBTOPIC_ARTICLES_QUERY = `
   *[_type == "production" && soustopic == $soustopic && defined(slug.current)] | order(datePublication desc)[0...20] {
     "title": titre,
     "slug": slug.current,
     "description": coalesce(description, extrait, chapeau, deck),
-    "type": coalesce(typeArticle, "article")
+    "image": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
+    "type": coalesce(typeArticle, "article"),
+    videoUrl
   }
 `
 

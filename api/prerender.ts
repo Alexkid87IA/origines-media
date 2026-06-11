@@ -6,7 +6,7 @@ import {
 } from './_lib/constants.js'
 import {
   articleSchema, videoSchema, breadcrumbSchema,
-  faqSchema, organizationSchema, itemListSchema, jsonLdTag,
+  faqSchema, homePageSchema, itemListSchema, jsonLdTag,
 } from './_lib/jsonLd.js'
 import {
   ARTICLE_FULL_QUERY, VIDEO_FULL_QUERY,
@@ -15,7 +15,7 @@ import {
   SUBTOPIC_ARTICLES_QUERY, LIST_ARTICLES_QUERY,
   LIST_VIDEOS_QUERY, LIST_PORTRAITS_QUERY,
   LIST_RECOMMENDATIONS_QUERY, LIST_SERIES_QUERY,
-  LIST_DOSSIERS_QUERY,
+  LIST_DOSSIERS_QUERY, UNIVERS_ARTICLES_QUERY,
   fetchSanity,
 } from './_lib/queries.js'
 import { renderPortableText } from './_lib/portableTextToHtml.js'
@@ -32,6 +32,7 @@ interface PageMeta {
 
 const STATIC_PAGES: Record<string, PageMeta> = {
   '/': { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION, ogType: 'website' },
+  '/galaxie': { title: 'Galaxie Origines — Origines Media', description: 'La carte des formats Origines Media : articles, vidéos, guides pratiques et boutique éditoriale.', ogType: 'website' },
   '/articles': { title: 'Articles — Origines Media', description: 'Tous nos articles : analyses, récits, interviews et réflexions sur les grands sujets de société.' },
   '/videos': { title: 'Vidéos — Origines Media', description: 'Découvrez nos programmes vidéo originaux : documentaires, interviews et contenus exclusifs.' },
   '/histoires': { title: 'Histoires — Origines Media', description: 'Des parcours de vie inspirants, des témoignages authentiques et des portraits intimes.' },
@@ -83,6 +84,14 @@ function formatDate(d: string | undefined): string {
   } catch { return '' }
 }
 
+function isVideoItem(item: { type?: string; videoUrl?: string }): boolean {
+  return item.type === 'video' || Boolean(item.videoUrl)
+}
+
+function itemHref(item: { slug: string; type?: string; videoUrl?: string }): string {
+  return isVideoItem(item) ? `/video/${item.slug}` : `/article/${item.slug}`
+}
+
 // ---------------------------------------------------------------------------
 // Enriched meta interface
 // ---------------------------------------------------------------------------
@@ -126,7 +135,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       ogType: staticMeta.ogType || 'website',
     }
     if (path === '/') {
-      meta.jsonLdBlocks = [jsonLdTag(organizationSchema())]
+      meta.jsonLdBlocks = [jsonLdTag(homePageSchema())]
     }
 
     // Enrich list pages with real Sanity content
@@ -192,6 +201,8 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
           title: data.title, description: data.description || '', image: data.image || DEFAULT_OG_IMAGE,
           url, publishedAt: data.publishedAt, modifiedAt: data.modifiedAt,
           author: data.author, section: data.verticaleNom || data.soustopic,
+          tags: Array.isArray(data.tags) ? data.tags.map((tag: any) => tag?.title).filter(Boolean) : undefined,
+          isNews: data.rubrique === 'actu',
         })))
       }
       schemas.push(jsonLdTag(breadcrumbSchema(crumbs)))
@@ -389,8 +400,31 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
         }
         body += '</dl>'
       }
+      const articles = await fetchSanity<Array<{
+        title: string
+        slug: string
+        description?: string
+        image?: string
+        type?: string
+        videoUrl?: string
+      }>>(UNIVERS_ARTICLES_QUERY, { univpilar: univers.id })
+      if (articles?.length) {
+        body += '<h2>Articles et vidéos récents</h2><ul>'
+        for (const a of articles.slice(0, 12)) {
+          body += `<li><a href="${itemHref(a)}">${esc(a.title)}</a>${a.description ? ` — ${esc(a.description)}` : ''}</li>`
+        }
+        body += '</ul>'
+      }
       const schemas = [jsonLdTag(breadcrumbSchema(crumbs))]
       if (allFaqs.length > 0) schemas.push(jsonLdTag(faqSchema(allFaqs.slice(0, 10))))
+      if (articles?.length) {
+        schemas.push(jsonLdTag(itemListSchema(articles.slice(0, 20).map(a => ({
+          name: a.title,
+          url: itemHref(a),
+          description: a.description,
+          image: a.image,
+        })))))
+      }
 
       return {
         ...defaults,
@@ -422,7 +456,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       if (articles?.length) {
         body += '<h2>Articles</h2><ul>'
         for (const a of articles) {
-          const href = a.type === 'video' ? `/video/${a.slug}` : `/article/${a.slug}`
+          const href = itemHref(a)
           body += `<li><a href="${href}">${esc(a.title)}</a>${a.description ? ` — ${esc(a.description)}` : ''}</li>`
         }
         body += '</ul>'
@@ -438,6 +472,14 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
 
       const schemas = [jsonLdTag(breadcrumbSchema(crumbs))]
       if (subtopic.faq?.length) schemas.push(jsonLdTag(faqSchema(subtopic.faq)))
+      if (articles?.length) {
+        schemas.push(jsonLdTag(itemListSchema(articles.slice(0, 20).map(a => ({
+          name: a.title,
+          url: itemHref(a),
+          description: a.description,
+          image: a.image,
+        })))))
+      }
 
       return {
         ...defaults,
@@ -507,6 +549,8 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
         jsonLdTag(articleSchema({
           title: data.title, description: data.description || '', image: data.image || DEFAULT_OG_IMAGE,
           url: canonicalUrl, publishedAt: data.publishedAt, modifiedAt: data.modifiedAt, author: data.author,
+          tags: Array.isArray(data.tags) ? data.tags.map((tag: any) => tag?.title).filter(Boolean) : undefined,
+          isNews: data.rubrique === 'actu',
         })),
         jsonLdTag(breadcrumbSchema(crumbs)),
       ]
@@ -569,6 +613,8 @@ function renderHTML(meta: ResolvedMeta): string {
   <title>${t}</title>
   <meta name="title" content="${t}" />
   <meta name="description" content="${d}" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="author" content="${SITE_NAME}" />
   <link rel="canonical" href="${meta.url}" />
   <meta property="og:type" content="${meta.ogType}" />
   <meta property="og:url" content="${meta.url}" />
