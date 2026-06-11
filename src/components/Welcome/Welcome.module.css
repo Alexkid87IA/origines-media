@@ -46,9 +46,9 @@
   display: block;
   font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(64px, 10vw, 140px);
+  font-size: 128px;
   line-height: 0.88;
-  letter-spacing: -0.045em;
+  letter-spacing: 0;
   color: var(--ink);
   text-transform: uppercase;
 }
@@ -117,7 +117,7 @@
 .tagline {
   font-family: var(--serif);
   font-style: italic;
-  font-size: clamp(17px, 2.2vw, 24px);
+  font-size: 22px;
   line-height: 1.45;
   color: var(--stone600);
   margin: 0 0 36px;
@@ -132,108 +132,175 @@
 
 .pillars {
   position: relative;
-  display: flex;
-  gap: 0;
+  --active-color: var(--ink);
   opacity: 0;
   animation: fadeUp 0.6s ease forwards 1s;
 }
 
-.spectrumLine {
+.pillarTrack {
+  --chapter-axis-y: 46px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  isolation: isolate;
+  border-top: 1px solid rgba(10, 10, 10, 0.12);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.12);
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.36), rgba(10, 10, 10, 0.015)),
+    transparent;
+}
+
+.pillarTrack::before {
+  content: "";
   position: absolute;
-  bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  top: var(--chapter-axis-y);
+  z-index: 1;
+  height: 1px;
   background: linear-gradient(
-    to right,
-    #7B5CD6 0%,
-    #7B5CD6 20%,
-    #E67839 20%,
-    #E67839 40%,
-    #D64C90 40%,
-    #D64C90 60%,
-    #2E94B5 60%,
-    #2E94B5 80%,
-    #34A853 80%,
-    #34A853 100%
+    90deg,
+    rgba(123, 92, 214, 0.72),
+    rgba(230, 120, 57, 0.72),
+    rgba(214, 76, 144, 0.72),
+    rgba(46, 148, 181, 0.72),
+    rgba(52, 168, 83, 0.72)
   );
   transform-origin: left;
   transform: scaleX(0);
-  animation: expandLine 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.2s;
+  animation: expandLine 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.2s;
 }
 
 /* Pillar wrapper */
 .pillarWrap {
   position: relative;
-  flex: 1;
+  min-width: 0;
 }
 
-/* Each pillar button */
-.pillar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 20px 20px 24px;
-  color: var(--ink);
-  cursor: pointer;
-  transition: background 0.3s ease;
-  overflow: hidden;
-  border: none;
-  background: transparent;
-  font: inherit;
-  text-align: left;
-}
-
-.pillarWrap:first-child .pillar { padding-left: 0; }
-.pillarWrap:last-child .pillar { padding-right: 0; }
-
-.pillar:hover {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-.pillarActive {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-/* Left bar accent */
-.pillarBar {
+.pillarWrap:not(:last-child)::after {
+  content: "";
   position: absolute;
-  left: 0;
   top: 0;
+  right: 0;
+  bottom: 4px;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.12),
+    rgba(10, 10, 10, 0.03) 72%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.chapterButton {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 116px;
+  padding: 0 !important;
+  color: var(--stone500) !important;
+  cursor: pointer;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  overflow: hidden;
+}
+
+.chapterButton > span {
+  width: 100%;
+  min-height: 116px;
+  display: grid;
+  grid-template-rows: 24px 36px auto;
+  justify-items: center;
+  align-content: start;
+  gap: 0;
+  padding: 14px 12px 16px;
+}
+
+.chapterButton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--pillar-color) 12%, transparent), transparent 72%),
+    rgba(255, 255, 255, 0.36);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chapterButton::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
   bottom: 0;
-  width: 2px;
+  z-index: 2;
+  height: 3px;
   background: var(--pillar-color);
-  transform-origin: top;
-  transform: scaleY(0);
-  animation: barGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: calc(1.1s + var(--pillar-i) * 0.1s);
+  opacity: 0;
+  transform: scaleX(0.42);
+  transform-origin: center;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.pillarWrap:first-child .pillarBar { display: none; }
-
-.pillar:hover .pillarBar {
-  width: 3px;
+.chapterButton:hover::before,
+.chapterActive::before {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Dot with glow ring */
-.pillarDot {
+.chapterButton:hover::after,
+.chapterActive::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.chapterButton:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pillar-color) 42%, transparent) !important;
+}
+
+.chapterNumber {
   position: relative;
-  width: 10px;
-  height: 10px;
-  flex-shrink: 0;
+  z-index: 2;
+  grid-row: 1;
+  align-self: end;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--pillar-color) 72%, var(--stone500));
+}
+
+.chapterDot {
+  position: absolute;
+  z-index: 3;
+  top: var(--chapter-axis-y);
+  left: 50%;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: var(--pillar-color);
   animation: dotAppear 0.4s ease forwards;
   animation-delay: calc(1.2s + var(--pillar-i) * 0.12s);
   opacity: 0;
-  transform: scale(0);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
 }
 
-.pillarRing {
+.chapterRing {
   position: absolute;
-  inset: -4px;
+  inset: -6px;
   border-radius: 50%;
   border: 1.5px solid var(--pillar-color);
   opacity: 0;
@@ -241,109 +308,125 @@
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.pillar:hover .pillarRing,
-.pillarActive .pillarRing {
-  opacity: 0.4;
+.chapterButton:hover .chapterRing,
+.chapterActive .chapterRing {
+  opacity: 0.42;
   transform: scale(1);
 }
 
-.pillar:hover .pillarDot,
-.pillarActive .pillarDot {
-  box-shadow: 0 0 12px 3px var(--pillar-color);
+.chapterButton:hover .chapterDot,
+.chapterActive .chapterDot {
+  box-shadow: 0 0 18px color-mix(in srgb, var(--pillar-color) 58%, transparent);
 }
 
-/* Label */
-.pillarLabel {
+.chapterBody {
+  position: relative;
+  z-index: 2;
+  grid-row: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  text-align: center;
+}
+
+.chapterLabel {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--stone500);
-  transition: color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    letter-spacing 0.3s ease;
 }
 
-.pillar:hover .pillarLabel,
-.pillarActive .pillarLabel {
+.chapterCue {
+  min-height: 18px;
+  font-family: var(--serif);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.25;
+  color: var(--stone500);
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chapterButton:hover .chapterLabel,
+.chapterActive .chapterLabel {
   color: var(--ink);
+  letter-spacing: 0.18em;
 }
 
-/* Chevron */
-.pillarChevron {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-  margin-left: auto;
-  opacity: 0.25;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-  color: var(--stone400);
-}
-
-.pillar:hover .pillarChevron {
-  opacity: 0.5;
-}
-
-.pillarActive .pillarChevron {
-  transform: rotate(180deg);
-  opacity: 0.7;
-  color: var(--pillar-color);
+.chapterButton:hover .chapterCue,
+.chapterActive .chapterCue {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ══════════════════════════════════════════════
-   DROPDOWN CARD — per pillar
+   METHOD PANEL — editorial intent
    ══════════════════════════════════════════════ */
 
-.card {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 30;
-  padding: 0 16px;
-  background: var(--paper);
-  border: 1px solid var(--stone100, #E8E5DE);
-  border-top: 2px solid var(--pillar-color);
-  box-shadow: 0 16px 48px -8px rgba(10, 10, 10, 0.14);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-8px);
+.methodPanel {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  min-height: 88px;
+  margin-top: 14px;
+  padding: 18px 22px;
+  border: 1px solid rgba(10, 10, 10, 0.14);
+  border-left: 4px solid var(--active-color);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--active-color) 8%, transparent), transparent 72%),
+    rgba(255, 255, 255, 0.34);
   transition:
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    visibility 0s linear 0.3s;
-  pointer-events: none;
+    border-color 0.3s ease,
+    background 0.3s ease;
 }
 
-.cardOpen {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(4px);
-  transition-delay: 0s, 0s, 0s;
-  pointer-events: auto;
-}
-
-.cardAccent {
-  display: none;
-}
-
-.cardTitle {
+.panelKicker {
   display: block;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--pillar-color);
-  padding: 16px 0 0;
-  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--active-color);
+  white-space: nowrap;
 }
 
-.cardText {
+.panelContent {
+  display: grid;
+  gap: 6px;
+}
+
+.panelTitle {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.panelText {
   font-family: var(--body);
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--stone600);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--stone500);
   margin: 0;
-  padding-bottom: 16px;
+  max-width: 74ch;
+  text-align: left;
 }
 
 /* ══════════════════════════════════════════════
@@ -366,19 +449,14 @@
   to { transform: scaleX(1); }
 }
 
-@keyframes barGrow {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
-}
-
 @keyframes dotAppear {
   from {
     opacity: 0;
-    transform: scale(0);
+    transform: translate(-50%, -50%) scale(0);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -393,22 +471,66 @@
    RESPONSIVE
    ══════════════════════════════════════════════ */
 
+@media (max-width: 1100px) {
+  .mastheadWord {
+    font-size: 104px;
+  }
+
+  .chapterButton,
+  .chapterButton > span {
+    min-height: 108px;
+  }
+
+  .chapterLabel {
+    font-size: 10px;
+    letter-spacing: 0.13em;
+  }
+
+  .chapterButton:hover .chapterLabel,
+  .chapterActive .chapterLabel {
+    letter-spacing: 0.15em;
+  }
+
+  .methodPanel {
+    gap: 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .welcome {
     padding: 36px 0 0;
   }
 
-  .pillar {
-    padding: 16px 14px 20px;
+  .mastheadWord {
+    font-size: 76px;
   }
 
-  .pillarLabel {
+  .tagline {
+    font-size: 18px;
+  }
+
+  .chapterButton,
+  .chapterButton > span {
+    min-height: 98px;
+  }
+
+  .chapterLabel {
     font-size: 9px;
     letter-spacing: 0.1em;
   }
 
-  .card {
-    width: 280px;
+  .chapterNumber {
+    font-size: 8px;
+  }
+
+  .methodPanel {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 14px 16px;
+  }
+
+  .panelText {
+    font-size: 13px;
   }
 }
 
@@ -432,7 +554,7 @@
   .mastheadWord {
     font-size: 32px;
     line-height: 1;
-    letter-spacing: -0.035em;
+    letter-spacing: 0;
   }
 
   .social {
@@ -467,7 +589,8 @@
     max-width: 100%;
   }
 
-  .pillars {
+  .pillarTrack {
+    display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -476,37 +599,55 @@
     animation: pillarPeek 1.6s ease 0.8s 1;
   }
 
-  .pillars::-webkit-scrollbar {
+  .pillarTrack::before {
+    top: var(--chapter-axis-y);
+  }
+
+  .pillarTrack::-webkit-scrollbar {
     display: none;
   }
 
   .pillarWrap {
     width: auto;
+    min-width: 156px;
     flex: none;
     flex-shrink: 0;
   }
 
-  .pillar {
-    padding: 8px 14px 10px;
-    gap: 6px;
-    white-space: nowrap;
+  .pillarWrap::after {
+    display: none;
   }
 
-  .pillarDot {
+  .chapterButton,
+  .chapterButton > span {
+    min-height: 92px;
+  }
+
+  .chapterButton > span {
+    grid-template-rows: auto 18px auto;
+    gap: 7px;
+    padding: 12px 10px 13px;
+  }
+
+  .chapterDot {
     width: 7px;
     height: 7px;
   }
 
-  .pillarLabel {
+  .chapterLabel {
     font-size: 9px;
     letter-spacing: 0.1em;
   }
 
-  .pillarChevron { display: none; }
-  .pillarBar { display: none; }
-  .spectrumLine { display: none; }
+  .chapterCue { display: none; }
 
-  .card { display: none !important; }
+  .methodPanel {
+    margin-top: 10px;
+    min-height: auto;
+    padding: 12px 14px;
+  }
+
+  .panelTitle { font-size: 16px; }
 }
 
 @media (max-width: 480px) {
@@ -524,8 +665,8 @@
     margin: 0 0 4px;
   }
 
-  .pillar {
-    padding: 6px 12px 8px;
+  .pillarWrap {
+    min-width: 142px;
   }
 }
 
@@ -543,27 +684,18 @@
     animation: none;
   }
 
-  .spectrumLine {
+  .pillarTrack::before {
     transform: scaleX(1);
     animation: none;
   }
 
-  .pillarBar {
-    transform: scaleY(1);
-    animation: none;
-  }
-
-  .pillarDot {
+  .chapterDot {
     opacity: 1;
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
     animation: none;
   }
 
-  .card {
-    transition: none;
-  }
-
-  .pillarChevron {
+  .methodPanel {
     transition: none;
   }
 }

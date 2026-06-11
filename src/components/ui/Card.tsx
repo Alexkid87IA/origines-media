@@ -9,6 +9,7 @@ export interface CardProps {
   href?: string;
   color?: string;
   className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
   onClick?: () => void;
 }
@@ -58,6 +59,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       href,
       color,
       className = '',
+      style: customStyle,
       children,
       onClick,
     },
@@ -86,9 +88,10 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       ${className}
     `;
 
-    const style: React.CSSProperties = color && variant === 'outlined'
-      ? { borderColor: `${color}40` }
-      : {};
+    const style: React.CSSProperties = {
+      ...customStyle,
+      ...(color && variant === 'outlined' ? { borderColor: `${color}40` } : {}),
+    };
 
     // If href is provided, render as Link
     if (href) {

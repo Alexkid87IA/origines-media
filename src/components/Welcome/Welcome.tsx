@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState } from "react";
+import Button from "@/components/ui/Button";
 import s from "./Welcome.module.css";
 
 const SOCIAL_LINKS = [
@@ -61,77 +62,49 @@ const SOCIAL_LINKS = [
 const PILLARS = [
   {
     label: "Comprendre",
-    title: "Ce qui se joue sous la surface",
+    chapter: "CH. 01",
+    title: "Lire les mécanismes",
     color: "#7B5CD6",
-    text: "Décoder les mécanismes invisibles qui nous façonnent. Psychologie, neurosciences, philosophie — nous explorons ce qui se joue sous la surface pour vous aider à mieux vous connaître.",
+    text: "Mettre des mots sur ce qui se joue sous la surface : émotions, relations, habitudes, choix.",
+    cue: "Observer avant d'agir",
   },
   {
     label: "Ressentir",
-    title: "Le corps sait avant nous",
+    chapter: "CH. 02",
+    title: "Revenir au vivant",
     color: "#E67839",
-    text: "Donner une place aux émotions, au corps, à ce qui ne se dit pas toujours. Nous croyons que la sensibilité est une force, pas une faiblesse — et qu'elle mérite un espace éditorial à sa hauteur.",
+    text: "Donner de la place au corps, aux sensations et à ce que l'on comprend parfois avant les mots.",
+    cue: "Écouter ce qui insiste",
   },
   {
     label: "Partager",
-    title: "Se reconnaître dans l'autre",
+    chapter: "CH. 03",
+    title: "Faire circuler les récits",
     color: "#D64C90",
-    text: "Recueillir les histoires de ceux qui ont traversé quelque chose. Témoignages, récits, portraits — parce que se reconnaître dans le parcours d'un autre, c'est déjà avancer.",
+    text: "Relier les expériences singulières : témoignages, portraits, histoires qui aident à se reconnaître.",
+    cue: "Créer du lien",
   },
   {
     label: "Découvrir",
-    title: "Élargir le regard",
+    chapter: "CH. 04",
+    title: "Changer d'angle",
     color: "#2E94B5",
-    text: "Ouvrir le regard sur ce qui existe ailleurs. Cultures, idées, pratiques, rencontres — nous cherchons ce qui élargit la perspective et nourrit la curiosité.",
+    text: "Ouvrir des fenêtres sur d'autres idées, pratiques, cultures et manières d'habiter le monde.",
+    cue: "Élargir le regard",
   },
   {
     label: "Grandir",
-    title: "Avancer sans forcer",
+    chapter: "CH. 05",
+    title: "Avancer sans injonction",
     color: "#34A853",
-    text: "Accompagner le mouvement, pas le forcer. Guides, outils, réflexions — pour ceux qui veulent avancer à leur rythme, sans injonction, avec intention.",
+    text: "Transformer doucement ce qui peut l'être, avec des guides, des repères et des gestes concrets.",
+    cue: "Trouver l'élan juste",
   },
 ];
 
-const AUTO_CLOSE_MS = 3000;
-
 export default function Welcome() {
-  const [active, setActive] = useState<number | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hoveringCard = useRef(false);
-
-  const clearTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
-
-  const startTimer = useCallback(() => {
-    clearTimer();
-    timerRef.current = setTimeout(() => {
-      if (!hoveringCard.current) setActive(null);
-    }, AUTO_CLOSE_MS);
-  }, [clearTimer]);
-
-  const toggle = (i: number) => {
-    clearTimer();
-    setActive((prev) => {
-      const next = prev === i ? null : i;
-      if (next !== null) startTimer();
-      return next;
-    });
-  };
-
-  const onCardEnter = () => {
-    hoveringCard.current = true;
-    clearTimer();
-  };
-
-  const onCardLeave = () => {
-    hoveringCard.current = false;
-    if (active !== null) startTimer();
-  };
-
-  useEffect(() => () => clearTimer(), [clearTimer]);
+  const [activePillar, setActivePillar] = useState(0);
+  const active = PILLARS[activePillar];
 
   return (
     <section className={s.welcome} aria-label="Bienvenue">
@@ -160,52 +133,55 @@ export default function Welcome() {
         Savoir d'où l'on vient pour savoir où l'on va.
       </p>
 
-      <div className={s.pillars}>
-        <div className={s.spectrumLine} aria-hidden="true" />
-        {PILLARS.map((u, i) => (
-          <div key={u.label} className={s.pillarWrap}>
-            <button
-              type="button"
-              className={`${s.pillar}${active === i ? ` ${s.pillarActive}` : ""}`}
-              onClick={() => toggle(i)}
-              aria-expanded={active === i}
-              style={
-                {
-                  "--pillar-color": u.color,
-                  "--pillar-i": i,
-                } as React.CSSProperties
-              }
-            >
-              <span className={s.pillarBar} aria-hidden="true" />
-              <span className={s.pillarDot} aria-hidden="true">
-                <span className={s.pillarRing} />
-              </span>
-              <span className={s.pillarLabel}>{u.label}</span>
-              <svg
-                className={s.pillarChevron}
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
+      <div
+        className={s.pillars}
+        style={{ "--active-color": active.color } as React.CSSProperties}
+      >
+        <div className={s.pillarTrack} role="tablist" aria-label="Les chapitres éditoriaux Origines">
+          {PILLARS.map((u, i) => (
+            <div key={u.label} className={s.pillarWrap}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                role="tab"
+                aria-selected={activePillar === i}
+                aria-controls="welcome-chapter-panel"
+                id={`welcome-chapter-${i + 1}`}
+                className={`${s.chapterButton}${activePillar === i ? ` ${s.chapterActive}` : ""}`}
+                onClick={() => setActivePillar(i)}
+                style={
+                  {
+                    "--pillar-color": u.color,
+                    "--pillar-i": i,
+                  } as React.CSSProperties
+                }
               >
-                <path d="M4 6l4 4 4-4" />
-              </svg>
-            </button>
-
-            <div
-              className={`${s.card}${active === i ? ` ${s.cardOpen}` : ""}`}
-              aria-hidden={active !== i}
-              style={{ "--pillar-color": u.color } as React.CSSProperties}
-              onMouseEnter={onCardEnter}
-              onMouseLeave={onCardLeave}
-            >
-              <div className={s.cardAccent} aria-hidden="true" />
-              <span className={s.cardTitle}>{u.title}</span>
-              <p className={s.cardText}>{u.text}</p>
+                <span className={s.chapterNumber}>{u.chapter}</span>
+                <span className={s.chapterDot} aria-hidden="true">
+                  <span className={s.chapterRing} />
+                </span>
+                <span className={s.chapterBody}>
+                  <span className={s.chapterLabel}>{u.label}</span>
+                  <span className={s.chapterCue}>{u.cue}</span>
+                </span>
+              </Button>
             </div>
+          ))}
+        </div>
+
+        <div
+          className={s.methodPanel}
+          id="welcome-chapter-panel"
+          role="tabpanel"
+          aria-labelledby={`welcome-chapter-${activePillar + 1}`}
+        >
+          <span className={s.panelKicker}>{active.chapter}</span>
+          <div className={s.panelContent}>
+            <strong className={s.panelTitle}>{active.title}</strong>
+            <p className={s.panelText}>{active.text}</p>
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );

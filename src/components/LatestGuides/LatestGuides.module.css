@@ -1,123 +1,186 @@
-/* ====== Nos guides — Cards horizontales avec accent coloré ====== */
+/* ====== Nos guides — parcours pratiques ====== */
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .section {
-  margin-top: 72px;
+  margin-top: 96px;
   position: relative;
 }
 
-/* ── Chapter header ── */
 .chapterMark {
   display: flex;
   align-items: baseline;
   gap: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--ink);
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--stone500);
   opacity: 0;
   animation: fadeUp 0.5s ease forwards 0.1s;
 }
-.cNum { font-weight: 600; color: var(--ink); }
-.cSep { opacity: 0.3; }
-.cLabel { color: var(--stone700); }
+
+.cNum {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cSep {
+  opacity: 0.3;
+}
+
+.cLabel {
+  color: var(--stone700);
+}
 
 .seeAll {
   margin-left: auto;
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--stone500);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
   white-space: nowrap;
 }
-.seeAll:hover { color: var(--ink); }
-.arrow {
-  display: inline-block;
+
+.seeAll:hover {
+  color: var(--ink);
+}
+
+.arrow,
+.ctaArrow {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
   transition: transform 0.3s ease;
 }
-.seeAll:hover .arrow { transform: translateX(4px); }
 
-/* ── Liste verticale ── */
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  background: var(--stone200);
-  border: 1px solid var(--stone200);
-  overflow: hidden;
+.seeAll:hover .arrow,
+.featureGuide:hover .ctaArrow {
+  transform: translateX(4px);
 }
 
-/* ── Card guide horizontale ── */
-.card {
+.editorialHeader {
   display: grid;
-  grid-template-columns: 4px 260px minmax(0, 1fr);
-  gap: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
+  gap: 32px;
+  align-items: end;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.18s;
+}
+
+.sectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone600);
+}
+
+.sectionKicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+}
+
+.sectionTitle {
+  margin: 0;
+  max-width: 780px;
+  font-family: var(--display);
+  font-size: 42px;
+  line-height: 1.04;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.sectionDeck {
+  margin: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--stone200);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--stone600);
+}
+
+.guideLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(430px, 0.98fr);
+  gap: 20px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.28s;
+}
+
+.featureGuide {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
   text-decoration: none;
   color: var(--ink);
-  background: var(--paper);
+  background: var(--pure);
+  border: 1px solid var(--ink);
+  border-radius: 8px;
   overflow: hidden;
-  transition: background 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-  opacity: 0;
-  animation: fadeUp 0.5s ease forwards calc(0.2s + var(--i, 0) * 0.1s);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.card:hover {
-  background: var(--stone50, #F0EDE6);
+
+.featureGuide:hover {
+  background: var(--pure);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 18px 44px rgba(10, 10, 10, 0.08);
 }
 
-/* Barre accent colorée */
-.cardAccent {
-  background: var(--accent, var(--stone300));
-  transition: filter 0.3s ease;
-}
-.card:hover .cardAccent {
-  filter: brightness(1.3);
-}
-
-.cardImgWrap {
+.featureMedia {
   position: relative;
+  aspect-ratio: var(--cover-ratio, 1.5);
   overflow: hidden;
-  background: #0A0A0A;
-}
-.cardImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.card:hover .cardImg { transform: scale(1.04); }
-
-.cardBody {
-  display: flex;
-  flex-direction: column;
-  padding: 24px 32px;
-  min-width: 0;
-}
-
-.cardMeta {
+  background: var(--ink);
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  justify-content: center;
 }
 
-.cardUnivers {
+.featureImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.featureGuide:hover .featureImg {
+  opacity: 0.96;
+}
+
+.featurePill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--stone200);
+  background: var(--stone50);
+  color: var(--stone600);
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
@@ -125,102 +188,299 @@
   text-transform: uppercase;
 }
 
-.cardSep {
-  font-size: 10px;
-  color: var(--stone300);
+.featureBody {
+  padding: 28px 30px 30px;
+  border-top: 1px solid var(--stone100);
 }
 
-.cardTime {
+.guideMeta {
+  margin-bottom: 12px;
   font-family: var(--mono);
   font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent, var(--stone500));
+}
+
+.featureTitle {
+  margin: 0 0 16px;
+  font-family: var(--display);
+  font-size: 31px;
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.featureDeck {
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--stone100);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--stone700);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 22px;
+}
+
+.step {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 9px;
+  border: 1px solid var(--stone200);
+  background: var(--stone50);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stone700);
+}
+
+.stepIcon {
+  width: 15px;
+  height: 15px;
+  color: var(--accent, var(--stone500));
+  flex: 0 0 auto;
+}
+
+.cardCta {
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent, var(--stone600));
+}
+
+.guideRail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.railHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 18px;
+  border: 1px solid var(--stone200);
+  border-radius: 8px;
+  background: var(--pure);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--stone500);
 }
 
-.cardTitle {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: clamp(18px, 2vw, 22px);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  margin: 0 0 8px;
-  text-wrap: balance;
-}
-.card:hover .cardTitle {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+.railCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 15px;
+  padding: 11px;
+  min-height: 118px;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--pure);
+  border: 1px solid var(--stone200);
+  border-radius: 8px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards calc(0.34s + var(--i, 0) * 0.08s);
+  transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
 }
 
-.cardDeck {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 14px;
-  line-height: 1.5;
+.railCard:hover {
+  background: var(--stone50);
+  border-color: var(--stone300);
+  transform: translateX(3px);
+}
+
+.railCard::before {
+  content: "";
+  position: absolute;
+  inset: 10px auto 10px 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent, var(--stone300));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.railCard:hover::before {
+  opacity: 1;
+}
+
+.railVisual {
+  align-self: center;
+  aspect-ratio: var(--cover-ratio, 1.5);
+  overflow: hidden;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.railImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.railCard:hover .railImg {
+  opacity: 0.96;
+}
+
+.railBody {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.railTitle {
+  margin: 0 0 6px;
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: 1.14;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.railDeck {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 12px;
+  line-height: 1.4;
   color: var(--stone600);
-  margin: 0 0 16px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.cardCta {
-  margin-top: auto;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent, var(--stone500));
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ctaArrow {
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-.card:hover .ctaArrow { transform: translateX(4px); }
-
-/* ── Responsive ── */
-@media (max-width: 1024px) {
-  .card { grid-template-columns: 4px 200px minmax(0, 1fr); }
-  .cardBody { padding: 20px 24px; }
-}
-
-@media (max-width: 640px) {
-  .section { margin-top: 48px; }
-  .card {
-    grid-template-columns: 4px 1fr;
-    grid-template-rows: auto auto;
+@media (max-width: 1120px) {
+  .guideLayout {
+    grid-template-columns: 1fr;
   }
-  .cardImgWrap {
-    grid-column: 2;
-    grid-row: 1;
+
+  .guideRail {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .cardImg { aspect-ratio: auto; }
-  .cardBody {
-    grid-column: 2;
-    grid-row: 2;
-    padding: 16px 18px 20px;
+
+  .railHead {
+    grid-column: 1 / -1;
   }
-  .cardAccent {
-    grid-row: 1 / -1;
+
+  .railCard {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .railVisual {
+    aspect-ratio: var(--cover-ratio, 1.5);
   }
 }
 
-.ctaDot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent, var(--stone500));
-  margin-right: 4px;
-  vertical-align: middle;
+@media (max-width: 820px) {
+  .section {
+    margin-top: 64px;
+  }
+
+  .chapterMark {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .seeAll {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .editorialHeader {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .sectionTitle {
+    font-size: 32px;
+  }
+
+  .sectionDeck {
+    padding-left: 18px;
+  }
+
+  .featureBody {
+    padding: 24px 20px 26px;
+  }
+
+  .featureTitle {
+    font-size: 28px;
+  }
+
+  .featureDeck {
+    font-size: 17px;
+  }
+
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .guideRail {
+    grid-template-columns: 1fr;
+  }
+
+  .railCard {
+    grid-template-columns: 132px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .railCard {
+    grid-template-columns: 1fr;
+  }
+
+  .railVisual {
+    aspect-ratio: var(--cover-ratio, 1.5);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card { transition: none; }
+  .chapterMark,
+  .editorialHeader,
+  .guideLayout,
+  .railCard {
+    animation: none;
+    opacity: 1;
+    transition: none;
+  }
 }

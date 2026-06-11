@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { Card } from "@/components/ui/Card";
 import { sanityFetch } from "@/lib/sanity";
 import { sanityImg } from "@/lib/sanityImage";
 import { RT } from "@/lib/queries";
@@ -15,11 +17,15 @@ interface ArticleItem {
   tempsLecture?: number;
   authorName?: string;
   description?: string;
+  extrait?: string;
+  contenuTexte?: string;
+  datePublication?: string;
 }
 
 const QUERY = `
   *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [0...5] {
-    _id, titre, description,
+    _id, titre, description, extrait, datePublication,
+    "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
     "slug": slug.current,
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     univpilar, ${RT},
@@ -30,8 +36,58 @@ const QUERY = `
 function uLabel(id?: string) {
   return id ? UNIVERS_MAP[id as UniversId]?.label ?? null : null;
 }
+
 function uColor(id?: string) {
   return id ? UNIVERS_MAP[id as UniversId]?.color ?? "var(--stone500)" : "var(--stone500)";
+}
+
+function excerptOf(article: ArticleItem, max = 220) {
+  const raw = article.extrait || article.description || article.contenuTexte || "";
+  const clean = raw.replace(/\s+/g, " ").trim();
+
+  if (!clean) {
+    return "Un article Origines pour prendre le temps de comprendre ce qui nous traverse, ce qui nous relie et ce qui continue de nous transformer.";
+  }
+
+  if (clean.length <= max) return clean;
+
+  const cut = clean.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${cut.slice(0, lastSpace > 120 ? lastSpace : max).trim()}...`;
+}
+
+function formatDate(value?: string) {
+  if (!value) return null;
+
+  try {
+    return new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(new Date(value));
+  } catch {
+    return null;
+  }
+}
+
+function ArticleMeta({ article, compact = false }: { article: ArticleItem; compact?: boolean }) {
+  const univers = uLabel(article.univpilar);
+  const date = formatDate(article.datePublication);
+  const parts = [
+    date,
+    article.tempsLecture ? `${article.tempsLecture} min` : null,
+    compact ? null : article.authorName,
+  ].filter(Boolean);
+
+  return (
+    <div className={s.metaLine}>
+      {univers && (
+        <span className={s.univers} style={{ "--accent": uColor(article.univpilar) } as CSSProperties}>
+          <span className={s.universDot} />
+          {univers}
+        </span>
+      )}
+      {parts.length > 0 && (
+        <span className={s.metaText}>{parts.join(" / ")}</span>
+      )}
+    </div>
+  );
 }
 
 export default function LatestArticles() {
@@ -47,82 +103,83 @@ export default function LatestArticles() {
   const rest = items.slice(1, 5);
 
   return (
-    <section className={s.section}>
+    <section className={s.section} aria-labelledby="latest-articles-title">
       <div className={s.chapterMark}>
         <span className={s.cNum}>Ch.02</span>
         <span className={s.cSep}>/</span>
         <span className={s.cLabel}>Derniers articles</span>
         <Link to="/articles" className={s.seeAll}>
-          Tous les articles <span className={s.arrow}>→</span>
+          Tous les articles <ArrowRight className={s.arrow} aria-hidden="true" />
         </Link>
       </div>
 
-      <div className={s.grid}>
-        {/* Hero card */}
-        <Link to={`/article/${hero.slug}`} className={s.heroCard}>
-          <img
-            src={sanityImg(hero.imageUrl, 800) || "/placeholder.svg"}
-            alt={hero.titre}
-            className={s.heroImg}
-            loading="lazy"
-          />
-          <div className={s.heroGradient} />
+      <header className={s.editorialHeader}>
+        <div className={s.headerCopy}>
+          <span className={s.sectionKicker}>À lire maintenant</span>
+          <h2 id="latest-articles-title" className={s.sectionTitle}>
+            Des idées qui restent après la lecture.
+          </h2>
+        </div>
+        <p className={s.sectionDeck}>
+          Une sélection de récits, d'analyses et de pistes concrètes pour comprendre ce qui nous construit.
+        </p>
+      </header>
+
+      <div className={s.featureGrid}>
+        <Card href={`/article/${hero.slug}`} variant="outlined" size="sm" className={s.heroCard}>
+          <div className={s.heroVisual}>
+            <img
+              src={sanityImg(hero.imageUrl, 1000) || "/placeholder.svg"}
+              alt={hero.titre}
+              className={s.heroImg}
+              loading="lazy"
+            />
+            <span className={s.heroNumber}>01</span>
+          </div>
+
           <div className={s.heroBody}>
-            {uLabel(hero.univpilar) && (
-              <span className={s.heroKicker} style={{ color: uColor(hero.univpilar) }}>
-                <span className={s.kickerDot} />
-                {uLabel(hero.univpilar)}
-              </span>
-            )}
+            <ArticleMeta article={hero} />
             <h3 className={s.heroTitle}>{hero.titre}</h3>
-            {hero.description && (
-              <p className={s.heroDeck}>{hero.description}</p>
-            )}
-            <div className={s.heroMeta}>
-              {hero.authorName && <span>{hero.authorName}</span>}
-              {hero.tempsLecture && (
-                <>
-                  <span className={s.dot}>·</span>
-                  <span>{hero.tempsLecture} min</span>
-                </>
-              )}
+            <p className={s.heroExcerpt}>{excerptOf(hero, 260)}</p>
+            <div className={s.heroFooter}>
+              <span>{hero.authorName || "Origines Media"}</span>
+              <span className={s.readMore}>
+                Lire l'article <ArrowRight className={s.readMoreIcon} aria-hidden="true" />
+              </span>
             </div>
           </div>
-        </Link>
+        </Card>
 
-        {/* Side stack */}
-        <div className={s.stack}>
-          {rest.map((a, i) => (
-            <Link key={a._id} to={`/article/${a.slug}`} className={s.card} style={{ "--i": i } as React.CSSProperties}>
-              <div className={s.cardImgWrap}>
+        <div className={s.storyStack}>
+          <div className={s.stackHead}>
+            <span>Le fil</span>
+            <span>{rest.length} lectures</span>
+          </div>
+
+          {rest.map((article, index) => (
+            <Card
+              key={article._id}
+              href={`/article/${article.slug}`}
+              variant="outlined"
+              size="sm"
+              className={s.storyCard}
+              style={{ "--i": index, "--accent": uColor(article.univpilar) } as CSSProperties}
+            >
+              <span className={s.storyNumber}>{String(index + 2).padStart(2, "0")}</span>
+              <div className={s.storyCopy}>
+                <ArticleMeta article={article} compact />
+                <h3 className={s.storyTitle}>{article.titre}</h3>
+                <p className={s.storyExcerpt}>{excerptOf(article, 150)}</p>
+              </div>
+              <div className={s.storyVisual}>
                 <img
-                  src={sanityImg(a.imageUrl, 400) || "/placeholder.svg"}
-                  alt={a.titre}
-                  className={s.cardImg}
+                  src={sanityImg(article.imageUrl, 360) || "/placeholder.svg"}
+                  alt={article.titre}
+                  className={s.storyImg}
                   loading="lazy"
                 />
               </div>
-              <div className={s.cardBody}>
-                <div className={s.cardMeta}>
-                  {uLabel(a.univpilar) && (
-                    <span className={s.cardUnivers} style={{ color: uColor(a.univpilar) }}>
-                      <span className={s.cardDot} />
-                      {uLabel(a.univpilar)}
-                    </span>
-                  )}
-                  {a.tempsLecture && (
-                    <>
-                      <span className={s.cardSep}>·</span>
-                      <span className={s.cardTime}>{a.tempsLecture} min</span>
-                    </>
-                  )}
-                </div>
-                <h4 className={s.cardTitle}>{a.titre}</h4>
-                {a.authorName && (
-                  <span className={s.cardAuthor}>{a.authorName}</span>
-                )}
-              </div>
-            </Link>
+            </Card>
           ))}
         </div>
       </div>

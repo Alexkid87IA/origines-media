@@ -340,38 +340,50 @@ export default function SiteHeader() {
               onMouseEnter={() => openMega("galaxie")}
               onMouseLeave={closeMega}
             >
-              <button
-                type="button"
+              <div
                 className={`${styles.megaBtn}${megaTarget === "galaxie" ? ` ${styles.megaBtnActive}` : ""}`}
-                onClick={() => setMegaTarget((t) => t === "galaxie" ? null : "galaxie")}
-                aria-expanded={megaTarget === "galaxie"}
-                aria-controls="mega-galaxie"
               >
-                <svg
-                  className={styles.megaIcon}
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  aria-hidden="true"
+                <a
+                  href="/galaxie"
+                  className={styles.megaMainLink}
+                  aria-label="Aller à la page Galaxie"
                 >
-                  <circle cx="8" cy="8" r="6" />
-                  <ellipse cx="8" cy="8" rx="6" ry="2.5" />
-                  <ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)" />
-                  <ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(120 8 8)" />
-                </svg>
-                Galaxie
-                <svg
-                  className={`${styles.megaChevron}${megaTarget === "galaxie" ? ` ${styles.megaChevronOpen}` : ""}`}
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
+                  <svg
+                    className={styles.megaIcon}
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    aria-hidden="true"
+                  >
+                    <circle cx="8" cy="8" r="6" />
+                    <ellipse cx="8" cy="8" rx="6" ry="2.5" />
+                    <ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)" />
+                    <ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(120 8 8)" />
+                  </svg>
+                  <span>Galaxie</span>
+                </a>
+                <button
+                  type="button"
+                  className={styles.megaToggle}
+                  onClick={() => setMegaTarget((t) => t === "galaxie" ? null : "galaxie")}
+                  aria-label={megaTarget === "galaxie" ? "Fermer le menu Galaxie" : "Ouvrir le menu Galaxie"}
+                  aria-expanded={megaTarget === "galaxie"}
+                  aria-controls="mega-galaxie"
+                  aria-haspopup="true"
                 >
-                  <path d="M4 6l4 4 4-4" />
-                </svg>
-              </button>
+                  <svg
+                    className={`${styles.megaChevron}${megaTarget === "galaxie" ? ` ${styles.megaChevronOpen}` : ""}`}
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M4 6l4 4 4-4" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <div
@@ -379,36 +391,48 @@ export default function SiteHeader() {
               onMouseEnter={() => openMega("univers")}
               onMouseLeave={closeMega}
             >
-              <button
-                type="button"
+              <div
                 className={`${styles.megaBtn}${megaTarget === "univers" ? ` ${styles.megaBtnActive}` : ""}`}
-                onClick={() => setMegaTarget((t) => t === "univers" ? null : "univers")}
-                aria-expanded={megaTarget === "univers"}
-                aria-controls="mega-univers"
               >
-                <svg
-                  className={styles.megaIcon}
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  aria-hidden="true"
+                <a
+                  href="/univers"
+                  className={styles.megaMainLink}
+                  aria-label="Voir tous les univers"
                 >
-                  <rect x="1" y="1" width="6" height="6" rx="1" />
-                  <rect x="9" y="1" width="6" height="6" rx="1" />
-                  <rect x="1" y="9" width="6" height="6" rx="1" />
-                  <rect x="9" y="9" width="6" height="6" rx="1" />
-                </svg>
-                Univers
-                <svg
-                  className={`${styles.megaChevron}${megaTarget === "univers" ? ` ${styles.megaChevronOpen}` : ""}`}
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
+                  <svg
+                    className={styles.megaIcon}
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <rect x="1" y="1" width="6" height="6" rx="1" />
+                    <rect x="9" y="1" width="6" height="6" rx="1" />
+                    <rect x="1" y="9" width="6" height="6" rx="1" />
+                    <rect x="9" y="9" width="6" height="6" rx="1" />
+                  </svg>
+                  <span>Univers</span>
+                </a>
+                <button
+                  type="button"
+                  className={styles.megaToggle}
+                  onClick={() => setMegaTarget((t) => t === "univers" ? null : "univers")}
+                  aria-label={megaTarget === "univers" ? "Fermer le menu Univers" : "Ouvrir le menu Univers"}
+                  aria-expanded={megaTarget === "univers"}
+                  aria-controls="mega-univers"
+                  aria-haspopup="true"
                 >
-                  <path d="M4 6l4 4 4-4" />
-                </svg>
-              </button>
+                  <svg
+                    className={`${styles.megaChevron}${megaTarget === "univers" ? ` ${styles.megaChevronOpen}` : ""}`}
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M4 6l4 4 4-4" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {SECONDARY.map((section) => {

@@ -747,6 +747,7 @@ const MOBILE_SECTIONS = [
   {
     title: "Origines",
     links: [
+      { label: "Galaxie", href: "/galaxie" },
       { label: "Média" , href: "/media" },
       { label: "Vidéos", href: "/videos" },
       { label: "Guides & Ateliers", href: "/guides" },

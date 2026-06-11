@@ -273,9 +273,9 @@ export default function Pillars() {
   return (
     <section className={s.pillars} aria-labelledby="pillars-title">
       <div className={s.chapterMark}>
-        <span className={`${s.cNum} mono`}>Ch.02</span>
+        <span className={`${s.cNum} mono`}>Rep&egrave;res</span>
         <span className={`${s.cSep} mono`}>/</span>
-        <span className={`${s.cLabel} mono`}>Nos univers</span>
+        <span className={`${s.cLabel} mono`}>Les cinq univers</span>
       </div>
 
       <header className={s.sectionHead}>
