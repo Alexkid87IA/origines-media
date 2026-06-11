@@ -220,6 +220,7 @@ export default function SousTopicPage() {
   }
 
   const color = univers.color;
+  const countLabel = (count: number) => loading ? "..." : count.toString();
   const sponsor = soustopic ? SPONSORS[soustopic] : undefined;
   const Wrap = sponsor
     ? ({ children }: { children: React.ReactNode }) => (
@@ -328,13 +329,13 @@ export default function SousTopicPage() {
                   className={`${s.contentFilterBtn} ${contentFilter === "all" ? s.contentFilterBtnActive : ""}`}
                   onClick={() => handleContentFilterChange("all")}
                 >
-                  Tout <span className={s.contentFilterCount}>{articles.length}</span>
+                  Tout <span className={s.contentFilterCount}>{countLabel(articles.length)}</span>
                 </button>
                 <button
                   className={`${s.contentFilterBtn} ${contentFilter === "articles" ? s.contentFilterBtnActive : ""}`}
                   onClick={() => handleContentFilterChange("articles")}
                 >
-                  Articles <span className={s.contentFilterCount}>{articleCount}</span>
+                  Articles <span className={s.contentFilterCount}>{countLabel(articleCount)}</span>
                 </button>
                 {videoCount > 0 && (
                   <button

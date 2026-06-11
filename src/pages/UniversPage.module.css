@@ -13,6 +13,568 @@
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
+@keyframes skelShimmer {
+  from { background-position: 220% 0; }
+  to { background-position: -220% 0; }
+}
+
+/* =====================================================================
+   UNIVERS HUB — refonte page liste
+   ===================================================================== */
+
+.uPage {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.uHero {
+  padding: 56px 0 76px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.uHeroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 0.72fr);
+  gap: 56px;
+  align-items: center;
+  padding-top: 24px;
+}
+
+.uHeroText {
+  max-width: 700px;
+}
+
+.uKicker,
+.uSectionKicker,
+.uPanelTop,
+.uPanelFoot,
+.uPanelCount,
+.uUniversCount,
+.uLatestPillar,
+.uLatestMeta {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.uKicker,
+.uSectionKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.uKicker {
+  margin-bottom: 22px;
+  color: rgba(247, 245, 240, 0.58);
+}
+
+.uHeroTitle,
+.uSectionTitle,
+.uIndexTitle,
+.uCtaTitle {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.uHeroTitle {
+  max-width: 11ch;
+  margin-bottom: 24px;
+  font-size: clamp(48px, 7vw, 92px);
+}
+
+.uHeroDeck {
+  max-width: 60ch;
+  margin: 0;
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.7;
+  color: rgba(247, 245, 240, 0.66);
+}
+
+.uHeroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.uHeroPanel {
+  border: 1px solid rgba(247, 245, 240, 0.16);
+  background: rgba(247, 245, 240, 0.04);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+}
+
+.uPanelTop,
+.uPanelFoot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  color: rgba(247, 245, 240, 0.46);
+}
+
+.uPanelRows {
+  display: grid;
+  gap: 1px;
+  background: rgba(247, 245, 240, 0.12);
+  border-top: 1px solid rgba(247, 245, 240, 0.12);
+  border-bottom: 1px solid rgba(247, 245, 240, 0.12);
+}
+
+.uPanelRow {
+  display: grid;
+  grid-template-columns: 44px 10px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 72px;
+  padding: 0 20px;
+  background: rgba(10, 10, 10, 0.82);
+  color: var(--paper);
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.uPanelRow:hover {
+  background: var(--pillar-color);
+  color: #fff;
+}
+
+.uPanelIndex {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(247, 245, 240, 0.34);
+}
+
+.uPanelDot {
+  width: 8px;
+  height: 8px;
+  background: var(--pillar-color);
+}
+
+.uPanelName {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.uPanelCount {
+  color: rgba(247, 245, 240, 0.46);
+}
+
+.uIntentSection,
+.uUniversSection,
+.uIndexSection,
+.uLatestSection,
+.uCtaSection {
+  padding: 80px 0;
+}
+
+.uSectionHead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 34px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.uSectionKicker {
+  color: var(--stone500);
+}
+
+.uSectionTitle {
+  font-size: clamp(30px, 4vw, 54px);
+}
+
+.uIntentGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  border: 1px solid var(--stone100);
+  background: var(--stone100);
+}
+
+.uIntentCard,
+.uUniversCard {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+.uIntentCard {
+  display: flex !important;
+  min-height: 310px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px !important;
+}
+
+.uIntentIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 22px;
+  border: 1px solid color-mix(in srgb, var(--pillar-color) 38%, transparent);
+  color: var(--pillar-color);
+}
+
+.uIntentTitle {
+  margin: 0 0 12px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 850;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.uIntentText {
+  margin: 0 0 20px;
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.58;
+  color: var(--stone500);
+}
+
+.uIntentTopics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: auto 0 22px;
+}
+
+.uIntentTopics span,
+.uTopicChip,
+.uIndexTopic,
+.uCloudItem {
+  border: 1px solid var(--stone100);
+  font-family: var(--body);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.uIntentTopics span {
+  padding: 8px 10px;
+  color: var(--stone500);
+}
+
+.uUniversSection {
+  background: #f7f4ed;
+}
+
+.uUniversGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  border: 1px solid var(--stone100);
+  background: var(--stone100);
+}
+
+.uUniversCard {
+  display: flex !important;
+  min-height: 420px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.uUniversAccent {
+  width: 100%;
+  height: 5px;
+  background: var(--pillar-color);
+}
+
+.uUniversHeader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 22px 0;
+}
+
+.uUniversNumber {
+  font-family: var(--display);
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(10, 10, 10, 0.12);
+}
+
+.uUniversCount {
+  color: var(--pillar-color);
+  padding-top: 8px;
+}
+
+.uUniversName {
+  margin: 18px 22px 12px;
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.uUniversTagline {
+  margin: 0 22px 22px;
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.58;
+  color: var(--stone500);
+}
+
+.uUniversTopics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: auto 22px 24px;
+}
+
+.uTopicChip {
+  padding: 8px 10px;
+  color: var(--stone600);
+  text-decoration: none;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.uTopicChip:hover {
+  border-color: var(--pillar-color);
+  color: var(--ink);
+  background: rgba(10, 10, 10, 0.02);
+}
+
+.uUniversCard > a:last-child {
+  margin: 0 22px 24px;
+}
+
+.uIndexSection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.uIndexGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 52px;
+  align-items: start;
+}
+
+.uIndexTitle {
+  max-width: 12ch;
+  margin: 18px 0 20px;
+  font-size: clamp(34px, 4.8vw, 62px);
+}
+
+.uIndexText {
+  max-width: 44ch;
+  margin: 0 0 28px;
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(247, 245, 240, 0.58);
+}
+
+.uIndexList {
+  display: grid;
+  gap: 1px;
+  border: 1px solid rgba(247, 245, 240, 0.12);
+  background: rgba(247, 245, 240, 0.12);
+}
+
+.uIndexGroup {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  background: #111;
+}
+
+.uIndexGroupTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--paper);
+  text-decoration: none;
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+
+.uIndexDot {
+  width: 8px;
+  height: 8px;
+  background: var(--pillar-color);
+}
+
+.uIndexTopics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.uIndexTopic {
+  padding: 8px 10px;
+  color: rgba(247, 245, 240, 0.62);
+  text-decoration: none;
+  border-color: rgba(247, 245, 240, 0.12);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.uIndexTopic:hover {
+  color: var(--paper);
+  border-color: rgba(247, 245, 240, 0.32);
+}
+
+.uTopicCloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.uCloudItem {
+  padding: 9px 12px;
+  color: rgba(247, 245, 240, 0.58);
+  text-decoration: none;
+  border-color: rgba(247, 245, 240, 0.12);
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.uCloudItem:hover {
+  color: var(--paper);
+  border-color: var(--pillar-color);
+  background: rgba(247, 245, 240, 0.04);
+}
+
+.uLatestSection {
+  background: var(--paper);
+}
+
+.uLatestGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  border: 1px solid var(--stone100);
+  background: var(--stone100);
+}
+
+.uLatestCard {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.uLatestCard:hover {
+  background: rgba(10, 10, 10, 0.025);
+}
+
+.uLatestCardLead {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.uLatestImage {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgba(10, 10, 10, 0.05);
+}
+
+.uLatestImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s ease;
+}
+
+.uLatestCard:hover .uLatestImage img {
+  transform: scale(1.04);
+}
+
+.uLatestBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.uLatestPillar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--pillar-color);
+}
+
+.uLatestDot {
+  width: 6px;
+  height: 6px;
+  background: var(--pillar-color);
+}
+
+.uLatestTitle {
+  margin: 0 0 14px;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 850;
+  line-height: 1.14;
+  letter-spacing: 0;
+}
+
+.uLatestCardLead .uLatestTitle {
+  font-size: clamp(26px, 3.2vw, 44px);
+}
+
+.uLatestMeta {
+  margin-top: auto;
+  color: var(--stone400);
+}
+
+.uCtaSection {
+  background: #f7f4ed;
+}
+
+.uCtaBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 42px;
+  border: 1px solid var(--stone100);
+  background: var(--paper);
+}
+
+.uCtaTitle {
+  margin: 16px 0 12px;
+  font-size: clamp(28px, 3.6vw, 46px);
+}
+
+.uCtaText {
+  max-width: 58ch;
+  margin: 0;
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--stone500);
+}
 
 /* =====================================================================
    HERO — LIST PAGE
@@ -173,6 +735,7 @@
   min-height: 420px; background: var(--ink); color: var(--paper);
   text-decoration: none; overflow: hidden;
 }
+.dHeroGridSolo { grid-template-columns: 1fr; }
 
 .dHeroText {
   display: flex; flex-direction: column; justify-content: center;
@@ -220,6 +783,36 @@
 .dHeroFeatured {
   position: relative; display: block; overflow: hidden; text-decoration: none;
 }
+.dHeroFeaturedSkeleton {
+  position: relative;
+  height: 100%;
+  min-height: 320px;
+  overflow: hidden;
+  border-left: 1px solid rgba(247,245,240,0.1);
+  background:
+    linear-gradient(90deg, rgba(247,245,240,0.04), rgba(247,245,240,0.1), rgba(247,245,240,0.04)),
+    var(--ink);
+  background-size: 220% 100%;
+  animation: skelShimmer 1.6s ease-in-out infinite;
+}
+.dHeroFeaturedSkeleton::before {
+  content: "";
+  position: absolute;
+  inset: 24px;
+  border: 1px solid rgba(247,245,240,0.1);
+}
+.dHeroSkeletonLine,
+.dHeroSkeletonTitle,
+.dHeroSkeletonText {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  height: 10px;
+  background: rgba(247,245,240,0.14);
+}
+.dHeroSkeletonLine { bottom: 122px; width: 28%; }
+.dHeroSkeletonTitle { bottom: 82px; width: 68%; height: 18px; }
+.dHeroSkeletonText { bottom: 50px; width: 46%; }
 .dHeroFeaturedImg {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
@@ -707,7 +1300,41 @@
    RESPONSIVE
    ===================================================================== */
 
+@media (max-width: 1180px) {
+  .uHeroGrid,
+  .uIndexGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .uIntentGrid,
+  .uUniversGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .uLatestGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 1024px) {
+  .uHero {
+    padding: 44px 0 64px;
+  }
+
+  .uPanelRow {
+    grid-template-columns: 40px 10px 1fr;
+  }
+
+  .uPanelCount {
+    grid-column: 3;
+    margin-top: -10px;
+  }
+
+  .uCtaBox {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .bentoGrid { grid-template-columns: repeat(2,1fr); }
   .bentoGrid > :nth-child(1) { grid-column: 1 / 3; }
   .latestGrid { grid-template-columns: repeat(2,1fr); }
@@ -728,6 +1355,54 @@
 }
 
 @media (max-width: 768px) {
+  .uHeroTitle {
+    font-size: clamp(42px, 14vw, 68px);
+  }
+
+  .uHeroDeck {
+    font-size: 15px;
+  }
+
+  .uHeroActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .uIntentSection,
+  .uUniversSection,
+  .uIndexSection,
+  .uLatestSection,
+  .uCtaSection {
+    padding: 58px 0;
+  }
+
+  .uSectionHead {
+    display: block;
+  }
+
+  .uSectionKicker {
+    margin-bottom: 14px;
+  }
+
+  .uIntentGrid,
+  .uUniversGrid,
+  .uLatestGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .uLatestCardLead {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .uIndexGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .uCtaBox {
+    padding: 28px;
+  }
+
   .dFeaturedCard { grid-template-columns: 1fr; }
   .dFeaturedImgWrap { min-height: 240px; aspect-ratio: 16/10; }
   .dFeaturedBody { padding: 28px 24px; }
@@ -739,6 +1414,33 @@
 }
 
 @media (max-width: 640px) {
+  .uHeroPanel {
+    margin-top: 8px;
+  }
+
+  .uPanelTop,
+  .uPanelFoot {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .uPanelRow {
+    min-height: 66px;
+    padding: 0 16px;
+  }
+
+  .uPanelName {
+    font-size: 20px;
+  }
+
+  .uIntentCard {
+    min-height: auto;
+  }
+
+  .uUniversCard {
+    min-height: auto;
+  }
+
   .hero { padding: 36px 0 0; }
   .heroInner { padding-bottom: 40px; }
   .heroTitle { font-size: clamp(32px,10vw,52px); }
@@ -751,6 +1453,7 @@
   .dHeroTitle { font-size: clamp(36px,10vw,52px); }
   .dHeroTagline { font-size: 17px; }
   .dHeroFeatured { aspect-ratio: 4/3; }
+  .dHeroFeaturedSkeleton { min-height: 240px; }
   .dBandCards { grid-template-columns: 1fr; }
   .dBandName { font-size: 18px; }
   .dBandDesc { font-size: 13px; }
@@ -779,7 +1482,15 @@
   .reveal { transition: none; }
   .visible .spectrumLine, .visible .bentoCard, .visible .latestCard,
   .visible .articleCard, .visible .relatedCard, .visible .dBand { animation: none !important; }
+  .uPanelRow,
+  .uTopicChip,
+  .uIndexTopic,
+  .uCloudItem,
+  .uLatestImage img {
+    transition: none;
+  }
   .bentoAccent, .dSubnavChip::after { transition: none; }
   .dFeaturedImg, .dHeroFeaturedImg, .latestImg, .articleImg, .dBandCardImg img { transition: none; }
+  .dHeroFeaturedSkeleton { animation: none; }
   .faqToggle { transition: none; }
 }

@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Brain, Compass, Globe2, HeartPulse, Rocket, Search, Sparkles, Users } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
 import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import Button from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import EmailCapture from "@/components/EmailCapture";
 import { sanityFetch } from "../lib/sanity";
 import { sanityImg } from "../lib/sanityImage";
@@ -88,31 +91,99 @@ function formatDate(d: string): string {
   return new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
 }
 
+const UNIVERS_ORDER: UniversId[] = ["esprit", "corps", "liens", "monde", "avenir"];
+
+const UNIVERS_INTENTS = [
+  {
+    title: "Je veux mieux me comprendre",
+    text: "Émotions, conscience, thérapies, quête de sens : entrer par ce qui se passe en vous.",
+    href: "/univers/esprit",
+    color: "#7B5CD6",
+    icon: Brain,
+    topics: ["Émotions", "Conscience", "Thérapies"],
+  },
+  {
+    title: "Je veux prendre soin de moi",
+    text: "Sommeil, nutrition, respiration, mouvement : revenir au corps sans injonction.",
+    href: "/univers/corps",
+    color: "#5AA352",
+    icon: HeartPulse,
+    topics: ["Sommeil", "Nutrition", "Respiration"],
+  },
+  {
+    title: "Je veux comprendre mes liens",
+    text: "Couple, famille, amitié, communauté : regarder ce qui nous attache et nous transforme.",
+    href: "/univers/liens",
+    color: "#E67839",
+    icon: Users,
+    topics: ["Couples", "Parentalité", "Amitié"],
+  },
+  {
+    title: "Je veux ouvrir le regard",
+    text: "Voyage, art, musique, littérature : partir du monde pour revenir autrement.",
+    href: "/univers/monde",
+    color: "#2E9B74",
+    icon: Globe2,
+    topics: ["Récits de voyage", "Art", "Cinéma"],
+  },
+  {
+    title: "Je veux préparer la suite",
+    text: "Carrière, IA, innovation, économie : comprendre ce qui change avant de le subir.",
+    href: "/univers/avenir",
+    color: "#2E94B5",
+    icon: Rocket,
+    topics: ["IA", "Carrière", "Innovation"],
+  },
+];
+
+const UNIVERS_FAQ = [
+  {
+    question: "Quels sont les univers d'Origines Media ?",
+    answer:
+      "Origines Media organise ses contenus autour de cinq univers éditoriaux : L'Esprit, Le Corps, Les Liens, Le Monde et L'Avenir.",
+  },
+  {
+    question: "À quoi sert la page Univers ?",
+    answer:
+      "La page Univers aide à choisir une porte d'entrée par sujet : psychologie, santé, relations, culture, voyage, travail, technologie ou société.",
+  },
+  {
+    question: "Quelle est la différence entre Galaxie et Univers ?",
+    answer:
+      "La Galaxie organise les formats du média, tandis que les Univers organisent les sujets. On choisit la Galaxie pour lire, regarder ou pratiquer ; on choisit un Univers pour explorer un thème.",
+  },
+];
+
 /* ================================================================== */
 /*  UniversListPage                                                    */
 /* ================================================================== */
 
 function UniversListPage() {
   const [counts, setCounts] = useState<UniversCounts | null>(null);
-  const heroReveal = useReveal();
-  const gridReveal = useReveal();
-  const themesReveal = useReveal();
+  const intentReveal = useReveal();
+  const universReveal = useReveal();
+  const indexReveal = useReveal();
   const latestReveal = useReveal();
-  const pillarOrder: UniversId[] = ["esprit", "corps", "liens", "monde", "avenir"];
 
   useEffect(() => {
     sanityFetch<UniversCounts>(UNIVERS_COUNTS_QUERY).then(setCounts).catch(() => {});
   }, []);
 
   const totalArticles = counts ? counts.esprit + counts.corps + counts.liens + counts.monde + counts.avenir : 0;
+  const totalThemes = UNIVERS.reduce((sum, u) => sum + u.subtopics.length, 0);
+  const latestArticles = counts?.latest || [];
+  const topicIndex = useMemo(
+    () => UNIVERS.flatMap((u) => u.subtopics.slice(0, 5).map((st) => ({ ...st, univers: u }))),
+    []
+  );
 
   return (
     <>
       <SEO
-        title="Nos Univers — Origines Media"
+        title="Tous les univers — Origines Media"
         description={totalArticles > 0
-          ? `Cinq regards sur ce qui nous construit : L'Esprit, Le Corps, Les Liens, Le Monde et L'Avenir. ${totalArticles} récits, reportages et vidéos pour explorer l'expérience humaine en profondeur.`
-          : "Cinq regards sur ce qui nous construit : L'Esprit, Le Corps, Les Liens, Le Monde et L'Avenir. Articles, vidéos et reportages pour explorer l'expérience humaine en profondeur."
+          ? `Explorez les cinq univers Origines Media : esprit, corps, liens, monde et avenir. ${totalArticles} contenus et ${totalThemes} thèmes pour trouver le bon point d'entrée.`
+          : "Explorez les cinq univers Origines Media : esprit, corps, liens, monde et avenir. Une carte claire pour trouver articles, vidéos et guides par thème."
         }
         url="/univers"
         breadcrumbs={[
@@ -125,120 +196,262 @@ function UniversListPage() {
           image: "/icons/origines-og.png",
           url: `/univers/${u.id}`,
         }))}
+        faqData={UNIVERS_FAQ}
       />
       <SiteHeader />
 
-      <main>
-        <section ref={heroReveal.ref} className={`${s.hero} ${heroReveal.className}`}>
+      <main className={s.uPage}>
+        <section className={s.uHero}>
           <div className="v2-container">
             <Breadcrumb items={[{ name: "Accueil", url: "/" }, { name: "Univers", url: "/univers" }]} />
-            <div className={s.heroInner}>
-              <div className={s.chapterMark}>
-                <span className={s.cNum}>Explorer</span>
-                <span className={s.cSep}>/</span>
-                <span className={s.cLabel}>5 piliers</span>
-              </div>
-              <h1 className={s.heroTitle}>Nos <em>univers.</em></h1>
-              <p className={s.heroDeck}>
-                Cinq regards sur ce qui nous construit. Chaque univers est une
-                porte d&rsquo;entr&eacute;e vers des r&eacute;cits, des id&eacute;es et des voix
-                qui &eacute;clairent un pan de l&rsquo;exp&eacute;rience humaine.
-              </p>
-              {totalArticles > 0 && (
-                <div className={s.heroMeta}>
-                  <span className={s.heroMetaCount}>{totalArticles.toLocaleString("fr-FR")}</span>
-                  <span className={s.heroMetaLabel}>r&eacute;cits publi&eacute;s</span>
+            <div className={s.uHeroGrid}>
+              <div className={s.uHeroText}>
+                <span className={s.uKicker}>
+                  <Compass size={14} aria-hidden="true" />
+                  Carte des sujets
+                </span>
+                <h1 className={s.uHeroTitle}>Choisir le bon univers.</h1>
+                <p className={s.uHeroDeck}>
+                  Les univers classent tout Origines par grands territoires de
+                  vie. Partez d&rsquo;une question, d&rsquo;un besoin ou d&rsquo;une
+                  curiosit&eacute;, puis rejoignez les articles, vid&eacute;os et guides
+                  qui vont avec.
+                </p>
+                <div className={s.uHeroActions}>
+                  <Button as="link" to="/galaxie" variant="gradient" size="lg" withArrow>
+                    Voir la galaxie
+                  </Button>
+                  <Button as="link" to="/articles" variant="outline" size="lg" color="#F5F5F5">
+                    Derniers articles
+                  </Button>
                 </div>
-              )}
-              <div className={s.spectrumLine}>
-                {pillarOrder.map((id) => (
-                  <span key={id} className={s.spectrumSeg} style={{ backgroundColor: UNIVERS_MAP[id].color }} />
-                ))}
+              </div>
+
+              <div className={s.uHeroPanel}>
+                <div className={s.uPanelTop}>
+                  <span>Origines index</span>
+                  <span>{totalThemes} thèmes</span>
+                </div>
+                <div className={s.uPanelRows}>
+                  {UNIVERS_ORDER.map((id, index) => {
+                    const u = UNIVERS_MAP[id];
+                    const count = counts ? counts[id] : 0;
+                    return (
+                      <Link
+                        key={id}
+                        to={`/univers/${id}`}
+                        className={s.uPanelRow}
+                        style={{ "--pillar-color": u.color } as React.CSSProperties}
+                      >
+                        <span className={s.uPanelIndex}>{String(index + 1).padStart(2, "0")}</span>
+                        <span className={s.uPanelDot} />
+                        <span className={s.uPanelName}>{u.name}</span>
+                        <span className={s.uPanelCount}>{count > 0 ? `${count} contenus` : `${u.subtopics.length} thèmes`}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+                <div className={s.uPanelFoot}>
+                  <span>{totalArticles > 0 ? `${totalArticles.toLocaleString("fr-FR")} contenus classés` : "Articles, vidéos et guides"}</span>
+                  <span>5 univers</span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section ref={gridReveal.ref} className={`${s.bentoSection} ${gridReveal.className}`}>
+        <section ref={intentReveal.ref} className={`${s.uIntentSection} ${intentReveal.className}`}>
           <div className="v2-container">
-            <div className={s.bentoGrid}>
-              {pillarOrder.map((id, i) => {
-                const u = UNIVERS_MAP[id];
-                const count = counts ? counts[id] : 0;
+            <header className={s.uSectionHead}>
+              <span className={s.uSectionKicker}>
+                <Search size={14} aria-hidden="true" />
+                Par intention
+              </span>
+              <h2 className={s.uSectionTitle}>Vous cherchez quoi ?</h2>
+            </header>
+            <div className={s.uIntentGrid}>
+              {UNIVERS_INTENTS.map((intent) => {
+                const Icon = intent.icon;
                 return (
-                  <Link key={id} to={`/univers/${id}`} className={s.bentoCard} style={{ "--pillar-color": u.color, "--i": i } as React.CSSProperties}>
-                    <span className={s.bentoAccent} />
-                    <div className={s.bentoContent}>
-                      <span className={s.bentoKicker}><span className={s.bentoDot} />{count > 0 ? `${count} récits` : "Explorer"}</span>
-                      <h2 className={s.bentoName}>{u.name}</h2>
-                      <p className={s.bentoTagline}>{u.tagline}</p>
-                      <div className={s.bentoSubtopics}>
-                        {u.subtopics.slice(0, 6).map((st, j) => (
-                          <span key={st.slug}>{j > 0 && <span className={s.bentoSubSep}>&middot;</span>}{st.label}</span>
-                        ))}
-                        {u.subtopics.length > 6 && <span className={s.bentoSubMore}>+{u.subtopics.length - 6}</span>}
-                      </div>
+                  <Card
+                    key={intent.title}
+                    className={s.uIntentCard}
+                    style={{ "--pillar-color": intent.color } as React.CSSProperties}
+                  >
+                    <span className={s.uIntentIcon}>
+                      <Icon size={18} aria-hidden="true" />
+                    </span>
+                    <h3 className={s.uIntentTitle}>{intent.title}</h3>
+                    <p className={s.uIntentText}>{intent.text}</p>
+                    <div className={s.uIntentTopics}>
+                      {intent.topics.map((topic) => (
+                        <span key={topic}>{topic}</span>
+                      ))}
                     </div>
-                    <span className={s.bentoArrow}><ArrowIcon size={18} /></span>
-                  </Link>
+                    <Button as="link" to={intent.href} variant="outline" size="sm" color={intent.color} withArrow>
+                      Explorer
+                    </Button>
+                  </Card>
                 );
               })}
             </div>
           </div>
         </section>
 
-        <section ref={themesReveal.ref} className={`${s.themesSection} ${themesReveal.className}`}>
+        <section ref={universReveal.ref} className={`${s.uUniversSection} ${universReveal.className}`}>
           <div className="v2-container">
-            <header className={s.sectionHead}>
-              <span className={s.sectionKicker}><span className={s.sectionKickerDot} />Th&eacute;matiques</span>
-              <h2 className={s.sectionTitle}>Explorer par <em>th&egrave;me.</em></h2>
+            <header className={s.uSectionHead}>
+              <span className={s.uSectionKicker}>
+                <Sparkles size={14} aria-hidden="true" />
+                Les cinq piliers
+              </span>
+              <h2 className={s.uSectionTitle}>Une carte simple du site.</h2>
             </header>
-            <div className={s.themesGrid}>
-              {UNIVERS.map((u) => (
-                <div key={u.id} className={s.themesGroup}>
-                  <span className={s.themesGroupLabel} style={{ color: u.color }}>
-                    <span className={s.themesGroupDot} style={{ backgroundColor: u.color }} />{u.name}
-                  </span>
-                  <div className={s.themesChips}>
-                    {u.subtopics.map((st) => (
-                      <Link key={st.slug} to={`/univers/${u.id}/${st.slug}`} className={s.themesChip} style={{ "--pillar-color": u.color } as React.CSSProperties}>{st.label}</Link>
-                    ))}
+            <div className={s.uUniversGrid}>
+              {UNIVERS_ORDER.map((id, index) => {
+                const u = UNIVERS_MAP[id];
+                const count = counts ? counts[id] : 0;
+                return (
+                  <Card
+                    key={u.id}
+                    className={s.uUniversCard}
+                    style={{ "--pillar-color": u.color, "--i": index } as React.CSSProperties}
+                  >
+                    <div className={s.uUniversAccent} />
+                    <div className={s.uUniversHeader}>
+                      <span className={s.uUniversNumber}>{String(index + 1).padStart(2, "0")}</span>
+                      <span className={s.uUniversCount}>{count > 0 ? `${count} contenus` : `${u.subtopics.length} thèmes`}</span>
+                    </div>
+                    <h3 className={s.uUniversName}>{u.name}</h3>
+                    <p className={s.uUniversTagline}>{u.tagline}</p>
+                    <div className={s.uUniversTopics}>
+                      {u.subtopics.slice(0, 7).map((st) => (
+                        <Link key={st.slug} to={`/univers/${u.id}/${st.slug}`} className={s.uTopicChip}>
+                          {st.label}
+                        </Link>
+                      ))}
+                    </div>
+                    <Button as="link" to={`/univers/${u.id}`} variant="outline" size="sm" color={u.color} withArrow>
+                      Voir l'univers
+                    </Button>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section ref={indexReveal.ref} className={`${s.uIndexSection} ${indexReveal.className}`}>
+          <div className="v2-container">
+            <div className={s.uIndexGrid}>
+              <div className={s.uIndexIntro}>
+                <span className={s.uSectionKicker}>Index rapide</span>
+                <h2 className={s.uIndexTitle}>Les thèmes les plus directs.</h2>
+                <p className={s.uIndexText}>
+                  Une entrée courte pour les recherches fréquentes : méditation,
+                  sommeil, couples, IA, créativité, parentalité ou quête de sens.
+                </p>
+                <Button as="link" to="/articles" variant="gradient" size="md" withArrow>
+                  Explorer tous les contenus
+                </Button>
+              </div>
+              <div className={s.uIndexList}>
+                {UNIVERS.map((u) => (
+                  <div key={u.id} className={s.uIndexGroup}>
+                    <Link to={`/univers/${u.id}`} className={s.uIndexGroupTitle} style={{ "--pillar-color": u.color } as React.CSSProperties}>
+                      <span className={s.uIndexDot} />
+                      {u.name}
+                    </Link>
+                    <div className={s.uIndexTopics}>
+                      {u.subtopics.slice(0, 5).map((st) => (
+                        <Link key={st.slug} to={`/univers/${u.id}/${st.slug}`} className={s.uIndexTopic}>
+                          {st.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ))}
+              </div>
+            </div>
+            <div className={s.uTopicCloud} aria-label="Thèmes Origines">
+              {topicIndex.map((topic) => (
+                <Link
+                  key={`${topic.univers.id}-${topic.slug}`}
+                  to={`/univers/${topic.univers.id}/${topic.slug}`}
+                  className={s.uCloudItem}
+                  style={{ "--pillar-color": topic.univers.color } as React.CSSProperties}
+                >
+                  {topic.label}
+                </Link>
               ))}
             </div>
           </div>
         </section>
 
-        {counts?.latest && counts.latest.length > 0 && (
-          <section ref={latestReveal.ref} className={`${s.latestSection} ${latestReveal.className}`}>
+        {latestArticles.length > 0 && (
+          <section ref={latestReveal.ref} className={`${s.uLatestSection} ${latestReveal.className}`}>
             <div className="v2-container">
-              <header className={s.sectionHead}>
-                <span className={s.sectionKicker}><span className={s.sectionKickerDot} />Derniers r&eacute;cits</span>
-                <h2 className={s.sectionTitle}>Publi&eacute;s <em>r&eacute;cemment.</em></h2>
+              <header className={s.uSectionHead}>
+                <span className={s.uSectionKicker}>Récemment publiés</span>
+                <h2 className={s.uSectionTitle}>Entrées fraîches.</h2>
               </header>
-              <div className={s.latestGrid}>
-                {counts.latest.slice(0, 4).map((art, i) => {
-                  const pc = art.univpilar && UNIVERS_MAP[art.univpilar as UniversId] ? UNIVERS_MAP[art.univpilar as UniversId].color : "#0A0A0A";
+              <div className={s.uLatestGrid}>
+                {latestArticles.slice(0, 5).map((art, i) => {
+                  const uid = (art.univpilar || "esprit") as UniversId;
+                  const u = UNIVERS_MAP[uid] || UNIVERS_MAP.esprit;
                   return (
-                    <Link key={art._id} to={`/article/${art.slug}`} className={s.latestCard} style={{ "--i": i } as React.CSSProperties}>
-                      {art.imageUrl && <div className={s.latestImgWrap}><img src={sanityImg(art.imageUrl, 500)} alt={art.titre} className={s.latestImg} loading="lazy" decoding="async" /></div>}
-                      <div className={s.latestBody}>
-                        <span className={s.latestPillar} style={{ color: pc }}><span className={s.latestPillarDot} style={{ backgroundColor: pc }} />{art.univpilar && UNIVERS_MAP[art.univpilar as UniversId]?.name}</span>
-                        <h3 className={s.latestTitle}>{typo(art.titre)}</h3>
-                        <span className={s.latestMeta}>{art.tempsLecture || 5} min &middot; {art.authorName || "Origines"}</span>
+                    <Link
+                      key={art._id}
+                      to={`/article/${art.slug}`}
+                      className={`${s.uLatestCard} ${i === 0 ? s.uLatestCardLead : ""}`}
+                      style={{ "--pillar-color": u.color } as React.CSSProperties}
+                    >
+                      {art.imageUrl && (
+                        <div className={s.uLatestImage}>
+                          <img src={sanityImg(art.imageUrl, i === 0 ? 900 : 520)} alt={art.titre} loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+                        </div>
+                      )}
+                      <div className={s.uLatestBody}>
+                        <span className={s.uLatestPillar}>
+                          <span className={s.uLatestDot} />
+                          {u.name}
+                        </span>
+                        <h3 className={s.uLatestTitle}>{typo(art.titre)}</h3>
+                        <span className={s.uLatestMeta}>
+                          {art.tempsLecture || 5} min
+                          {art.authorName ? ` · ${art.authorName}` : ""}
+                        </span>
                       </div>
                     </Link>
                   );
                 })}
               </div>
-              <div className={s.latestFoot}><Link to="/articles" className={s.latestCta}>Tous les articles <ArrowIcon size={14} /></Link></div>
             </div>
           </section>
         )}
 
+        <section className={s.uCtaSection}>
+          <div className="v2-container">
+            <div className={s.uCtaBox}>
+              <div>
+                <span className={s.uSectionKicker}>Encore plus simple</span>
+                <h2 className={s.uCtaTitle}>Vous préférez choisir par format ?</h2>
+                <p className={s.uCtaText}>
+                  La Galaxie organise Origines par expérience : lire, regarder,
+                  pratiquer ou garder un support pour plus tard.
+                </p>
+              </div>
+              <Button as="link" to="/galaxie" variant="gradient" size="lg" withArrow>
+                Ouvrir la galaxie
+              </Button>
+            </div>
+          </div>
+        </section>
+
         <div className={s.spectrumBar}>
-          {pillarOrder.map((id) => <span key={id} className={s.spectrumBarSeg} style={{ backgroundColor: UNIVERS_MAP[id].color }} />)}
+          {UNIVERS_ORDER.map((id) => (
+            <span key={id} className={s.spectrumBarSeg} style={{ backgroundColor: UNIVERS_MAP[id].color }} />
+          ))}
         </div>
       </main>
       <Footer2 />
@@ -288,9 +501,11 @@ function UniversDetailPage({ universId }: { universId: string }) {
     );
   }
 
-  const featuredArticle = articles.find((a) => a.imageUrl);
-  const secondaryPicks = articles.filter((a) => a !== featuredArticle).slice(0, 3);
-  const otherArticles = articles.filter((a) => a !== featuredArticle && !secondaryPicks.includes(a));
+  const heroArticle = articles.find((a) => a.imageUrl);
+  const articlesAfterHero = articles.filter((a) => a !== heroArticle);
+  const featuredArticle = articlesAfterHero.find((a) => a.imageUrl) || articlesAfterHero[0];
+  const secondaryPicks = articlesAfterHero.filter((a) => a !== featuredArticle).slice(0, 3);
+  const otherArticles = articlesAfterHero.filter((a) => a !== featuredArticle && !secondaryPicks.includes(a));
   const totalPages = Math.ceil(otherArticles.length / ITEMS_PER_PAGE);
   const paginated = otherArticles.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
   const otherPillars = UNIVERS.filter((u) => u.id !== universId);
@@ -356,14 +571,18 @@ function UniversDetailPage({ universId }: { universId: string }) {
               { name: "Univers", url: "/univers" },
               { name: univers.name, url: `/univers/${universId}` },
             ]} />
-            <div className={s.dHeroGrid}>
+            <div className={`${s.dHeroGrid} ${!loading && !heroArticle?.imageUrl ? s.dHeroGridSolo : ""}`}>
               <div className={s.dHeroText}>
                 <nav className={s.dHeroNav}>
                   <Link to="/univers" className={s.dHeroBack}><ArrowLeftIcon size={12} /> Tous les univers</Link>
                 </nav>
                 <div className={s.dHeroMeta}>
                   <span className={s.dHeroDot} />
-                  <span>{articles.length} articles</span>
+                  <span>
+                    {loading
+                      ? "Articles en chargement"
+                      : `${articles.length} article${articles.length > 1 ? "s" : ""}`}
+                  </span>
                   <span className={s.dHeroMetaSep}>·</span>
                   <span>{univers.subtopics.length} thèmes</span>
                 </div>
@@ -376,22 +595,28 @@ function UniversDetailPage({ universId }: { universId: string }) {
                   {univers.subtopics.length > 5 && <span className={s.dHeroSubMore}>+{univers.subtopics.length - 5}</span>}
                 </div>
               </div>
-              {featuredArticle?.imageUrl && (
-                <Link to={`/article/${featuredArticle.slug}`} className={s.dHeroFeatured}>
-                  <img src={sanityImg(featuredArticle.imageUrl, 800)} alt={featuredArticle.titre} className={s.dHeroFeaturedImg} />
+              {heroArticle?.imageUrl ? (
+                <Link to={`/article/${heroArticle.slug}`} className={s.dHeroFeatured}>
+                  <img src={sanityImg(heroArticle.imageUrl, 800)} alt={heroArticle.titre} className={s.dHeroFeaturedImg} />
                   <div className={s.dHeroFeaturedOverlay} />
                   <div className={s.dHeroFeaturedContent}>
                     <span className={s.dHeroFeaturedLabel}>
                       <span className={s.dHeroFeaturedLabelDot} />
                       À la une
                     </span>
-                    <h2 className={s.dHeroFeaturedTitle}>{typo(featuredArticle.titre)}</h2>
+                    <h2 className={s.dHeroFeaturedTitle}>{typo(heroArticle.titre)}</h2>
                     <span className={s.dHeroFeaturedMeta}>
-                      {featuredArticle.authorName || "Origines"} · {featuredArticle.tempsLecture || 5} min
+                      {heroArticle.authorName || "Origines"} · {heroArticle.tempsLecture || 5} min
                     </span>
                   </div>
                 </Link>
-              )}
+              ) : loading ? (
+                <div className={s.dHeroFeaturedSkeleton} aria-hidden="true">
+                  <span className={s.dHeroSkeletonLine} />
+                  <span className={s.dHeroSkeletonTitle} />
+                  <span className={s.dHeroSkeletonText} />
+                </div>
+              ) : null}
             </div>
           </div>
         </section>

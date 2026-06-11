@@ -117,6 +117,8 @@ export default function ArticlesPageV2() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
 
@@ -141,16 +143,19 @@ export default function ArticlesPageV2() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setLoadError(false);
         const data = await sanityFetch<Article[]>(ARTICLES_V2_QUERY);
         setArticles(data || []);
-      } catch {
-        // fallback
+      } catch (error) {
+        console.warn("[ArticlesPage] Unable to load articles", error);
+        setLoadError(true);
+        setArticles([]);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [reloadKey]);
 
   useEffect(() => {
     setSearchInput(searchQuery);
@@ -309,7 +314,13 @@ export default function ArticlesPageV2() {
     setSearchInput("");
   }, [setSearchParams]);
 
-  const hasActiveFilters = searchQuery || activeUnivers || activeTag;
+  const hasActiveFilters = searchQuery || activeUnivers || activeTag || activeCategory;
+  const publicationLabel = loading
+    ? "Chargement des articles"
+    : `${articles.length} publication${articles.length > 1 ? "s" : ""}`;
+  const resultCountLabel = loading
+    ? "Chargement"
+    : `${filteredArticles.length} article${filteredArticles.length > 1 ? "s" : ""}`;
 
   /* ── Render ── */
   return (
@@ -347,7 +358,7 @@ export default function ArticlesPageV2() {
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
                   <span className={s.sectionKickerDot} aria-hidden="true" />
-                  Articles &middot; {articles.length} publications
+                  Articles &middot; {publicationLabel}
                 </span>
                 <h1 className={s.sectionTitle}>
                   Tous nos <em>articles.</em>
@@ -621,8 +632,7 @@ export default function ArticlesPageV2() {
               <div className={s.content}>
                 <div className={s.resultBar}>
                   <span className={`${s.resultCount} mono`}>
-                    {filteredArticles.length} article
-                    {filteredArticles.length > 1 ? "s" : ""}
+                    {resultCountLabel}
                   </span>
                 </div>
 
@@ -752,19 +762,26 @@ export default function ArticlesPageV2() {
                     )}
                   </>
                 ) : (
-                  <div className={s.empty}>
+                  <div className={`${s.empty} ${loadError ? s.emptyError : ""}`}>
                     <svg className={s.emptyIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="48" height="48">
                       <circle cx="11" cy="11" r="7" />
                       <path d="M21 21l-4.35-4.35" />
                     </svg>
-                    <h3 className={s.emptyTitle}>Aucun article trouv&eacute;</h3>
+                    <h3 className={s.emptyTitle}>
+                      {loadError ? "Impossible de charger les articles" : "Aucun article trouvé"}
+                    </h3>
                     <p className={s.emptyText}>
-                      {searchQuery
-                        ? `Aucun résultat pour « ${searchQuery} »`
-                        : "Essayez de modifier vos filtres."}
+                      {loadError
+                        ? "Sanity n'a pas répondu. Vérifiez le studio local ou réessayez."
+                        : searchQuery
+                          ? `Aucun résultat pour « ${searchQuery} »`
+                          : "Essayez de modifier vos filtres."}
                     </p>
-                    <button className={s.emptyCta} onClick={clearFilters}>
-                      Voir tous les articles &rarr;
+                    <button
+                      className={s.emptyCta}
+                      onClick={loadError ? () => setReloadKey((key) => key + 1) : clearFilters}
+                    >
+                      {loadError ? "Réessayer" : "Voir tous les articles"} &rarr;
                     </button>
                   </div>
                 )}

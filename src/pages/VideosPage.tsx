@@ -215,6 +215,7 @@ export default function VideosPage() {
   }, [gridVideos, currentPage]);
 
   const hasActiveFilters = searchQuery || activeUnivers;
+  const countLabel = (count: number) => loading ? "..." : count.toString();
 
   /* ── Handlers ── */
   const handleSearch = useCallback((e: React.FormEvent) => {
@@ -291,7 +292,7 @@ export default function VideosPage() {
               <div className={s.sectionLabel}>
                 <span className={s.sectionKicker}>
                   <span className={s.sectionKickerDot} aria-hidden="true" />
-                  Vid&eacute;os &middot; {videos.length} publications
+                  Vid&eacute;os &middot; {loading ? "catalogue en chargement" : `${videos.length} publications`}
                 </span>
                 <h1 className={s.sectionTitle}>
                   Toutes nos <em>vid&eacute;os.</em>
@@ -443,7 +444,7 @@ export default function VideosPage() {
                     >
                       <span className={s.filterDot} />
                       Toutes les vid&eacute;os
-                      <span className={s.filterCount}>{videos.length}</span>
+                      <span className={s.filterCount}>{countLabel(videos.length)}</span>
                     </button>
                     {UNIVERS.map((u) => {
                       const count = universCounts[u.id] || 0;
@@ -478,7 +479,7 @@ export default function VideosPage() {
                     >
                       <span className={s.filterDot} />
                       Toutes les vid&eacute;os
-                      <span className={s.filterCount}>{videos.length}</span>
+                      <span className={s.filterCount}>{countLabel(videos.length)}</span>
                     </button>
                     {UNIVERS.map((u) => {
                       const count = universCounts[u.id] || 0;
@@ -503,7 +504,9 @@ export default function VideosPage() {
               <div className={s.content}>
                 <div className={s.resultBar}>
                   <span className={`${s.resultCount} mono`}>
-                    {filteredVideos.length} vid&eacute;o{filteredVideos.length > 1 ? "s" : ""}
+                    {loading
+                      ? "Chargement des vidéos"
+                      : `${filteredVideos.length} vidéo${filteredVideos.length > 1 ? "s" : ""}`}
                   </span>
                 </div>
 

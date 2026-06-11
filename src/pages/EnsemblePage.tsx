@@ -21,6 +21,13 @@ const NAV_SECTIONS = [
   { id: "calendrier", label: "Calendrier", color: "#5AA352" },
 ];
 
+const HERO_HIGHLIGHTS = [
+  { id: "histoires", label: "Histoires", title: "3 récits ouverts", detail: "Des parcours reçus cette semaine", color: "#D64C90" },
+  { id: "lettre", label: "Lettre", title: "Dimanche matin", detail: "La prochaine édition se prépare", color: "#C99B1E" },
+  { id: "question", label: "Question", title: "2 340 réponses", detail: "Ce qui vous retient vraiment", color: "#2E94B5" },
+  { id: "calendrier", label: "Rythme", title: "12 dossiers", detail: "Articles, vidéos et formats à venir", color: "#5AA352" },
+];
+
 const HISTOIRES = [
   { title: "J'ai quitté mon CDI pour traverser l'Atlantique à la voile", cat: "Parcours", author: "Camille Dufresne", time: "18 min", image: "/histoires/histoire_parcours_resilience.webp" },
   { title: "Comment j'ai appris à vivre avec mon TDAH à 35 ans", cat: "Épreuves", author: "Mathilde Aubry", time: "22 min", image: "/histoires/histoire_sante_mentale.webp" },
@@ -152,31 +159,59 @@ export default function EnsemblePage() {
               <span className={s.cLabel}>Ensemble</span>
             </div>
 
-            <h1 className={s.heroTitle}>
-              La vie du <em>m&eacute;dia.</em>
-            </h1>
-            <p className={s.heroDeck}>
-              Ce qui se passe chez Origines au-del&agrave; des articles&nbsp;:
-              les histoires que vous nous confiez, les recommandations qu&rsquo;on partage,
-              les questions qu&rsquo;on se pose ensemble.
-            </p>
+            <div className={s.heroGrid}>
+              <div className={s.heroCopy}>
+                <h1 className={s.heroTitle}>
+                  La vie du <em>m&eacute;dia.</em>
+                </h1>
+                <p className={s.heroDeck}>
+                  Ce qui se passe chez Origines au-del&agrave; des articles&nbsp;:
+                  les histoires que vous nous confiez, les recommandations qu&rsquo;on partage,
+                  les questions qu&rsquo;on se pose ensemble.
+                </p>
 
-            {/* Stats bar */}
-            <div className={s.statsBar}>
-              <div className={s.stat}>
-                <span className={s.statNum}>3&nbsp;400</span>
-                <span className={s.statLabel}>lecteurs cette semaine</span>
+                {/* Stats bar */}
+                <div className={s.statsBar}>
+                  <div className={s.stat}>
+                    <span className={s.statNum}>3&nbsp;400</span>
+                    <span className={s.statLabel}>lecteurs cette semaine</span>
+                  </div>
+                  <span className={s.statDivider} aria-hidden="true" />
+                  <div className={s.stat}>
+                    <span className={s.statNum}>47</span>
+                    <span className={s.statLabel}>histoires publi&eacute;es</span>
+                  </div>
+                  <span className={s.statDivider} aria-hidden="true" />
+                  <div className={s.stat}>
+                    <span className={s.statNum}>12</span>
+                    <span className={s.statLabel}>dossiers en cours</span>
+                  </div>
+                </div>
               </div>
-              <span className={s.statDivider} aria-hidden="true" />
-              <div className={s.stat}>
-                <span className={s.statNum}>47</span>
-                <span className={s.statLabel}>histoires publi&eacute;es</span>
-              </div>
-              <span className={s.statDivider} aria-hidden="true" />
-              <div className={s.stat}>
-                <span className={s.statNum}>12</span>
-                <span className={s.statLabel}>dossiers en cours</span>
-              </div>
+
+              <aside className={s.heroPanel} aria-label="Cette semaine chez Origines">
+                <div>
+                  <span className={s.heroPanelKicker}>Cette semaine</span>
+                  <p className={s.heroPanelTitle}>Ce qu&rsquo;on pr&eacute;pare avec vous.</p>
+                </div>
+                <div className={s.heroPanelList}>
+                  {HERO_HIGHLIGHTS.map((item) => (
+                    <a key={item.id} href={`#${item.id}`} className={s.heroPanelItem}>
+                      <span className={s.heroPanelDot} style={{ background: item.color }} aria-hidden="true" />
+                      <span className={s.heroPanelItemText}>
+                        <span className={s.heroPanelLabel}>{item.label}</span>
+                        <strong>{item.title}</strong>
+                        <span>{item.detail}</span>
+                      </span>
+                      <span className={s.heroPanelArrow} aria-hidden="true">&rarr;</span>
+                    </a>
+                  ))}
+                </div>
+                <div className={s.heroPanelFoot}>
+                  <span>Prochain rendez-vous</span>
+                  <strong>Dimanche &middot; 9h</strong>
+                </div>
+              </aside>
             </div>
 
             {/* Navigation — pillar style (like homepage Welcome) */}

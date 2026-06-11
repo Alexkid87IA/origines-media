@@ -51,6 +51,18 @@
 .chapterMarkLight .cSep { opacity: 0.3; }
 .chapterMarkLight .cLabel { opacity: 0.5; }
 
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: stretch;
+  margin-bottom: 34px;
+}
+
+.heroCopy {
+  min-width: 0;
+}
+
 /* Title */
 .heroTitle {
   font-family: var(--display);
@@ -75,7 +87,7 @@
   line-height: 1.6;
   color: var(--stone700);
   max-width: 54ch;
-  margin: 0 0 40px;
+  margin: 0 0 34px;
 }
 
 /* Stats bar */
@@ -114,6 +126,132 @@
   height: 32px;
   background: var(--stone100);
   flex-shrink: 0;
+}
+
+.heroPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 320px;
+  padding: 28px;
+  border: 1px solid var(--stone100);
+  background:
+    linear-gradient(135deg, rgba(10, 10, 10, 0.035), rgba(10, 10, 10, 0) 46%),
+    var(--paper);
+}
+
+.heroPanelKicker {
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone400);
+}
+
+.heroPanelTitle {
+  max-width: 12ch;
+  margin: 0 0 26px;
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.heroPanelList {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--stone100);
+}
+
+.heroPanelItem {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--stone100);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.heroPanelDot {
+  width: 8px;
+  height: 8px;
+  align-self: start;
+  margin-top: 6px;
+}
+
+.heroPanelItemText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heroPanelLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone400);
+}
+
+.heroPanelItemText strong {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.12;
+  color: var(--ink);
+}
+
+.heroPanelItemText span:last-child {
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--stone500);
+}
+
+.heroPanelArrow {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--stone300);
+  transform: translateX(0);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.heroPanelItem:hover .heroPanelArrow {
+  color: var(--ink);
+  transform: translateX(4px);
+}
+
+.heroPanelFoot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ink);
+}
+
+.heroPanelFoot span {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone400);
+}
+
+.heroPanelFoot strong {
+  font-family: var(--display);
+  font-size: 14px;
+  color: var(--ink);
 }
 
 /* Navigation — Pillar style (matches homepage Welcome) */
@@ -1302,6 +1440,12 @@
 
 /* ── 1024px+ — full desktop grids ── */
 @media (min-width: 1024px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+    gap: 56px;
+    align-items: start;
+  }
+
   .histoiresGrid { grid-template-columns: repeat(3, 1fr); }
   .recosGrid { grid-template-columns: repeat(4, 1fr); }
   .lettreGrid { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
@@ -1315,6 +1459,24 @@
 
 /* ── 880px — medium adjustments ── */
 @media (max-width: 1023px) and (min-width: 641px) {
+  .heroPanel {
+    min-height: 0;
+  }
+
+  .heroPanelList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .heroPanelItem:nth-child(odd) {
+    padding-right: 20px;
+  }
+
+  .heroPanelItem:nth-child(even) {
+    padding-left: 20px;
+    border-left: 1px solid var(--stone100);
+  }
+
   .histoiresGrid { grid-template-columns: repeat(2, 1fr); }
   .histoiresGrid .histoireCard:last-child {
     grid-column: 1 / -1;
@@ -1344,8 +1506,36 @@
 /* ── 640px and below — mobile ── */
 @media (max-width: 640px) {
   .hero { padding: 36px 0 0; }
+  .heroGrid { gap: 24px; margin-bottom: 24px; }
   .heroTitle { font-size: clamp(32px, 9vw, 48px); }
   .heroDeck { font-size: 15px; margin-bottom: 28px; }
+
+  .heroPanel {
+    min-height: 0;
+    padding: 22px;
+  }
+
+  .heroPanelTitle {
+    max-width: none;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .heroPanelItem {
+    gap: 12px;
+    padding: 14px 0;
+  }
+
+  .heroPanelItemText strong {
+    font-size: 15px;
+  }
+
+  .heroPanelFoot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 18px;
+  }
 
   .statsBar {
     flex-wrap: wrap;
@@ -1422,6 +1612,18 @@
   .stat { gap: 2px; }
   .statNum { font-size: 18px; }
   .statLabel { font-size: 8px; }
+
+  .heroPanel {
+    padding: 18px;
+  }
+
+  .heroPanelItem {
+    grid-template-columns: 7px minmax(0, 1fr);
+  }
+
+  .heroPanelArrow {
+    display: none;
+  }
 
   .histoireCard { aspect-ratio: 3 / 4; }
   .histoireTitle { font-size: 17px; }
@@ -1532,6 +1734,7 @@
   .lettreBtn svg,
   .actCta svg,
   .contactArrow,
+  .heroPanelArrow,
   .sectionAllArrow,
   .questionOptArrow,
   .questionFill,

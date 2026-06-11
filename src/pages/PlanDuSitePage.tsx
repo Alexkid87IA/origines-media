@@ -11,6 +11,7 @@ const SITE_SECTIONS = [
     title: "Contenu éditorial",
     links: [
       { href: "/", label: "Accueil" },
+      { href: "/galaxie", label: "Galaxie Origines" },
       { href: "/articles", label: "Tous les articles" },
       { href: "/temoignages", label: "Témoignages & Portraits" },
       { href: "/recommandations", label: "Recommandations" },
@@ -22,6 +23,7 @@ const SITE_SECTIONS = [
   {
     title: "Univers",
     links: [
+      { href: "/univers", label: "Tous les univers" },
       { href: "/univers/esprit", label: "Esprit" },
       { href: "/univers/corps", label: "Corps" },
       { href: "/univers/liens", label: "Liens" },

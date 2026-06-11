@@ -208,7 +208,6 @@ function ProductCard({ product, index, onClick }: { product: Product; index: num
         <img src={product.image} alt={product.title} loading="lazy" decoding="async" />
         <span className={s.cardGrad} />
         {product.badge && <span className={s.cardBadge} style={{ background: product.badgeColor }}>{product.badge}</span>}
-        <span className={s.cardSoon}>Bientôt disponible</span>
       </div>
       <div className={s.cardBody}>
         <span className={s.cardFormat} style={{ color: product.color }}>{product.format}</span>
@@ -377,7 +376,6 @@ export default function BoutiquePage() {
                   <div key={p.id} className={s.mosaicCard} onClick={() => open(p)}>
                     <img src={p.image} alt={p.title} loading="lazy" decoding="async" />
                     <span className={s.mosaicGrad} />
-                    <span className={s.cardSoon}>Bientôt disponible</span>
                     <span className={s.mosaicBadge} style={{ background: p.color }}>{p.format.split(" ")[0]}</span>
                     <div className={s.mosaicInfo}>
                       <span className={s.mosaicName}>{p.title}</span>

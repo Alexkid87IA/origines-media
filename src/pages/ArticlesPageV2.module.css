@@ -63,9 +63,9 @@
 .sectionTitle {
   font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(28px, 4vw, 48px);
+  font-size: 48px;
   line-height: 1;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   color: var(--ink);
   margin: 0;
   text-wrap: balance;
@@ -75,7 +75,7 @@
   font-family: var(--serif);
   font-style: italic;
   font-weight: 500;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
 }
 
 .sectionLabel {
@@ -162,9 +162,9 @@
 .featuredTitle {
   font-family: var(--display);
   font-weight: 900;
-  font-size: clamp(22px, 2.5vw, 32px);
+  font-size: 30px;
   line-height: 1.1;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   color: var(--ink);
   margin: 0;
   text-wrap: balance;
@@ -835,7 +835,7 @@
   font-weight: 800;
   font-size: 17px;
   line-height: 1.18;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--ink);
   margin: 0;
   text-wrap: balance;
@@ -1022,7 +1022,7 @@
   font-family: var(--display);
   font-weight: 800;
   font-size: 20px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--ink);
   margin: 0 0 8px;
 }
@@ -1034,6 +1034,12 @@
   color: var(--stone500);
   margin: 0 0 24px;
   max-width: 40ch;
+}
+
+.emptyError {
+  border-style: solid;
+  border-color: rgba(236, 72, 153, 0.35);
+  background: rgba(236, 72, 153, 0.04);
 }
 
 .emptyCta {
@@ -1196,7 +1202,7 @@
   font-family: var(--display);
   font-weight: 800;
   font-size: 18px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: var(--ink);
   margin: 0;
 }
@@ -1257,7 +1263,7 @@
 /* — Small phones (<=640px) — */
 @media (max-width: 640px) {
   .page { padding-top: 24px; padding-bottom: 64px; }
-  .sectionTitle { font-size: clamp(24px, 6vw, 34px); }
+  .sectionTitle { font-size: 34px; }
   .sectionDeck { font-size: 14px; }
   .toolbar { flex-direction: column; align-items: stretch; }
   .searchWrap { max-width: none; min-width: 0; }
@@ -1279,7 +1285,7 @@
 
 /* — Very small phones (<=480px) — */
 @media (max-width: 480px) {
-  .sectionTitle { font-size: clamp(22px, 6vw, 28px); }
+  .sectionTitle { font-size: 28px; }
   .cardTitle { font-size: 15px; }
   .cardExcerpt { font-size: 12px; }
   .cardFoot { font-size: 8px; }

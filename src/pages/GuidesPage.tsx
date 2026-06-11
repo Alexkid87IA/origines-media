@@ -8,6 +8,7 @@ import { sanityFetch } from "@/lib/sanity";
 import { RT } from "@/lib/queries";
 import { smartExcerpt } from "@/lib/typography";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import Button from "@/components/ui/Button";
 import { useSubscribe } from "../hooks/useSubscribe";
 import s from "./GuidesPage.module.css";
 
@@ -63,6 +64,39 @@ const CATEGORY_LABELS: Record<string, string> = {
   "kits-gratuits": "Kit gratuit",
   programmes: "Parcours",
 };
+
+const CATEGORY_PROMOS = [
+  {
+    key: "masterclass",
+    label: "Masterclass",
+    desc: "Des parcours vidéo complets, guidés par des experts.",
+    color: "#8B5CF6",
+  },
+  {
+    key: "ateliers",
+    label: "Ateliers",
+    desc: "Sessions courtes et ciblées pour apprendre une compétence.",
+    color: "#EC4899",
+  },
+  {
+    key: "programmes",
+    label: "Parcours",
+    desc: "Des guides structurés sur plusieurs semaines.",
+    color: "#06B6D4",
+  },
+  {
+    key: "kits-gratuits",
+    label: "Kits gratuits",
+    desc: "Ressources gratuites pour commencer à explorer.",
+    color: "#10B981",
+  },
+] as const;
+
+const GUIDE_PHASES = ["Comprendre", "Préparer", "Pratiquer", "Ancrer"] as const;
+
+function guideHref(guide: Guide): string {
+  return `/article/${guide.slug}`;
+}
 
 /* ================================================================
    Page
@@ -123,6 +157,30 @@ export default function GuidesPage() {
 
   const showParcours = (activeFilter === "all" || activeFilter === "programmes") && filteredParcours.length > 0;
   const showKits = (activeFilter === "all" || activeFilter === "kits-gratuits") && filteredKits.length > 0;
+  const countLabel = (count: number) => loading ? "..." : count.toString();
+
+  const featuredGuide = useMemo(() => {
+    const universePool = activeUnivers ? guides.filter((g) => g.univpilar === activeUnivers) : guides;
+    const typedPool = activeFilter === "all"
+      ? universePool
+      : universePool.filter((g) => g.category === activeFilter);
+
+    return (
+      typedPool.find((g) => g.category === "programmes" && g.imageUrl) ||
+      typedPool.find((g) => g.imageUrl) ||
+      universePool.find((g) => g.imageUrl) ||
+      guides[0]
+    );
+  }, [activeFilter, activeUnivers, guides]);
+
+  const guideItemList = useMemo(() => (
+    guides.slice(0, 12).map((g) => ({
+      name: g.titre,
+      description: smartExcerpt(g.deck || g.description || g.contenuTexte || "", 160),
+      image: g.imageUrl,
+      url: guideHref(g),
+    }))
+  ), [guides]);
 
   function getExcerpt(g: Guide): string {
     return smartExcerpt(g.deck || g.description || g.contenuTexte || "", 140);
@@ -138,6 +196,7 @@ export default function GuidesPage() {
           { name: "Accueil", url: "/" },
           { name: "Guides", url: "/guides" },
         ]}
+        itemListData={guideItemList}
       />
       <SiteHeader />
 
@@ -152,59 +211,128 @@ export default function GuidesPage() {
 
           {/* ═══ HERO ═══ */}
           <section className={s.hero}>
-            <div className={`${s.chapterMark} mono`}>
-              <span className={s.cNum}>Ch.03</span>
-              <span className={s.cSep}>/</span>
-              <span className={s.cLabel}>Guides</span>
-            </div>
+            <div className={s.heroGrid}>
+              <div className={s.heroCopy}>
+                <div className={`${s.chapterMark} mono`}>
+                  <span className={s.cNum}>Ch.03</span>
+                  <span className={s.cSep}>/</span>
+                  <span className={s.cLabel}>Guides</span>
+                </div>
 
-            <h1 className={s.heroTitle}>
-              Apprenez à votre rythme.
-              <br />
-              Avancez pour de <em>vrai.</em>
-            </h1>
-            <p className={s.heroDeck}>
-              Parcours structurés et kits gratuits — chaque guide est conçu pour
-              vous aider à passer de la compréhension à l'action.
-            </p>
+                <h1 className={s.heroTitle}>
+                  Apprenez à votre rythme.
+                  <br />
+                  Avancez pour de <em>vrai.</em>
+                </h1>
+                <p className={s.heroDeck}>
+                  Parcours structurés et kits gratuits — chaque guide est conçu pour
+                  vous aider à passer de la compréhension à l'action, sans vous perdre
+                  dans des conseils vagues.
+                </p>
 
-            {/* ═══ FILTERS ═══ */}
-            <div className={s.filters}>
-              <button
-                className={`${s.filterChip} ${activeFilter === "all" ? s.filterChipActive : ""}`}
-                onClick={() => setActiveFilter("all")}
-              >
-                Tout ({guides.length})
-              </button>
-              <button
-                className={`${s.filterChip} ${activeFilter === "programmes" ? s.filterChipActive : ""}`}
-                onClick={() => setActiveFilter("programmes")}
-              >
-                Parcours ({allParcours.length})
-              </button>
-              <button
-                className={`${s.filterChip} ${activeFilter === "kits-gratuits" ? s.filterChipActive : ""}`}
-                onClick={() => setActiveFilter("kits-gratuits")}
-              >
-                Kits gratuits ({allKits.length})
-              </button>
+                {/* ═══ FILTERS ═══ */}
+                <div className={s.filters}>
+                  <button
+                    className={`${s.filterChip} ${activeFilter === "all" ? s.filterChipActive : ""}`}
+                    onClick={() => setActiveFilter("all")}
+                  >
+                    Tout ({countLabel(guides.length)})
+                  </button>
+                  <button
+                    className={`${s.filterChip} ${activeFilter === "programmes" ? s.filterChipActive : ""}`}
+                    onClick={() => setActiveFilter("programmes")}
+                  >
+                    Parcours ({countLabel(allParcours.length)})
+                  </button>
+                  <button
+                    className={`${s.filterChip} ${activeFilter === "kits-gratuits" ? s.filterChipActive : ""}`}
+                    onClick={() => setActiveFilter("kits-gratuits")}
+                  >
+                    Kits gratuits ({countLabel(allKits.length)})
+                  </button>
 
-              {universesInGuides.length > 1 && (
-                <>
-                  <span className={s.filterSep} />
-                  {universesInGuides.map((u) => (
-                    <button
-                      key={u}
-                      className={`${s.filterChip} ${s.filterChipUnivers} ${activeUnivers === u ? s.filterChipActive : ""}`}
-                      onClick={() => setActiveUnivers(activeUnivers === u ? null : u)}
-                      style={{ "--chip-color": UNIVERS_COLORS[u] } as React.CSSProperties}
-                    >
-                      <span className={s.filterChipDot} />
-                      {UNIVERS_LABELS[u] || u}
-                    </button>
+                  {universesInGuides.length > 1 && (
+                    <>
+                      <span className={s.filterSep} />
+                      {universesInGuides.map((u) => (
+                        <button
+                          key={u}
+                          className={`${s.filterChip} ${s.filterChipUnivers} ${activeUnivers === u ? s.filterChipActive : ""}`}
+                          onClick={() => setActiveUnivers(activeUnivers === u ? null : u)}
+                          style={{ "--chip-color": UNIVERS_COLORS[u] } as React.CSSProperties}
+                        >
+                          <span className={s.filterChipDot} />
+                          {UNIVERS_LABELS[u] || u}
+                        </button>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <aside className={s.heroPanel} aria-label="Guide mis en avant">
+                <div className={`${s.heroPanelKicker} mono`}>
+                  <span>Guide à commencer</span>
+                  <span>{loading ? "En cours" : `${guides.length} ressources`}</span>
+                </div>
+
+                {featuredGuide ? (
+                  <article className={s.heroFeature}>
+                    <Link to={guideHref(featuredGuide)} className={s.heroFeatureMedia}>
+                      {featuredGuide.imageUrl && (
+                        <img
+                          src={featuredGuide.imageUrl}
+                          alt={featuredGuide.titre}
+                          loading="eager"
+                          decoding="async"
+                          className={s.heroFeatureImg}
+                        />
+                      )}
+                    </Link>
+                    <div className={s.heroFeatureBody}>
+                      <div className={s.heroFeatureMeta}>
+                        {featuredGuide.univpilar && (
+                          <span style={{ color: UNIVERS_COLORS[featuredGuide.univpilar] }}>
+                            {UNIVERS_LABELS[featuredGuide.univpilar] || featuredGuide.univpilar}
+                          </span>
+                        )}
+                        <span>{CATEGORY_LABELS[featuredGuide.category] || "Guide"}</span>
+                        {featuredGuide.tempsLecture && <span>{featuredGuide.tempsLecture} min</span>}
+                      </div>
+                      <Link to={guideHref(featuredGuide)} className={s.heroFeatureTitleLink}>
+                        <h2 className={s.heroFeatureTitle}>{featuredGuide.titre}</h2>
+                      </Link>
+                      <p className={s.heroFeatureDeck}>{getExcerpt(featuredGuide)}</p>
+                      <Button
+                        as="link"
+                        to={guideHref(featuredGuide)}
+                        variant="cta"
+                        size="md"
+                        color="#0A0A0A"
+                        withArrow
+                        className={s.heroFeatureButton}
+                      >
+                        Lire le guide
+                      </Button>
+                    </div>
+                  </article>
+                ) : (
+                  <div className={s.heroFeatureSkeleton}>
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                )}
+
+                <div className={s.heroPhases} aria-label="Méthode des guides">
+                  {GUIDE_PHASES.map((phase, index) => (
+                    <span key={phase}>
+                      <b>{String(index + 1).padStart(2, "0")}</b>
+                      {phase}
+                    </span>
                   ))}
-                </>
-              )}
+                </div>
+              </aside>
             </div>
           </section>
         </div>
@@ -213,13 +341,13 @@ export default function GuidesPage() {
         <div className="v2-container">
           <section className={s.catSection}>
             <div className={s.catGrid}>
-              {([
-                { key: "masterclass", label: "Masterclass", desc: "Des parcours vidéo complets, guidés par des experts." },
-                { key: "ateliers", label: "Ateliers", desc: "Sessions courtes et ciblées pour apprendre une compétence." },
-                { key: "programmes", label: "Parcours", desc: "Des guides structurés sur plusieurs semaines." },
-                { key: "kits-gratuits", label: "Kits gratuits", desc: "Ressources gratuites pour commencer à explorer." },
-              ] as const).map((cat) => (
-                <Link key={cat.key} to={`/guides/${cat.key}`} className={s.catCard}>
+              {CATEGORY_PROMOS.map((cat) => (
+                <Link
+                  key={cat.key}
+                  to={`/guides/${cat.key}`}
+                  className={s.catCard}
+                  style={{ "--cat-color": cat.color } as React.CSSProperties}
+                >
                   <span className={s.catCardAccent} />
                   <span className={`${s.catCardLabel} mono`}>
                     {cat.label}
@@ -228,6 +356,8 @@ export default function GuidesPage() {
                   <span className={s.catCardFoot}>
                     {catCounts[cat.key] > 0
                       ? <span className={s.catCardCount}>{catCounts[cat.key]} guide{catCounts[cat.key] > 1 ? "s" : ""}</span>
+                      : loading
+                        ? <span className={s.catCardSoon}>Chargement</span>
                       : <span className={s.catCardSoon}>Bientôt</span>
                     }
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
