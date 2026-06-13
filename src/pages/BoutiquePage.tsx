@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import SiteHeader from "@/components/SiteHeader/SiteHeader";
@@ -7,6 +7,8 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import { typo } from "../lib/typography";
 import { useSubscribe } from "../hooks/useSubscribe";
+import { useSanityQuery } from "@/hooks/useSanityQuery";
+import { BOUTIQUE_PRODUCTS_QUERY } from "@/lib/queries";
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./BoutiquePage.module.css";
 
@@ -22,54 +24,40 @@ interface Product {
   price: string;
   originalPrice?: string;
   badge?: string;
-  badgeColor: string;
-  color: string;
+  badgeColor?: string;
   features: string[];
   format: string;
   category: string;
-  subcategory: string;
   popular?: boolean;
   featured?: boolean;
-  image: string;
+  imageUrl: string;
+  slug?: string;
+  lien?: string;
 }
 
 /* ================================================================
-   DATA — 16 kits thématiques par univers
+   COULEUR PAR UNIVERS
    ================================================================ */
 
-const products: Product[] = [
-  // ── Esprit ──
-  { id: "kit-meditation", title: "Kit Méditation", subtitle: "Trouver le calme intérieur", description: "Carnet de pratique, cartes de respiration et workbook pour installer une routine méditative durable.", price: "39 €", badge: "Populaire", badgeColor: "#111827", color: "#7B5CD6", features: ["Carnet 90 jours", "30 cartes guidées", "Workbook introspection"], format: "Kit complet", category: "esprit", subcategory: "esprit", popular: true, featured: true, image: "/boutique/boutique-gpt2-meditation.png" },
-  { id: "kit-therapie", title: "Kit Thérapie", subtitle: "Cheminer vers soi", description: "Un coffret pour accompagner un travail thérapeutique : journal émotionnel, exercices et outils de suivi.", price: "39 €", badgeColor: "#7B5CD6", color: "#7B5CD6", features: ["Journal émotionnel", "Cartes introspection", "Workbook exercices"], format: "Kit complet", category: "esprit", subcategory: "esprit", image: "/boutique/boutique-gpt2-therapie.png" },
-  { id: "kit-art-therapie", title: "Kit Art-Thérapie", subtitle: "Créer pour se libérer", description: "Explorez vos émotions par le dessin, le collage et l’écriture créative.", price: "39 €", badgeColor: "#7B5CD6", color: "#7B5CD6", features: ["Carnet créatif", "Prompts artistiques", "Guide techniques"], format: "Kit complet", category: "esprit", subcategory: "esprit", image: "/boutique/boutique-gpt2-art-therapie.png" },
-  // ── Corps ──
-  { id: "kit-sport", title: "Kit Sport", subtitle: "Reprendre en douceur", description: "Programme progressif de 8 semaines avec carnet de suivi et cartes d’exercices illustrées.", price: "39 €", badge: "Best-seller", badgeColor: "#111827", color: "#5AA352", features: ["Programme 8 semaines", "Cartes exercices", "Carnet de suivi"], format: "Kit complet", category: "corps", subcategory: "corps", popular: true, featured: true, image: "/boutique/boutique-gpt2-sport.png" },
-  { id: "kit-alimentation", title: "Kit Alimentation", subtitle: "Nourrir corps et esprit", description: "Un guide nutrition, des recettes et un planificateur de repas pour une alimentation consciente.", price: "39 €", badgeColor: "#5AA352", color: "#5AA352", features: ["Guide nutrition", "40 recettes", "Planificateur repas"], format: "Kit complet", category: "corps", subcategory: "corps", image: "/boutique/boutique-gpt2-alimentation.png" },
-  { id: "kit-sommeil", title: "Kit Sommeil", subtitle: "Retrouver des nuits profondes", description: "Rituels du soir, journal de sommeil et exercices de relaxation pour des nuits réparatrices.", price: "39 €", badgeColor: "#5AA352", color: "#5AA352", features: ["Journal de sommeil", "Rituels du soir", "Exercices relaxation"], format: "Kit complet", category: "corps", subcategory: "corps", image: "/boutique/boutique-gpt2-sommeil.png" },
-  { id: "kit-respiration", title: "Kit Respiration", subtitle: "Le souffle comme ancre", description: "Techniques respiratoires, cartes de pratique et programme anti-anxiété en 21 jours.", price: "39 €", badgeColor: "#5AA352", color: "#5AA352", features: ["21 jours programme", "Cartes techniques", "Audio guidé"], format: "Kit complet", category: "corps", subcategory: "corps", image: "/boutique/boutique-gpt2-respiration.png" },
-  // ── Liens ──
-  { id: "kit-couple", title: "Kit Couple", subtitle: "Se retrouver à deux", description: "Cartes conversation, journal partagé et exercices pour raviver la connexion dans votre relation.", price: "39 €", badge: "Idée cadeau", badgeColor: "#E67839", color: "#E67839", features: ["Cartes conversation", "Journal duo", "Exercices à deux"], format: "Kit complet", category: "liens", subcategory: "liens", popular: true, featured: true, image: "/boutique/boutique-gpt2-couple.png" },
-  { id: "kit-education", title: "Kit Éducation", subtitle: "Grandir ensemble", description: "Outils de communication bienveillante, cartes émotions et activités parent-enfant.", price: "39 €", badgeColor: "#E67839", color: "#E67839", features: ["Cartes émotions", "Guide bienveillance", "Activités famille"], format: "Kit complet", category: "liens", subcategory: "liens", image: "/boutique/boutique-gpt2-education.png" },
-  // ── Monde ──
-  { id: "kit-photo-bien-etre", title: "Kit Photo & Bien-être", subtitle: "Voir le beau au quotidien", description: "Apprenez à utiliser la photographie comme outil de pleine conscience et de gratitude.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Guide photo mindful", "30 défis créatifs", "Carnet visuel"], format: "Kit complet", category: "monde", subcategory: "monde", image: "/boutique/boutique-gpt2-photo-bien-etre.png" },
-  { id: "kit-photo-therapeutique", title: "Kit Photo Thérapeutique", subtitle: "Se raconter en images", description: "Utilisez l’autoportrait et le reportage personnel comme vecteurs de transformation.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Exercices autoportrait", "Journal photographique", "Guide narratif"], format: "Kit complet", category: "monde", subcategory: "monde", featured: true, image: "/boutique/boutique-gpt2-photo-therapeutique.png" },
-  { id: "kit-instrument", title: "Kit Instrument", subtitle: "La musique comme thérapie", description: "Initiez-vous à un instrument avec un programme pensé pour le bien-être, pas la performance.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Programme débutant", "Exercices quotidiens", "Playlist guidée"], format: "Kit complet", category: "monde", subcategory: "monde", image: "/boutique/boutique-gpt2-instrument.png" },
-  { id: "kit-mobilite", title: "Kit Mobilité", subtitle: "Bouger pour s’ouvrir", description: "Un programme mêlant mouvement, découverte et connexion au monde extérieur.", price: "39 €", badgeColor: "#2E9B74", color: "#2E9B74", features: ["Programme mobilité", "Cartes exploration", "Journal de route"], format: "Kit complet", category: "monde", subcategory: "monde", image: "/boutique/boutique-gpt2-mobilite.png" },
-  // ── Avenir ──
-  { id: "kit-entrepreneuriat", title: "Kit Entrepreneuriat", subtitle: "Lancer son projet", description: "Workbook stratégique, cartes décision et planner pour passer de l’idée à l’action.", price: "39 €", badge: "Pro", badgeColor: "#2E94B5", color: "#2E94B5", features: ["Workbook stratégie", "Cartes décision", "Planner 12 semaines"], format: "Kit complet", category: "avenir", subcategory: "avenir", popular: true, image: "/boutique/boutique-gpt2-entrepreneuriat.png" },
-  { id: "kit-finances", title: "Kit Finances", subtitle: "Reprendre le contrôle", description: "Budget conscient, journal financier et méthodes pour une relation saine à l’argent.", price: "39 €", badgeColor: "#2E94B5", color: "#2E94B5", features: ["Planner budget", "Journal financier", "Guide investissement"], format: "Kit complet", category: "avenir", subcategory: "avenir", image: "/boutique/boutique-gpt2-finances.png" },
-  { id: "kit-innovation", title: "Kit Innovation", subtitle: "Penser autrement", description: "Outils de créativité, cartes de brainstorming et méthodes pour résoudre des problèmes complexes.", price: "39 €", badgeColor: "#2E94B5", color: "#2E94B5", features: ["Cartes brainstorming", "Méthodes créatives", "Workbook idéation"], format: "Kit complet", category: "avenir", subcategory: "avenir", image: "/boutique/boutique-gpt2-innovation.png" },
-];
+const UNIVERS_COLOR: Record<string, string> = {
+  esprit: "#7B5CD6",
+  corps: "#5AA352",
+  liens: "#E67839",
+  monde: "#2E9B74",
+  avenir: "#2E94B5",
+};
 
-const featuredProducts = products.filter((p) => p.featured);
+function getProductColor(category: string): string {
+  return UNIVERS_COLOR[category] || "#111827";
+}
 
 const universCategories = [
   { id: "all", label: "Tous les kits", color: "#111827" },
-  { id: "esprit", label: "Esprit", color: "#7B5CD6" },
-  { id: "corps", label: "Corps", color: "#5AA352" },
-  { id: "liens", label: "Liens", color: "#E67839" },
-  { id: "monde", label: "Monde", color: "#2E9B74" },
-  { id: "avenir", label: "Avenir", color: "#2E94B5" },
+  { id: "esprit", label: "Esprit", color: UNIVERS_COLOR.esprit },
+  { id: "corps", label: "Corps", color: UNIVERS_COLOR.corps },
+  { id: "liens", label: "Liens", color: UNIVERS_COLOR.liens },
+  { id: "monde", label: "Monde", color: UNIVERS_COLOR.monde },
+  { id: "avenir", label: "Avenir", color: UNIVERS_COLOR.avenir },
 ];
 
 const faqItems = [
@@ -132,12 +120,12 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ type: "spring", duration: 0.45 }} onClick={(e) => e.stopPropagation()}>
               <div className={s.modal}>
                 <div className={s.modalImgWrap}>
-                  <img src={product.image} alt={product.title} loading="lazy" />
+                  <img src={product.imageUrl} alt={product.title} loading="lazy" />
                   <span className={s.modalGrad} />
                   <button onClick={onClose} className={s.modalClose} aria-label="Fermer">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                   </button>
-                  <span className={s.modalFormat} style={{ background: product.color }}>{product.format}</span>
+                  <span className={s.modalFormat} style={{ background: getProductColor(product.category) }}>{product.format}</span>
                   <div className={s.modalImgInfo}>
                     <h3 className={s.modalTitle}>{typo(product.title)}</h3>
                     <p className={s.modalSub}>{product.subtitle}</p>
@@ -154,7 +142,7 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
                   <div className={s.modalFeats}>
                     {product.features.map((f, i) => (
                       <span key={i} className={s.modalFeat}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke={product.color} strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke={getProductColor(product.category)} strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
                         {f}
                       </span>
                     ))}
@@ -205,12 +193,12 @@ function ProductCard({ product, index, onClick }: { product: Product; index: num
       onClick={onClick}
     >
       <div className={s.cardImg}>
-        <img src={product.image} alt={product.title} loading="lazy" decoding="async" />
+        <img src={product.imageUrl} alt={product.title} loading="lazy" decoding="async" />
         <span className={s.cardGrad} />
-        {product.badge && <span className={s.cardBadge} style={{ background: product.badgeColor }}>{product.badge}</span>}
+        {product.badge && <span className={s.cardBadge} style={{ background: product.badgeColor || getProductColor(product.category) }}>{product.badge}</span>}
       </div>
       <div className={s.cardBody}>
-        <span className={s.cardFormat} style={{ color: product.color }}>{product.format}</span>
+        <span className={s.cardFormat} style={{ color: getProductColor(product.category) }}>{product.format}</span>
         <h3 className={s.cardTitle}>{typo(product.title)}</h3>
         <p className={s.cardSub}>{product.subtitle}</p>
         <div className={s.cardFoot}>
@@ -236,7 +224,7 @@ function FilterTabs({ categories, active, setActive, items }: { categories: { id
   return (
     <nav className={s.filters} aria-label="Filtrer par univers">
       {categories.map((cat) => {
-        const count = cat.id === "all" ? items.length : items.filter((p) => p.subcategory === cat.id).length;
+        const count = cat.id === "all" ? items.length : items.filter((p) => p.category === cat.id).length;
         return (
           <button key={cat.id} onClick={() => setActive(cat.id)} className={`${s.filter} ${active === cat.id ? s.filterActive : ""}`} style={cat.id !== "all" ? { "--dot": cat.color } as React.CSSProperties : undefined}>
             {cat.id !== "all" && <span className={s.filterDot} />}
@@ -302,6 +290,10 @@ export default function BoutiquePage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const { data: productsData } = useSanityQuery<Product[]>("boutique-products", BOUTIQUE_PRODUCTS_QUERY);
+  const products = useMemo<Product[]>(() => productsData ?? [], [productsData]);
+  const featuredProducts = useMemo(() => products.filter((p) => p.featured), [products]);
+
   const open = (p: Product) => { setSelectedProduct(p); setModalOpen(true); };
   const close = () => { setModalOpen(false); setTimeout(() => setSelectedProduct(null), 300); };
 
@@ -314,7 +306,7 @@ export default function BoutiquePage() {
         description="16 kits thématiques alliant carnet, cartes et workbook pour votre développement personnel. Méditation, sport, couple, entrepreneuriat et plus."
         url="/boutique"
         type="website"
-        itemListData={products.map((p) => ({ name: p.title, description: p.description, image: p.image }))}
+        itemListData={products.map((p) => ({ name: p.title, description: p.description, image: p.imageUrl }))}
         faqData={faqItems}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
@@ -374,9 +366,9 @@ export default function BoutiquePage() {
               <div className={s.heroMosaic}>
                 {featuredProducts.slice(0, 4).map((p) => (
                   <div key={p.id} className={s.mosaicCard} onClick={() => open(p)}>
-                    <img src={p.image} alt={p.title} loading="lazy" decoding="async" />
+                    <img src={p.imageUrl} alt={p.title} loading="lazy" decoding="async" />
                     <span className={s.mosaicGrad} />
-                    <span className={s.mosaicBadge} style={{ background: p.color }}>{p.format.split(" ")[0]}</span>
+                    <span className={s.mosaicBadge} style={{ background: getProductColor(p.category) }}>{p.format.split(" ")[0]}</span>
                     <div className={s.mosaicInfo}>
                       <span className={s.mosaicName}>{p.title}</span>
                       <span className={s.mosaicPrice}>{p.price}</span>

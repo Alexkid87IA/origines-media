@@ -3,10 +3,17 @@ import {
   V2_HERO_MAIN_QUERY,
   V2_QUESTION_QUERY,
   V2_HERO_VIDEO_QUERY,
+  V2_HERO_RIGHT_COL_QUERY,
 } from "@/lib/queries";
 import { verticaleToUnivers, UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { smartExcerpt } from "@/lib/typography";
-import type { CMSArticle, CMSQuestion, CMSHeroVideo } from "@/components/HeroCarousel/HeroCarousel";
+import type {
+  CMSArticle,
+  CMSQuestion,
+  CMSHeroVideo,
+  CMSGuide,
+  CMSProduit,
+} from "@/components/HeroCarousel/HeroCarousel";
 
 interface SanityArticle {
   _id: string;
@@ -25,6 +32,37 @@ interface SanityArticle {
   authorName?: string;
   duree?: string;
   univpilar?: string;
+  metaHero?: string;
+}
+
+interface SanityHeroGuide {
+  _id: string;
+  titre: string;
+  deck?: string;
+  description?: string;
+  imageUrl?: string;
+  slug?: string;
+  univpilar?: string;
+}
+
+interface SanityHeroProduit {
+  _id: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  price: string;
+  mention?: string;
+  badge?: string;
+  badgeColor?: string;
+  imageUrl?: string;
+  slug?: string;
+  lien?: string;
+  category?: string;
+}
+
+interface SanityHeroRightCol {
+  guide: SanityHeroGuide | null;
+  produit: SanityHeroProduit | null;
 }
 
 interface SanityQuestion {
@@ -93,12 +131,36 @@ function toCMSArticle(a: SanityArticle): CMSArticle {
     univers,
     category: UNIVERS_MAP[univers].name,
     subCategory: a.category ? CATEGORY_LABELS[a.category] || a.category : undefined,
+    meta: a.metaHero,
     title: a.titre,
     excerpt: getExcerpt(a),
     author: a.authorName || "Rédaction Origines",
     readTime: formatReadTime(a),
     href: `/article/${a.slug || ""}`,
     image: a.imageUrl || "/placeholder.svg",
+  };
+}
+
+function toCMSGuide(g: SanityHeroGuide): CMSGuide {
+  return {
+    label: "Guide gratuit",
+    title: g.titre,
+    description: g.deck || g.description || "",
+    href: `/article/${g.slug || ""}`,
+    cta: "Télécharger le guide",
+  };
+}
+
+function toCMSProduit(p: SanityHeroProduit): CMSProduit {
+  return {
+    label: "Boutique",
+    title: p.title,
+    description: p.description || p.subtitle || "",
+    price: p.price,
+    mention: p.mention || "",
+    href: p.lien || (p.slug ? `/boutique/${p.slug}` : "/boutique"),
+    cta: "Découvrir",
+    image: p.imageUrl,
   };
 }
 
@@ -110,8 +172,14 @@ export function useHeroData() {
 
   const { data: mainRaw } = useSanityQuery<SanityArticle>("v2-hero-main", V2_HERO_MAIN_QUERY);
   const { data: questionRaw } = useSanityQuery<SanityQuestion>("v2-question", V2_QUESTION_QUERY);
+  const { data: rightColRaw } = useSanityQuery<SanityHeroRightCol>(
+    "v2-hero-right-col",
+    V2_HERO_RIGHT_COL_QUERY
+  );
 
   const mainArticle = mainRaw ? toCMSArticle(mainRaw) : undefined;
+  const cmsGuide = rightColRaw?.guide ? toCMSGuide(rightColRaw.guide) : undefined;
+  const cmsProduit = rightColRaw?.produit ? toCMSProduit(rightColRaw.produit) : undefined;
 
   const cmsQuestion: CMSQuestion | undefined = questionRaw?.question
     ? {
@@ -147,5 +215,5 @@ export function useHeroData() {
     };
   })();
 
-  return { mainArticle, cmsQuestion, cmsHeroVideo };
+  return { mainArticle, cmsQuestion, cmsHeroVideo, cmsGuide, cmsProduit };
 }

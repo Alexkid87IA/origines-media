@@ -1,5 +1,6 @@
 import { UNIVERS_MAP, type UniversId } from "@/data/univers";
 import { sanityImg } from "@/lib/sanityImage";
+import { Card } from "@/components/ui/Card";
 import s from "./HeroCarousel.module.css";
 
 function frTypo(text: string): string {
@@ -10,6 +11,7 @@ export interface CMSArticle {
   univers: UniversId;
   category: string;
   subCategory?: string;
+  meta?: string;
   title: string;
   excerpt: string;
   author: string;
@@ -45,63 +47,50 @@ export interface CMSReco {
   image: string;
 }
 
+export interface CMSGuide {
+  label: string;
+  title: string;
+  description: string;
+  href: string;
+  cta: string;
+}
+
+export interface CMSProduit {
+  label: string;
+  title: string;
+  description: string;
+  price: string;
+  mention: string;
+  href: string;
+  cta: string;
+  image?: string;
+}
+
 interface HeroCarouselProps {
   cmsMain?: CMSArticle;
   cmsQuestion?: CMSQuestion;
   cmsVideo?: CMSHeroVideo;
   cmsReco?: CMSReco;
+  cmsGuide?: CMSGuide;
+  cmsProduit?: CMSProduit;
 }
 
-const MAIN_ARTICLE = {
-  univers: "esprit" as UniversId,
-  category: "Psychologie",
-  meta: "Enquête · N°09",
-  title: "Pourquoi on ne finit jamais rien.",
-  deck: "Derrière ce qu'on appelle un manque de motivation se cache autre chose : un cerveau qui tourne trop vite, et une honte qu'on ne sait pas nommer.",
-  author: "Émilie Roux",
-  readTime: "Lecture 24 min",
-  href: "/article/pourquoi-on-ne-finit-jamais-rien",
-  image: "/covers/cover-01.webp",
-  coverFocusX: 70,
-  coverFocusY: 38,
-};
+export default function HeroCarousel({
+  cmsMain,
+  cmsQuestion,
+  cmsVideo,
+  cmsGuide,
+  cmsProduit,
+}: HeroCarouselProps) {
+  // Tout vient du CMS. Si une donnée manque, le bloc concerné est masqué.
+  if (!cmsMain || !cmsQuestion || !cmsVideo) return null;
 
-const DOSSIER = {
-  question: "Pourquoi dort-on si mal ?",
-  week: 17,
-  slug: "semaine-17-sommeil",
-  univers: "corps" as UniversId,
-  publishedCount: 3,
-  totalCount: 7,
-  href: "/dossiers/semaine-17-sommeil",
-  image: "/covers/cover-02.webp",
-};
-
-const VIDEO = {
-  title: "Ce que personne ne dit sur la fatigue chronique.",
-  duration: "18:42",
-  thumbnail: "/covers/cover-03.webp",
-  href: "/video/fatigue-chronique",
-  channel: "Origines · Documentaire",
-};
-
-const GUIDE = {
-  label: "Guide gratuit",
-  title: "7 jours pour reprendre le contrôle de son attention.",
-  description: "Un exercice par jour, guidé par notre rédaction. Sans inscription.",
-  href: "/guides/attention-7-jours",
-  cta: "Télécharger le guide",
-};
-
-export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCarouselProps) {
-  const main = cmsMain
-    ? { ...MAIN_ARTICLE, univers: cmsMain.univers, category: cmsMain.category, title: cmsMain.title, deck: cmsMain.excerpt, author: cmsMain.author, readTime: cmsMain.readTime, href: cmsMain.href, image: cmsMain.image }
-    : MAIN_ARTICLE;
-  const dossier = cmsQuestion || DOSSIER;
-  const video = cmsVideo || VIDEO;
+  const main = cmsMain;
+  const dossier = cmsQuestion;
+  const video = cmsVideo;
   const mainU = UNIVERS_MAP[main.univers];
   const dossierU = UNIVERS_MAP[dossier.univers];
-  const progress = (dossier.publishedCount / dossier.totalCount) * 100;
+  const progress = dossier.totalCount > 0 ? (dossier.publishedCount / dossier.totalCount) * 100 : 0;
 
   return (
     <section className={s.hero}>
@@ -191,10 +180,12 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
                   {main.subCategory && (
                     <span className={s.mainMeta}>{main.subCategory}</span>
                   )}
-                  <span className={s.mainMeta}>{main.meta}</span>
+                  {main.meta && (
+                    <span className={s.mainMeta}>{main.meta}</span>
+                  )}
                 </div>
                 <h3 className={s.articleTitle}>{frTypo(main.title)}</h3>
-                <p className={s.articleDeck}>{main.deck}</p>
+                <p className={s.articleDeck}>{main.excerpt}</p>
                 <div className={s.mainByline}>
                   Par <strong>{main.author}</strong>
                   <span className={s.dot} />
@@ -207,39 +198,141 @@ export default function HeroCarousel({ cmsMain, cmsQuestion, cmsVideo }: HeroCar
           {/* COL 3 — Guide + Boutique */}
           <div className={s.rightCol}>
             {/* Guide (Guides pillar) */}
-            <a href={GUIDE.href} className={s.guideBlock}>
-              <div className={s.guideAccent} />
-              <span className={s.guideLabel}>{GUIDE.label}</span>
-              <h3 className={s.guideTitle}>{frTypo(GUIDE.title)}</h3>
-              <p className={s.guideDesc}>{GUIDE.description}</p>
-              <span className={s.guideCta}>
-                {GUIDE.cta}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                  <path d="M5 12h14M13 5l7 7-7 7" />
-                </svg>
-              </span>
-            </a>
+            {cmsGuide && (
+              <a href={cmsGuide.href} className={s.guideBlock}>
+                <div className={s.guideAccent} />
+                <span className={s.guideLabel}>{cmsGuide.label}</span>
+                <h3 className={s.guideTitle}>{frTypo(cmsGuide.title)}</h3>
+                <p className={s.guideDesc}>{cmsGuide.description}</p>
+                <span className={s.guideCta}>
+                  {cmsGuide.cta}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </a>
+            )}
 
             {/* Boutique (Boutique pillar) */}
-            <a href="/boutique" className={s.boutiqueBlock}>
-              <span className={s.boutiqueLabel}>Boutique</span>
-              <h3 className={s.boutiqueTitle}>Coffret Nouveau D&eacute;part</h3>
-              <p className={s.boutiqueDesc}>
-                Carnet, guide illustr&eacute; et exercices &mdash;
-                tout pour red&eacute;marrer avec intention.
-              </p>
-              <div className={s.boutiquePrice}>
-                <span className={s.boutiquePriceTag}>39&nbsp;&euro;</span>
-                <span className={s.boutiquePriceSub}>&Eacute;dition limit&eacute;e</span>
-              </div>
-              <span className={s.boutiqueCta}>
-                D&eacute;couvrir
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                  <path d="M5 12h14M13 5l7 7-7 7" />
-                </svg>
-              </span>
-            </a>
+            {cmsProduit && (
+              <a href={cmsProduit.href} className={s.boutiqueBlock}>
+                <span className={s.boutiqueLabel}>{cmsProduit.label}</span>
+                <h3 className={s.boutiqueTitle}>{frTypo(cmsProduit.title)}</h3>
+                <p className={s.boutiqueDesc}>{cmsProduit.description}</p>
+                <div className={s.boutiquePrice}>
+                  <span className={s.boutiquePriceTag}>{cmsProduit.price}</span>
+                  {cmsProduit.mention && (
+                    <span className={s.boutiquePriceSub}>{cmsProduit.mention}</span>
+                  )}
+                </div>
+                <span className={s.boutiqueCta}>
+                  {cmsProduit.cta}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </a>
+            )}
           </div>
+        </div>
+
+        <div className={s.mobileHero} aria-label="À la une mobile">
+          <Card href={video.href} variant="outlined" size="sm" className={s.mobileLead}>
+            <div className={s.mobileLeadMedia}>
+              <img
+                src={sanityImg(video.thumbnail, 900)}
+                alt={video.title}
+                className={s.mobileLeadImg}
+                fetchpriority="high"
+                loading="eager"
+                decoding="async"
+              />
+              <span className={s.mobileLeadShade} />
+              <div className={s.mobileLeadTop}>
+                <span>Origines vidéo</span>
+                <span>{video.duration || "Vidéo"}</span>
+              </div>
+              <span className={s.mobilePlay} aria-hidden="true">
+                <img src="/icons/play-button.webp" alt="" loading="lazy" />
+              </span>
+            </div>
+            <div className={s.mobileLeadBody}>
+              <span className={s.mobileEyebrow}>{video.channel}</span>
+              <h2 className={s.mobileLeadTitle}>{frTypo(video.title)}</h2>
+              <span className={s.mobileCta}>Regarder maintenant</span>
+            </div>
+          </Card>
+
+          <div className={s.mobileStoryStack}>
+            <Card href={dossier.href} variant="outlined" size="sm" className={s.mobileStoryCard}>
+              <div className={s.mobileStoryCopy}>
+                <div className={s.mobileStoryMeta}>
+                  <span>Question</span>
+                  <span>S.{dossier.week}</span>
+                </div>
+                <h3 className={s.mobileStoryTitle}>{frTypo(dossier.question)}</h3>
+                <div className={s.mobileProgressRow}>
+                  <span>{dossierU.name}</span>
+                  <span>{dossier.publishedCount}/{dossier.totalCount}</span>
+                </div>
+              </div>
+              <div className={s.mobileStoryThumb}>
+                {dossier.image ? (
+                  <img
+                    src={sanityImg(dossier.image, 360)}
+                    alt=""
+                    className={s.mobileStoryImg}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span className={s.mobileQuestionVisual} aria-hidden="true">
+                    <span>S.{dossier.week}</span>
+                    <span>{dossier.publishedCount}/{dossier.totalCount}</span>
+                  </span>
+                )}
+              </div>
+            </Card>
+
+            <Card href={main.href} variant="outlined" size="sm" className={s.mobileStoryCard}>
+              <div className={s.mobileStoryCopy}>
+                <div className={s.mobileStoryMeta}>
+                  <span>{main.category || mainU.name}</span>
+                  <span>{main.readTime}</span>
+                </div>
+                <h3 className={s.mobileStoryTitle}>{frTypo(main.title)}</h3>
+                <p className={s.mobileStoryDeck}>{main.excerpt}</p>
+              </div>
+              <div className={s.mobileStoryThumb}>
+                <img
+                  src={sanityImg(main.image, 360)}
+                  alt=""
+                  className={s.mobileStoryImg}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </Card>
+          </div>
+
+          {(cmsGuide || cmsProduit) && (
+            <div className={s.mobileActionGrid}>
+              {cmsGuide && (
+                <Card href={cmsGuide.href} variant="outlined" size="sm" className={`${s.mobileActionCard} ${s.mobileGuideCard}`}>
+                  <span className={s.mobileActionLabel}>{cmsGuide.label}</span>
+                  <strong className={s.mobileActionTitle}>{frTypo(cmsGuide.title)}</strong>
+                  <span className={s.mobileActionCta}>Commencer</span>
+                </Card>
+              )}
+              {cmsProduit && (
+                <Card href={cmsProduit.href} variant="outlined" size="sm" className={`${s.mobileActionCard} ${s.mobileShopCard}`}>
+                  <span className={s.mobileActionLabel}>{cmsProduit.label}</span>
+                  <strong className={s.mobileActionTitle}>{frTypo(cmsProduit.title)}</strong>
+                  <span className={s.mobileActionCta}>{cmsProduit.cta}</span>
+                </Card>
+              )}
+            </div>
+          )}
         </div>
     </section>
   );

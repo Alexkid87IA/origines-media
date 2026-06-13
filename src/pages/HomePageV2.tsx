@@ -25,7 +25,7 @@ export default function HomePageV2() {
     };
   }, []);
 
-  const { mainArticle, cmsQuestion, cmsHeroVideo } = useHeroData();
+  const { mainArticle, cmsQuestion, cmsHeroVideo, cmsGuide, cmsProduit } = useHeroData();
 
   return (
     <>
@@ -46,6 +46,8 @@ export default function HomePageV2() {
             cmsMain={mainArticle}
             cmsQuestion={cmsQuestion}
             cmsVideo={cmsHeroVideo}
+            cmsGuide={cmsGuide}
+            cmsProduit={cmsProduit}
           />
           <LatestArticles />
           <LatestVideos />

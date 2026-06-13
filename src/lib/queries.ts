@@ -103,7 +103,7 @@ export const V2_DOSSIER_DETAIL_QUERY = `
 export const V2_HERO_MAIN_QUERY = `
   coalesce(
     *[_id == "siteSettings"][0].articleALaUne-> {
-      _id, titre, extrait, description,
+      _id, titre, extrait, description, metaHero,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       typeArticle, category,
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
@@ -114,7 +114,7 @@ export const V2_HERO_MAIN_QUERY = `
       "authorName": author->name
     },
     *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [0] {
-      _id, titre, extrait, description,
+      _id, titre, extrait, description, metaHero,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       typeArticle, category,
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
@@ -125,6 +125,32 @@ export const V2_HERO_MAIN_QUERY = `
       "authorName": author->name
     }
   )
+`
+
+// Colonne 3 du hero : Guide gratuit (curé OU plus récent) + Produit boutique (curé OU null)
+export const V2_HERO_RIGHT_COL_QUERY = `
+  {
+    "guide": coalesce(
+      *[_id == "siteSettings"][0].guideGratuitALaUne-> {
+        _id, titre, deck, description,
+        "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+        "slug": slug.current,
+        univpilar
+      },
+      *[_type == "production" && rubrique == "guides" && category == "kits-gratuits" && defined(image.asset)] | order(datePublication desc) [0] {
+        _id, titre, deck, description,
+        "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+        "slug": slug.current,
+        univpilar
+      }
+    ),
+    "produit": *[_id == "siteSettings"][0].produitBoutiqueALaUne-> {
+      _id, title, subtitle, description, price, mention, badge, badgeColor,
+      "imageUrl": image.asset->url,
+      "slug": slug.current,
+      lien, category
+    }
+  }
 `
 
 // 3 articles secondaires pour le hero (les suivants, hors vidéo)
@@ -971,6 +997,31 @@ export const ARTICLE_BY_SLUG_QUERY = `
         title
       }
     }
+  }
+`
+
+// Catalogue boutique — tous les produits triés (featured/popular d'abord)
+export const BOUTIQUE_PRODUCTS_QUERY = `
+  *[_type == "boutiqueProduct"] | order(featured desc, popular desc, title asc) {
+    _id,
+    "id": slug.current,
+    title,
+    subtitle,
+    description,
+    price,
+    originalPrice,
+    badge,
+    badgeColor,
+    mention,
+    features,
+    format,
+    category,
+    popular,
+    featured,
+    "slug": slug.current,
+    "imageUrl": image.asset->url,
+    "imageAlt": image.alt,
+    lien
   }
 `
 
