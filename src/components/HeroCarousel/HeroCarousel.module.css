@@ -36,6 +36,10 @@
   overflow: hidden;
 }
 
+.mobileHero {
+  display: none;
+}
+
 /* ======================================================================
    COL 1 — Vidéo immersive (pleine hauteur)
    ====================================================================== */
@@ -977,11 +981,18 @@
 @media (max-width: 640px) {
   .hero { padding-top: 10px; }
   .chapterMark { margin-bottom: 6px; font-size: 9px; gap: 8px; }
-  .heroGrid { border-width: 0; }
+  .heroGrid {
+    border-width: 0;
+    display: grid;
+    gap: 10px;
+    overflow: visible;
+  }
 
   .mainCol {
-    min-height: 360px;
+    min-height: 300px;
     aspect-ratio: auto;
+    border: 1px solid var(--ink);
+    border-radius: 8px;
   }
 
   .mainGradient {
@@ -1027,7 +1038,8 @@
 
   .questionBlock {
     padding: 32px 20px 28px;
-    min-height: 240px;
+    min-height: 200px;
+    border-radius: 8px;
     background:
       radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.12) 0%, transparent 50%),
       radial-gradient(ellipse at 90% 100%, rgba(0,0,0,0.2) 0%, transparent 50%),
@@ -1084,8 +1096,9 @@
   }
 
   .articleBlock {
-    min-height: 360px;
+    min-height: 280px;
     aspect-ratio: auto;
+    border-radius: 8px;
   }
   .articleOverlay {
     background: linear-gradient(
@@ -1124,6 +1137,7 @@
     display: flex !important;
     flex-direction: row;
     border-top: none;
+    gap: 10px;
   }
 
   .guideBlock {
@@ -1131,6 +1145,7 @@
     padding: 20px 16px;
     border-left: none;
     border-top: none;
+    border-radius: 8px;
     background: linear-gradient(135deg, #7B5CD6 0%, #5A3FB5 100%);
     color: var(--paper);
   }
@@ -1149,6 +1164,7 @@
   .boutiqueBlock {
     flex: 1;
     padding: 14px;
+    border-radius: 8px;
   }
   .boutiqueBlock:hover { background: var(--ink); }
 
@@ -1188,11 +1204,400 @@
 }
 
 @media (max-width: 480px) {
-  .mainCol { min-height: 300px; }
+  .heroGrid {
+    gap: 8px;
+  }
+
+  .mainCol { min-height: 260px; }
   .mainTitle { font-size: 16px !important; }
-  .questionBlock { min-height: 200px; padding: 24px 16px 22px; }
+  .questionBlock { min-height: 170px; padding: 20px 16px 18px; }
   .questionTitle { font-size: 20px; }
-  .articleBlock { min-height: 300px; }
+  .articleBlock { min-height: 240px; }
   .articleTitle { font-size: 18px; }
   .rightCol { flex-direction: column; }
+}
+
+/* ======================================================================
+   MOBILE EDITORIAL HERO — dedicated phone composition
+   ====================================================================== */
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 14px;
+  }
+
+  .chapterMark {
+    margin-bottom: 12px;
+    padding-top: 10px;
+    font-size: 9px;
+    gap: 10px;
+  }
+
+  .heroGrid {
+    display: none;
+  }
+
+  .mobileHero {
+    display: grid;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.15s;
+  }
+
+  .mobileLead,
+  .mobileStoryCard,
+  .mobileActionCard {
+    text-decoration: none;
+    border-radius: 8px !important;
+    transition:
+      transform 0.3s ease,
+      border-color 0.3s ease,
+      background 0.3s ease;
+  }
+
+  .mobileLead {
+    overflow: hidden;
+    background: var(--ink) !important;
+    border: 1px solid var(--ink) !important;
+    color: var(--paper);
+  }
+
+  .mobileLeadMedia {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .mobileLeadImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.92) contrast(1.05);
+  }
+
+  .mobileLeadShade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, rgba(10, 10, 10, 0.74), rgba(10, 10, 10, 0.06) 58%),
+      linear-gradient(90deg, rgba(10, 10, 10, 0.32), transparent 58%);
+    pointer-events: none;
+  }
+
+  .mobileLeadTop {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(247, 245, 240, 0.82);
+  }
+
+  .mobileLeadTop span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 0 8px;
+    background: rgba(10, 10, 10, 0.46);
+    border: 1px solid rgba(247, 245, 240, 0.16);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .mobilePlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(247, 245, 240, 0.1);
+    border: 1px solid rgba(247, 245, 240, 0.36);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .mobilePlay img {
+    width: 46px;
+    height: 46px;
+    display: block;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.38));
+  }
+
+  .mobileLeadBody {
+    padding: 16px;
+    background:
+      linear-gradient(135deg, rgba(247, 245, 240, 0.06), transparent 44%),
+      var(--ink);
+  }
+
+  .mobileEyebrow,
+  .mobileCta,
+  .mobileStoryMeta,
+  .mobileProgressRow,
+  .mobileActionLabel,
+  .mobileActionCta {
+    font-family: var(--mono);
+    text-transform: uppercase;
+  }
+
+  .mobileEyebrow {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: rgba(247, 245, 240, 0.48);
+  }
+
+  .mobileLeadTitle {
+    margin: 0;
+    max-width: 100%;
+    font-family: var(--display);
+    font-size: 23px;
+    font-weight: 900;
+    line-height: 1.03;
+    letter-spacing: 0;
+    color: var(--paper);
+    text-wrap: balance;
+  }
+
+  .mobileCta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 13px;
+    padding-top: 11px;
+    border-top: 1px solid rgba(247, 245, 240, 0.12);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: rgba(247, 245, 240, 0.76);
+  }
+
+  .mobileCta::after,
+  .mobileActionCta::after {
+    content: "→";
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .mobileStoryStack {
+    display: grid;
+    gap: 8px;
+  }
+
+  .mobileStoryCard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 116px;
+    gap: 12px;
+    align-items: stretch;
+    min-height: 132px;
+    padding: 10px;
+    background: var(--pure) !important;
+    border: 1px solid var(--stone200, #D8D2C6) !important;
+    color: var(--ink);
+  }
+
+  .mobileStoryCopy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4px 0 4px 4px;
+  }
+
+  .mobileStoryMeta,
+  .mobileProgressRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 8px;
+    letter-spacing: 0.11em;
+    color: var(--stone500);
+  }
+
+  .mobileStoryMeta {
+    margin-bottom: 8px;
+  }
+
+  .mobileProgressRow {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--stone100, #E8E5DE);
+  }
+
+  .mobileStoryTitle {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.06;
+    letter-spacing: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .mobileStoryDeck {
+    margin: 7px 0 0;
+    font-family: var(--body);
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--stone600);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mobileStoryThumb {
+    align-self: stretch;
+    width: 116px;
+    overflow: hidden;
+    border-radius: 6px;
+    background:
+      linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(236, 72, 153, 0.14)),
+      var(--ink);
+  }
+
+  .mobileStoryImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mobileQuestionVisual {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+    background:
+      linear-gradient(135deg, rgba(139, 92, 246, 0.92), rgba(236, 72, 153, 0.78)),
+      var(--ink);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .mobileQuestionVisual::before,
+  .mobileQuestionVisual::after {
+    content: "";
+    display: block;
+    height: 1px;
+    background: rgba(247, 245, 240, 0.38);
+  }
+
+  .mobileActionGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .mobileActionCard {
+    min-height: 134px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px;
+    border: 1px solid rgba(10, 10, 10, 0.12) !important;
+    overflow: hidden;
+  }
+
+  .mobileGuideCard {
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%) !important;
+    color: var(--paper);
+  }
+
+  .mobileShopCard {
+    background:
+      radial-gradient(ellipse at 100% 0%, rgba(247, 245, 240, 0.12), transparent 48%),
+      var(--ink) !important;
+    color: var(--paper);
+  }
+
+  .mobileActionLabel {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: rgba(247, 245, 240, 0.62);
+  }
+
+  .mobileActionTitle {
+    display: block;
+    margin: 12px 0;
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1.06;
+    letter-spacing: 0;
+    color: var(--paper);
+    text-wrap: balance;
+  }
+
+  .mobileActionCta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: rgba(247, 245, 240, 0.74);
+  }
+
+  .mobileLead:hover,
+  .mobileStoryCard:hover,
+  .mobileActionCard:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .mobileLeadTitle {
+    font-size: 21px;
+  }
+
+  .mobileStoryCard {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+
+  .mobileStoryThumb {
+    width: 96px;
+  }
+
+  .mobileStoryTitle {
+    font-size: 16px;
+  }
+
+  .mobileActionCard {
+    min-height: 122px;
+    padding: 12px;
+  }
+
+  .mobileActionTitle {
+    font-size: 15px;
+  }
 }

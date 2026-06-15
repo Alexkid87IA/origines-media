@@ -445,10 +445,16 @@
 }
 
 @media (max-width: 640px) {
+  .section {
+    margin-top: 56px;
+  }
+
   .chapterMark {
     align-items: flex-start;
     flex-wrap: wrap;
+    margin-bottom: 16px;
     row-gap: 8px;
+    font-size: 9px;
   }
 
   .seeAll {
@@ -457,35 +463,87 @@
   }
 
   .sectionTitle {
-    font-size: 29px;
+    font-size: 28px;
+    line-height: 1.04;
+  }
+
+  .sectionDeck {
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   .heroBody {
-    padding: 26px 20px 24px;
+    padding: 22px 18px 20px;
   }
 
   .heroTitle {
-    font-size: 28px;
+    font-size: 24px;
+    line-height: 1.08;
+    margin-bottom: 14px;
   }
 
   .heroExcerpt {
-    font-size: 17px;
+    padding-top: 14px;
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-line-clamp: 3;
   }
 
   .heroFooter {
     align-items: flex-start;
     flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 14px;
   }
 
   .storyCard {
-    grid-template-columns: 34px minmax(0, 1fr);
-    gap: 14px;
-    padding: 17px 16px;
+    grid-template-columns: 24px minmax(0, 1fr) 96px;
+    gap: 10px;
+    align-items: center;
+    min-height: 116px;
+    padding: 12px;
   }
 
   .storyVisual {
-    grid-column: 1 / -1;
-    aspect-ratio: 16 / 8;
+    grid-column: 3;
+    grid-row: 1;
+    aspect-ratio: 1;
+    align-self: stretch;
+    border-radius: 6px;
+  }
+
+  .storyNumber {
+    font-size: 9px;
+  }
+
+  .storyTitle {
+    margin-bottom: 6px;
+    font-size: 16px;
+    line-height: 1.12;
+  }
+
+  .storyExcerpt {
+    font-size: 12px;
+    line-height: 1.35;
+    -webkit-line-clamp: 2;
+  }
+
+  .metaLine {
+    margin-bottom: 7px;
+    gap: 6px;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 380px) {
+  .storyCard {
+    grid-template-columns: 22px minmax(0, 1fr) 82px;
+  }
+
+  .storyTitle {
+    font-size: 15px;
   }
 }
 

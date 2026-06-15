@@ -461,16 +461,118 @@
 }
 
 @media (max-width: 560px) {
+  .section {
+    margin-top: 56px;
+  }
+
+  .chapterMark {
+    margin-bottom: 16px;
+    font-size: 9px;
+  }
+
+  .sectionTitle {
+    font-size: 28px;
+    line-height: 1.04;
+  }
+
+  .sectionDeck {
+    padding-left: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .featureMedia {
+    aspect-ratio: 16 / 9;
+  }
+
+  .featureBody {
+    padding: 20px 18px 20px;
+  }
+
+  .featurePill {
+    margin-bottom: 10px;
+    padding: 6px 8px;
+    font-size: 8px;
+  }
+
+  .guideMeta {
+    margin-bottom: 8px;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .featureTitle {
+    font-size: 24px;
+    line-height: 1.08;
+  }
+
+  .featureDeck {
+    padding-top: 14px;
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-line-clamp: 3;
+  }
+
   .steps {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .step {
+    min-height: 42px;
+    padding: 8px;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  .cardCta {
+    margin-top: 18px;
+    font-size: 9px;
+  }
+
+  .railHead {
+    padding: 13px 14px;
+    font-size: 9px;
   }
 
   .railCard {
-    grid-template-columns: 1fr;
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 12px;
+    min-height: 104px;
+    padding: 10px;
+    align-items: center;
   }
 
   .railVisual {
-    aspect-ratio: var(--cover-ratio, 1.5);
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    align-self: center;
+    border-radius: 6px;
+  }
+
+  .railTitle {
+    margin-bottom: 5px;
+    font-size: 15px;
+    line-height: 1.12;
+  }
+
+  .railDeck {
+    font-size: 11px;
+    line-height: 1.35;
+    -webkit-line-clamp: 2;
+  }
+}
+
+@media (max-width: 380px) {
+  .railCard {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+
+  .railTitle {
+    font-size: 14px;
   }
 }
 
