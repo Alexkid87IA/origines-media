@@ -215,13 +215,15 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: 28px 26px;
-  background-color: var(--ink);
+  background-color: #0F8E97;
   background-size: cover;
   background-position: center;
+  background-blend-mode: luminosity;
   color: var(--paper);
   text-decoration: none;
   flex-shrink: 0;
   overflow: hidden;
+  isolation: isolate;
   opacity: 0;
   animation: fadeUp 0.6s ease forwards 0.35s;
 }
@@ -229,25 +231,17 @@
 .questionOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(10, 10, 10, 0.9) 0%,
-    rgba(10, 10, 10, 0.5) 40%,
-    rgba(10, 10, 10, 0.3) 70%,
-    rgba(10, 10, 10, 0.25) 100%
-  );
+  background:
+    linear-gradient(135deg, rgba(20, 184, 166, 0.92) 0%, rgba(6, 182, 212, 0.76) 46%, rgba(139, 92, 246, 0.42) 100%),
+    linear-gradient(to top, rgba(10, 10, 10, 0.72) 0%, rgba(10, 10, 10, 0.32) 52%, rgba(10, 10, 10, 0.14) 100%);
   z-index: 1;
   pointer-events: none;
   transition: background 0.4s ease;
 }
 .questionBlock:hover .questionOverlay {
-  background: linear-gradient(
-    to top,
-    rgba(10, 10, 10, 0.94) 0%,
-    rgba(10, 10, 10, 0.55) 40%,
-    rgba(10, 10, 10, 0.35) 70%,
-    rgba(10, 10, 10, 0.3) 100%
-  );
+  background:
+    linear-gradient(135deg, rgba(20, 184, 166, 0.98) 0%, rgba(6, 182, 212, 0.84) 46%, rgba(139, 92, 246, 0.5) 100%),
+    linear-gradient(to top, rgba(10, 10, 10, 0.68) 0%, rgba(10, 10, 10, 0.26) 55%, rgba(10, 10, 10, 0.1) 100%);
 }
 
 .questionContent {
@@ -272,14 +266,15 @@
   font-size: 9px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.55);
+  color: rgba(247, 245, 240, 0.88);
+  font-weight: 600;
 }
 
 .questionWeek {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 0.14em;
-  color: rgba(247, 245, 240, 0.35);
+  color: rgba(247, 245, 240, 0.68);
 }
 
 .questionTitle {
@@ -314,17 +309,17 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   padding: 4px 10px;
-  color: var(--paper);
+  color: var(--ink);
   font-weight: 500;
   flex-shrink: 0;
-  background: rgba(247, 245, 240, 0.15);
+  background: rgba(247, 245, 240, 0.92);
 }
 
 .questionProgress {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.12em;
-  color: rgba(247, 245, 240, 0.45);
+  color: rgba(247, 245, 240, 0.82);
   flex-shrink: 0;
 }
 
@@ -332,13 +327,13 @@
   flex: 1;
   min-width: 40px;
   height: 3px;
-  background: rgba(247, 245, 240, 0.15);
+  background: rgba(247, 245, 240, 0.28);
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: rgba(247, 245, 240, 0.6);
+  background: var(--paper);
   transform-origin: left;
   animation: progressGrow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 1s;
   transform: scaleX(0);
@@ -494,89 +489,126 @@
 
 .articleBlock {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(0, 1.2fr);
   text-decoration: none;
-  color: var(--paper);
-  background-color: var(--ink);
-  background-size: cover;
-  background-position: center;
+  color: var(--ink);
+  background: var(--pure);
   flex: 1;
   min-height: 0;
   overflow: hidden;
   opacity: 0;
+  border-top: 1px solid rgba(10, 10, 10, 0.12);
   animation: fadeUp 0.6s ease forwards 0.5s;
+  transition: background 0.3s ease;
+}
+
+.articleBlock:hover {
+  background: var(--stone50, #F0EDE6);
+}
+
+.articleMedia {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  background: var(--ink);
+  border-right: 1px solid rgba(10, 10, 10, 0.1);
+}
+
+.articleMedia::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(10, 10, 10, 0.26), transparent 58%),
+    linear-gradient(90deg, transparent 58%, rgba(10, 10, 10, 0.12));
+  pointer-events: none;
+}
+
+.articleImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.92) contrast(1.04);
+  transition: transform 0.45s ease, filter 0.45s ease;
+}
+
+.articleBlock:hover .articleImg {
+  transform: scale(1.025);
+  filter: saturate(1.02) contrast(1.05);
 }
 
 .articleOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(10, 10, 10, 0.92) 0%,
-    rgba(10, 10, 10, 0.6) 35%,
-    rgba(10, 10, 10, 0.45) 65%,
-    rgba(10, 10, 10, 0.55) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-  transition: background 0.4s ease;
-}
-.articleBlock:hover .articleOverlay {
-  background: linear-gradient(
-    to top,
-    rgba(10, 10, 10, 0.95) 0%,
-    rgba(10, 10, 10, 0.65) 35%,
-    rgba(10, 10, 10, 0.5) 65%,
-    rgba(10, 10, 10, 0.6) 100%
-  );
+  display: none;
 }
 
 .articleInfo {
   position: relative;
   z-index: 2;
-  padding: 20px 26px;
-  flex: 1;
+  min-width: 0;
+  padding: 22px 24px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--pure) 0%, var(--paper) 100%);
+}
+
+.articleBlock .mainKicker {
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.articleBlock .mainTag {
+  background: #14B8A6;
+  color: var(--paper);
 }
 
 .articleTitle {
   font-family: var(--display);
   font-weight: 900;
-  font-size: 20px;
-  line-height: 1.15;
+  font-size: clamp(19px, 1.65vw, 24px);
+  line-height: 1.08;
   letter-spacing: -0.025em;
-  color: var(--paper);
-  margin: 8px 0 0;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
 }
 .articleBlock:hover .articleTitle {
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
-  text-decoration-color: rgba(247, 245, 240, 0.5);
+  text-decoration-color: rgba(10, 10, 10, 0.28);
 }
 
 .articleDeck {
   font-family: var(--body);
   font-size: 13px;
-  line-height: 1.45;
-  color: rgba(247, 245, 240, 0.6);
-  margin: 8px 0 0;
+  line-height: 1.5;
+  color: var(--stone600, #525252);
+  margin: 10px 0 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.articleBlock .mainMeta { color: rgba(247, 245, 240, 0.5); }
+.articleBlock .mainMeta { color: var(--stone500, #6B6B6B); }
 .articleBlock .mainByline {
-  color: rgba(247, 245, 240, 0.4);
-  border-top-color: rgba(247, 245, 240, 0.1);
+  color: var(--stone500, #6B6B6B);
+  border-top-color: var(--stone100, #E8E5DE);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  gap: 7px;
+  margin-top: 14px;
+  padding-top: 12px;
 }
-.articleBlock .mainByline strong { color: rgba(247, 245, 240, 0.85); }
+.articleBlock .mainByline strong {
+  color: var(--ink);
+  white-space: nowrap;
+}
 
 /* ======================================================================
    COL 3 — Guide + Boutique
@@ -680,7 +712,8 @@
   flex-direction: column;
   justify-content: center;
   padding: 28px 26px;
-  background: var(--ink);
+  background:
+    linear-gradient(135deg, #8B5CF6 0%, #3B82F6 52%, #14B8A6 100%);
   color: var(--paper);
   text-decoration: none;
   flex: 1;
@@ -688,17 +721,25 @@
   transition: background 0.3s ease;
   opacity: 0;
   animation: slideInRight 0.6s ease forwards 0.55s;
-  border-top: 1px solid rgba(247, 245, 240, 0.06);
+  border-top: 1px solid rgba(247, 245, 240, 0.18);
 }
-.boutiqueBlock:hover { background: #141414; }
+.boutiqueBlock:hover {
+  background:
+    linear-gradient(135deg, #7C3AED 0%, #2563EB 50%, #0D9488 100%);
+}
 
 .boutiqueBlock::before {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse at 80% 20%, rgba(247, 245, 240, 0.04) 0%, transparent 55%),
-    radial-gradient(ellipse at 15% 85%, rgba(247, 245, 240, 0.03) 0%, transparent 50%);
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(247, 245, 240, 0.12) 0,
+    rgba(247, 245, 240, 0.12) 1px,
+    transparent 1px,
+    transparent 22px
+  );
+  opacity: 0.22;
   pointer-events: none;
 }
 
@@ -726,7 +767,7 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 600;
-  color: rgba(247, 245, 240, 0.5);
+  color: rgba(247, 245, 240, 0.78);
   margin-bottom: 14px;
 }
 
@@ -754,7 +795,7 @@
   font-family: var(--body);
   font-size: 13px;
   line-height: 1.45;
-  color: rgba(247, 245, 240, 0.5);
+  color: rgba(247, 245, 240, 0.78);
   margin: 12px 0 0;
 }
 
@@ -766,7 +807,7 @@
   gap: 10px;
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px solid rgba(247, 245, 240, 0.08);
+  border-top: 1px solid rgba(247, 245, 240, 0.24);
 }
 
 .boutiquePriceTag {
@@ -782,7 +823,7 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.35);
+  color: rgba(247, 245, 240, 0.68);
 }
 
 .boutiqueCta {
@@ -796,7 +837,7 @@
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.6);
+  color: rgba(247, 245, 240, 0.82);
   transition: gap 0.3s ease, color 0.3s ease;
 }
 .boutiqueBlock:hover .boutiqueCta {

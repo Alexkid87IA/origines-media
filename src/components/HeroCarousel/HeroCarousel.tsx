@@ -169,8 +169,16 @@ export default function HeroCarousel({
             <a
               href={main.href}
               className={s.articleBlock}
-              style={{ backgroundImage: `url('${sanityImg(main.image, 800)}')` }}
             >
+              <div className={s.articleMedia} aria-hidden="true">
+                <img
+                  src={sanityImg(main.image, 700)}
+                  alt=""
+                  className={s.articleImg}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
               <span className={s.articleOverlay} />
               <div className={s.articleInfo}>
                 <div className={s.mainKicker}>
