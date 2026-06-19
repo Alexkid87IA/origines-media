@@ -1,0 +1,389 @@
+.socialCarouselSection {
+  position: relative;
+  margin-top: clamp(54px, 5vw, 84px);
+  overflow: visible;
+}
+
+.socialCarouselHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+  padding-top: 24px;
+  border-top: 1px solid var(--ink);
+}
+
+.socialCarouselKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.socialCarouselKicker::before {
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+  content: "";
+}
+
+.socialCarouselHead h2 {
+  max-width: 820px;
+  margin: 10px 0 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.6vw, 64px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.socialCarouselHead a {
+  border-radius: 0 !important;
+  border-color: var(--ink) !important;
+  color: var(--ink) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.socialCarouselHead a:hover,
+.socialCarouselHead a:focus-visible {
+  color: var(--paper) !important;
+  background: var(--ink) !important;
+}
+
+.socialCarouselActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.socialCarouselNav {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.socialCarouselButton {
+  width: 38px !important;
+  height: 38px !important;
+  border: 1px solid var(--ink) !important;
+  border-radius: 0 !important;
+  color: var(--ink) !important;
+  background: transparent !important;
+  transition: all 200ms ease !important;
+}
+
+.socialCarouselButton:hover,
+.socialCarouselButton:focus-visible {
+  color: var(--paper) !important;
+  background: var(--ink) !important;
+  outline: none;
+}
+
+.socialCarouselButton svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.socialCarouselCount {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  border: 1px solid var(--paper-line);
+  padding: 0 12px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Rail ── */
+.socialRail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(240px, 22vw, 290px);
+  gap: 0;
+  margin-top: clamp(22px, 2.6vw, 32px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  padding-bottom: 2px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+.socialRail::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Card ── */
+.socialPostCard {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--paper-line);
+  border-right: 0;
+  color: var(--paper);
+  background: var(--ink);
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+
+.socialPostCard:last-child {
+  border-right: 1px solid var(--paper-line);
+}
+
+.socialPostCard:hover .socialPostMedia img,
+.socialPostCard:focus-visible .socialPostMedia img {
+  filter: saturate(1.1) contrast(1.06);
+  transform: scale(1.04);
+}
+
+.socialPostCard:hover .socialPostType,
+.socialPostCard:focus-visible .socialPostType {
+  background: var(--ink);
+  border-color: rgba(255, 255, 255, 0.44);
+}
+
+/* ── Media layer ── */
+.socialPostMedia {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.socialPostMedia::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.02) 0%,
+    rgba(10, 10, 10, 0.08) 40%,
+    rgba(10, 10, 10, 0.88) 100%
+  );
+}
+
+.socialPostMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.96) contrast(1.04);
+  transform: scale(1.005);
+  transition: filter 400ms ease, transform 600ms ease;
+}
+
+/* ── Badge ── */
+.socialPostType {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  padding: 6px 9px;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(10, 10, 10, 0.34);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+/* ── Body (Instagram posts) ── */
+.socialPostBody {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-width: 0;
+  align-self: end;
+  gap: 10px;
+  padding: 20px;
+}
+
+.socialPostMeta {
+  color: rgba(255, 255, 255, 0.58);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.socialPostBody strong {
+  display: -webkit-box;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: clamp(22px, 1.8vw, 28px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.socialPostStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.64);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.socialPostStats span {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.socialPostStats svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Carousel cards (Sanity) ── */
+.socialPostCarousel .socialPostMedia::after {
+  background: linear-gradient(180deg, transparent 60%, rgba(10, 10, 10, 0.48) 100%);
+}
+
+.socialPostCarouselFooter {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  align-self: end;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(10, 10, 10, 0.42);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.socialPostCarousel:hover .socialPostCarouselFooter,
+.socialPostCarousel:focus-visible .socialPostCarouselFooter {
+  color: #fff;
+  background: rgba(10, 10, 10, 0.58);
+}
+
+/* ── Responsive ── */
+@media (max-width: 920px) {
+  .socialCarouselHead {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .socialCarouselActions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 700px) {
+  .socialCarouselSection {
+    margin-top: 42px;
+    padding: 0;
+  }
+
+  .socialCarouselHead {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    padding-top: 18px;
+  }
+
+  .socialCarouselHead h2 {
+    max-width: none;
+    font-size: clamp(32px, 10vw, 42px);
+    line-height: 0.96;
+  }
+
+  .socialCarouselActions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .socialCarouselCount {
+    width: fit-content;
+    min-height: 34px;
+    padding: 0 10px;
+  }
+
+  .socialCarouselNav {
+    justify-self: end;
+  }
+
+  .socialCarouselActions a {
+    grid-column: 1 / -1;
+    width: fit-content;
+  }
+
+  .socialRail {
+    grid-auto-columns: minmax(250px, 72vw);
+    margin-top: 18px;
+  }
+
+  .socialPostBody {
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .socialPostBody strong {
+    font-size: clamp(20px, 5.8vw, 24px);
+    line-height: 1.04;
+    -webkit-line-clamp: 4;
+  }
+
+  .socialPostStats {
+    padding-top: 8px;
+  }
+
+  .socialPostCarouselFooter {
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .socialCarouselHead h2 {
+    font-size: clamp(30px, 9.5vw, 38px);
+  }
+
+  .socialRail {
+    grid-auto-columns: minmax(260px, 80vw);
+  }
+
+  .socialPostBody strong {
+    font-size: 22px;
+  }
+}

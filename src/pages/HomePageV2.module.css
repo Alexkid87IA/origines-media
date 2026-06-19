@@ -1,0 +1,29 @@
+.page {
+  --font-display: var(--display);
+  --font-body: var(--body);
+  --font-mono: var(--mono);
+  --font-serif: var(--serif);
+  --paper-soft: var(--paper);
+  --paper-line: var(--stone200);
+  --paper-muted: var(--stone50);
+  --ink-soft: var(--stone700);
+  --ink-faint: var(--stone500);
+  background: var(--paper);
+}
+
+.mediaRows {
+  display: grid;
+  gap: clamp(48px, 6vw, 78px);
+  margin-top: clamp(48px, 6vw, 84px);
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding-bottom: 52px;
+  }
+
+  .mediaRows {
+    gap: 42px;
+    margin-top: 42px;
+  }
+}

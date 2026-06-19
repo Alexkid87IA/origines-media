@@ -1,0 +1,317 @@
+.promoBand {
+  width: 100%;
+  max-width: none;
+  min-height: 198px;
+  margin-top: clamp(48px, 6vw, 84px);
+}
+
+.promoStory,
+.promoShop {
+  position: relative;
+  display: grid;
+  min-height: clamp(310px, 28vw, 430px);
+  grid-template-columns: minmax(0, 1fr) clamp(142px, 14vw, 210px);
+  overflow: hidden;
+  border: 1px solid rgba(10, 10, 10, 0.84);
+  color: var(--paper);
+  isolation: isolate;
+  box-shadow: 0 34px 90px -72px rgba(10, 10, 10, 0.86);
+}
+
+.promoStory {
+  --promo-image: url("/images/promo-recits.jpg");
+  --promo-accent: #22d3c5;
+}
+
+.promoShop {
+  --promo-image: url("/images/promo-boutique.jpg");
+  --promo-accent: #ec4899;
+}
+
+.promoStory::before,
+.promoShop::before {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  background:
+    linear-gradient(90deg, rgba(10, 10, 10, 0.96) 0%, rgba(10, 10, 10, 0.78) 42%, rgba(10, 10, 10, 0.18) 100%),
+    radial-gradient(circle at 76% 48%, color-mix(in srgb, var(--promo-accent) 42%, transparent), transparent 32%),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.04), rgba(10, 10, 10, 0.46)),
+    var(--promo-image);
+  background-position: center;
+  background-size: cover;
+  mask-image: none;
+}
+
+.promoStory::after,
+.promoShop::after {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  height: auto;
+  content: "";
+  background:
+    linear-gradient(rgba(247, 245, 240, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 245, 240, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.44;
+  pointer-events: none;
+}
+
+.promoStory .promoBody,
+.promoShop .promoBody {
+  display: grid;
+  grid-column: 1;
+  grid-row: 1;
+  min-height: 100%;
+  align-content: center;
+  gap: clamp(18px, 2vw, 26px);
+  padding: clamp(36px, 5vw, 72px);
+}
+
+.promoStory .promoContent,
+.promoShop .promoContent {
+  max-width: 760px;
+}
+
+.promoStory .promoContent span,
+.promoShop .promoContent span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(247, 245, 240, 0.74);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.promoStory .promoContent span::before,
+.promoShop .promoContent span::before {
+  width: 8px;
+  height: 8px;
+  content: "";
+  border-radius: 999px;
+  background: var(--promo-accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--promo-accent) 16%, transparent);
+}
+
+.promoStory .promoContent h2,
+.promoShop .promoContent h2,
+.promoContent h2 {
+  max-width: 760px;
+  margin: 12px 0 10px;
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: clamp(38px, 4.6vw, 74px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.promoStory .promoContent p,
+.promoShop .promoContent p,
+.promoContent p {
+  max-width: 660px;
+  color: rgba(247, 245, 240, 0.76);
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.35vw, 20px);
+  line-height: 1.5;
+}
+
+.promoStory .promoFooter,
+.promoShop .promoFooter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  max-width: 780px;
+  gap: 18px;
+  align-items: end;
+  margin-top: 0;
+  padding-top: clamp(8px, 1vw, 14px);
+  border-top: 1px solid rgba(247, 245, 240, 0.18);
+}
+
+.promoPoints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.promoStory .promoPoints,
+.promoShop .promoPoints {
+  display: flex;
+}
+
+.promoStory .promoPoints span,
+.promoShop .promoPoints span,
+.promoPoints span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  border: 1px solid rgba(247, 245, 240, 0.24);
+  padding: 0 12px;
+  color: rgba(247, 245, 240, 0.78);
+  background: rgba(247, 245, 240, 0.08);
+  backdrop-filter: blur(14px);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.promoStory .promoFooter a,
+.promoShop .promoFooter a {
+  min-height: 44px;
+  padding: 0 20px !important;
+  border: 1px solid rgba(247, 245, 240, 0.72) !important;
+  border-radius: 2px !important;
+  color: var(--paper) !important;
+  background: rgba(10, 10, 10, 0.34) !important;
+  backdrop-filter: blur(16px);
+  box-shadow: none !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.02em;
+}
+
+.promoStory .promoFooter a:hover,
+.promoStory .promoFooter a:focus-visible,
+.promoShop .promoFooter a:hover,
+.promoShop .promoFooter a:focus-visible {
+  color: var(--ink) !important;
+  background: var(--paper) !important;
+}
+
+.promoStory .promoVisual,
+.promoShop .promoVisual {
+  display: grid;
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 100%;
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(22px, 2.6vw, 34px);
+  border-right: 0;
+  border-left: 1px solid rgba(247, 245, 240, 0.18);
+  background:
+    linear-gradient(180deg, rgba(247, 245, 240, 0.13), rgba(247, 245, 240, 0.04)),
+    color-mix(in srgb, var(--promo-accent) 18%, rgba(10, 10, 10, 0.54));
+  backdrop-filter: blur(18px);
+}
+
+.promoStory .promoVisual span,
+.promoShop .promoVisual span {
+  color: rgba(247, 245, 240, 0.54);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.promoStory .promoVisual img,
+.promoShop .promoVisual img {
+  align-self: center;
+  justify-self: center;
+  width: clamp(58px, 5.2vw, 86px);
+  filter: brightness(0) invert(1);
+}
+
+.promoStory .promoVisual small,
+.promoShop .promoVisual small {
+  width: auto;
+  color: rgba(247, 245, 240, 0.58);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 920px) {
+  .promoBand,
+  .promoStory,
+  .promoShop {
+    max-width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .promoStory .promoVisual,
+  .promoShop .promoVisual {
+    display: none;
+  }
+
+  .promoStory .promoFooter,
+  .promoShop .promoFooter {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .promoBand,
+  .promoStory,
+  .promoShop {
+    margin-top: 42px;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    border-radius: 0;
+  }
+
+  .promoStory .promoBody,
+  .promoShop .promoBody {
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .promoStory .promoContent h2,
+  .promoShop .promoContent h2,
+  .promoContent h2 {
+    max-width: none;
+    font-size: clamp(26px, 8vw, 32px);
+    line-height: 1;
+  }
+
+  .promoStory .promoContent p,
+  .promoShop .promoContent p,
+  .promoContent p {
+    display: -webkit-box;
+    overflow: hidden;
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.42;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .promoStory .promoFooter,
+  .promoShop .promoFooter {
+    gap: 10px;
+  }
+
+  .promoStory .promoVisual,
+  .promoShop .promoVisual {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .promoStory .promoBody,
+  .promoShop .promoBody {
+    padding: 22px;
+  }
+
+  .promoStory .promoContent h2,
+  .promoShop .promoContent h2 {
+    font-size: 28px;
+  }
+
+  .promoPoints {
+    display: none;
+  }
+}

@@ -1,0 +1,373 @@
+.entranceSection {
+  margin-top: clamp(56px, 6vw, 96px);
+}
+
+.entranceHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+  padding-top: 24px;
+  border-top: 1px solid var(--ink);
+}
+
+.entranceHeader a {
+  border-radius: 0 !important;
+  border-color: var(--ink) !important;
+  color: var(--ink) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.entranceHeader a:hover,
+.entranceHeader a:focus-visible {
+  color: var(--paper) !important;
+  background: var(--ink) !important;
+}
+
+.eyebrow {
+  color: var(--stone500);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.entranceTitle {
+  max-width: 820px;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.2vw, 72px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.94;
+  text-wrap: balance;
+}
+
+.entranceIntro {
+  max-width: 630px;
+  margin: 14px 0 0;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.45;
+}
+
+.entranceGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 14px;
+  margin-top: clamp(24px, 3vw, 34px);
+}
+
+.entranceCard {
+  --accent: #8b5cf6;
+  display: grid !important;
+  grid-template-rows: 148px minmax(0, 1fr);
+  overflow: hidden;
+  min-height: 360px;
+  border: 1px solid var(--paper-line) !important;
+  border-radius: 0 !important;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(247, 245, 240, 0.98)),
+    var(--paper-soft) !important;
+  box-shadow: 0 16px 40px rgba(10, 10, 10, 0.055) !important;
+  text-decoration: none;
+  transition:
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    transform 300ms ease;
+}
+
+.entranceCardFeature {
+  grid-column: auto;
+  grid-row: auto;
+}
+
+.entranceCard:hover,
+.entranceCard:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--ink)) !important;
+  color: var(--ink);
+  box-shadow: 0 22px 54px rgba(10, 10, 10, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+.entranceMedia {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  border-bottom: 1px solid var(--paper-line);
+  background: var(--paper-muted);
+}
+
+.entranceMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.95) contrast(1.03);
+  transform: scale(1);
+  transition:
+    filter 300ms ease,
+    transform 700ms ease;
+}
+
+.entranceCard:hover .entranceMedia img,
+.entranceCard:focus-visible .entranceMedia img {
+  filter: saturate(1.06) contrast(1.05);
+  transform: scale(1.045);
+}
+
+.entranceIcon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(247, 245, 240, 0.5);
+  color: var(--paper);
+  background: rgba(10, 10, 10, 0.22);
+  backdrop-filter: blur(12px);
+}
+
+.entranceIcon svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+}
+
+.entranceCardBody {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+}
+
+.entranceCardFeature .entranceCardBody {
+  gap: 10px;
+  padding: 22px;
+}
+
+.entranceMeta,
+.entranceLabel,
+.entrancePoints span,
+.entranceCta {
+  font-family: var(--font-mono);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.entranceMeta {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--accent) 72%, var(--ink));
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+.entranceMeta span {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 24px;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--paper-line));
+  padding: 0 6px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  white-space: nowrap;
+}
+
+.entranceLabel {
+  color: color-mix(in srgb, var(--accent) 72%, var(--ink));
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.entranceCardTitle {
+  display: block;
+  max-width: none;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(23px, 1.85vw, 29px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.entranceCardText {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.entrancePoints {
+  display: none;
+}
+
+.entranceCardFeature .entrancePoints {
+  display: none;
+}
+
+.entranceCta {
+  display: inline-flex;
+  width: fit-content;
+  gap: 9px;
+  align-items: center;
+  margin-top: auto;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 72%, var(--ink));
+  padding-bottom: 6px;
+  color: var(--ink);
+  font-size: 10px;
+}
+
+.entranceCta svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 300ms ease;
+}
+
+.entranceCard:hover .entranceCta svg,
+.entranceCard:focus-visible .entranceCta svg {
+  transform: translateX(4px);
+}
+
+@media (max-width: 1160px) {
+  .entranceGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .entranceGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .entranceSection {
+    margin-top: 42px;
+  }
+
+  .entranceHeader {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    padding-top: 18px;
+    border-top-width: 1px;
+  }
+
+  .entranceTitle {
+    max-width: none;
+    font-size: clamp(32px, 10vw, 42px);
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  .entranceHeader a {
+    width: fit-content;
+  }
+
+  .entranceIntro {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.42;
+  }
+
+  .entranceGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .entranceCard,
+  .entranceCardFeature,
+  .entranceCard:not(.entranceCardFeature) {
+    grid-template-columns: 104px minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    min-height: 132px;
+  }
+
+  .entranceCard .entranceMedia,
+  .entranceCardFeature .entranceMedia,
+  .entranceCard:not(.entranceCardFeature) .entranceMedia {
+    height: 100%;
+    aspect-ratio: auto;
+    border-right: 1px solid var(--paper-line);
+    border-bottom: 0;
+  }
+
+  .entranceCard .entranceCardBody,
+  .entranceCardFeature .entranceCardBody,
+  .entranceCard:not(.entranceCardFeature) .entranceCardBody {
+    gap: 6px;
+    padding: 13px 14px;
+  }
+
+  .entranceCard .entranceCardTitle,
+  .entranceCardFeature .entranceCardTitle,
+  .entranceCard:not(.entranceCardFeature) .entranceCardTitle {
+    font-size: 19px;
+    line-height: 1;
+  }
+
+  .entranceCard .entranceMeta,
+  .entranceCard .entranceCardText,
+  .entranceCard .entranceIcon,
+  .entranceCardFeature .entranceMeta,
+  .entranceCardFeature .entranceCardText,
+  .entranceCardFeature .entranceIcon {
+    display: none;
+  }
+
+  .entranceCta {
+    margin-top: auto;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 460px) {
+  .entranceCard,
+  .entranceCardFeature,
+  .entranceCard:not(.entranceCardFeature) {
+    grid-template-columns: 94px minmax(0, 1fr);
+    min-height: 122px;
+  }
+
+  .entranceCard .entranceCardBody,
+  .entranceCardFeature .entranceCardBody,
+  .entranceCard:not(.entranceCardFeature) .entranceCardBody {
+    padding: 13px 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .entranceTitle {
+    font-size: clamp(30px, 9.5vw, 38px);
+  }
+
+  .entranceCard,
+  .entranceCardFeature,
+  .entranceCard:not(.entranceCardFeature) {
+    grid-template-columns: 94px minmax(0, 1fr);
+    min-height: 122px;
+  }
+}

@@ -1,0 +1,117 @@
+.threadSection {
+  margin-top: clamp(48px, 6vw, 84px);
+}
+
+.threadLayout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 22px;
+  border-top: 1px solid var(--stone200);
+  border-left: 1px solid var(--stone200);
+  border-color: var(--stone200);
+  background: transparent;
+}
+
+.threadCard {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 126px;
+  gap: 18px;
+  min-height: 164px;
+  padding: 18px;
+  border-right: 1px solid var(--paper-line) !important;
+  border-bottom: 1px solid var(--paper-line) !important;
+  border-color: var(--stone200) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ink);
+  box-shadow: none !important;
+}
+
+.threadCard:hover,
+.threadCard:focus-visible {
+  background: var(--stone50) !important;
+  color: var(--ink);
+  transform: none;
+}
+
+.threadNumber {
+  color: #8b5cf6;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.threadCard h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.03;
+  text-wrap: balance;
+}
+
+.threadCard p {
+  display: -webkit-box;
+  margin: 10px 0 0;
+  overflow: hidden;
+  color: var(--stone700);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.threadCard img {
+  width: 126px;
+  height: 126px;
+  object-fit: cover;
+  border: 1px solid var(--paper-line);
+}
+
+@media (max-width: 700px) {
+  .threadSection {
+    margin-top: 42px;
+  }
+
+  .threadLayout {
+    margin-top: 18px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .threadCard {
+    grid-template-columns: 28px minmax(0, 1fr) 82px;
+    gap: 10px;
+    min-height: 116px;
+    padding: 12px;
+  }
+
+  .threadNumber {
+    font-size: 10px;
+  }
+
+  .threadCard img {
+    width: 82px;
+    height: 82px;
+  }
+
+  .threadCard h3 {
+    margin-top: 6px;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .threadCard p {
+    margin-top: 7px;
+    font-size: 13px;
+    line-height: 1.32;
+    -webkit-line-clamp: 2;
+  }
+
+  .threadCard {
+    min-height: 0;
+  }
+}

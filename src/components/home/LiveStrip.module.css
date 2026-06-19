@@ -1,0 +1,129 @@
+.liveStrip {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) 96px;
+  align-items: stretch;
+  margin-top: 22px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--stone200);
+  background: transparent;
+}
+
+.liveLabel {
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--stone200);
+  padding: 16px 18px;
+  color: var(--stone500);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.liveItems {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.liveItem {
+  display: grid;
+  gap: 6px;
+  min-height: 72px;
+  padding: 14px 16px;
+  border-right: 1px solid var(--stone200);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+.liveItem time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.liveItem span {
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.15;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.liveItem:hover,
+.liveItem:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.liveItem:hover time,
+.liveItem:focus-visible time {
+  color: rgba(245, 245, 245, 0.72);
+}
+
+.liveMore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--stone200);
+  color: var(--stone500);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+.liveMore:hover,
+.liveMore:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (max-width: 700px) {
+  .liveStrip {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 16px;
+    border-top-color: rgba(10, 10, 10, 0.62);
+    background: rgba(255, 255, 255, 0.34);
+  }
+
+  .liveLabel,
+  .liveMore {
+    min-height: 38px;
+    justify-content: flex-start;
+    border-right: 0;
+    padding: 10px 12px;
+  }
+
+  .liveLabel {
+    border-bottom: 1px solid var(--paper-line);
+  }
+
+  .liveItems {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(168px, 68vw);
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .liveItem {
+    min-height: 82px;
+    padding: 13px 12px;
+    scroll-snap-align: start;
+  }
+
+  .liveMore {
+    border-top: 1px solid var(--paper-line);
+  }
+}
