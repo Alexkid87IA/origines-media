@@ -59,6 +59,12 @@
   z-index: 2;
   flex-wrap: wrap;
 }
+
+.joinedMasthead .chapterMark {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .cNum { letter-spacing: 0.2em; font-weight: 500; }
 .cSep { opacity: 0.3; }
 .cLabel { opacity: 0.75; }
@@ -350,33 +356,47 @@
 }
 
 @media (max-width: 640px) {
-  .hero { padding-top: 10px; }
+  .hero {
+    padding-top: 12px;
+    overflow: visible;
+  }
 
   .watermark { display: none; }
 
   .chapterMark {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     gap: 8px;
     font-size: 9px;
     padding-top: 8px;
   }
-  .slideNav { gap: 8px; }
-  .slideBtn { width: 24px; height: 24px; }
+  .slideNav {
+    width: 100%;
+    gap: 8px;
+    margin-left: 0;
+    padding-top: 10px;
+    border-top: 1px solid rgba(10, 10, 10, 0.08);
+  }
+  .slideBtn { width: 28px; height: 28px; }
   .slideBtn svg { width: 10px; height: 10px; }
-  .slideNum, .slideSlash, .slideTot { font-size: 16px; }
+  .slideCounter { margin-left: auto; }
+  .slideNum, .slideSlash, .slideTot { font-size: 18px; }
   .slideDots { display: none; }
 
   .heroGrid {
     min-height: auto;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
+    gap: 0;
   }
 
   .heroCover {
     position: relative;
+    order: 1;
     width: 100%;
     aspect-ratio: 16 / 9;
     inset: auto;
+    border: 1px solid rgba(10, 10, 10, 0.14);
+    background: var(--ink);
   }
   .heroCoverImg {
     left: 0;
@@ -393,8 +413,9 @@
   }
 
   .heroTitleBlock {
+    order: 2;
     max-width: 100%;
-    padding: 20px 0 0;
+    padding: 18px 0 0;
   }
 
   .heroKicker {
@@ -405,24 +426,29 @@
   .catTag { padding: 3px 8px; font-size: 8px; }
 
   .heroTitle {
-    font-size: 24px;
-    line-height: 1.05;
+    display: block;
+    overflow: visible;
+    font-size: clamp(30px, 9vw, 40px);
+    line-height: 0.98;
+    letter-spacing: 0;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: initial;
   }
   .heroTitle::before {
-    width: 32px;
+    width: 36px;
     height: 2px;
     margin-bottom: 10px;
   }
 
   .heroDeck {
-    font-size: 14px;
-    margin-top: 10px;
+    display: block;
+    overflow: visible;
+    font-size: 15px;
+    margin-top: 12px;
     max-width: 100%;
     line-height: 1.45;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: initial;
   }
 
   .heroFooter {
@@ -430,7 +456,13 @@
     padding-top: 12px;
     gap: 12px;
   }
-  .heroByline { font-size: 9px; gap: 8px; }
+  .heroByline {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    font-size: 9px;
+    gap: 8px;
+    row-gap: 5px;
+  }
   .heroRead {
     width: 100%;
     justify-content: center;
@@ -440,8 +472,11 @@
 }
 
 @media (max-width: 480px) {
-  .heroTitle { font-size: 20px; }
-  .heroDeck { font-size: 13px; -webkit-line-clamp: 2; }
+  .heroTitle {
+    font-size: clamp(28px, 8.6vw, 34px);
+    line-height: 1;
+  }
+  .heroDeck { font-size: 14px; }
   .heroRead { padding: 12px 14px; }
   .heroCover { aspect-ratio: 16 / 10; }
 }

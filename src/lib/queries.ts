@@ -113,7 +113,7 @@ export const V2_HERO_MAIN_QUERY = `
       "verticaleNom": verticale->nom,
       "authorName": author->name
     },
-    *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [0] {
+    *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc) [0] {
       _id, titre, extrait, description, metaHero,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       typeArticle, category,
@@ -155,7 +155,7 @@ export const V2_HERO_RIGHT_COL_QUERY = `
 
 // 3 articles secondaires pour le hero (les suivants, hors vidéo)
 export const V2_HERO_SECONDARY_QUERY = `
-  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [1...15] {
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc) [1...15] {
     _id,
     titre,
     extrait,
@@ -184,7 +184,7 @@ export const MEDIA_HERO_SLIDES_QUERY = `
       "verticaleNom": verticale->nom,
       "authorName": author->name
     },
-    "fallback": *[_type == "production" && rubrique == "articles" && defined(image.asset) && coalesce(typeArticle, "article") != "video"] | order(datePublication desc) [0...5] {
+    "fallback": *[_type == "production" && rubrique == "articles" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc) [0...5] {
       _id, titre, extrait, description, category, typeArticle,
       "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
       "imageUrl": image.asset->url,
@@ -199,7 +199,7 @@ export const MEDIA_HERO_SLIDES_QUERY = `
 
 // Ce qui vient de paraître — 6 articles les plus récents (avec image)
 export const V2_SPOTLIGHT_QUERY = `
-  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides"] | order(datePublication desc) [0...6] {
+  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc) [0...6] {
     _id, titre, extrait, description,
     "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
     typeArticle,
@@ -215,7 +215,7 @@ export const V2_SPOTLIGHT_QUERY = `
 
 // Articles pour le Feed (16 derniers, avec image)
 export const V2_FEED_QUERY = `
-  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides"] | order(datePublication desc) {
+  *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc) {
     _id,
     titre,
     extrait,
@@ -240,7 +240,7 @@ export const V2_FEED_QUERY = `
 
 // 2 articles éditoriaux pour Spotlight (après le premier, avec image)
 export const V2_EDITORIAL_QUERY = `
-  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides"] | order(datePublication desc) [4...18] {
+  *[_type == "production" && defined(image.asset) && coalesce(typeArticle, "article") != "video" && rubrique != "guides" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc) [4...18] {
     _id,
     titre,
     extrait,
@@ -258,7 +258,7 @@ export const V2_EDITORIAL_QUERY = `
 
 // ExploreTopics — articles récents avec sous-topic pour filtrage par thème
 export const V2_EXPLORE_QUERY = `
-  *[_type == "production" && defined(image.asset) && defined(soustopic) && rubrique == "articles"] | order(datePublication desc) [0...60] {
+  *[_type == "production" && defined(image.asset) && defined(soustopic) && rubrique == "articles" && !("carrousel" in tags)] | order(datePublication desc) [0...60] {
     _id, titre, extrait, description,
     "contenuTexte": array::join(contenu[_type == "block"][0...2].children[].text, " "),
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
@@ -295,7 +295,7 @@ export const UNIVERS_COUNTS_QUERY = `
     "liens": count(*[_type == "production" && univpilar == "liens"]),
     "monde": count(*[_type == "production" && univpilar == "monde"]),
     "avenir": count(*[_type == "production" && univpilar == "avenir"]),
-    "latest": *[_type == "production" && defined(image.asset) && defined(univpilar)] | order(datePublication desc) [0...5] {
+    "latest": *[_type == "production" && defined(image.asset) && defined(univpilar) && !("carrousel" in tags)] | order(datePublication desc) [0...5] {
       _id, titre,
       "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
       "slug": slug.current,
@@ -973,6 +973,14 @@ export const ARTICLE_BY_SLUG_QUERY = `
     videoUrl,
     "duration": duree,
 
+    // Carrousel
+    "carouselSlides": carouselSlides[] {
+      _key,
+      caption,
+      alt,
+      "url": asset->url
+    },
+
     // SEO
     seo,
 
@@ -1060,7 +1068,7 @@ export const RELATED_ARTICLES_QUERY = `
 
 // Articles populaires (par vues) - exclut vidéos et histoires
 export const POPULAR_ARTICLES_QUERY = `
-  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"]) && rubrique != "guides"] | order(coalesce(stats.views, views, 0) desc) [0...10] {
+  *[_type == "production" && !(coalesce(typeArticle, "article") in ["video", "histoire"]) && rubrique != "guides" && !("carrousel" in tags)] | order(coalesce(stats.views, views, 0) desc) [0...10] {
     _id,
     "title": titre,
     slug,

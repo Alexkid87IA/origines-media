@@ -102,12 +102,16 @@ const PILLARS = [
   },
 ];
 
-export default function Welcome() {
+interface WelcomeProps {
+  compact?: boolean;
+}
+
+export default function Welcome({ compact = false }: WelcomeProps) {
   const [activePillar, setActivePillar] = useState(0);
   const active = PILLARS[activePillar];
 
   return (
-    <section className={s.welcome} aria-label="Bienvenue">
+    <section className={`${s.welcome}${compact ? ` ${s.compact}` : ""}`} aria-label="Bienvenue">
       <p className={s.kicker}>
         <span className={s.kickerDot} />
         Bienvenue sur&nbsp;:
@@ -129,60 +133,64 @@ export default function Welcome() {
 
       <div className={s.rule} />
 
-      <p className={s.tagline}>
-        Savoir d'où l'on vient pour savoir où l'on va.
-      </p>
+      {!compact && (
+        <>
+          <p className={s.tagline}>
+            Savoir d'où l'on vient pour savoir où l'on va.
+          </p>
 
-      <div
-        className={s.pillars}
-        style={{ "--active-color": active.color } as React.CSSProperties}
-      >
-        <div className={s.pillarTrack} role="tablist" aria-label="Les chapitres éditoriaux Origines">
-          {PILLARS.map((u, i) => (
-            <div key={u.label} className={s.pillarWrap}>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                role="tab"
-                aria-selected={activePillar === i}
-                aria-controls="welcome-chapter-panel"
-                id={`welcome-chapter-${i + 1}`}
-                className={`${s.chapterButton}${activePillar === i ? ` ${s.chapterActive}` : ""}`}
-                onClick={() => setActivePillar(i)}
-                style={
-                  {
-                    "--pillar-color": u.color,
-                    "--pillar-i": i,
-                  } as React.CSSProperties
-                }
-              >
-                <span className={s.chapterNumber}>{u.chapter}</span>
-                <span className={s.chapterDot} aria-hidden="true">
-                  <span className={s.chapterRing} />
-                </span>
-                <span className={s.chapterBody}>
-                  <span className={s.chapterLabel}>{u.label}</span>
-                  <span className={s.chapterCue}>{u.cue}</span>
-                </span>
-              </Button>
+          <div
+            className={s.pillars}
+            style={{ "--active-color": active.color } as React.CSSProperties}
+          >
+            <div className={s.pillarTrack} role="tablist" aria-label="Les chapitres éditoriaux Origines">
+              {PILLARS.map((u, i) => (
+                <div key={u.label} className={s.pillarWrap}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    role="tab"
+                    aria-selected={activePillar === i}
+                    aria-controls="welcome-chapter-panel"
+                    id={`welcome-chapter-${i + 1}`}
+                    className={`${s.chapterButton}${activePillar === i ? ` ${s.chapterActive}` : ""}`}
+                    onClick={() => setActivePillar(i)}
+                    style={
+                      {
+                        "--pillar-color": u.color,
+                        "--pillar-i": i,
+                      } as React.CSSProperties
+                    }
+                  >
+                    <span className={s.chapterNumber}>{u.chapter}</span>
+                    <span className={s.chapterDot} aria-hidden="true">
+                      <span className={s.chapterRing} />
+                    </span>
+                    <span className={s.chapterBody}>
+                      <span className={s.chapterLabel}>{u.label}</span>
+                      <span className={s.chapterCue}>{u.cue}</span>
+                    </span>
+                  </Button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <div
-          className={s.methodPanel}
-          id="welcome-chapter-panel"
-          role="tabpanel"
-          aria-labelledby={`welcome-chapter-${activePillar + 1}`}
-        >
-          <span className={s.panelKicker}>{active.chapter}</span>
-          <div className={s.panelContent}>
-            <strong className={s.panelTitle}>{active.title}</strong>
-            <p className={s.panelText}>{active.text}</p>
+            <div
+              className={s.methodPanel}
+              id="welcome-chapter-panel"
+              role="tabpanel"
+              aria-labelledby={`welcome-chapter-${activePillar + 1}`}
+            >
+              <span className={s.panelKicker}>{active.chapter}</span>
+              <div className={s.panelContent}>
+                <strong className={s.panelTitle}>{active.title}</strong>
+                <p className={s.panelText}>{active.text}</p>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </section>
   );
 }

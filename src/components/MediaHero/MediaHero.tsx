@@ -21,6 +21,7 @@ export interface Slide {
 
 interface MediaHeroProps {
   cmsSlides?: Slide[];
+  joinedMasthead?: boolean;
 }
 
 const SLIDES: Slide[] = [
@@ -102,7 +103,7 @@ function frTypo(text: string): string {
 
 const AUTOPLAY_MS = 8000;
 
-export default function MediaHero({ cmsSlides }: MediaHeroProps) {
+export default function MediaHero({ cmsSlides, joinedMasthead = false }: MediaHeroProps) {
   const slides = cmsSlides && cmsSlides.length > 0 ? cmsSlides : SLIDES;
   const [current, setCurrent] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
@@ -140,7 +141,7 @@ export default function MediaHero({ cmsSlides }: MediaHeroProps) {
   const u = UNIVERS_MAP[slide.univers];
 
   return (
-    <section className={s.hero}>
+    <section className={`${s.hero}${joinedMasthead ? ` ${s.joinedMasthead}` : ""}`}>
       <div className={s.watermark} aria-hidden="true">
         <span className={s.wmCircle} />
         <span className={s.wmDot} />

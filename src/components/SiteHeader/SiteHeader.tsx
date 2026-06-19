@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { UNIVERS } from "@/data/univers";
 import { sanityFetch } from "@/lib/sanity";
 import { sanityImg } from "@/lib/sanityImage";
+import Button from "@/components/ui/Button";
 import styles from "./SiteHeader.module.css";
 
 interface SearchResult {
@@ -226,6 +227,7 @@ const SECONDARY: SecondaryNav[] = [
     dropdownLabel: "Origines Media",
     allLabel: "Découvrir Origines",
     items: [
+      { href: "/marque", label: "La marque", color: "#8B5CF6" },
       { href: "/a-propos", label: "Notre mission", color: "#8B5CF6" },
       { href: "/a-propos#equipe", label: "L'équipe", color: "#EC4899" },
       { href: "/contact", label: "Contact", color: "#10B981" },
@@ -266,9 +268,38 @@ export default function SiteHeader() {
   }, [comingSoon]);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    const body = document.body;
+    const media = window.matchMedia("(max-width: 1120px)");
+
+    const unlockScroll = () => {
+      body.style.overflow = "";
+      body.style.overflowY = "";
+    };
+
+    const syncScrollLock = () => {
+      const shouldLock = mobileOpen && media.matches;
+
+      if (shouldLock) {
+        body.style.overflow = "";
+        body.style.overflowY = "hidden";
+        return;
+      }
+
+      unlockScroll();
+
+      if (mobileOpen && !media.matches) {
+        setMobileOpen(false);
+      }
+    };
+
+    syncScrollLock();
     if (!mobileOpen) setMobileSection(null);
-    return () => { document.body.style.overflow = ""; };
+
+    media.addEventListener?.("change", syncScrollLock);
+    return () => {
+      media.removeEventListener?.("change", syncScrollLock);
+      unlockScroll();
+    };
   }, [mobileOpen]);
 
   const openMega = useCallback((target: MegaTarget) => {
@@ -332,6 +363,9 @@ export default function SiteHeader() {
               alt="Origines Media"
               className={styles.logoImg}
             />
+            <span className={styles.logoText} aria-hidden="true">
+              <small>Média indépendant</small>
+            </span>
           </a>
 
           <nav className={styles.nav} aria-label="Navigation principale">
@@ -495,30 +529,29 @@ export default function SiteHeader() {
           </nav>
 
           <div className={styles.headerActions}>
-            <a className={styles.cta} href="/ecrire-mon-histoire">
-              <span>Racontez votre histoire</span>
-              <svg
-                className={styles.arrow}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </a>
-
-            <a
-              className={styles.ctaIcon}
+            <Button
+              as="a"
               href="/ecrire-mon-histoire"
-              aria-label="Racontez votre histoire"
+              className={styles.cta}
+              variant="outline"
+              size="md"
+              color="#0A0A0A"
+              withArrow
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                <path d="M16.5 3.5 20 7l-9.5 9.5L5 17l0.5-5.5 11-8Z" />
-                <path d="M14 6l3 3" />
-              </svg>
-            </a>
+              Racontez votre histoire
+            </Button>
+
+            <Button
+              as="a"
+              href="/ecrire-mon-histoire"
+              className={styles.ctaIcon}
+              variant="outline"
+              size="sm"
+              color="#0A0A0A"
+              withArrow
+            >
+              Récit
+            </Button>
 
             <div className={styles.accountWrap}>
               {user ? (
@@ -568,28 +601,38 @@ export default function SiteHeader() {
             </button>
           </div>
         </div>
-        <div className={`${styles.tagRow}${tagsOpen ? ` ${styles.tagRowOpen}` : ""}`}>
-          {UNIVERS.flatMap((u, ui) => {
-            const tags = u.subtopics.map((st) => (
-              <a
-                key={`${u.id}-${st.slug}`}
-                href={`/univers/${u.id}/${st.slug}`}
-                className={styles.tag}
-                style={{ "--tag-color": u.color } as React.CSSProperties}
-              >
-                {st.label}
-              </a>
-            ));
-            if (ui < UNIVERS.length - 1) {
-              tags.push(<span key={`sep-${u.id}`} className={styles.tagSep} aria-hidden="true">&middot;</span>);
-            }
-            return tags;
-          })}
+        <nav
+          className={`${styles.tagRow}${tagsOpen ? ` ${styles.tagRowOpen}` : ""}`}
+          aria-label="Explorer par sujets"
+        >
+          <span className={styles.tagRowLabel} aria-hidden="true">
+            <span className={styles.tagRowMark} />
+            Sujets
+          </span>
+          <div className={styles.tagTrack}>
+            {UNIVERS.flatMap((u, ui) => {
+              const tags = u.subtopics.map((st) => (
+                <a
+                  key={`${u.id}-${st.slug}`}
+                  href={`/univers/${u.id}/${st.slug}`}
+                  className={styles.tag}
+                  style={{ "--tag-color": u.color } as React.CSSProperties}
+                >
+                  {st.label}
+                </a>
+              ));
+              if (ui < UNIVERS.length - 1) {
+                tags.push(<span key={`sep-${u.id}`} className={styles.tagSep} aria-hidden="true">&middot;</span>);
+              }
+              return tags;
+            })}
+          </div>
           <div className={styles.tagActions}>
             <button
               type="button"
               className={styles.tagToggle}
               onClick={() => setTagsOpen((o) => !o)}
+              aria-expanded={tagsOpen}
             >
               {tagsOpen ? "Voir moins" : "Voir plus"}
             </button>
@@ -606,7 +649,7 @@ export default function SiteHeader() {
               <kbd className={styles.tagSearchKbd}>/</kbd>
             </button>
           </div>
-        </div>
+        </nav>
       </div>
 
       <div

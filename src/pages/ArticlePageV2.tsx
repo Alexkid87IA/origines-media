@@ -94,6 +94,7 @@ export default function ArticlePageV2() {
   const [activeHeading, setActiveHeading] = useState("");
   const [showMobileToc, setShowMobileToc] = useState(false);
   const [tocExpanded, setTocExpanded] = useState(false);
+  const [slideIndex, setSlideIndex] = useState(0);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -425,6 +426,8 @@ export default function ArticlePageV2() {
     ? [...fullContent.slice(0, firstParaIndex), ...fullContent.slice(firstParaIndex + 1)]
     : fullContent;
   const isGuide = article.rubrique === "guides";
+  const carouselSlides = (article as any).carouselSlides as Array<{ _key: string; url: string; caption?: string; alt?: string }> | undefined;
+  const hasCarousel = !!carouselSlides?.length;
   const soustopic = article.soustopic as string | undefined;
   const soustopicLabel = soustopic ? SOUSTOPIC_LABELS[soustopic] || soustopic : "";
   const soustopicColor = soustopic ? SOUSTOPIC_UNIVERS_COLOR[soustopic] || "" : "";
@@ -587,8 +590,61 @@ export default function ArticlePageV2() {
           );
         })()}
 
-        {/* ═══ Hero image — contained ═══ */}
-        {imageUrl && (
+        {/* ═══ Carousel slideshow ═══ */}
+        {hasCarousel ? (
+          <div className={s.carouselWrap}>
+            <div className={s.carouselViewport}>
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={carouselSlides[slideIndex]._key}
+                  src={carouselSlides[slideIndex].url}
+                  alt={carouselSlides[slideIndex].alt || `Slide ${slideIndex + 1}`}
+                  className={s.carouselSlide}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  loading={slideIndex === 0 ? "eager" : "lazy"}
+                  draggable={false}
+                />
+              </AnimatePresence>
+              {carouselSlides[slideIndex].caption && (
+                <span className={s.carouselCaption}>{carouselSlides[slideIndex].caption}</span>
+              )}
+            </div>
+            <div className={s.carouselNav}>
+              <button
+                className={s.carouselBtn}
+                onClick={() => setSlideIndex((i) => Math.max(0, i - 1))}
+                disabled={slideIndex === 0}
+                aria-label="Slide précédente"
+              >
+                &larr;
+              </button>
+              <span className={s.carouselCounter}>
+                {slideIndex + 1} / {carouselSlides.length}
+              </span>
+              <button
+                className={s.carouselBtn}
+                onClick={() => setSlideIndex((i) => Math.min(carouselSlides.length - 1, i + 1))}
+                disabled={slideIndex === carouselSlides.length - 1}
+                aria-label="Slide suivante"
+              >
+                &rarr;
+              </button>
+            </div>
+            <div className={s.carouselDots}>
+              {carouselSlides.map((slide, i) => (
+                <button
+                  key={slide._key}
+                  className={`${s.carouselDot} ${i === slideIndex ? s.carouselDotActive : ""}`}
+                  onClick={() => setSlideIndex(i)}
+                  aria-label={`Aller à la slide ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        ) : imageUrl ? (
           <figure className={s.heroFigure}>
             <img
               src={sanityImg(imageUrl, 1200)}
@@ -603,7 +659,7 @@ export default function ArticlePageV2() {
               </figcaption>
             )}
           </figure>
-        )}
+        ) : null}
 
         {/* ═══ Guide Banner — pedagogical note ═══ */}
         {isGuide && <GuideBanner themeColor={themeColor} />}
