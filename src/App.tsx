@@ -71,6 +71,7 @@ const PortraitDetailPage = lazyRetry(() => import('./pages/PortraitDetailPage'))
 const HistoiresPage = lazyRetry(() => import('./pages/HistoiresPage'));
 const ArticlesPage = lazyRetry(() => import('./pages/ArticlesPageV2'));
 const AboutPage = lazyRetry(() => import('./pages/AboutPage'));
+const MarquePage = lazyRetry(() => import('./pages/MarquePage'));
 const ContactPage = lazyRetry(() => import('./pages/ContactPage'));
 const LegalPage = lazyRetry(() => import('./pages/LegalPage'));
 const CGUPage = lazyRetry(() => import('./pages/CGUPage'));
@@ -113,6 +114,7 @@ const ConfidentialitePage = lazyRetry(() => import('./pages/ConfidentialitePage'
 const CookiesPage = lazyRetry(() => import('./pages/CookiesPage'));
 const PlanDuSitePage = lazyRetry(() => import('./pages/PlanDuSitePage'));
 const SousTopicPage = lazyRetry(() => import('./pages/SousTopicPage'));
+const CarouselReaderPage = lazyRetry(() => import('./pages/CarouselReaderPage'));
 const NotFoundPage = lazyRetry(() => import('./pages/NotFoundPage'));
 
 const LoadingFallback = () => (
@@ -188,8 +190,10 @@ function App() {
         <Route path="/histoire/:slug" element={<PortraitDetailPage />} />
         <Route path="/article/:slug" element={<ArticlePage />} />
         <Route path="/video/:slug" element={<VideoPage />} />
+        <Route path="/carousel/:slug" element={<CarouselReaderPage />} />
         <Route path="/recit/:slug" element={<RedirectToArticle />} />
         <Route path="/a-propos" element={<AboutPage />} />
+        <Route path="/marque" element={<MarquePage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/partenariats" element={<PartnershipsPage />} />
         <Route path="/rejoindre" element={<JoinPage />} />
