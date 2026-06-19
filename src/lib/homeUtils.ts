@@ -38,6 +38,7 @@ export interface HomeData {
   guides: HomeItem[];
   videos: HomeItem[];
   carousels?: CarouselItem[];
+  heroSlides?: HomeItem[];
 }
 
 export const FALLBACK_DECK =
@@ -45,6 +46,24 @@ export const FALLBACK_DECK =
 
 export const HOME_DATA_QUERY = `
   {
+    "heroSlides": coalesce(
+      *[_id == "siteSettings"][0].unesDuJour[]-> {
+        _id,
+        titre,
+        extrait,
+        description,
+        "contenuTexte": array::join(contenu[_type == "block"][0...3].children[].text, " "),
+        typeArticle,
+        category,
+        "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
+        "slug": slug.current,
+        datePublication,
+        ${RT},
+        univpilar,
+        "authorName": author->name
+      },
+      []
+    ),
     "feed": *[_type == "production" && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc) [0...28] {
       _id,
       titre,

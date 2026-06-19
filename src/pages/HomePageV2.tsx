@@ -25,7 +25,7 @@ import { STATIC_CAROUSELS } from "@/data/carousels";
 import s from "./HomePageV2.module.css";
 
 export default function HomePageV2() {
-  const [data, setData] = useState<HomeData>({ feed: [], guides: [], videos: [], carousels: [] });
+  const [data, setData] = useState<HomeData>({ feed: [], guides: [], videos: [], carousels: [], heroSlides: [] });
 
   useEffect(() => {
     document.body.style.background = "var(--paper)";
@@ -43,12 +43,16 @@ export default function HomePageV2() {
         guides: result?.guides || [],
         videos: result?.videos || [],
         carousels: result?.carousels || [],
+        heroSlides: result?.heroSlides || [],
       });
     });
   }, []);
 
   const articles = data.feed.filter((item) => item.typeArticle !== "video" && !item.videoUrl);
-  const heroSlides = articles.slice(0, 5).map(heroSlideOf);
+  const curatedHero = (data.heroSlides || []).length > 0
+    ? data.heroSlides!.map(heroSlideOf)
+    : null;
+  const heroSlides = curatedHero || articles.slice(0, 5).map(heroSlideOf);
   const thread = articles.slice(5, 13);
   const selection = articles.slice(13, 17);
   const featuredVideo = data.videos[0];
