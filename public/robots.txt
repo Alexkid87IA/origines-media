@@ -24,8 +24,8 @@ Disallow: /deconnexion
 Disallow: /join-partner
 Disallow: /join
 
-# Bloquer les paramètres de pagination et tri (évite le contenu dupliqué)
-Disallow: /*?*page=
+# Bloquer les paramètres de tri (évite le contenu dupliqué)
+# La pagination (?page=) reste crawlable pour le maillage interne
 Disallow: /*?*tri=
 
 # Règles spécifiques pour Googlebot

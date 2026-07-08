@@ -201,7 +201,23 @@ export default function AffiliateProductDetailPage() {
         }
         image={product.imageUrl}
         url={`/recommandations/produits/${product.slug}`}
-        jsonLd="article"
+        productData={{
+          name: product.name,
+          description: product.description,
+          image: product.imageUrl,
+          brand: product.brand,
+          offers: (product.affiliateLinks || [])
+            .filter((l) => l.url)
+            .map((l) => {
+              const parsed = l.price
+                ? parseFloat(l.price.replace(/[^\d,.]/g, "").replace(",", "."))
+                : NaN;
+              return {
+                url: l.url,
+                ...(Number.isFinite(parsed) ? { price: parsed, currency: "EUR" } : {}),
+              };
+            }),
+        }}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
           { name: "Recommandations", url: "/recommandations" },

@@ -156,6 +156,17 @@ export const SUBTOPIC_ARTICLES_QUERY = `
   }
 `
 
+export const AFFILIATE_PRODUCT_QUERY = `
+  *[_type == "affiliateProduct" && slug.current == $slug][0] {
+    name,
+    "slug": slug.current,
+    description,
+    brand,
+    "image": coalesce(image.asset->url, imageUrl),
+    affiliateLinks
+  }
+`
+
 export async function fetchSanity<T = Record<string, unknown>>(
   query: string,
   params: Record<string, string> = {}

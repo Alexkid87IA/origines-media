@@ -6,7 +6,7 @@ import {
 } from './_lib/constants.js'
 import {
   articleSchema, videoSchema, breadcrumbSchema,
-  faqSchema, homePageSchema, itemListSchema, jsonLdTag,
+  faqSchema, homePageSchema, itemListSchema, productSchema, jsonLdTag,
 } from './_lib/jsonLd.js'
 import {
   ARTICLE_FULL_QUERY, VIDEO_FULL_QUERY,
@@ -16,7 +16,7 @@ import {
   LIST_VIDEOS_QUERY, LIST_PORTRAITS_QUERY,
   LIST_RECOMMENDATIONS_QUERY, LIST_SERIES_QUERY,
   LIST_DOSSIERS_QUERY, UNIVERS_ARTICLES_QUERY,
-  fetchSanity,
+  AFFILIATE_PRODUCT_QUERY, fetchSanity,
 } from './_lib/queries.js'
 import { renderPortableText } from './_lib/portableTextToHtml.js'
 
@@ -516,7 +516,52 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
 
   // /recommandations/produits/:slug
   if (segments.length === 3 && segments[0] === 'recommandations' && segments[1] === 'produits') {
-    const label = segments[2].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    const slug = segments[2]
+    const data = await fetchSanity<any>(AFFILIATE_PRODUCT_QUERY, { slug })
+    if (data) {
+      const crumbs = [
+        { name: 'Accueil', url: '/' },
+        { name: 'Produits recommandés', url: '/recommandations/produits' },
+        { name: data.name || slug, url: `/recommandations/produits/${slug}` },
+      ]
+      const links: Array<{ platform?: string; url?: string; price?: string }> = Array.isArray(data.affiliateLinks) ? data.affiliateLinks : []
+      const offers = links
+        .filter(l => l?.url)
+        .map(l => {
+          const parsed = l.price ? parseFloat(l.price.replace(/[^\d,.]/g, '').replace(',', '.')) : NaN
+          return { url: l.url as string, ...(Number.isFinite(parsed) ? { price: parsed, currency: 'EUR' } : {}) }
+        })
+      let body = data.description ? `<p>${esc(data.description)}</p>` : ''
+      if (links.length) {
+        body += '<h2>Où l\'acheter</h2><ul>'
+        for (const l of links) {
+          if (!l.url) continue
+          body += `<li><a href="${esc(l.url)}" rel="sponsored nofollow">${esc(l.platform || 'Voir le produit')}</a>${l.price ? ` — ${esc(l.price)}` : ''}</li>`
+        }
+        body += '</ul>'
+      }
+      return {
+        ...defaults,
+        title: `${data.name} — Produits recommandés · Origines Media`,
+        description: data.description || `Découvrez ${data.name} : avis, test et liens d'achat sur Origines Media.`,
+        image: data.image || DEFAULT_OG_IMAGE,
+        ogType: 'website',
+        bodyHtml: body,
+        jsonLdBlocks: [
+          jsonLdTag(productSchema({
+            name: data.name,
+            description: data.description,
+            image: data.image,
+            url,
+            brand: data.brand,
+            offers,
+          })),
+          jsonLdTag(breadcrumbSchema(crumbs)),
+        ],
+        breadcrumbs: crumbs,
+      }
+    }
+    const label = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
     return {
       ...defaults,
       title: `${label} — Produits recommandés · Origines Media`,

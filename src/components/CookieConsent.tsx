@@ -5,6 +5,23 @@ const CONSENT_KEY = 'cookie-consent';
 
 export type ConsentType = 'accepted' | 'refused' | null;
 
+// La CMP Google (Privacy & Messaging / TCF) expose window.__tcfapi quand elle est
+// active : dans ce cas c'est elle qui gère le consentement, pas notre bannière.
+export const isTcfCmpActive = () =>
+  typeof window !== 'undefined' && typeof (window as any).__tcfapi === 'function';
+
+function updateGtagConsent(granted: boolean) {
+  const w = window as any;
+  if (typeof w.gtag !== 'function') return;
+  const value = granted ? 'granted' : 'denied';
+  w.gtag('consent', 'update', {
+    ad_storage: value,
+    ad_user_data: value,
+    ad_personalization: value,
+    analytics_storage: value,
+  });
+}
+
 export const useCookieConsent = () => {
   const [consent, setConsent] = useState<ConsentType>(() => {
     if (typeof window === 'undefined') return null;
@@ -14,11 +31,13 @@ export const useCookieConsent = () => {
 
   const acceptCookies = () => {
     localStorage.setItem(CONSENT_KEY, 'accepted');
+    updateGtagConsent(true);
     setConsent('accepted');
   };
 
   const refuseCookies = () => {
     localStorage.setItem(CONSENT_KEY, 'refused');
+    updateGtagConsent(false);
     setConsent('refused');
   };
 
@@ -32,7 +51,9 @@ export default function CookieConsent() {
 
   useEffect(() => {
     if (!hasResponded) {
-      const t = setTimeout(() => setVisible(true), 1500);
+      const t = setTimeout(() => {
+        if (!isTcfCmpActive()) setVisible(true);
+      }, 1500);
       return () => clearTimeout(t);
     }
   }, [hasResponded]);
@@ -52,8 +73,8 @@ export default function CookieConsent() {
       <div className={styles.inner}>
         <span className={styles.label}>Cookies</span>
         <p className={styles.text}>
-          Nous utilisons des cookies pour am&eacute;liorer votre exp&eacute;rience et analyser le trafic.{' '}
-          <a href="/mentions-legales">En savoir plus</a>
+          Nous utilisons des cookies pour mesurer l&apos;audience et financer le site par la publicit&eacute;.{' '}
+          <a href="/cookies">En savoir plus</a>
         </p>
         <div className={styles.actions}>
           <button className={styles.refuse} onClick={() => dismiss(false)} type="button">

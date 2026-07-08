@@ -10,7 +10,8 @@ import EmailCapture from "@/components/EmailCapture";
 import { sanityFetch } from "@/lib/sanity";
 import { typo, estimateReadingTime } from "@/lib/typography";
 import { sanityImg } from "@/lib/sanityImage";
-import { AdPlaceholder } from "@/components/AdSense";
+import { AdInArticle, AdMultiplex } from "@/components/AdSense";
+import { AD_SLOTS } from "@/lib/adsConfig";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import {
   XIcon,
@@ -35,6 +36,7 @@ import {
 } from "@/lib/queries";
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { UNIVERS } from "@/data/univers";
+import { STATIC_CAROUSELS } from "@/data/carousels";
 import SponsorSkin from "@/components/SponsorSkin/SponsorSkin";
 import { SPONSORS, SPONSOR_ADS, DEFAULT_SIDEBAR_AD } from "@/data/sponsors";
 import s from "./ArticlePageV2.module.css";
@@ -79,6 +81,14 @@ export default function ArticlePageV2() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Si le slug correspond à un carrousel statique, on redirige vers /carousel/:slug
+  // pour ne pas afficher l'article seul sans le slideshow.
+  useEffect(() => {
+    if (slug && STATIC_CAROUSELS.some((c) => c.slug === slug)) {
+      navigate(`/carousel/${slug}`, { replace: true });
+    }
+  }, [slug, navigate]);
 
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<RelatedArticle[]>([]);
@@ -668,26 +678,30 @@ export default function ArticlePageV2() {
         <section className={s.contentSection}>
           <div className={isGuide ? s.contentGridGuide : s.contentGrid}>
             {/* Article body */}
-            <div ref={contentRef} className={isGuide ? s.articleBodyGuide : s.articleBody}>
+            <article ref={contentRef} className={isGuide ? s.articleBodyGuide : s.articleBody}>
               <div className={isGuide ? s.proseGuide : s.prose}>
                 {!isGuide ? (() => {
                   const adImage = (soustopic && SPONSOR_ADS[soustopic]?.mobile) || DEFAULT_SIDEBAR_AD.mobile;
                   const adUrl = sponsor?.url || DEFAULT_SIDEBAR_AD.url;
                   const adName = sponsor?.name || DEFAULT_SIDEBAR_AD.name;
                   let paraCount = 0;
-                  let splitIdx = -1;
+                  let sponsorIdx = -1;
+                  let adIdx = -1;
                   for (let i = 0; i < content.length; i++) {
                     if (content[i]._type === "block" && (!content[i].style || content[i].style === "normal")) {
                       paraCount++;
-                      if (paraCount === 3) {
-                        splitIdx = i + 1;
+                      if (paraCount === 3 && sponsorIdx === -1) sponsorIdx = i + 1;
+                      if (paraCount === 9) {
+                        adIdx = i + 1;
                         break;
                       }
                     }
                   }
-                  if (splitIdx === -1) splitIdx = content.length;
-                  const before = content.slice(0, splitIdx);
-                  const after = content.slice(splitIdx);
+                  if (sponsorIdx === -1) sponsorIdx = content.length;
+                  if (adIdx === -1 || adIdx <= sponsorIdx) adIdx = content.length;
+                  const before = content.slice(0, sponsorIdx);
+                  const middle = content.slice(sponsorIdx, adIdx);
+                  const after = content.slice(adIdx);
                   return (
                     <>
                       <PortableText value={before} components={portableTextComponents} />
@@ -697,6 +711,8 @@ export default function ArticlePageV2() {
                           <img src={adImage} alt={adName} className={s.sponsorInlineImg} />
                         </a>
                       </div>
+                      <PortableText value={middle} components={portableTextComponents} />
+                      {after.length > 0 && <AdInArticle adSlot={AD_SLOTS.articleInContent} />}
                       <PortableText value={after} components={portableTextComponents} />
                     </>
                   );
@@ -768,7 +784,7 @@ export default function ArticlePageV2() {
                   </div>
                 </div>
               </div>
-            </div>
+            </article>
 
             {/* Sidebar */}
             {!isGuide && <aside ref={sidebarContainerRef} className={s.sidebar}>
@@ -1236,6 +1252,11 @@ export default function ArticlePageV2() {
               </div>
             </aside>}
           </div>
+        </section>
+
+        {/* ═══ Publicité — grille de contenus recommandés (Multiplex) ═══ */}
+        <section className={s.contentSection}>
+          <AdMultiplex adSlot={AD_SLOTS.articleMultiplex} />
         </section>
 
         {/* ═══ Related content — editorial section + CTA ═══ */}

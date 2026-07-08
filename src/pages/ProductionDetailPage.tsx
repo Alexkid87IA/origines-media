@@ -14,7 +14,8 @@ import { sanityFetch } from "@/lib/sanity";
 import { PRODUCTION_BY_SLUG_QUERY } from "@/lib/queries";
 import { typo, estimateReadingTime } from "@/lib/typography";
 import { sanityImg } from "@/lib/sanityImage";
-import { AdPlaceholder } from "@/components/AdSense";
+import { AdBanner, AdRectangle } from "@/components/AdSense";
+import { AD_SLOTS } from "@/lib/adsConfig";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
 import { shareButtons } from "@/components/article/SocialIcons";
 import type { Heading } from "@/components/article/types";
@@ -760,7 +761,7 @@ export default function ProductionDetailPage() {
             {/* Article body */}
             <div ref={articleRef} className={s.articleBody}>
               {/* Mobile ad */}
-              <AdPlaceholder format="banner" className={s.mobileAdBanner} />
+              <AdBanner adSlot={AD_SLOTS.mobileBanner} className={s.mobileAdBanner} />
 
               {production.contenu && production.contenu.length > 0 ? (
                 <div className={s.prose}>
@@ -962,7 +963,7 @@ export default function ProductionDetailPage() {
                 </div>
 
                 {/* 3. Ad */}
-                <AdPlaceholder format="rectangle" />
+                <AdRectangle adSlot={AD_SLOTS.sidebarRectangle} />
 
                 {/* 4. Explore (tabbed) */}
                 {latestArticles.length > 0 && (
@@ -1077,7 +1078,7 @@ export default function ProductionDetailPage() {
                 </div>
 
                 {/* 6. Ad */}
-                <AdPlaceholder format="rectangle" />
+                <AdRectangle adSlot={AD_SLOTS.sidebarRectangle} />
 
                 {/* 7. Social follow */}
                 <div className={s.socialWidget}>
@@ -1182,7 +1183,7 @@ export default function ProductionDetailPage() {
                 )}
 
                 {/* 10. Ad */}
-                <AdPlaceholder format="rectangle" />
+                <AdRectangle adSlot={AD_SLOTS.sidebarRectangle} />
               </div>
             </aside>
           </div>

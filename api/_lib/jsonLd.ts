@@ -234,6 +234,35 @@ export function homePageSchema() {
   }
 }
 
+export function productSchema(props: {
+  name: string
+  description?: string
+  image?: string
+  url: string
+  brand?: string
+  offers?: Array<{ url: string; price?: number; currency?: string }>
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: props.name,
+    url: props.url,
+    ...(props.description ? { description: props.description } : {}),
+    ...(props.image ? { image: [props.image] } : {}),
+    ...(props.brand ? { brand: { '@type': 'Brand', name: props.brand } } : {}),
+    ...(props.offers?.length
+      ? {
+          offers: props.offers.map(o => ({
+            '@type': 'Offer',
+            url: o.url,
+            availability: 'https://schema.org/InStock',
+            ...(o.price != null ? { price: o.price, priceCurrency: o.currency || 'EUR' } : {}),
+          })),
+        }
+      : {}),
+  }
+}
+
 export function jsonLdTag(schema: Record<string, unknown>): string {
   return `<script type="application/ld+json">${JSON.stringify(schema)}</script>`
 }

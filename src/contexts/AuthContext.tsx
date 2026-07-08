@@ -1,12 +1,18 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import type { User } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
+
+// Firebase (~500 KB) n'est chargé au démarrage que si une session est connue
+// (hint localStorage). Sinon l'init n'a lieu qu'à la première action d'auth.
+const AUTH_HINT_KEY = "origines-auth-hint";
 
 interface AuthContextValue {
   user: User | null;
@@ -48,34 +54,61 @@ function shouldFallbackToRedirect(error: unknown) {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const listenerStarted = useRef(false);
+  const cancelledRef = useRef(false);
+  const unsubRef = useRef<(() => void) | undefined>(undefined);
 
-  useEffect(() => {
-    let unsub: (() => void) | undefined;
-    let cancelled = false;
-
-    getFirebaseAuth().then(async (auth) => {
-      if (cancelled) return;
-      if (!auth) {
-        setLoading(false);
-        return;
-      }
-      const { onAuthStateChanged, getRedirectResult } = await import("firebase/auth");
-      getRedirectResult(auth).catch(() => {});
-      unsub = onAuthStateChanged(auth, (u) => {
-        if (!cancelled) {
-          setUser(u);
-          setLoading(false);
-        }
-      });
+  const startListener = useCallback(async () => {
+    if (listenerStarted.current) return;
+    listenerStarted.current = true;
+    const auth = await getFirebaseAuth();
+    if (cancelledRef.current) return;
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+    const { onAuthStateChanged, getRedirectResult } = await import("firebase/auth");
+    getRedirectResult(auth).catch(() => {});
+    unsubRef.current = onAuthStateChanged(auth, (u) => {
+      if (cancelledRef.current) return;
+      try {
+        if (u) localStorage.setItem(AUTH_HINT_KEY, "1");
+        else localStorage.removeItem(AUTH_HINT_KEY);
+      } catch { /* stockage indisponible */ }
+      setUser(u);
+      setLoading(false);
     });
-
-    return () => {
-      cancelled = true;
-      unsub?.();
-    };
   }, []);
 
+  useEffect(() => {
+    cancelledRef.current = false;
+    let hasSession = false;
+    try {
+      hasSession = localStorage.getItem(AUTH_HINT_KEY) === "1";
+    } catch { /* stockage indisponible */ }
+
+    if (hasSession) {
+      startListener();
+    } else {
+      setLoading(false);
+      // Migration : sessions créées avant le hint (Firebase persiste dans IndexedDB)
+      try {
+        indexedDB.databases?.()
+          .then((dbs) => {
+            if (dbs?.some((d) => d.name === "firebaseLocalStorageDb")) startListener();
+          })
+          .catch(() => {});
+      } catch { /* indexedDB.databases non supporté */ }
+    }
+
+    return () => {
+      cancelledRef.current = true;
+      unsubRef.current?.();
+    };
+  }, [startListener]);
+
   async function signup(email: string, password: string, displayName: string) {
+    await startListener();
     const auth = await getFirebaseAuth();
     if (!auth) return;
     const { createUserWithEmailAndPassword, updateProfile } = await import("firebase/auth");
@@ -84,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function login(email: string, password: string) {
+    await startListener();
     const auth = await getFirebaseAuth();
     if (!auth) return;
     const { signInWithEmailAndPassword } = await import("firebase/auth");
@@ -91,6 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function loginWithGoogle() {
+    await startListener();
     const auth = await getFirebaseAuth();
     if (!auth) return;
     const { signInWithPopup, signInWithRedirect, GoogleAuthProvider } = await import("firebase/auth");
@@ -98,6 +133,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     provider.setCustomParameters({ prompt: "select_account" });
 
     if (shouldUseRedirectForGoogleAuth()) {
+      // Le hint garantit l'init au retour du redirect (getRedirectResult)
+      try { localStorage.setItem(AUTH_HINT_KEY, "1"); } catch { /* stockage indisponible */ }
       await signInWithRedirect(auth, provider);
       return "redirect";
     }
@@ -108,12 +145,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       if (!shouldFallbackToRedirect(error)) throw error;
 
+      try { localStorage.setItem(AUTH_HINT_KEY, "1"); } catch { /* stockage indisponible */ }
       await signInWithRedirect(auth, provider);
       return "redirect";
     }
   }
 
   async function logout() {
+    try { localStorage.removeItem(AUTH_HINT_KEY); } catch { /* stockage indisponible */ }
+    if (!listenerStarted.current) return;
     const auth = await getFirebaseAuth();
     if (!auth) return;
     const { signOut } = await import("firebase/auth");

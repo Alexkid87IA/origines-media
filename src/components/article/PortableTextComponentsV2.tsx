@@ -576,7 +576,7 @@ export const createPortableTextComponentsV2 = ({
           ? getImageUrl(value.asset)
           : value.asset?.url || value.url;
         if (!rawUrl) return null;
-        const imageUrl = sanityImg(rawUrl, 900);
+        const imageUrl = sanityImg(rawUrl, 1200);
         return (
           <figure className={s.figure}>
             <img

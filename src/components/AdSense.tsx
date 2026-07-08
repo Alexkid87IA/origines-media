@@ -1,9 +1,10 @@
 // src/components/AdSense.tsx
 // Composant Google AdSense réutilisable
-// Nécessite le consentement cookies pour s'afficher
+// S'affiche si consentement local accepté, ou si la CMP Google (TCF) gère le consentement
 
 import { useEffect, useRef, useState } from 'react';
-import { useCookieConsent } from './CookieConsent';
+import { useCookieConsent, isTcfCmpActive } from './CookieConsent';
+import { AD_CLIENT, isSlotConfigured } from '@/lib/adsConfig';
 
 declare global {
   interface Window {
@@ -11,9 +12,32 @@ declare global {
   }
 }
 
+// Autorise les pubs si l'utilisateur a accepté notre bannière, ou si la CMP
+// Google (Privacy & Messaging) est active — dans ce cas le script AdSense
+// respecte lui-même la chaîne TCF.
+function useAdsAllowed(): boolean {
+  const { hasConsent } = useCookieConsent();
+  const [tcfActive, setTcfActive] = useState(false);
+
+  useEffect(() => {
+    if (isTcfCmpActive()) {
+      setTcfActive(true);
+      return;
+    }
+    // La CMP se charge en async : on revérifie une fois après 2s
+    const t = setTimeout(() => {
+      if (isTcfCmpActive()) setTcfActive(true);
+    }, 2000);
+    return () => clearTimeout(t);
+  }, []);
+
+  return hasConsent || tcfActive;
+}
+
 interface AdSenseProps {
   adSlot: string;
-  adFormat?: 'auto' | 'rectangle' | 'horizontal' | 'vertical';
+  adFormat?: 'auto' | 'rectangle' | 'horizontal' | 'vertical' | 'fluid' | 'autorelaxed';
+  adLayout?: string;
   fullWidthResponsive?: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -22,48 +46,31 @@ interface AdSenseProps {
 const AdSense: React.FC<AdSenseProps> = ({
   adSlot,
   adFormat = 'auto',
+  adLayout,
   fullWidthResponsive = true,
   className = '',
   style = {}
 }) => {
   const adRef = useRef<HTMLModElement>(null);
   const isAdLoaded = useRef(false);
-  const [hasError, setHasError] = useState(false);
-  const { hasConsent } = useCookieConsent();
+  const adsAllowed = useAdsAllowed();
 
   useEffect(() => {
-    // Protection SSR
     if (typeof window === 'undefined') return;
-
-    // Ne pas charger si pas de consentement cookies
-    if (!hasConsent) return;
-
-    // Éviter de charger plusieurs fois la même pub
-    if (isAdLoaded.current) return;
+    if (!adsAllowed || isAdLoaded.current) return;
 
     try {
-      if (adRef.current) {
-        // Vérifier que le script AdSense est chargé
-        if (!window.adsbygoogle) {
-          // Pas d'erreur console - AdSense pas encore configuré
-          setHasError(true);
-          return;
-        }
-
-        // Vérifier que l'élément n'a pas déjà une pub
-        if (adRef.current.children.length === 0) {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-          isAdLoaded.current = true;
-        }
+      // Le pattern de queue fonctionne même si le script async n'est pas encore chargé
+      if (adRef.current && adRef.current.children.length === 0) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        isAdLoaded.current = true;
       }
     } catch {
-      // Fail silently - pas d'erreur console
-      setHasError(true);
+      // Fail silently — bloqueur de pub ou script indisponible
     }
-  }, [hasConsent]);
+  }, [adsAllowed]);
 
-  // Si pas de consentement ou erreur, ne rien afficher
-  if (!hasConsent || hasError) {
+  if (!adsAllowed || !isSlotConfigured(adSlot)) {
     return null;
   }
 
@@ -76,9 +83,10 @@ const AdSense: React.FC<AdSenseProps> = ({
           display: 'block',
           ...style
         }}
-        data-ad-client="ca-pub-1236201752351510"
+        data-ad-client={AD_CLIENT}
         data-ad-slot={adSlot}
         data-ad-format={adFormat}
+        {...(adLayout ? { 'data-ad-layout': adLayout } : {})}
         data-full-width-responsive={fullWidthResponsive.toString()}
       />
     </div>
@@ -126,6 +134,32 @@ export const AdAuto: React.FC<{ adSlot: string; className?: string }> = ({
       fullWidthResponsive={true}
     />
   </div>
+);
+
+// In-article : s'intègre dans le flux de lecture (format fluid)
+export const AdInArticle: React.FC<{ adSlot: string; className?: string }> = ({
+  adSlot,
+  className = ''
+}) => (
+  <AdSense
+    adSlot={adSlot}
+    adFormat="fluid"
+    adLayout="in-article"
+    className={className}
+    style={{ textAlign: 'center' }}
+  />
+);
+
+// Multiplex : grille "contenus recommandés" (équivalent Taboola natif AdSense)
+export const AdMultiplex: React.FC<{ adSlot: string; className?: string }> = ({
+  adSlot,
+  className = ''
+}) => (
+  <AdSense
+    adSlot={adSlot}
+    adFormat="autorelaxed"
+    className={className}
+  />
 );
 
 // Placeholder pour le développement (avant validation AdSense)

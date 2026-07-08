@@ -136,7 +136,7 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
                   <div className={s.modalPriceRow}>
                     <span className={s.modalPrice}>{product.price}</span>
                     {product.originalPrice && <span className={s.modalOld}>{product.originalPrice}</span>}
-                    <span className={s.modalSoon}>Bient&ocirc;t disponible</span>
+                    {!product.lien && <span className={s.modalSoon}>Bient&ocirc;t disponible</span>}
                   </div>
                   <p className={s.modalDesc}>{typo(product.description)}</p>
                   <div className={s.modalFeats}>
@@ -148,7 +148,13 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
                     ))}
                   </div>
 
-                  {status !== "success" ? (
+                  {product.lien ? (
+                    <div className={s.notifyRow}>
+                      <a href={product.lien} className={s.notifyBtn} rel="noopener">
+                        Acheter — {product.price}
+                      </a>
+                    </div>
+                  ) : status !== "success" ? (
                     <form onSubmit={handleSubmit}>
                       <div className={s.notifyRow}>
                         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Votre email" required autoComplete="email" disabled={status === "loading"} className={s.notifyInput} />

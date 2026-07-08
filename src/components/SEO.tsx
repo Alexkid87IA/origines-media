@@ -32,6 +32,13 @@ interface SEOProps {
     question: string;
     answer: string;
   }>;
+  productData?: {
+    name: string;
+    description?: string;
+    image?: string;
+    brand?: string;
+    offers?: Array<{ url: string; price?: number; currency?: string }>;
+  };
 }
 
 const DEFAULT_TITLE = 'Origines Media';
@@ -273,6 +280,33 @@ const generateItemListSchema = (items: Array<{
   })
 });
 
+const generateProductSchema = (props: {
+  name: string;
+  description?: string;
+  image?: string;
+  brand?: string;
+  url: string;
+  offers?: Array<{ url: string; price?: number; currency?: string }>;
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: props.name,
+  url: props.url,
+  ...(props.description ? { description: props.description } : {}),
+  ...(props.image ? { image: [props.image] } : {}),
+  ...(props.brand ? { brand: { '@type': 'Brand', name: props.brand } } : {}),
+  ...(props.offers?.length
+    ? {
+        offers: props.offers.map(o => ({
+          '@type': 'Offer',
+          url: o.url,
+          availability: 'https://schema.org/InStock',
+          ...(o.price != null ? { price: o.price, priceCurrency: o.currency || 'EUR' } : {}),
+        })),
+      }
+    : {}),
+});
+
 const generateFAQSchema = (faqs: Array<{ question: string; answer: string }>) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -306,6 +340,7 @@ const SEO: React.FC<SEOProps> = ({
   duration,
   itemListData,
   faqData,
+  productData,
 }) => {
   const fullTitle = absoluteTitle || (title
     ? title.includes(DEFAULT_TITLE) ? title : `${title} — ${DEFAULT_TITLE}`
@@ -367,7 +402,9 @@ const SEO: React.FC<SEOProps> = ({
   const breadcrumbData = breadcrumbs ? generateBreadcrumbSchema(breadcrumbs) : null;
 
   return (
-    <Helmet>
+    // defer={false} : commit synchrone — le rAF par défaut ne tire jamais dans
+    // les onglets en arrière-plan, laissant title/meta/canonical non appliqués
+    <Helmet defer={false}>
       {/* Primary Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="title" content={fullTitle} />
@@ -447,6 +484,11 @@ const SEO: React.FC<SEOProps> = ({
       {faqData && faqData.length > 0 && (
         <script type="application/ld+json">
           {JSON.stringify(generateFAQSchema(faqData))}
+        </script>
+      )}
+      {productData && (
+        <script type="application/ld+json">
+          {JSON.stringify(generateProductSchema({ ...productData, url: canonicalUrl }))}
         </script>
       )}
     </Helmet>

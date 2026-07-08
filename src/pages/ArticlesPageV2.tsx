@@ -326,9 +326,9 @@ export default function ArticlesPageV2() {
   return (
     <>
       <SEO
-        title="Articles — Psychologie, relations, culture"
+        title={currentPage > 1 ? `Articles — Page ${currentPage}` : "Articles — Psychologie, relations, culture"}
         description="Explorez tous les articles Origines Media par univers et thématique. Psychologie, bien-être, relations, culture et avenir — filtrez, triez, trouvez ce qui vous parle."
-        url="/articles"
+        url={currentPage > 1 ? `/articles?page=${currentPage}` : "/articles"}
         breadcrumbs={[
           { name: "Accueil", url: "/" },
           { name: "Articles", url: "/articles" },

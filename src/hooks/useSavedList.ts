@@ -1,14 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  collection,
-  doc,
-  setDoc,
-  deleteDoc,
-  onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+
+// firebase/firestore est importé dynamiquement : ce hook est utilisé par
+// SaveButton sur toutes les pages publiques, un import statique embarquerait
+// le chunk Firebase (~500 KB) dans le chargement initial.
 
 export interface SavedItem {
   id: string;
@@ -34,26 +30,28 @@ export function useSavedList() {
     let unsub: (() => void) | undefined;
     let cancelled = false;
 
-    getFirebaseDb().then((db) => {
-      if (cancelled || !db) {
-        if (!cancelled) setLoading(false);
-        return;
-      }
-      const col = collection(db, "users", user.uid, "savedItems");
-      unsub = onSnapshot(
-        col,
-        (snap) => {
-          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavedItem));
-          list.sort((a, b) => (b.savedAt?.seconds ?? 0) - (a.savedAt?.seconds ?? 0));
-          setItems(list);
-          setLoading(false);
-        },
-        () => {
-          setItems([]);
-          setLoading(false);
+    Promise.all([getFirebaseDb(), import("firebase/firestore")]).then(
+      ([db, { collection, onSnapshot }]) => {
+        if (cancelled || !db) {
+          if (!cancelled) setLoading(false);
+          return;
         }
-      );
-    });
+        const col = collection(db, "users", user.uid, "savedItems");
+        unsub = onSnapshot(
+          col,
+          (snap) => {
+            const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavedItem));
+            list.sort((a, b) => (b.savedAt?.seconds ?? 0) - (a.savedAt?.seconds ?? 0));
+            setItems(list);
+            setLoading(false);
+          },
+          () => {
+            setItems([]);
+            setLoading(false);
+          }
+        );
+      }
+    );
 
     return () => {
       cancelled = true;
@@ -65,6 +63,7 @@ export function useSavedList() {
     async (item: Omit<SavedItem, "id" | "savedAt">) => {
       const db = await getFirebaseDb();
       if (!user || !db) return;
+      const { doc, setDoc, serverTimestamp } = await import("firebase/firestore");
       const ref = doc(db, "users", user.uid, "savedItems", `${item.type}_${item.slug}`);
       await setDoc(ref, { ...item, savedAt: serverTimestamp() });
     },
@@ -75,6 +74,7 @@ export function useSavedList() {
     async (itemId: string) => {
       const db = await getFirebaseDb();
       if (!user || !db) return;
+      const { doc, deleteDoc } = await import("firebase/firestore");
       const ref = doc(db, "users", user.uid, "savedItems", itemId);
       await deleteDoc(ref);
     },
