@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFile, mkdtemp, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, rm, access } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -52,6 +54,22 @@ test('AdSense desktop/mobile and Google Ads receive HTML on every existing crawl
     ]) assert.ok(regex.test(ua), `${rule.source}: ${ua}`);
     assert.equal(regex.test('Mozilla/5.0 Chrome/134.0.0.0 Safari/537.36'), false, rule.source);
   }
+});
+
+test('Vercel entry does not shadow the homepage crawler route and preserves the visitor HTML', async () => {
+  const output = await mkdtemp(join(temp, 'entry-'));
+  const html = '<!doctype html><div id="root"></div><script type="module" src="/assets/app.js"></script>';
+  await writeFile(join(output, 'index.html'), html);
+  await promisify(execFile)(process.execPath, ['scripts/prepare-vercel-entry.mjs', output]);
+  await assert.rejects(access(join(output, 'index.html')), { code: 'ENOENT' });
+  assert.equal(await readFile(join(output, 'app.html'), 'utf8'), html);
+  assert.equal(config.rewrites.at(-1).destination, '/app.html');
+  assert.ok(config.rewrites.some(rule => rule.source === '/' && rule.destination === '/api/prerender?p=/'));
+  assert.ok(config.redirects.some(rule => rule.source === '/index.html' && rule.destination === '/'));
+  const scripts = JSON.parse(await readFile('package.json', 'utf8')).scripts;
+  assert.equal(config.buildCommand, 'npm run build:vercel');
+  assert.equal(scripts.build, 'vite build', 'Normal local builds keep the default Vite entry');
+  assert.match(scripts['build:vercel'], /npm run build && node scripts\/prepare-vercel-entry\.mjs/);
 });
 
 test('Homepage exposes genuine article/video titles and excerpts with correct destinations', async () => {

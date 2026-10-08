@@ -1,4 +1,5 @@
 {
+  "buildCommand": "npm run build:vercel",
   "crons": [
     {
       "path": "/api/interview/cleanup",
@@ -54,6 +55,11 @@
   },
   "trailingSlash": false,
   "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
     {
       "source": "/dossiers/:dossierSlug/:articleSlug",
       "destination": "/article/:articleSlug",
@@ -736,12 +742,12 @@
     },
     {
       "source": "/((?!api|assets|static|_next|favicon.ico|robots.txt|sitemap.xml|kit-media-origines.pdf|.*\\..*).*)",
-      "destination": "/index.html"
+      "destination": "/app.html"
     }
   ],
   "headers": [
     {
-      "source": "/index.html",
+      "source": "/app.html",
       "headers": [
         {
           "key": "Cache-Control",

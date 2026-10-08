@@ -1,5 +1,6 @@
 // Read-only check of public production responses and the corrected local renderer.
 // Run: node scripts/audit-adsense.mjs /private/tmp/origines-adsense-audit
+// After deployment, append --require-live-match to fail if public content differs.
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -10,6 +11,7 @@ import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 
 const output = process.argv[2] || '/private/tmp/origines-adsense-audit';
+const requireLiveMatch = process.argv.includes('--require-live-match');
 await mkdir(output, { recursive: true });
 const temp = await mkdtemp(join(tmpdir(), 'origines-adsense-audit-'));
 const exec = promisify(execFile);
@@ -69,7 +71,7 @@ try {
   for (const path of paths) {
     const live = await get(`${base}${path}`, 'Mediapartners-Google');
     const revised = path.endsWith('.txt') ? { status: 200, body: await readFile(`public${path}`, 'utf8') } : await local(path);
-    report.pageChecks.push({ path, liveStatus: live.status, liveTextCharacters: bodyText(live.body).length, revisedStatus: revised.status, revisedTextCharacters: bodyText(revised.body).length });
+    report.pageChecks.push({ path, liveStatus: live.status, liveTextCharacters: bodyText(live.body).length, revisedStatus: revised.status, revisedTextCharacters: bodyText(revised.body).length, liveContentMatches: bodyText(live.body) === bodyText(revised.body) });
     assert.equal(live.status, 200, `Public page ${path}`);
     assert.equal(revised.status, 200, `Corrected page ${path}`);
     await writeFile(join(output, path === '/' ? 'homepage.html' : `${path.slice(1).replaceAll('/', '-')}.html`), revised.body);
@@ -85,21 +87,29 @@ try {
       const quoteSafe = text => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
       for (const point of points) assert.ok(revised.body.includes(quoteSafe(point)), `Missing key point: ${article.slug}`);
       for (const block of article.content || []) for (const mark of block.markDefs || []) if (mark.href?.startsWith('/article/')) internalLinks.add(mark.href);
+      assert.equal(live.status, 200, path);
       assert.equal(revised.status, 200, path);
       assert.ok(bodyText(revised.body).length > 1000, `Article text absent: ${path}`);
       assert.ok(revised.body.includes(quoteSafe(article.title)), `Article title absent: ${path}`);
       assert.ok(revised.body.includes(quoteSafe(article.author)), `Author absent: ${path}`);
       await writeFile(join(output, `${article.slug}.html`), revised.body);
-      return { path, author: article.author, cmsWords: cmsText.split(/\s+/).length, hasSourceSection: /sources?|références?/i.test(cmsText), liveStatus: live.status, liveTextCharacters: bodyText(live.body).length, revisedStatus: revised.status, revisedTextCharacters: bodyText(revised.body).length, preservedKeyPoints: points.length };
+      return { path, author: article.author, cmsWords: cmsText.split(/\s+/).length, hasSourceSection: /sources?|références?/i.test(cmsText), liveStatus: live.status, liveTextCharacters: bodyText(live.body).length, revisedStatus: revised.status, revisedTextCharacters: bodyText(revised.body).length, liveContentMatches: bodyText(live.body) === bodyText(revised.body), preservedKeyPoints: points.length };
     }));
     report.articleSample.push(...results);
   }
   for (const path of [...internalLinks].slice(0, 12)) {
     const response = await get(`${base}${path}`, 'Googlebot');
     report.internalLinkChecks.push({ path, status: response.status, textCharacters: bodyText(response.body).length });
+    assert.equal(response.status, 200, path);
+    assert.ok(bodyText(response.body).length > 1000, `Internal article text absent: ${path}`);
   }
   await writeFile(join(output, 'report.json'), JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report, null, 2));
+  if (requireLiveMatch) {
+    for (const page of [...report.pageChecks, ...report.articleSample]) {
+      assert.ok(page.liveContentMatches, `Production content differs: ${page.path}`);
+    }
+  }
 } finally {
   globalThis.fetch = originalFetch;
   await rm(temp, { recursive: true, force: true });

@@ -6,10 +6,10 @@ Date : 8 octobre 2026. Contrôle public en lecture seule et comparaison avec le 
 
 Le robot Mediapartners-Google reçoit sur les douze articles examinés une réponse HTTP 200 dont le corps ne contient que le message demandant JavaScript (99 caractères). Googlebot reçoit le texte complet d’un article testé séparément. Les règles du projet ne reconnaissaient pas le robot AdSense. Cela confirme un défaut d’accès au contenu. Cela ne prouve pas que ce défaut soit l’unique raison du refus AdSense du 26 septembre.
 
-## Corrections préparées
+## Corrections réalisées
 
 - Ajout de Mediapartners-Google et AdsBot-Google aux 51 règles de rendu HTML existantes. Le navigateur habituel conserve le parcours React.
-- Accueil : titres, extraits et liens réels tirés du même flux public que la page React.
+- Accueil : titres, extraits et liens réels tirés du même flux public que la page React. La compilation Vercel déplace son entrée de index.html vers app.html afin que le fichier statique ne masque pas le routage du robot. Les compilations locales conservent index.html.
 - Articles : texte principal et ancien champ body, auteur, liens internes résolus, encadrés avec leurs références, accordéons et points clés.
 - Pages de confiance : texte généré depuis les quatre pages React existantes, régénéré avant chaque compilation. Aucune information juridique ni éditoriale ajoutée.
 - Contenu absent : réponse 404 et noindex. Incident du CMS : réponse temporaire 503 avec Retry-After, sans mise en cache d’une page vide.
@@ -52,14 +52,18 @@ Le fichier public https://www.origines.media/ads.txt répond HTTP 200. Il est id
 
 ## Validation et reproduction
 
-- Neuf tests ciblés passent : routage des robots et du navigateur normal, accueil, contenu et références, pages de confiance, encodage, pages absentes, incident du CMS, identifiant publicitaire.
+- Dix tests ciblés passent : routage des robots et du navigateur normal, entrée Vercel, accueil, contenu et références, pages de confiance, encodage, pages absentes, incident du CMS, identifiant publicitaire.
 - Vérification TypeScript des fichiers serveur modifiés : réussie.
-- Compilation complète : réussie dans une copie temporaire propre avec les dépendances exactes du package-lock.json ; 2 431 modules, 6,31 secondes. Les neuf tests ont également réussi dans cette copie. Les dépendances originales n’ont pas été remplacées.
+- Compilation complète : réussie dans une copie temporaire propre avec les dépendances exactes du package-lock.json ; 2 431 modules, 6,31 secondes. Les dix tests ont également réussi dans cette copie. Les dépendances originales n’ont pas été remplacées.
 - Scripts : node scripts/generate-static-pages.mjs ; node --test scripts/adsense.test.mjs ; node scripts/audit-adsense.mjs /private/tmp/origines-adsense-audit.
 - Les captures HTML et le détail des résultats ont été enregistrés dans /private/tmp/origines-adsense-audit.
 
-## Limites et prochaines étapes
+## Déploiement et contrôle en production
 
-Les résultats de la colonne corrigée sont ceux du code local exécuté avec les données publiques réelles. Ils ne sont pas encore des réponses de la production déployée. La compilation complète est validée. Les mêmes URL devront être contrôlées après la mise en ligne. Alex a explicitement autorisé le push et le déploiement le 8 octobre 2026. La validation locale est complète ; les contrôles de production suivront le déploiement. Le nouvel examen doit suivre la mise en ligne et sa vérification. L’acceptation reste une décision de Google.
+Alex a explicitement autorisé le push et le déploiement le 8 octobre 2026. Le premier déploiement du commit 1f82461 a été confirmé actif sur www.origines.media. Un nouveau contrôle public a confirmé le texte complet des douze articles, des cinq autres pages et les douze liens internes. Les caractères publics sont devenus identiques à la colonne corrigée. Le rapport est enregistré dans /private/tmp/origines-adsense-production-audit/report.json.
+
+Ce contrôle a aussi révélé un second problème sur l’accueil : Vercel servait index.html avant la réécriture conditionnelle, malgré la règle présente. La correction d’entrée Vercel est incluse dans cette version. Son résultat public doit être confirmé après ce second déploiement avec node scripts/audit-adsense.mjs /private/tmp/origines-adsense-production-final --require-live-match. Ce mode compare le contenu public complet au rendu attendu et échoue au moindre écart.
+
+Les tableaux ci-dessus conservent les mesures initiales pour montrer le défaut avant correction. Ils ne représentent plus l’état actuel des articles. Le nouvel examen AdSense doit suivre la mise en ligne et sa vérification. L’acceptation reste une décision de Google.
 
 Deux points préexistants doivent être contrôlés séparément : les mentions légales indiquent OVH alors que ce projet possède une configuration Vercel ; le formulaire de contact simule actuellement un envoi sans service de transmission. Ces constats ne sont pas présentés comme les causes confirmées du refus.
