@@ -4,10 +4,10 @@ export const ARTICLE_FULL_QUERY = `
   *[_type == "production" && slug.current == $slug][0] {
     "title": titre,
     "description": coalesce(description, extrait, chapeau, deck),
-    "image": coalesce(image.asset->url, imageUrl),
+    "image": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
     "publishedAt": datePublication,
     "modifiedAt": coalesce(dateModification, _updatedAt),
-    "author": coalesce(author->name, auteur->nom),
+    "author": coalesce(auteur->nom, auteur->name, author->nom, author->name),
     "type": coalesce(typeArticle, "article"),
     "readTime": coalesce(tempsLecture, readTime),
     univpilar,
@@ -15,7 +15,13 @@ export const ARTICLE_FULL_QUERY = `
     "verticaleNom": verticale->titre,
     "verticaleSlug": verticale->slug.current,
     "tags": tags[]->{ "title": titre, "slug": slug.current },
-    "contenu": contenu,
+    "contenu": coalesce(contenu, body)[] {
+      ...,
+      markDefs[] {
+        ...,
+        _type == "internalLink" => { "slug": reference->slug.current }
+      }
+    },
     videoUrl,
     rubrique
   }
@@ -28,13 +34,19 @@ export const VIDEO_FULL_QUERY = `
     "image": coalesce(image.asset->url, imageUrl),
     "publishedAt": datePublication,
     "modifiedAt": coalesce(dateModification, _updatedAt),
-    "author": coalesce(author->name, auteur->nom),
+    "author": coalesce(auteur->nom, auteur->name, author->nom, author->name),
     "videoUrl": videoUrl,
     "readTime": coalesce(tempsLecture, readTime),
     univpilar,
     soustopic,
     "verticaleNom": verticale->titre,
-    "contenu": contenu
+    "contenu": coalesce(contenu, body)[] {
+      ...,
+      markDefs[] {
+        ...,
+        _type == "internalLink" => { "slug": reference->slug.current }
+      }
+    }
   }
 `
 
@@ -79,12 +91,24 @@ export const DOSSIER_FULL_QUERY = `
 `
 
 export const LIST_ARTICLES_QUERY = `
-  *[_type == "production" && defined(slug.current)] | order(datePublication desc)[0...20] {
+  *[_type == "production" && defined(slug.current) && coalesce(typeArticle, "article") != "video" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc)[0...20] {
     "title": titre,
     "slug": slug.current,
     "description": coalesce(description, extrait, chapeau, deck),
     "image": coalesce(image.asset->url, imageUrl),
     "type": coalesce(typeArticle, "article")
+  }
+`
+
+// Same feed selection as the public homepage; keep real titles and excerpts.
+export const HOME_FEED_QUERY = `
+  *[_type == "production" && defined(slug.current) && (defined(image.asset) || defined(imageUrl)) && rubrique != "guides" && !defined(carouselSlides) && !("carrousel" in tags)] | order(datePublication desc)[0...28] {
+    "title": titre,
+    "slug": slug.current,
+    "description": coalesce(extrait, description, array::join(contenu[_type == "block"][0...2].children[].text, " ")),
+    "image": coalesce(image.asset->url, mainImage.asset->url, imageUrl),
+    "type": coalesce(typeArticle, "article"),
+    videoUrl
   }
 `
 
@@ -173,18 +197,18 @@ export async function fetchSanity<T = Record<string, unknown>>(
 ): Promise<T | null> {
   const searchParams = new URLSearchParams({ query })
   for (const [key, val] of Object.entries(params)) {
-    searchParams.set(`$${key}`, `"${val}"`)
+    searchParams.set(`$${key}`, JSON.stringify(val))
   }
   try {
-    const res = await fetch(`${SANITY_URL}?${searchParams}`)
+    const res = await fetch(`${SANITY_URL}?${searchParams}`, { signal: AbortSignal.timeout(7000) })
     if (!res.ok) {
       console.error(`[prerender] Sanity ${res.status}`)
-      return null
+      throw new Error(`Sanity ${res.status}`)
     }
     const data = await res.json()
     return (data.result as T) ?? null
   } catch (err) {
     console.error('[prerender] Sanity fetch error:', err)
-    return null
+    throw err
   }
 }

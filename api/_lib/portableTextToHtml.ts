@@ -1,5 +1,24 @@
 function esc(t: string): string {
-  return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
+}
+
+function safeHref(value: unknown): string | null {
+  if (typeof value !== 'string') return null
+  const href = value.trim()
+  // Preserve public citations and internal links, never executable URLs.
+  return /^(https?:\/\/|mailto:|\/(?!\/)|#)/i.test(href) && !/[\u0000-\u0020]/.test(href) ? href : null
+}
+
+function renderContent(value: unknown): string {
+  if (Array.isArray(value)) return renderPortableText(value)
+  if (typeof value !== 'string') return ''
+  // Custom editorial blocks use the same inline Markdown as the React renderer.
+  return esc(value)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label: string, href: string) => {
+      const safe = safeHref(href)
+      return safe ? `<a href="${safe}">${label}</a>` : label
+    })
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
 }
 
 function extractText(blocks: unknown): string {
@@ -38,12 +57,13 @@ function renderSpan(span: any, markDefs: any[]): string {
       default: {
         const def = markDefs.find((d: any) => d._key === mark)
         if (def?._type === 'link') {
-          const href = def.href || '#'
+          const href = safeHref(def.href)
+          if (!href) break
           const ext = href.startsWith('http')
           text = `<a href="${esc(href)}"${ext ? ' target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`
         } else if (def?._type === 'internalLink') {
           const slug = def.slug?.current || def.slug || ''
-          text = `<a href="/article/${esc(slug)}">${text}</a>`
+          if (slug) text = `<a href="/article/${esc(slug)}">${text}</a>`
         }
       }
     }
@@ -79,10 +99,12 @@ function renderCustomType(block: any): string {
     }
     case 'callout': {
       const raw = block.text || block.content || block.body || ''
-      const content = typeof raw === 'string' ? raw : extractText(raw)
+      const content = renderContent(raw)
       if (!content) return ''
       const title = block.title ? `<strong>${esc(block.title)}</strong> ` : ''
-      return `<aside>${title}${esc(content)}</aside>`
+      const sourceHref = safeHref(block.sourceUrl || block.source)
+      const source = block.source ? `<p>Source : ${sourceHref ? `<a href="${esc(sourceHref)}">${esc(block.source)}</a>` : esc(block.source)}</p>` : ''
+      return `<aside>${title}${content}${source}</aside>`
     }
     case 'styledQuote': case 'quote': {
       const raw = block.quote || block.text || block.content || block.citation || block.body || ''
@@ -92,25 +114,25 @@ function renderCustomType(block: any): string {
       return `<blockquote><p>${esc(text)}</p>${author ? `<footer>— ${esc(author)}</footer>` : ''}</blockquote>`
     }
     case 'keyTakeaways': {
-      const items = block.items || block.points || block.takeaways || block.list || []
+      const items = block.items || block.points || block.takeaways || block.list || block.content || block.bullets || block.essentiels || block.keys || block.highlights || block.children || []
       if (!Array.isArray(items) || items.length === 0) return ''
       const title = block.title || 'Points clés'
       const lis = items.map((item: any) => {
-        const t = item.title || item.heading || ''
-        const raw = item.content || item.body || item.description || item.text || ''
-        const c = typeof raw === 'string' ? raw : extractText(raw)
-        return `<li>${t ? `<strong>${esc(t)}</strong> ` : ''}${esc(c)}</li>`
+        const t = item?.title || item?.heading || item?.label || item?.name || ''
+        const raw = typeof item === 'string' || Array.isArray(item) ? item : item?.content || item?.body || item?.description || item?.text || item?.point || item?.details || item?.answer || ''
+        const c = renderContent(raw)
+        return `<li>${t ? `<strong>${esc(t)}</strong> ` : ''}${c}</li>`
       }).join('')
       return `<section><h3>${esc(title)}</h3><ul>${lis}</ul></section>`
     }
     case 'accordion': {
-      const items = block.items || []
+      const items = block.items || block.accordions || block.sections || []
       if (!Array.isArray(items) || items.length === 0) return ''
       const dts = items.map((item: any) => {
         const q = item.title || item.question || ''
         const raw = item.content || item.body || item.answer || ''
-        const a = typeof raw === 'string' ? raw : extractText(raw)
-        return `<dt>${esc(q)}</dt><dd>${esc(a)}</dd>`
+        const a = renderContent(raw)
+        return `<dt>${esc(q)}</dt><dd>${a}</dd>`
       }).join('')
       return `<dl>${dts}</dl>`
     }
@@ -183,6 +205,6 @@ export function renderPortableText(blocks: unknown): string {
   } catch (err) {
     console.error('[prerender] Portable Text render error:', err)
     const fallback = extractText(blocks)
-    return fallback ? `<p>${fallback}</p>` : ''
+    return fallback ? `<p>${esc(fallback)}</p>` : ''
   }
 }

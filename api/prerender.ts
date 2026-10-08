@@ -16,9 +16,10 @@ import {
   LIST_VIDEOS_QUERY, LIST_PORTRAITS_QUERY,
   LIST_RECOMMENDATIONS_QUERY, LIST_SERIES_QUERY,
   LIST_DOSSIERS_QUERY, UNIVERS_ARTICLES_QUERY,
-  AFFILIATE_PRODUCT_QUERY, fetchSanity,
+  AFFILIATE_PRODUCT_QUERY, HOME_FEED_QUERY, fetchSanity,
 } from './_lib/queries.js'
 import { renderPortableText } from './_lib/portableTextToHtml.js'
+import { STATIC_PAGE_CONTENT } from './_lib/staticPages.generated.js'
 
 // ---------------------------------------------------------------------------
 // Static page meta
@@ -31,7 +32,7 @@ interface PageMeta {
 }
 
 const STATIC_PAGES: Record<string, PageMeta> = {
-  '/': { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION, ogType: 'website' },
+  '/': { title: 'Origines Media', description: 'Le média pour comprendre ce qui nous construit : articles, récits, vidéos, guides, témoignages et sélections de la rédaction.', ogType: 'website' },
   '/galaxie': { title: 'Galaxie Origines — Origines Media', description: 'La carte des formats Origines Media : articles, vidéos, guides pratiques et boutique éditoriale.', ogType: 'website' },
   '/articles': { title: 'Articles — Origines Media', description: 'Tous nos articles : analyses, récits, interviews et réflexions sur les grands sujets de société.' },
   '/videos': { title: 'Vidéos — Origines Media', description: 'Découvrez nos programmes vidéo originaux : documentaires, interviews et contenus exclusifs.' },
@@ -109,6 +110,7 @@ interface ResolvedMeta {
   breadcrumbs?: Array<{ name: string; url: string }>
   readTime?: number
   section?: string
+  noindex?: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -133,9 +135,26 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       description: staticMeta.description,
       image: staticMeta.image || DEFAULT_OG_IMAGE,
       ogType: staticMeta.ogType || 'website',
+      bodyHtml: STATIC_PAGE_CONTENT[path],
     }
     if (path === '/') {
+      const items = await fetchSanity<Array<{
+        title: string; slug: string; description?: string; image?: string; type?: string; videoUrl?: string
+      }>>(HOME_FEED_QUERY)
+      meta.bodyHtml = `<p>${esc(meta.description)}</p>`
+      if (items?.length) {
+        meta.bodyHtml += '<h2>Dernières publications</h2><ul>'
+        for (const item of items) {
+          meta.bodyHtml += `<li><a href="${esc(itemHref(item))}">${esc(item.title)}</a>${item.description ? ` — ${esc(item.description)}` : ''}</li>`
+        }
+        meta.bodyHtml += '</ul>'
+      }
       meta.jsonLdBlocks = [jsonLdTag(homePageSchema())]
+      if (items?.length) {
+        meta.jsonLdBlocks.push(jsonLdTag(itemListSchema(items.map(item => ({
+          name: item.title, url: itemHref(item), image: item.image,
+        })))))
+      }
     }
 
     // Enrich list pages with real Sanity content
@@ -374,7 +393,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
         breadcrumbs: crumbs,
       }
     }
-    return defaults
+    return null
   }
 
   // /univers/:universId
@@ -561,12 +580,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
         breadcrumbs: crumbs,
       }
     }
-    const label = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-    return {
-      ...defaults,
-      title: `${label} — Produits recommandés · Origines Media`,
-      description: `Découvrez ${label} : avis, test et liens d'achat sur Origines Media.`,
-    }
+    return null
   }
 
   // /guides/:category
@@ -658,7 +672,7 @@ function renderHTML(meta: ResolvedMeta): string {
   <title>${t}</title>
   <meta name="title" content="${t}" />
   <meta name="description" content="${d}" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="robots" content="${meta.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}" />
   <meta name="author" content="${SITE_NAME}" />
   <link rel="canonical" href="${meta.url}" />
   <meta property="og:type" content="${meta.ogType}" />
@@ -720,7 +734,7 @@ function renderHTML(meta: ResolvedMeta): string {
   <footer class="site">
     <p>&copy; ${SITE_NAME}</p>
     <nav>
-      <a href="/">Accueil</a> · <a href="/articles">Articles</a> · <a href="/videos">Vidéos</a> · <a href="/univers">Univers</a> · <a href="/a-propos">À propos</a>
+      <a href="/">Accueil</a> · <a href="/articles">Articles</a> · <a href="/videos">Vidéos</a> · <a href="/univers">Univers</a> · <a href="/a-propos">À propos</a> · <a href="/contact">Contact</a> · <a href="/mentions-legales">Mentions légales</a> · <a href="/confidentialite">Confidentialité</a>
     </nav>
   </footer>
 </body>
@@ -742,6 +756,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         title: 'Page non trouvée — Origines Media',
         description: 'Cette page n\'existe pas ou a été déplacée.',
         image: DEFAULT_OG_IMAGE, url: `${BASE_URL}${path}`, ogType: 'website',
+        noindex: true,
       })
       res.setHeader('Content-Type', 'text/html; charset=utf-8')
       res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
@@ -754,11 +769,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (err) {
     console.error('[prerender] error:', err)
     const fallback = renderHTML({
-      title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION,
+      title: 'Contenu temporairement indisponible — Origines Media',
+      description: 'Le contenu est temporairement indisponible. Veuillez réessayer dans quelques instants.',
       image: DEFAULT_OG_IMAGE, url: `${BASE_URL}${path}`, ogType: 'website',
+      noindex: true,
     })
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
-    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600')
-    return res.status(200).send(fallback)
+    res.setHeader('Cache-Control', 'no-store')
+    res.setHeader('Retry-After', '60')
+    return res.status(503).send(fallback)
   }
 }
