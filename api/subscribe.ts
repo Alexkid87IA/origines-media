@@ -1,5 +1,5 @@
 // API serverless pour inscription email (newsletter + notifications produit)
-// Abstraction CRM : supporte Brevo (Sendinblue) avec fallback gracieux
+// Abstraction CRM : supporte Brevo (Sendinblue) avec confirmation du service
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 // Validation email RFC 5322 simplifiée
@@ -13,7 +13,7 @@ function sanitize(str: string): string {
 }
 
 // Sources autorisées
-const VALID_SOURCES = ['newsletter', 'boutique', 'article', 'exit-intent', 'homepage'] as const
+const VALID_SOURCES = ['newsletter', 'boutique', 'article', 'exit-intent', 'homepage', 'guides'] as const
 type Source = typeof VALID_SOURCES[number]
 
 interface SubscribeBody {
@@ -27,8 +27,7 @@ interface SubscribeBody {
 async function addToBrevo(data: SubscribeBody): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.BREVO_API_KEY
   if (!apiKey) {
-    console.warn('[subscribe] BREVO_API_KEY not configured — email stored in logs only')
-    return { success: true }
+    return { success: false, error: 'L’inscription est temporairement indisponible. Réessayez plus tard.' }
   }
 
   const attributes: Record<string, string> = {
@@ -106,7 +105,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { email, source, productId, productName } = req.body as Partial<SubscribeBody>
+  const { email, source, productId, productName } = (req.body || {}) as Partial<SubscribeBody>
 
   // Validation email
   if (!email || typeof email !== 'string') {
@@ -124,7 +123,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Log pour monitoring (visible dans Vercel logs)
-  console.log(`[subscribe] ${cleanEmail} from=${source}${productId ? ` product=${productId}` : ''}`)
+  console.log(`[subscribe] source=${source}`)
 
   // Envoi au CRM
   const result = await addToBrevo({

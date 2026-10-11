@@ -9,6 +9,10 @@ import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import s from "./JoinPage.module.css";
+import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Send } from 'lucide-react';
+import { contactMailto, sendContactMessage } from '@/lib/contact';
 
 /* ------------------------------------------------------------------ */
 /*  Inline SVG icons                                                   */
@@ -84,13 +88,6 @@ const IconMapPin = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
     <circle cx="12" cy="10" r="3" />
-  </svg>
-);
-
-const IconSend = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-    <path d="m22 2-7 20-4-9-9-4z" />
-    <path d="m22 2-11 11" />
   </svg>
 );
 
@@ -225,15 +222,30 @@ export default function JoinPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [website, setWebsite] = useState('');
+  const applicationMessage = {
+    name: formData.name,
+    email: formData.email,
+    subject: `Candidature : ${jobOpenings.find(job => job.id === selectedJob)?.title || 'spontanée'}`,
+    message: `${formData.message}${formData.linkedin ? `\n\nProfil : ${formData.linkedin}` : ''}`,
+    website,
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (isSubmitting || !formData.name || !formData.email || !formData.message) return;
 
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitted(true);
-    setIsSubmitting(false);
+    setSubmitError(null);
+    try {
+      await sendContactMessage(applicationMessage);
+      setIsSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "L’envoi a échoué. Contactez-nous par email.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -447,7 +459,7 @@ export default function JoinPage() {
             </span>
 
             {!isSubmitted ? (
-              <div className={s.formCard}>
+              <Card className={s.formCard}>
                 <div className={s.formHeader}>
                   <div className={s.formIcon}>
                     <IconClipboard />
@@ -466,6 +478,10 @@ export default function JoinPage() {
                 </p>
 
                 <form onSubmit={handleSubmit} className={s.form}>
+                  <div hidden aria-hidden="true">
+                    <label htmlFor="application-website">Site web</label>
+                    <input id="application-website" name="website" value={website} onChange={event => setWebsite(event.target.value)} tabIndex={-1} autoComplete="off" />
+                  </div>
                   {/* Name + Email row */}
                   <div className={s.fieldRow}>
                     <div className={s.fieldGroup}>
@@ -480,6 +496,7 @@ export default function JoinPage() {
                           type="text"
                           id="name"
                           name="name"
+                          maxLength={120}
                           value={formData.name}
                           onChange={handleChange}
                           required
@@ -501,6 +518,7 @@ export default function JoinPage() {
                           type="email"
                           id="email"
                           name="email"
+                          maxLength={254}
                           value={formData.email}
                           onChange={handleChange}
                           required
@@ -524,6 +542,7 @@ export default function JoinPage() {
                         type="url"
                         id="linkedin"
                         name="linkedin"
+                        maxLength={1000}
                         value={formData.linkedin}
                         onChange={handleChange}
                         className={s.input}
@@ -544,39 +563,27 @@ export default function JoinPage() {
                       onChange={handleChange}
                       required
                       rows={5}
+                      maxLength={8500}
                       className={s.textarea}
                       placeholder="Parlez-nous de vous, votre parcours et pourquoi vous souhaitez rejoindre Origines..."
                     />
                   </div>
 
-                  {/* Submit */}
-                  <button
-                    type="submit"
-                    disabled={
-                      isSubmitting ||
-                      !formData.name ||
-                      !formData.email ||
-                      !formData.message
-                    }
-                    className={s.submitBtn}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className={s.spinner} />
-                        Envoi...
-                      </>
-                    ) : (
-                      <>
-                        <IconSend />
-                        Envoyer ma candidature
-                      </>
-                    )}
-                  </button>
+                  {submitError && <div role="alert" className="text-sm font-inter">
+                    <p>{submitError}</p>
+                    <a href={contactMailto(applicationMessage)} className="text-violet-500 underline transition-all duration-300">
+                      Envoyer cette candidature avec votre application email
+                    </a>
+                  </div>}
+                  <Button type="submit" variant="gradient" size="lg" fullWidth isLoading={isSubmitting} rightIcon={Send}
+                    disabled={isSubmitting || !formData.name || !formData.email || !formData.message}>
+                    {isSubmitting ? 'Envoi en cours…' : 'Envoyer ma candidature'}
+                  </Button>
                 </form>
-              </div>
+              </Card>
             ) : (
               /* ── Success state ── */
-              <div className={s.successCard}>
+              <Card className={s.successCard}>
                 <div className={s.successIcon}>
                   <IconCheck />
                 </div>
@@ -585,7 +592,7 @@ export default function JoinPage() {
                   Merci {formData.name.split(" ")[0]} ! Nous etudions votre
                   profil et reviendrons vers vous tres vite.
                 </p>
-                <button
+                <Button variant="outline"
                   onClick={() => {
                     setIsSubmitted(false);
                     setFormData({
@@ -596,11 +603,10 @@ export default function JoinPage() {
                     });
                     setSelectedJob(null);
                   }}
-                  className={s.resetBtn}
                 >
                   Nouvelle candidature
-                </button>
-              </div>
+                </Button>
+              </Card>
             )}
           </div>
         </section>

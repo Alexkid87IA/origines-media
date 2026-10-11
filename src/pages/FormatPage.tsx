@@ -332,7 +332,7 @@ export default function FormatPage() {
 
         try {
           const query = `
-            *[_type == "production" && formats[]->nom == $formatName] | order(datePublication desc) [0...6] {
+            *[_type == "production" && $formatName in formats[]->nom] | order(datePublication desc) [0...6] {
               _id,
               titre,
               description,
@@ -340,8 +340,8 @@ export default function FormatPage() {
               videoUrl,
               datePublication,
               duree,
-              "vues": coalesce(vues, 10000),
-              "likes": coalesce(likes, 500),
+              vues,
+              likes,
               slug
             }
           `;
@@ -367,24 +367,7 @@ export default function FormatPage() {
 
             setEpisodes(formattedEpisodes);
           } else {
-            const mockEpisodes = [
-              {
-                id: '1',
-                titre: `${formatData.name} - Episode pilote`,
-                description: 'Decouvrez le premier episode de notre format exclusif qui pose les bases de cette serie unique.',
-                thumbnailUrl: formatData.imageHero,
-                videoUrl: `/article/${formatId}-episode-1`,
-                datePublication: '2024-03-01',
-                duree: '30 min',
-                vues: 15000,
-                likes: 1200,
-                episode: 1,
-                saison: 1,
-                isRecent: true,
-                tags: ['Decouverte', 'Introduction']
-              }
-            ];
-            setEpisodes(mockEpisodes);
+            setEpisodes([]);
           }
         } catch {
           setEpisodes([]);

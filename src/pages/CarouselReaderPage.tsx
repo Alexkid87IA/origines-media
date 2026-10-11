@@ -10,6 +10,7 @@ import Button from "@/components/ui/Button";
 import { STATIC_CAROUSELS, type StaticCarousel } from "@/data/carousels";
 import { sanityFetch } from "@/lib/sanity";
 import { createPortableTextComponentsV2 } from "@/components/article/PortableTextComponentsV2";
+import { ARTICLE_MARK_DEFS } from '@/lib/contentQueries';
 import s from "./CarouselReaderPage.module.css";
 
 type CompanionArticle = {
@@ -28,7 +29,7 @@ const COMPANION_QUERY = `
     deck,
     readTime,
     "authorName": author->name,
-    contenu
+    contenu[]{..., ${ARTICLE_MARK_DEFS}}
   }
 `;
 

@@ -17,14 +17,35 @@ try {
         import Contact from './src/pages/ContactPage.tsx';
         import Legal from './src/pages/LegalPage.tsx';
         import Privacy from './src/pages/ConfidentialitePage.tsx';
+        import CGU from './src/pages/CGUPage.tsx';
+        import CGV from './src/pages/CGVPage.tsx';
+        import Cookies from './src/pages/CookiesPage.tsx';
+        import SiteMap from './src/pages/PlanDuSitePage.tsx';
+        import Galaxy from './src/pages/GalaxiePage.tsx';
+        import Newsletter from './src/pages/NewsletterPage.tsx';
+        import SundayLetter from './src/pages/LettreDuDimanchePage.tsx';
+        import Partnerships from './src/pages/PartnershipsPage.tsx';
+        import Join from './src/pages/JoinPage.tsx';
+        import Together from './src/pages/EnsemblePage.tsx';
+        import JoinPartner from './src/pages/JoinPartnerPage.tsx';
+        import Welcome from './src/components/Welcome/Welcome.tsx';
+        import Edito from './src/components/Edito/Edito.tsx';
+        import Pillars from './src/components/Pillars/Pillars.tsx';
+        const Brand = () => React.createElement('main', null,
+          React.createElement(Welcome), React.createElement(Edito), React.createElement(Pillars));
         export default Object.fromEntries(Object.entries({
           '/a-propos': About, '/contact': Contact,
           '/mentions-legales': Legal, '/confidentialite': Privacy,
+          '/cgu': CGU, '/cgv': CGV, '/cookies': Cookies, '/plan-du-site': SiteMap,
+          '/galaxie': Galaxy, '/newsletter': Newsletter, '/lettre-du-dimanche': SundayLetter,
+          '/partenariats': Partnerships, '/rejoindre': Join, '/ensemble': Together,
+          '/join-partner': JoinPartner, '/marque': Brand,
         }).map(([path, Page]) => [path, renderToStaticMarkup(React.createElement(Page))]));
       `,
       resolveDir: process.cwd(), loader: 'tsx',
     },
     bundle: true, platform: 'node', format: 'esm', jsx: 'automatic', outfile,
+    alias: { '@': resolve('src') },
     banner: { js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);' },
     define: { 'process.env.NODE_ENV': '"production"' },
     plugins: [{ name: 'static-editorial-pages', setup(build) {
@@ -33,7 +54,9 @@ try {
       build.onResolve({ filter: /(?:SiteHeader\/SiteHeader|Footer2|ScrollToTop\/ScrollToTopV2|components\/SEO|ui\/Breadcrumb)$/ }, args => ({ path: args.path, namespace: 'empty-chrome' }));
       build.onLoad({ filter: /.*/, namespace: 'empty-chrome' }, () => ({ contents: 'export default () => null;' }));
       build.onResolve({ filter: /^react-router-dom$/ }, () => ({ path: 'router', namespace: 'static-links' }));
-      build.onLoad({ filter: /.*/, namespace: 'static-links' }, () => ({ contents: 'import React from "react"; export const Link = ({to, children}) => React.createElement("a", {href:to}, children);', resolveDir: process.cwd() }));
+      build.onLoad({ filter: /.*/, namespace: 'static-links' }, () => ({ contents: 'import React from "react"; export const Link = ({to, children, ...props}) => React.createElement("a", {...props, href:to}, children); export const useLocation = () => ({hash:"", pathname:"/"});', resolveDir: process.cwd() }));
+      build.onResolve({ filter: /lib\/sanity$/ }, () => ({ path: 'sanity', namespace: 'static-cms' }));
+      build.onLoad({ filter: /.*/, namespace: 'static-cms' }, () => ({ contents: 'export const sanityFetch = async () => null;' }));
     } }],
   });
   const { default: pages } = await import(pathToFileURL(outfile));

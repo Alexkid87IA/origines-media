@@ -57,6 +57,7 @@ function renderSpan(span: any, markDefs: any[]): string {
       default: {
         const def = markDefs.find((d: any) => d._key === mark)
         if (def?._type === 'link') {
+          if (def.missingArticle === true) break
           const href = safeHref(def.href)
           if (!href) break
           const ext = href.startsWith('http')

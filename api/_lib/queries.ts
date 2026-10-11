@@ -1,4 +1,5 @@
 import { SANITY_URL } from './constants.js'
+import { ARTICLE_MARK_DEFS } from '../../src/lib/contentQueries.js'
 
 export const ARTICLE_FULL_QUERY = `
   *[_type == "production" && slug.current == $slug][0] {
@@ -17,10 +18,7 @@ export const ARTICLE_FULL_QUERY = `
     "tags": tags[]->{ "title": titre, "slug": slug.current },
     "contenu": coalesce(contenu, body)[] {
       ...,
-      markDefs[] {
-        ...,
-        _type == "internalLink" => { "slug": reference->slug.current }
-      }
+      ${ARTICLE_MARK_DEFS}
     },
     videoUrl,
     rubrique
@@ -42,10 +40,7 @@ export const VIDEO_FULL_QUERY = `
     "verticaleNom": verticale->titre,
     "contenu": coalesce(contenu, body)[] {
       ...,
-      markDefs[] {
-        ...,
-        _type == "internalLink" => { "slug": reference->slug.current }
-      }
+      ${ARTICLE_MARK_DEFS}
     }
   }
 `
@@ -188,6 +183,69 @@ export const AFFILIATE_PRODUCT_QUERY = `
     brand,
     "image": coalesce(image.asset->url, imageUrl),
     affiliateLinks
+  }
+`
+
+// Public catalogues: use the same content families as the browser pages.
+export const LIBRARY_QUERY = `
+  *[_type in ["production", "portrait", "recommendation"] && defined(slug.current)
+    && !(_type == "production" && (rubrique == "guides" || typeArticle == "histoire"))]
+  | order(coalesce(datePublication, _createdAt) desc)[0...40] {
+    "title": titre, "slug": slug.current,
+    "description": coalesce(description, extrait, deck, accroche, citation),
+    "kind": select(_type == "portrait" => "histoire", _type == "recommendation" => "recommandations", "article"),
+    "type": coalesce(typeArticle, "article"), videoUrl
+  }
+`
+
+export const GUIDES_CATALOG_QUERY = `
+  *[_type == "production" && rubrique == "guides" && defined(slug.current)]
+  | order(datePublication desc) {
+    "title": titre, "slug": slug.current, category,
+    "description": coalesce(description, extrait, accroche, deck)
+  }
+`
+
+export const PROGRAMMES_CATALOG_QUERY = `
+  *[_type == "production" && rubrique == "videos" && defined(image.asset) && defined(slug.current)
+    && programme in ["il-etait-une-fois", "etat-d-esprit", "transmission", "secrets-pro", "imagine", "la-lettre"]]
+  | order(datePublication desc) {
+    "title": titre, "slug": slug.current, programme,
+    "description": coalesce(description, extrait, deck), "type": "video", videoUrl
+  }
+`
+
+export const BOUTIQUE_CATALOG_QUERY = `
+  *[_type == "boutiqueProduct"] | order(featured desc, popular desc, title asc) {
+    "title": title, "slug": slug.current, subtitle, description, price, features, format, lien
+  }
+`
+
+export const AFFILIATE_CATALOG_QUERY = `
+  *[_type == "affiliateProduct" && defined(slug.current)] | order(datePublication desc) {
+    "title": name, "slug": slug.current, description, brand
+  }
+`
+
+export const ACTU_CATALOG_QUERY = `
+  *[_type == "production" && typeArticle == "actu" && defined(image.asset) && defined(slug.current)]
+  | order(datePublication desc)[0...40] {
+    "title": titre, "slug": slug.current, "description": coalesce(deck, description, extrait)
+  }
+`
+
+export const TESTIMONIALS_CATALOG_QUERY = `
+  *[_type == "production" && category in ["temoignages", "portraits"] && defined(slug.current)]
+  | order(datePublication desc)[0...40] {
+    "title": titre, "slug": slug.current, "description": coalesce(deck, description, extrait)
+  }
+`
+
+export const FORMAT_CATALOG_QUERY = `
+  *[_type == "production" && $formatName in formats[]->nom && defined(slug.current)]
+  | order(datePublication desc)[0...6] {
+    "title": titre, "slug": slug.current, description,
+    "type": coalesce(typeArticle, "article"), videoUrl
   }
 `
 

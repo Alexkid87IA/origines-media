@@ -17,9 +17,13 @@ import {
   LIST_RECOMMENDATIONS_QUERY, LIST_SERIES_QUERY,
   LIST_DOSSIERS_QUERY, UNIVERS_ARTICLES_QUERY,
   AFFILIATE_PRODUCT_QUERY, HOME_FEED_QUERY, fetchSanity,
+  LIBRARY_QUERY, GUIDES_CATALOG_QUERY, PROGRAMMES_CATALOG_QUERY,
+  BOUTIQUE_CATALOG_QUERY, AFFILIATE_CATALOG_QUERY, ACTU_CATALOG_QUERY,
+  TESTIMONIALS_CATALOG_QUERY, FORMAT_CATALOG_QUERY,
 } from './_lib/queries.js'
 import { renderPortableText } from './_lib/portableTextToHtml.js'
 import { STATIC_PAGE_CONTENT } from './_lib/staticPages.generated.js'
+import { STATIC_CAROUSELS } from '../src/data/carousels.js'
 
 // ---------------------------------------------------------------------------
 // Static page meta
@@ -34,6 +38,7 @@ interface PageMeta {
 const STATIC_PAGES: Record<string, PageMeta> = {
   '/': { title: 'Origines Media', description: 'Le média pour comprendre ce qui nous construit : articles, récits, vidéos, guides, témoignages et sélections de la rédaction.', ogType: 'website' },
   '/galaxie': { title: 'Galaxie Origines — Origines Media', description: 'La carte des formats Origines Media : articles, vidéos, guides pratiques et boutique éditoriale.', ogType: 'website' },
+  '/marque': { title: 'La marque Origines Media — Mission, univers et manifeste', description: 'Découvrez l’identité d’Origines Media : notre mission, nos cinq univers, notre ligne éditoriale et notre manière d’explorer ce qui nous construit.', ogType: 'website' },
   '/articles': { title: 'Articles — Origines Media', description: 'Tous nos articles : analyses, récits, interviews et réflexions sur les grands sujets de société.' },
   '/videos': { title: 'Vidéos — Origines Media', description: 'Découvrez nos programmes vidéo originaux : documentaires, interviews et contenus exclusifs.' },
   '/histoires': { title: 'Histoires — Origines Media', description: 'Des parcours de vie inspirants, des témoignages authentiques et des portraits intimes.' },
@@ -64,6 +69,7 @@ const STATIC_PAGES: Record<string, PageMeta> = {
   '/mentions-legales': { title: 'Mentions Légales — Origines Media', description: 'Mentions légales du site Origines Media.' },
   '/plan-du-site': { title: 'Plan du Site — Origines Media', description: 'Retrouvez toutes les pages du site Origines Media.' },
   '/actu': { title: 'Actualités — Origines Media', description: 'Toute l\'actualité Origines Media : dernières publications, brèves et mises à jour.' },
+  '/discover': { title: 'Découvrir — Origines Media', description: 'Explorez les dernières actualités publiées par Origines Media.' },
   '/lettre-du-dimanche': { title: 'La Lettre du Dimanche — Origines Media', description: 'Notre lettre hebdomadaire : chaque dimanche, le meilleur d\'Origines dans votre boîte mail.' },
   '/join-partner': { title: 'Devenir partenaire — Origines Media', description: 'Rejoignez le réseau de partenaires Origines Media et touchez une audience engagée.' },
   '/proposer-une-reco': { title: 'Proposer une recommandation — Origines Media', description: 'Partagez vos coups de cœur avec la communauté Origines : livres, films, podcasts et plus.' },
@@ -91,6 +97,21 @@ function isVideoItem(item: { type?: string; videoUrl?: string }): boolean {
 
 function itemHref(item: { slug: string; type?: string; videoUrl?: string }): string {
   return isVideoItem(item) ? `/video/${item.slug}` : `/article/${item.slug}`
+}
+
+interface CatalogItem {
+  title: string; slug: string; description?: string; kind?: string;
+  type?: string; videoUrl?: string; programme?: string; category?: string;
+  subtitle?: string; price?: string; features?: string[]; format?: string; lien?: string;
+}
+
+function catalogHtml(items: CatalogItem[], label: string, prefix?: string): string {
+  if (!items.length) return ''
+  return `<h2>${esc(label)}</h2><ul>` + items.map(item => {
+    const href = prefix ? `${prefix}/${item.slug}`
+      : item.kind && item.kind !== 'article' ? `/${item.kind}/${item.slug}` : itemHref(item)
+    return `<li><a href="${esc(href)}">${esc(item.title)}</a>${item.description ? ` — ${esc(item.description)}` : ''}</li>`
+  }).join('') + '</ul>'
 }
 
 // ---------------------------------------------------------------------------
@@ -125,6 +146,13 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     url,
     ogType: 'website',
   }
+  if (['/connexion', '/inscription', '/deconnexion', '/ecrire-mon-histoire', '/proposer-une-reco', '/recherche'].includes(path)
+    || /^\/compte(?:\/|$)/.test(path)) {
+    return { ...defaults, title: STATIC_PAGES[path]?.title || 'Votre compte — Origines Media',
+      description: STATIC_PAGES[path]?.description || 'Connectez-vous à votre compte Origines Media.',
+      noindex: true,
+      bodyHtml: `<p>${esc(STATIC_PAGES[path]?.description || 'Connectez-vous à votre compte Origines Media.')}</p><p><a href="/connexion">Connexion</a> · <a href="/contact">Contact</a> · <a href="/">Accueil</a></p>` }
+  }
 
   // Static pages (some enriched with dynamic content)
   const staticMeta = STATIC_PAGES[path]
@@ -136,6 +164,40 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       image: staticMeta.image || DEFAULT_OG_IMAGE,
       ogType: staticMeta.ogType || 'website',
       bodyHtml: STATIC_PAGE_CONTENT[path],
+    }
+    if (path === '/univers') {
+      meta.bodyHtml = '<ul>' + Object.values(UNIVERS_MAP).map(universe =>
+        `<li><a href="/univers/${esc(universe.id)}">${esc(universe.name)}</a><p>${esc(universe.tagline)}</p><ul>`
+        + universe.subtopics.map(topic => `<li><a href="/univers/${esc(universe.id)}/${esc(topic.slug)}">${esc(topic.label)}</a>${topic.description ? ` — ${esc(topic.description)}` : ''}</li>`).join('')
+        + '</ul></li>').join('') + '</ul>'
+    }
+    if (path === '/media' || path === '/bibliotheque' || path === '/programmes'
+      || path === '/guides' || path === '/boutique' || path === '/recommandations/produits' || path === '/actu' || path === '/discover') {
+      const catalogueQuery = {
+        '/media': HOME_FEED_QUERY, '/bibliotheque': LIBRARY_QUERY,
+        '/programmes': PROGRAMMES_CATALOG_QUERY, '/guides': GUIDES_CATALOG_QUERY,
+        '/boutique': BOUTIQUE_CATALOG_QUERY, '/recommandations/produits': AFFILIATE_CATALOG_QUERY,
+        '/actu': ACTU_CATALOG_QUERY, '/discover': ACTU_CATALOG_QUERY,
+      }[path]!
+      const items = await fetchSanity<CatalogItem[]>(catalogueQuery) || []
+      meta.bodyHtml = `<p>${esc(meta.description)}</p>`
+      if (path === '/boutique') {
+        meta.bodyHtml += items.map(item => {
+          let html = `<section><h2>${esc(item.title)}</h2><p>${esc(item.subtitle)}</p><p>${esc(item.description)}</p>`
+          if (item.price) html += `<p>${esc(item.price)}</p>`
+          if (item.format) html += `<p>${esc(item.format)}</p>`
+          if (item.features?.length) html += `<ul>${item.features.map(feature => `<li>${esc(feature)}</li>`).join('')}</ul>`
+          if (item.lien && /^https:\/\//i.test(item.lien) && !/[\s"<>]/.test(item.lien)) {
+            html += `<a href="${esc(item.lien)}">${esc(item.title)}</a>`
+          }
+          return html + '</section>'
+        }).join('')
+      } else {
+        meta.bodyHtml += catalogHtml(items, path === '/programmes' ? 'Vidéos des programmes' : 'Publications et ressources',
+          path === '/recommandations/produits' ? '/recommandations/produits' : undefined)
+      }
+      // An empty catalogue is not a page with editorial inventory.
+      meta.noindex = items.length === 0
     }
     if (path === '/') {
       const items = await fetchSanity<Array<{
@@ -162,7 +224,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       '/articles': { query: LIST_ARTICLES_QUERY, prefix: '/article', label: 'Articles' },
       '/videos': { query: LIST_VIDEOS_QUERY, prefix: '/video', label: 'Vidéos' },
       '/histoires': { query: LIST_PORTRAITS_QUERY, prefix: '/histoire', label: 'Histoires' },
-      '/temoignages': { query: LIST_PORTRAITS_QUERY, prefix: '/histoire', label: 'Témoignages' },
+      '/temoignages': { query: TESTIMONIALS_CATALOG_QUERY, prefix: '/article', label: 'Témoignages' },
       '/recommandations': { query: LIST_RECOMMENDATIONS_QUERY, prefix: '/recommandations', label: 'Recommandations' },
       '/series': { query: LIST_SERIES_QUERY, prefix: '/series', label: 'Séries' },
       '/dossiers': { query: LIST_DOSSIERS_QUERY, prefix: '/dossiers', label: 'Dossiers' },
@@ -171,6 +233,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     const lc = listConfig[path]
     if (lc) {
       const items = await fetchSanity<any[]>(lc.query)
+      meta.noindex = !items?.length
       if (items?.length) {
         let body = `<h2>${lc.label} récents</h2><ul>`
         for (const item of items) {
@@ -197,6 +260,21 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
   }
 
   const segments = path.split('/').filter(Boolean)
+
+  if (segments.length === 2 && segments[0] === 'carousel') {
+    const carousel = STATIC_CAROUSELS.find(item => item.slug === segments[1])
+    if (!carousel) return null
+    const companion = await fetchSanity<any>(ARTICLE_FULL_QUERY, { slug: carousel.slug })
+    let body = `<p>${esc(carousel.deck)}</p>`
+    body += carousel.slides.map((slide, index) => `<figure><img src="${esc(slide)}" alt="${esc(`Slide ${index + 1} — ${carousel.title}`)}" loading="lazy" /></figure>`).join('')
+    if (companion?.contenu?.length) {
+      body += `<h2>${esc(companion.title)}</h2>${renderPortableText(companion.contenu)}`
+    }
+    body += `<p><a href="${esc(carousel.instagram)}">Voir sur Instagram</a></p>`
+    return { ...defaults, title: `${carousel.title} — Origines Media`, description: carousel.deck,
+      image: carousel.cover || DEFAULT_OG_IMAGE, bodyHtml: body,
+      author: companion?.author, publishedAt: companion?.publishedAt, ogType: 'article' }
+  }
 
   // /article/:slug  /recit/:slug  /production/:slug
   if (segments.length === 2 && ['article', 'recit', 'production'].includes(segments[0])) {
@@ -515,21 +593,27 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
 
   // /boutique/:guideSlug
   if (segments.length === 2 && segments[0] === 'boutique') {
-    const label = segments[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-    return {
-      ...defaults,
-      title: `${label} — Boutique Origines Media`,
-      description: `Découvrez ${label} dans la boutique Origines Media : guides, ateliers et contenus premium.`,
-    }
+    // The browser displays the same catalogue on this legacy route.
+    const catalogue = await resolveMeta('/boutique')
+    return catalogue ? { ...catalogue, url: `${BASE_URL}/boutique` } : null
   }
 
   // /format/:formatId
   if (segments.length === 2 && segments[0] === 'format') {
-    const label = segments[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    const names: Record<string, string> = {
+      'la-lettre': 'La Lettre', 'secrets-pro': 'Secrets Pro', 'il-etait-une-fois': 'Il etait une fois',
+      connexion: 'Connexion', transmission: 'Transmission', 'etat-esprit': "Etat d'Esprit",
+      apparence: 'Apparence', 'je-suis': 'Je Suis',
+    }
+    const label = names[segments[1]]
+    if (!label) return null
+    const items = await fetchSanity<CatalogItem[]>(FORMAT_CATALOG_QUERY, { formatName: label }) || []
     return {
       ...defaults,
       title: `${label} — Origines Media`,
       description: `Découvrez nos contenus au format ${label} sur Origines Media.`,
+      bodyHtml: catalogHtml(items, 'Épisodes publiés'),
+      noindex: items.length === 0,
     }
   }
 
@@ -585,11 +669,16 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
 
   // /guides/:category
   if (segments.length === 2 && segments[0] === 'guides') {
+    if (!['masterclass', 'ateliers', 'programmes', 'kits-gratuits'].includes(segments[1])) return null
     const label = segments[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    const allGuides = await fetchSanity<CatalogItem[]>(GUIDES_CATALOG_QUERY) || []
+    const guides = allGuides.filter(item => item.category === segments[1])
     return {
       ...defaults,
       title: `Guides ${label} — Origines Media`,
       description: `Nos guides pratiques sur ${label.toLowerCase()} : conseils, méthodes et ressources.`,
+      bodyHtml: catalogHtml(guides, `Guides ${label}`, '/article'),
+      noindex: guides.length === 0,
     }
   }
 

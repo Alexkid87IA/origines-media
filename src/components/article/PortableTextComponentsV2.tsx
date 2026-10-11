@@ -515,6 +515,7 @@ export const createPortableTextComponentsV2 = ({
       ),
       em: ({ children }: any) => <em className={s.em}>{children}</em>,
       link: ({ children, value }: any) => {
+        if (value?.missingArticle === true) return <span>{children}</span>;
         const href = value?.href || value?.url || "";
         if (!href) return <span className={s.strong}>{children}</span>;
         const isExternal = href.startsWith("http");

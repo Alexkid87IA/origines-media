@@ -2,6 +2,8 @@
 // Requêtes Sanity GROQ - Nettoyé le 18/01/2026
 // Seules les queries utilisées sont conservées
 
+import { ARTICLE_MARK_DEFS } from './contentQueries';
+
 // Temps de lecture calculé côté GROQ : priorité au champ Sanity, fallback estimation par caractères (~1380 chars/min)
 export const RT = `"tempsLecture": coalesce(tempsLecture, round(length(array::join(contenu[_type == "block"].children[].text, " ")) / 1380))`;
 
@@ -873,15 +875,10 @@ export const ARTICLE_BY_SLUG_QUERY = `
     },
 
     // Contenu avec résolution des liens internes et articles liés
-    body,
+    body[]{..., ${ARTICLE_MARK_DEFS}},
     contenu[] {
       ...,
-      markDefs[] {
-        ...,
-        _type == "internalLink" => {
-          "slug": reference->slug.current
-        }
-      },
+      ${ARTICLE_MARK_DEFS},
       _type == "relatedArticles" => {
         ...,
         "articles": articles[]->{

@@ -51,6 +51,9 @@
     },
     "api/realtime/session.ts": {
       "maxDuration": 10
+    },
+    "api/contact.ts": {
+      "maxDuration": 10
     }
   },
   "trailingSlash": false,
@@ -739,6 +742,94 @@
         }
       ],
       "destination": "/api/prerender?p=/recherche"
+    },
+    {
+      "source": "/carousel/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/carousel/:slug"
+    },
+    {
+      "source": "/marque",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/marque"
+    },
+    {
+      "source": "/connexion",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/connexion"
+    },
+    {
+      "source": "/inscription",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/inscription"
+    },
+    {
+      "source": "/compte/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/compte/:path*"
+    },
+    {
+      "source": "/deconnexion",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/deconnexion"
+    },
+    {
+      "source": "/discover",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/discover"
+    },
+    {
+      "source": "/compte",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|Mediapartners-Google|AdsBot-Google|Bingbot|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|pinterest|redditbot).*"
+        }
+      ],
+      "destination": "/api/prerender?p=/compte"
     },
     {
       "source": "/((?!api|assets|static|_next|favicon.ico|robots.txt|sitemap.xml|kit-media-origines.pdf|.*\\..*).*)",

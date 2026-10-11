@@ -56,10 +56,9 @@ export default function LegalPage() {
             <h2 className={s.sectionTitle}>2. Hébergeur</h2>
             <p className={s.text}>Le site est hébergé par :</p>
             <div className={s.infoBox}>
-              <p><strong>OVH SAS</strong></p>
-              <p>2 rue Kellermann, 59100 Roubaix, France</p>
-              <p>Téléphone : 1007 (depuis la France)</p>
-              <p>Site web : www.ovh.com</p>
+              <p><strong>Vercel Inc.</strong></p>
+              <p>440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis</p>
+              <p>Site web : <a href="https://vercel.com" className="transition-all duration-300">vercel.com</a></p>
             </div>
           </div>
 

@@ -7,6 +7,10 @@ import Footer2 from "@/components/Footer2";
 import ScrollToTopV2 from "@/components/ScrollToTop/ScrollToTopV2";
 import SEO from "../components/SEO";
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Send } from 'lucide-react';
+import { CONTACT_EMAIL, contactMailto, sendContactMessage } from '@/lib/contact';
 import s from "./ContactPage.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -30,13 +34,6 @@ const IconMail = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
     <rect x="2" y="4" width="20" height="16" rx="0" />
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-  </svg>
-);
-
-const IconSend = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-    <path d="m22 2-7 20-4-9-9-4z" />
-    <path d="m22 2-11 11" />
   </svg>
 );
 
@@ -106,10 +103,10 @@ const subjects = [
 ];
 
 const socialLinks = [
-  { Icon: IconInstagram, label: "Instagram", href: "https://instagram.com/originesmedia" },
-  { Icon: IconYoutube, label: "YouTube", href: "https://youtube.com/originesmedia" },
+  { Icon: IconInstagram, label: "Instagram", href: "https://instagram.com/origines.media" },
+  { Icon: IconYoutube, label: "YouTube", href: "https://youtube.com/@originesmedia" },
   { Icon: IconTwitter, label: "X (Twitter)", href: "https://twitter.com/originesmedia" },
-  { Icon: IconTikTok, label: "TikTok", href: "https://tiktok.com/@originesmedia" },
+  { Icon: IconTikTok, label: "TikTok", href: "https://tiktok.com/@origines.media" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -125,15 +122,23 @@ const ContactPage: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [website, setWebsite] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (isSubmitting || !formData.name || !formData.email || !formData.message) return;
 
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitted(true);
-    setIsSubmitting(false);
+    setSubmitError(null);
+    try {
+      await sendContactMessage({ ...formData, website });
+      setIsSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "L’envoi a échoué. Contactez-nous par email.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -195,7 +200,7 @@ const ContactPage: React.FC = () => {
           {/* ── Form column ── */}
           <div>
             {!isSubmitted ? (
-              <div className={s.formCard}>
+              <Card className={s.formCard}>
                 <div className={s.formHeader}>
                   <div className={s.formIcon}>
                     <IconMessage />
@@ -204,6 +209,10 @@ const ContactPage: React.FC = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className={s.form}>
+                  <div hidden aria-hidden="true">
+                    <label htmlFor="contact-website">Site web</label>
+                    <input id="contact-website" name="website" value={website} onChange={event => setWebsite(event.target.value)} tabIndex={-1} autoComplete="off" />
+                  </div>
                   {/* Name + Email row */}
                   <div className={s.fieldRow}>
                     <div className={s.fieldGroup}>
@@ -221,6 +230,7 @@ const ContactPage: React.FC = () => {
                           value={formData.name}
                           onChange={handleChange}
                           required
+                          maxLength={120}
                           className={s.input}
                           placeholder="Jean Dupont"
                         />
@@ -237,6 +247,7 @@ const ContactPage: React.FC = () => {
                         </span>
                         <input
                           type="email"
+                          maxLength={254}
                           id="email"
                           name="email"
                           value={formData.email}
@@ -286,6 +297,7 @@ const ContactPage: React.FC = () => {
                       value={formData.message}
                       onChange={handleChange}
                       required
+                      maxLength={10000}
                       rows={5}
                       className={s.textarea}
                       placeholder="Decrivez votre demande..."
@@ -293,72 +305,71 @@ const ContactPage: React.FC = () => {
                   </div>
 
                   {/* Submit */}
-                  <button
+                  {submitError && <div role="alert" className="text-sm font-inter">
+                    <p>{submitError}</p>
+                    <a href={contactMailto(formData)} className="text-violet-500 underline transition-all duration-300">
+                      Envoyer ce message avec votre application email
+                    </a>
+                  </div>}
+                  <Button
                     type="submit"
+                    variant="gradient"
+                    size="lg"
+                    fullWidth
+                    isLoading={isSubmitting}
+                    rightIcon={Send}
                     disabled={
                       isSubmitting ||
                       !formData.name ||
                       !formData.email ||
                       !formData.message
                     }
-                    className={s.submitBtn}
                   >
-                    {isSubmitting ? (
-                      <>
-                        <span className={s.spinner} />
-                        Envoi en cours...
-                      </>
-                    ) : (
-                      <>
-                        <IconSend />
-                        Envoyer le message
-                      </>
-                    )}
-                  </button>
+                    {isSubmitting ? 'Envoi en cours…' : 'Envoyer le message'}
+                  </Button>
                 </form>
-              </div>
+              </Card>
             ) : (
               /* ── Success state ── */
-              <div className={s.successCard}>
+              <Card className={s.successCard}>
                 <div className={s.successIcon}>
                   <IconCheck />
                 </div>
-                <h3 className={s.successTitle}>Message envoye !</h3>
+                <h3 className={s.successTitle}>Message envoyé !</h3>
                 <p className={s.successText}>
-                  Merci pour votre message. Nous vous repondrons sous 48 heures.
+                  Merci pour votre message. Il a été transmis à notre service email.
                 </p>
-                <button
+                <Button variant="outline"
                   onClick={() => {
                     setIsSubmitted(false);
                     setFormData({ name: "", email: "", subject: "", message: "" });
                   }}
-                  className={s.resetBtn}
                 >
                   Nouveau message
-                </button>
-              </div>
+                </Button>
+              </Card>
             )}
           </div>
 
           {/* ── Info sidebar ── */}
           <aside className={s.sidebar}>
             {/* Email direct */}
-            <div className={s.infoCard}>
+            <Card className={s.infoCard}>
               <div className={s.infoRow}>
                 <div className={s.infoIcon}>
                   <IconMail />
                 </div>
                 <div>
                   <p className={s.infoLabel}>Email direct</p>
-                  <a href="mailto:contact@originesmedia.com" className={s.infoLink}>
-                    contact@originesmedia.com
+                  <a href={`mailto:${CONTACT_EMAIL}`} className={s.infoLink}>
+                    {CONTACT_EMAIL}
                   </a>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Location */}
-            <div className={s.infoCard}>
+            <Card className={s.infoCard}>
               <div className={s.infoRow}>
                 <div className={s.infoIcon}>
                   <IconMapPin />
@@ -368,10 +379,10 @@ const ContactPage: React.FC = () => {
                   <p className={s.infoValue}>Paris, France</p>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Social links */}
-            <div className={s.socialCard}>
+            <Card className={s.socialCard}>
               <h3 className={s.socialTitle}>Suivez-nous</h3>
               <div className={s.socialGrid}>
                 {socialLinks.map(({ Icon, label, href }) => (
@@ -388,7 +399,7 @@ const ContactPage: React.FC = () => {
                   </a>
                 ))}
               </div>
-            </div>
+            </Card>
           </aside>
         </div>
       </main>
