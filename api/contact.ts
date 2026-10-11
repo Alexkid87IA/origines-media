@@ -6,6 +6,25 @@ const WINDOW_MS = 10 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
 const SENDER_EMAIL = 'noreply@origines.media';
 
+async function verifiedSender(key: string): Promise<{ email?: string; reason?: string }> {
+  try {
+    const response = await fetch('https://api.brevo.com/v3/senders', {
+      headers: { 'api-key': key, accept: 'application/json' },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!response.ok) return { reason: response.status === 401 || response.status === 403 ? 'provider_authentication' : 'provider_unavailable' };
+    const result = await response.json();
+    const approved = Array.isArray(result.senders) ? result.senders.filter(
+      (sender: { email?: string; active?: boolean }) => sender.active === true && sender.email?.endsWith('@origines.media'),
+    ) : [];
+    const sender = approved.find((item: { email: string }) => item.email === SENDER_EMAIL)
+      || approved.find((item: { email: string }) => item.email === CONTACT_EMAIL) || approved[0];
+    return sender ? { email: sender.email } : { reason: 'sender_unverified' };
+  } catch {
+    return { reason: 'provider_unavailable' };
+  }
+}
+
 function cleanText(value: unknown, maxLength: number): string | null {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
@@ -17,22 +36,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
     // Read-only availability check: never sends a message or exposes credentials.
     const key = process.env.BREVO_API_KEY?.trim();
-    if (!key) return res.status(503).json({ available: false });
-    try {
-      const response = await fetch('https://api.brevo.com/v3/senders', {
-        headers: { 'api-key': key, accept: 'application/json' },
-        signal: AbortSignal.timeout(8000),
-      });
-      if (!response.ok) return res.status(503).json({ available: false });
-      const result = await response.json();
-      const available = Array.isArray(result.senders) && result.senders.some(
-        (sender: { email?: string; active?: boolean }) => sender.email === SENDER_EMAIL && sender.active === true,
-      );
-      res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60');
-      return res.status(available ? 200 : 503).json({ available });
-    } catch {
-      return res.status(503).json({ available: false });
-    }
+    if (!key) return res.status(503).json({ available: false, reason: 'configuration_missing' });
+    const sender = await verifiedSender(key);
+    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60');
+    return res.status(sender.email ? 200 : 503).json({ available: Boolean(sender.email), ...(sender.reason ? { reason: sender.reason } : {}) });
   }
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'GET, POST');
@@ -71,11 +78,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   attempts.set(ip, attempt);
 
   try {
+    const sender = await verifiedSender(key);
+    if (!sender.email) return res.status(503).json({ error: 'L’envoi est temporairement indisponible. Contactez-nous par email.' });
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST', signal: AbortSignal.timeout(8000),
+      method: 'POST', signal: AbortSignal.timeout(6000),
       headers: { 'content-type': 'application/json', 'api-key': key, accept: 'application/json' },
       body: JSON.stringify({
-        sender: { name: 'Origines Media', email: SENDER_EMAIL },
+        sender: { name: 'Origines Media', email: sender.email },
         to: [{ email: CONTACT_EMAIL, name: 'Rédaction Origines' }],
         replyTo: { email, name },
         subject: `[Contact Origines] ${subject}`,

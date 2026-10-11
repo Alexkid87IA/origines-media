@@ -60,6 +60,7 @@ test('Provider confirmation sends plain text to the published address with visit
   process.env.BREVO_API_KEY = 'test-key';
   let payload;
   globalThis.fetch = async (url, options) => {
+    if (url.endsWith('/senders')) return { ok: true, json: async () => ({ senders: [{ email: 'noreply@origines.media', active: true }] }) };
     assert.equal(url, 'https://api.brevo.com/v3/smtp/email');
     assert.equal(options.method, 'POST');
     payload = JSON.parse(options.body);
@@ -81,7 +82,9 @@ test('Unconfirmed delivery and provider/network failures cannot return success',
     async () => ({ ok: false, status: 502 }),
     async () => { throw new Error('Timeout'); },
   ]) {
-    globalThis.fetch = provider;
+    globalThis.fetch = async (url, options) => url.endsWith('/senders')
+      ? { ok: true, json: async () => ({ senders: [{ email: 'noreply@origines.media', active: true }] }) }
+      : provider(url, options);
     const response = await request();
     assert.equal(response.status, 502);
     assert.equal(response.json.sent, undefined);
@@ -98,7 +101,8 @@ test('Availability check reads approved senders without sending email or exposin
     };
     const response = await request(undefined, { method: 'GET' });
     assert.equal(response.status, active ? 200 : 503);
-    assert.deepEqual(response.json, { available: active });
+    assert.equal(response.json.available, active);
+    if (!active) assert.equal(response.json.reason, 'sender_unverified');
   }
   globalThis.fetch = async () => ({ ok: false, status: 401 });
   assert.equal((await request(undefined, { method: 'GET' })).status, 503);
@@ -107,7 +111,10 @@ test('Availability check reads approved senders without sending email or exposin
 test('Burst limit prevents repeated provider calls from the same address', async () => {
   process.env.BREVO_API_KEY = 'test-key';
   let calls = 0;
-  globalThis.fetch = async () => { calls++; return { ok: true, json: async () => ({ messageId: 'mock' }) }; };
+  globalThis.fetch = async url => {
+    if (url.endsWith('/senders')) return { ok: true, json: async () => ({ senders: [{ email: 'noreply@origines.media', active: true }] }) };
+    calls++; return { ok: true, json: async () => ({ messageId: 'mock' }) };
+  };
   const options = { headers: { origin: 'https://origines.media', 'x-forwarded-for': 'burst-test' } };
   for (let i = 0; i < 5; i++) assert.equal((await request(valid, options)).status, 200);
   const response = await request(valid, options);

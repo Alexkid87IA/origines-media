@@ -1,4 +1,4 @@
-import slideMap from "./carouselSlides.json";
+import slideMap from "./carouselSlides.json" with { type: "json" };
 
 export interface StaticCarousel {
   slug: string;

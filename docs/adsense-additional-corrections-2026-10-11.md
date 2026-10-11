@@ -30,6 +30,8 @@ Le contrôle doit suivre le push unique sur main. Aucune commande de déploiemen
 node scripts/audit-adsense.mjs /private/tmp/origines-adsense-additional-production --require-live-match
 ```
 
-GET /api/contact effectue un contrôle en lecture seule de la clé et de l’expéditeur Brevo actif, sans envoyer de message ni révéler la clé. Les variables Vercel sensibles ne sont pas exportables ; leur présence dans une exportation vide ne prouve pas qu’elles soient absentes du serveur.
+GET /api/contact effectue un contrôle en lecture seule de la clé et de l’expéditeur Brevo actif, sans envoyer de message ni révéler la clé. L’expéditeur préfère noreply@origines.media, puis admin@origines.media, puis une autre adresse Origines déjà active dans Brevo. Un échec indique seulement sa catégorie (configuration, authentification, expéditeur ou disponibilité). Les variables Vercel sensibles ne sont pas exportables ; leur présence dans une exportation vide ne prouve pas qu’elles soient absentes du serveur.
+
+Le premier contrôle en production a révélé un échec de démarrage du rendu des robots : Node ESM exige l’attribut type: json pour l’import du fichier des images de carrousel. L’import a été corrigé. Un test supplémentaire charge désormais tous les modules serveur avec le chargeur natif Node, sans regroupement préalable qui masquerait ce problème. Les 25 tests et une nouvelle compilation complète passent en local avant le push correctif.
 
 L’acceptation AdSense reste une décision de Google. La vérification technique ne certifie pas individuellement toutes les sources, tous les témoignages ou toutes les statistiques du site.

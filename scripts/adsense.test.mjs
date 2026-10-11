@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile, writeFile, mkdtemp, rm, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, rm, access, readdir, copyFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
@@ -55,6 +55,24 @@ test('AdSense desktop/mobile and Google Ads receive HTML on every existing crawl
     ]) assert.ok(regex.test(ua), `${rule.source}: ${ua}`);
     assert.equal(regex.test('Mozilla/5.0 Chrome/134.0.0.0 Safari/537.36'), false, rule.source);
   }
+});
+
+test('Server modules start with native Node ESM loading, including carousel JSON imports', async () => {
+  const native = await mkdtemp(join(temp, 'native-runtime-'));
+  const helpers = (await readdir('api/_lib')).filter(name => name.endsWith('.ts')).map(name => `api/_lib/${name}`);
+  await build({ entryPoints: ['api/prerender.ts', 'api/contact.ts', 'src/data/carousels.ts', 'src/lib/contact.ts', 'src/lib/contentQueries.ts', ...helpers],
+    bundle: false, platform: 'node', format: 'esm', target: 'node22', outdir: native, outbase: '.' });
+  await writeFile(join(native, 'package.json'), '{"type":"module"}');
+  await copyFile('src/data/carouselSlides.json', join(native, 'src/data/carouselSlides.json'));
+  const { default: server } = await import(pathToFileURL(join(native, 'api/prerender.js')));
+  assert.equal(typeof (await import(pathToFileURL(join(native, 'api/contact.js')))).default, 'function');
+  let status;
+  let html;
+  await server({ query: { p: '/compte' } }, {
+    setHeader() {}, status(value) { status = value; return this; }, send(value) { html = value; },
+  });
+  assert.equal(status, 200);
+  assert.match(html, /noindex, follow/);
 });
 
 test('Vercel entry does not shadow the homepage crawler route and preserves the visitor HTML', async () => {
