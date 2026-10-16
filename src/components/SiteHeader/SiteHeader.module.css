@@ -1117,7 +1117,7 @@
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--stone400);
+  color: var(--stone600);
   padding: 12px 0;
 }
 .searchResultItem {
@@ -1169,7 +1169,7 @@
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--stone400);
+  color: var(--stone600);
 }
 .searchResultVert::before {
   content: '·';
@@ -1617,7 +1617,7 @@
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.15);
+  color: var(--stone300);
   white-space: nowrap;
   flex-shrink: 0;
 }

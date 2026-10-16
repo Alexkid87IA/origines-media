@@ -93,6 +93,7 @@
 }
 
 .videoHeroBody {
+  --meta-color: var(--paper);
   position: absolute;
   left: clamp(22px, 4vw, 58px);
   right: clamp(22px, 36vw, 480px);

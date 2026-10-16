@@ -3,7 +3,7 @@
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  color: var(--ink-faint);
+  color: var(--meta-color, var(--stone600));
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 800;
@@ -15,7 +15,7 @@
   display: inline-flex;
   gap: 8px;
   align-items: center;
-  color: var(--accent);
+  color: inherit;
 }
 
 .dot {

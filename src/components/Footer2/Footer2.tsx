@@ -811,26 +811,40 @@ export default function Footer2() {
             </div>
           </header>
 
-          <nav className={s.tabs} aria-label="Mode d'exploration">
-            {TABS.map((tab) => (
+          <div className={s.tabs} role="tablist" aria-label="Mode d'exploration">
+            {TABS.map((tab, index) => (
               <button
                 key={tab.id}
                 type="button"
                 className={`${s.tab} ${activeTab === tab.id ? s.tabActive : ""}`}
                 onClick={() => setActiveTab(tab.id)}
+                id={`explore-tab-${tab.id}`}
+                aria-controls={`explore-panel-${tab.id}`}
+                tabIndex={activeTab === tab.id ? 0 : -1}
+                onKeyDown={(event) => {
+                  const next = event.key === "ArrowRight" ? (index + 1) % TABS.length
+                    : event.key === "ArrowLeft" ? (index + TABS.length - 1) % TABS.length
+                    : event.key === "Home" ? 0 : event.key === "End" ? TABS.length - 1 : null;
+                  if (next === null) return;
+                  event.preventDefault();
+                  setActiveTab(TABS[next].id);
+                  document.getElementById(`explore-tab-${TABS[next].id}`)?.focus();
+                }}
                 aria-selected={activeTab === tab.id}
                 role="tab"
               >
                 {tab.label}
               </button>
             ))}
-          </nav>
+          </div>
 
           {/* ── Galaxie panel (4 piliers) ── */}
           <div
             className={`${s.panel} ${activeTab === "galaxie" ? s.panelActive : ""}`}
             role="tabpanel"
-            aria-label="Galaxie"
+            id="explore-panel-galaxie"
+            aria-labelledby="explore-tab-galaxie"
+            tabIndex={0}
           >
             <div className={s.grid4}>
               {PILIERS.map((p) => (
@@ -843,7 +857,9 @@ export default function Footer2() {
           <div
             className={`${s.panel} ${activeTab === "univers" ? s.panelActive : ""}`}
             role="tabpanel"
-            aria-label="Univers"
+            id="explore-panel-univers"
+            aria-labelledby="explore-tab-univers"
+            tabIndex={0}
           >
             <div className={s.grid5}>
               {UNIVERS.map((u) => (
@@ -858,7 +874,9 @@ export default function Footer2() {
               key={panel.id}
               className={`${s.panel} ${activeTab === panel.id ? s.panelActive : ""}`}
               role="tabpanel"
-              aria-label={TABS.find((t) => t.id === panel.id)?.label}
+              id={`explore-panel-${panel.id}`}
+              aria-labelledby={`explore-tab-${panel.id}`}
+              tabIndex={0}
             >
               <div className={panel.gridClass}>
                 {panel.items.map((item) => (

@@ -504,6 +504,7 @@ export default function ArticlePageV2() {
         type="article"
         author={authorName}
         publishedTime={date}
+        modifiedTime={article.modifiedAt}
         section={verticale?.nom || soustopicLabel || parentPage.name}
         jsonLd="article"
         twitterCreator={authorSocial.twitter ? `@${authorSocial.twitter.replace(/^@/, '')}` : undefined}
@@ -519,7 +520,7 @@ export default function ArticlePageV2() {
 
       <Wrap>
 
-      <main>
+      <main id="main" tabIndex={-1}>
         <div className="v2-container">
           <Breadcrumb items={breadcrumbItems} />
         </div>
@@ -536,15 +537,15 @@ export default function ArticlePageV2() {
               <div className={s.headerKickerRow}>
                 {verticale && (
                   univId
-                    ? <Link to={`/univers/${univId}`} className={s.headerKicker} style={{ color: themeColor }}>{verticale.nom}</Link>
-                    : <span className={s.headerKicker} style={{ color: themeColor }}>{verticale.nom}</span>
+                    ? <Link to={`/univers/${univId}`} className={s.headerKicker} style={{ color: "var(--stone600)" }}>{verticale.nom}</Link>
+                    : <span className={s.headerKicker} style={{ color: "var(--stone600)" }}>{verticale.nom}</span>
                 )}
                 {soustopicLabel && (
                   <>
                     {verticale && <span className={s.headerKickerSep} style={{ color: themeColor }}>/</span>}
                     {univId && stSlug
-                      ? <Link to={`/univers/${univId}/${stSlug}`} className={s.headerSubtopic} style={{ color: themeColor }}>{soustopicLabel}</Link>
-                      : <span className={s.headerSubtopic} style={{ color: themeColor }}>{soustopicLabel}</span>
+                      ? <Link to={`/univers/${univId}/${stSlug}`} className={s.headerSubtopic} style={{ color: "var(--stone600)" }}>{soustopicLabel}</Link>
+                      : <span className={s.headerSubtopic} style={{ color: "var(--stone600)" }}>{soustopicLabel}</span>
                     }
                   </>
                 )}
@@ -814,11 +815,7 @@ export default function ArticlePageV2() {
                       {relatedArticles[0].verticale && (
                         <span
                           className={s.nextReadVert}
-                          style={{
-                            color:
-                              relatedArticles[0].verticale.couleurDominante ||
-                              "var(--stone500)",
-                          }}
+                          style={{ color: "var(--stone600)" }}
                         >
                           {relatedArticles[0].verticale.nom}
                         </span>

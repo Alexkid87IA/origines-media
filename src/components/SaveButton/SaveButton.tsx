@@ -43,7 +43,7 @@ export default function SaveButton({ type, slug, title, image, univers }: SaveBu
           fontWeight: 600,
           letterSpacing: "0.1em",
           textTransform: "uppercase" as const,
-          color: saved ? "var(--ink)" : "var(--stone400)",
+          color: saved ? "var(--ink)" : "var(--stone600)",
           background: saved ? "var(--stone50, #F0EDE6)" : "none",
           padding: "8px 14px",
           border: `1px solid ${saved ? "var(--ink)" : "var(--stone100)"}`,

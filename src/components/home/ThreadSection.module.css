@@ -35,7 +35,7 @@
 }
 
 .threadNumber {
-  color: #8b5cf6;
+  color: var(--stone600);
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 900;

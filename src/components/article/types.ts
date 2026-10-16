@@ -47,6 +47,7 @@ export interface Article {
   mainImage?: string;
   datePublication?: string;
   publishedAt?: string;
+  modifiedAt?: string;
   tempsLecture?: number;
   readTime?: number;
   contenu?: any[];

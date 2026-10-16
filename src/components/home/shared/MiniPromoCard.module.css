@@ -37,7 +37,7 @@
 .miniPromoLabel {
   position: relative;
   z-index: 1;
-  color: var(--mini-a);
+  color: var(--stone600);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 900;

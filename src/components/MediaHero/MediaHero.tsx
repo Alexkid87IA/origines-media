@@ -208,13 +208,13 @@ export default function MediaHero({ cmsSlides, joinedMasthead = false }: MediaHe
 
         <div className={s.heroTitleBlock}>
           <div className={s.heroKicker}>
-            <span className={s.catTag} style={{ background: u.color }}>{u.name}</span>
+            <span className={s.catTag} style={{ background: u.color, color: u.id === "esprit" ? "var(--pure)" : "var(--ink)" }}>{u.name}</span>
             <span className={s.dotSep} />
             <span className={s.meta}>{slide.meta}</span>
           </div>
-          <h1 className={s.heroTitle} style={{ "--kicker-color": u.color } as React.CSSProperties}>
+          <h2 className={s.heroTitle} style={{ "--kicker-color": u.color } as React.CSSProperties}>
             {frTypo(slide.title)}
-          </h1>
+          </h2>
           <p className={s.heroDeck}>{slide.deck}</p>
           <div className={s.heroFooter}>
             <div className={s.heroByline}>

@@ -38,7 +38,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(247,245,240,0.4);
+  color: var(--stone300);
   flex-shrink: 0;
 }
 

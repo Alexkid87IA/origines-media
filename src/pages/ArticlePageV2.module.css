@@ -399,7 +399,7 @@
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--stone400);
+  color: var(--stone600);
   margin: 0 0 6px;
 }
 
@@ -677,7 +677,7 @@
 .nextReadLabel {
   display: block;
   padding: 10px 16px;
-  background: var(--theme, var(--ink));
+  background: var(--ink);
   color: #fff;
   font-family: var(--mono);
   font-size: 10px;
@@ -876,7 +876,7 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--stone400);
+  color: var(--stone600);
   margin-top: 2px;
 }
 
@@ -1470,7 +1470,7 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(247, 245, 240, 0.35);
+  color: var(--stone300);
 }
 
 /* ──────────────────────────────────────────────────────────

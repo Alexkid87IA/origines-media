@@ -867,6 +867,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
     slug,
     "excerpt": description,
     "publishedAt": datePublication,
+    "modifiedAt": coalesce(dateModification, _updatedAt),
     "imageUrl": coalesce(image.asset->url, mainImage.asset->url),
     mainImage {
       asset-> {

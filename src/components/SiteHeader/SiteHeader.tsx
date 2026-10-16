@@ -258,6 +258,48 @@ export default function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileNavRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    searchRef.current?.focus();
+    return () => { searchButtonRef.current?.focus(); };
+  }, [searchOpen]);
+
+  useEffect(() => {
+    const menu = mobileNavRef.current;
+    if (!menu) return;
+    menu.inert = !mobileOpen;
+    if (!mobileOpen) return;
+    const focusable = () => Array.from(menu.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]',
+    )).filter(element => element.getClientRects().length > 0);
+    focusable()[0]?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMobileOpen(false);
+      } else if (event.key === "Tab") {
+        const items = focusable();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !menu.contains(document.activeElement))) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !menu.contains(document.activeElement))) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      if (menuButtonRef.current?.getClientRects().length) menuButtonRef.current.focus();
+    };
+  }, [mobileOpen]);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -315,7 +357,6 @@ export default function SiteHeader() {
     setSearchOpen((o) => {
       if (!o) {
         setMegaTarget(null);
-        requestAnimationFrame(() => searchRef.current?.focus());
       } else {
         setSearchQuery("");
         setSearchResults([]);
@@ -556,7 +597,7 @@ export default function SiteHeader() {
             <div className={styles.accountWrap}>
               {user ? (
                 <>
-                  <a href="/compte" className={styles.accountBtn}>
+                  <a href="/compte" className={styles.accountBtn} aria-label="Mon compte">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
                       <circle cx="12" cy="8" r="4" />
                       <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
@@ -576,7 +617,7 @@ export default function SiteHeader() {
                   </div>
                 </>
               ) : (
-                <a href="/compte" className={styles.accountBtn}>
+                <a href="/compte" className={styles.accountBtn} aria-label="Se connecter">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
                     <circle cx="12" cy="8" r="4" />
                     <path d="M4 21v-1a6 6 0 0 1 12 0v1" />
@@ -587,6 +628,9 @@ export default function SiteHeader() {
             </div>
 
             <button
+              ref={menuButtonRef}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation"
               className={styles.menuBtn}
               type="button"
               aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
@@ -638,6 +682,9 @@ export default function SiteHeader() {
             </button>
             <button
               type="button"
+              ref={searchButtonRef}
+              aria-expanded={searchOpen}
+              aria-controls="header-search"
               className={styles.tagSearch}
               onClick={toggleSearch}
               aria-label="Rechercher"
@@ -759,6 +806,15 @@ export default function SiteHeader() {
       </div>
 
       <div
+        id="header-search"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            setSearchOpen(false);
+            setSearchQuery("");
+            setSearchResults([]);
+          }
+        }}
         className={`${styles.search}${searchOpen ? ` ${styles.searchOpen}` : ""}`}
         aria-hidden={!searchOpen}
       >
@@ -777,7 +833,6 @@ export default function SiteHeader() {
               value={searchQuery}
               onChange={(e) => onSearchInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Escape") { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); }
                 if (e.key === "Enter" && searchQuery.trim()) { window.location.href = `/recherche?q=${encodeURIComponent(searchQuery)}`; }
               }}
             />
@@ -875,6 +930,8 @@ export default function SiteHeader() {
 
       {/* ── Mobile navigation drawer ── */}
       <nav
+        id="mobile-navigation"
+        ref={mobileNavRef}
         className={`${styles.mobileNav}${mobileOpen ? ` ${styles.mobileNavOpen}` : ""}`}
         aria-label="Navigation mobile"
         aria-hidden={!mobileOpen}

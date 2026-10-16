@@ -199,10 +199,10 @@ const TYPE_CONFIG: Record<
 /*  Result card                                                        */
 /* ------------------------------------------------------------------ */
 
-const ResultCard: React.FC<{ result: SearchResult; index: number }> = memo(({
+const ResultCard = memo(React.forwardRef<HTMLDivElement, { result: SearchResult; index: number }>(function ResultCard({
   result,
   index,
-}) => {
+}, ref) {
   const config = TYPE_CONFIG[result.type];
   const { Icon } = config;
   const colors = result.verticale
@@ -213,6 +213,7 @@ const ResultCard: React.FC<{ result: SearchResult; index: number }> = memo(({
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
@@ -277,7 +278,7 @@ const ResultCard: React.FC<{ result: SearchResult; index: number }> = memo(({
       </Link>
     </motion.div>
   );
-});
+}));
 
 /* ------------------------------------------------------------------ */
 /*  Skeleton loader                                                    */
@@ -508,7 +509,7 @@ const RecherchePage: React.FC = () => {
       </div>
 
       {/* ── Main content ── */}
-      <main className={s.main}>
+      <main id="main" tabIndex={-1} className={s.main}>
         {loading ? (
           /* Loading skeleton */
           <SkeletonGrid />
