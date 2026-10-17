@@ -82,7 +82,7 @@ export default function DossiersPage() {
   const schemaLD = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Dossiers thématiques — Origines Media",
+    name: "Dossiers thématiques | Origines Media",
     description: "Chaque semaine, une question explorée en 7 articles publiés en 7 jours.",
     url: "https://www.origines.media/dossiers",
     publisher: { "@type": "Organization", name: "Origines Media", url: "https://www.origines.media" },
@@ -98,7 +98,7 @@ export default function DossiersPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Dossiers — Une question, sept jours, sept articles"
+        title="Dossiers : Une question, sept jours, sept articles"
         description={
           activeDossier
             ? `Dossier en cours : « ${activeDossier.question} ». Chaque semaine, une question explorée en 7 articles.`
@@ -136,7 +136,7 @@ export default function DossiersPage() {
             </h1>
             <p className={s.deck}>
               Chaque semaine, la r&eacute;daction choisit une grande question
-              et publie un article par jour pendant sept jours &mdash; toujours
+              et publie un article par jour pendant sept jours, toujours
               &agrave; la m&ecirc;me heure. Psychologie, soci&eacute;t&eacute;,
               t&eacute;moignages, science&nbsp;: chaque angle &eacute;claire un
               peu plus la r&eacute;ponse.

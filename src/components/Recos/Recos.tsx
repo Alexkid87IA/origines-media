@@ -152,7 +152,7 @@ export default function Recos({ cmsRecos }: RecosProps) {
             Ce qu&rsquo;on a <em>aim&eacute;</em> cette semaine.
           </h2>
           <p className={s.sectionDeck}>
-            Des livres, des podcasts, des lieux, des films &mdash; s&eacute;lectionn&eacute;s
+            Des livres, des podcasts, des lieux, des films, s&eacute;lectionn&eacute;s
             un par un par la r&eacute;dac. Aucun deal, aucune pub&nbsp;: juste ce qui
             nous a touch&eacute;.
           </p>

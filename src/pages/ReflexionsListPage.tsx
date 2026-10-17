@@ -110,7 +110,7 @@ export default function ReflexionsListPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Réflexions — Essais et points de vue"
+        title="Réflexions : Essais et points de vue"
         description="Nos essais, chroniques et points de vue sur la société, la culture, les relations et le sens. Des textes qui prennent le temps de penser."
         url="/reflexions"
         breadcrumbs={[

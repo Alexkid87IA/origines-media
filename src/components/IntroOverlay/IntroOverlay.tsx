@@ -95,7 +95,7 @@ export default function IntroOverlay() {
       />
 
       <div className={styles.introMono}>
-        <span>Origines — Media Editorial</span>
+        <span>Origines, Media Editorial</span>
         <span>Paris &middot; Avril 2026</span>
       </div>
 

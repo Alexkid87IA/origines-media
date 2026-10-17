@@ -110,7 +110,7 @@ export default function ComprendreListPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Comprendre — Articles de fond"
+        title="Comprendre : Articles de fond"
         description="Nos articles de fond pour comprendre les grands sujets : psychologie, neurosciences, philosophie, relations. Des explications claires, sourcées, sans jargon."
         url="/comprendre"
         breadcrumbs={[

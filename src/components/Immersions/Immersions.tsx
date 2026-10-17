@@ -60,7 +60,7 @@ const GUIDES: Guide[] = [
     headlineEm: "ne se parlait plus",
     headlineSuffix: ".",
     description:
-      "Pendant six mois, nous avons suivi les Cissé — quatre personnes qui vivaient sous le même toit et n'avaient pas échangé un mot depuis 2019. Récit d'une fracture ordinaire, et de ce qui a fini par la réparer.",
+      "Pendant six mois, nous avons suivi les Cissé, quatre personnes qui vivaient sous le même toit et n'avaient pas échangé un mot depuis 2019. Récit d'une fracture ordinaire, et de ce qui a fini par la réparer.",
     author: "Camille Dufresne & Léo Marchand",
     isPaywall: true,
     pullquote:
@@ -101,7 +101,7 @@ const GUIDES: Guide[] = [
     headlineEm: "luxe collectif",
     headlineSuffix: ".",
     description:
-      "Nous avons perdu l'art de ne rien dire. Essai sur la disparition d'un espace mental — et sur ceux qui, encore, résistent.",
+      "Nous avons perdu l'art de ne rien dire. Essai sur la disparition d'un espace mental, et sur ceux qui, encore, résistent.",
     author: "Mathilde Aubry",
     isPaywall: true,
   },
@@ -184,7 +184,7 @@ export default function Immersions({ cmsItems }: ImmersionsProps) {
             Nos plus belles <em>plong&eacute;es.</em>
           </h2>
           <p className={s.sectionDeck}>
-            Des guides au long cours &mdash; enqu&ecirc;tes, portraits, essais.
+            Des guides au long cours : enqu&ecirc;tes, portraits, essais.
             De 2&nbsp;000 &agrave; 4&nbsp;000 mots, des mois d&rsquo;investigation.
             R&eacute;serv&eacute;s &agrave; nos abonn&eacute;s.
           </p>

@@ -117,7 +117,7 @@ export default function LyaInterviewSession({
     switch (lyaState) {
       case "connecting": return "Connexion en cours…";
       case "speaking": return "Lya vous parle…";
-      case "listening": return "À vous — parlez naturellement";
+      case "listening": return "À vous : parlez naturellement";
       case "ready": return "Entretien en cours";
       case "idle": return "Préparation…";
       case "error": return "Erreur de connexion";

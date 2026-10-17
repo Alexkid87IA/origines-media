@@ -43,7 +43,7 @@ const founders = [
   {
     name: "Alexandre Quilghini",
     role: "Co-fondateur & Direction éditoriale",
-    bio: "Journaliste de formation, Alexandre dirige la ligne éditoriale d’Origines. Il croit que les récits authentiques ont le pouvoir de transformer les vies — et les perspectives.",
+    bio: "Journaliste de formation, Alexandre dirige la ligne éditoriale d’Origines. Il croit que les récits authentiques ont le pouvoir de transformer les vies, et les perspectives.",
     color: "#8B5CF6",
   },
   {
@@ -198,8 +198,7 @@ export default function AboutPage() {
             </h1>
             <p className={s.heroDeck}>
               Origines Media est un m&eacute;dia ind&eacute;pendant qui produit des r&eacute;cits
-              authentiques &mdash; articles, t&eacute;moignages, reportages, documentaires
-              &mdash; pour &eacute;clairer, inspirer et faire avancer.
+              authentiques (articles, t&eacute;moignages, reportages, documentaires) pour &eacute;clairer, inspirer et faire avancer.
             </p>
           </div>
         </header>
@@ -235,13 +234,13 @@ export default function AboutPage() {
                 <p className={s.missionLede}>
                   Dans un monde satur&eacute; d&rsquo;informations superficielles, nous
                   avons cr&eacute;&eacute; un espace d&eacute;di&eacute; aux histoires qui comptent
-                  vraiment &mdash; celles qui transforment, pas celles qui
+                  vraiment, celles qui transforment, pas celles qui
                   divertissent.
                 </p>
                 <p className={s.missionBody}>
                   Chaque article, chaque t&eacute;moignage, chaque vid&eacute;o est pens&eacute;
                   pour donner la parole &agrave; ceux qu&rsquo;on n&rsquo;entend pas
-                  assez &mdash; et pour offrir aux lecteurs des cl&eacute;s de
+                  assez, et pour offrir aux lecteurs des cl&eacute;s de
                   compr&eacute;hension sur les sujets qui fa&ccedil;onnent nos vies.
                 </p>
                 <p className={s.missionBody}>
@@ -377,7 +376,7 @@ export default function AboutPage() {
               <p className={s.newSiteText}>
                 Ce site est tout neuf. Nous le construisons avec soin, pas
                 &agrave; pas, pour vous offrir la meilleure exp&eacute;rience de lecture
-                possible. Certaines sections sont encore en cours &mdash; et
+                possible. Certaines sections sont encore en cours, et
                 c&rsquo;est volontaire. Nous pr&eacute;f&eacute;rons avancer avec vous
                 plut&ocirc;t que de tout lancer d&rsquo;un coup dans le vide.
               </p>
@@ -398,7 +397,7 @@ export default function AboutPage() {
               divertissent, mais ceux qui nous r&eacute;v&egrave;lent &agrave; nous-m&ecirc;mes.
             </blockquote>
             <div className={s.quoteAuthor}>
-              Alexandre Quilghini &mdash; Co-fondateur, Origines Media
+              Alexandre Quilghini, Co-fondateur, Origines Media
             </div>
           </div>
         </section>

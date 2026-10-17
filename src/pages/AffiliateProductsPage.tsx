@@ -226,7 +226,7 @@ export default function AffiliateProductsPage() {
   return (
     <>
       <SEO
-        title="Produits recommandés — Origines Media"
+        title="Produits recommandés | Origines Media"
         description="Découvrez les produits, outils et ressources recommandés par les experts et créateurs d’Origines Media. Sélection indépendante et transparente."
         url="/recommandations/produits"
         breadcrumbs={[

@@ -693,7 +693,7 @@ export default function HistoiresPage() {
   return (
     <>
       <SEO
-        title="Histoires — Récits de vie et témoignages"
+        title="Histoires : Récits de vie et témoignages"
         description="Des récits singuliers qui inspirent, transforment et éclairent. Découvrez des parcours authentiques et des témoignages qui résonnent."
         url="/histoires"
         breadcrumbs={[

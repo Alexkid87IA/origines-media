@@ -80,11 +80,11 @@ const TABS: { id: TabId; label: string }[] = [
 /* ── Univers descriptions & icons ── */
 
 const UNIVERS_DESCRIPTIONS: Record<UniversId, string> = {
-  esprit: "Psychologie, neurosciences, conscience de soi, quête de sens. L'Esprit explore ce qui se joue dans notre tête — et pourquoi ça compte.",
+  esprit: "Psychologie, neurosciences, conscience de soi, quête de sens. L'Esprit explore ce qui se joue dans notre tête, et pourquoi ça compte.",
   corps: "Nutrition, sommeil, mouvement, prévention. Le Corps raconte comment habiter son corps avec plus d'attention et moins d'injonctions.",
-  liens: "Parentalité, couples, amitiés, ruptures, générations. Les Liens décryptent ce qui nous relie aux autres — et ce qui nous en sépare.",
-  monde: "Voyages, art, littérature, cinéma, photographie. Le Monde ouvre des fenêtres sur ce qui existe ailleurs — et ce que ça change en nous.",
-  avenir: "Travail, innovation, économie, numérique, intelligence artificielle. L'Avenir interroge ce qui vient — et comment s'y préparer.",
+  liens: "Parentalité, couples, amitiés, ruptures, générations. Les Liens décryptent ce qui nous relie aux autres, et ce qui nous en sépare.",
+  monde: "Voyages, art, littérature, cinéma, photographie. Le Monde ouvre des fenêtres sur ce qui existe ailleurs, et ce que ça change en nous.",
+  avenir: "Travail, innovation, économie, numérique, intelligence artificielle. L'Avenir interroge ce qui vient, et comment s'y préparer.",
 };
 
 const ICONS: Record<UniversId, React.ReactNode> = {
@@ -136,7 +136,7 @@ const PILIERS: Pilier[] = [
   {
     id: "media",
     name: "Média",
-    description: "Articles, récits, immersions, témoignages. Le cœur éditorial d'Origines — cinq univers, des centaines d'histoires, et une question : d'où vient-on, et vers quoi ?",
+    description: "Articles, récits, immersions, témoignages. Le cœur éditorial d'Origines : cinq univers, des centaines d'histoires, et une question : d'où vient-on, et vers quoi ?",
     color: "#6D28D9",
     href: "/media",
     subtopics: [
@@ -152,7 +152,7 @@ const PILIERS: Pilier[] = [
   {
     id: "prod",
     name: "Vidéos",
-    description: "Reportages, documentaires, interviews et formats courts. 10 programmes, 106 vidéos — des histoires qu'on ne raconte pas ailleurs.",
+    description: "Reportages, documentaires, interviews et formats courts. 10 programmes, 106 vidéos, des histoires qu'on ne raconte pas ailleurs.",
     color: "#C2410C",
     href: "/videos",
     subtopics: [
@@ -167,7 +167,7 @@ const PILIERS: Pilier[] = [
   {
     id: "ateliers",
     name: "Ateliers",
-    description: "Masterclass, ateliers pratiques, programmes sur plusieurs semaines et kits gratuits. Apprendre, pratiquer, progresser — à votre rythme.",
+    description: "Masterclass, ateliers pratiques, programmes sur plusieurs semaines et kits gratuits. Apprendre, pratiquer, progresser, à votre rythme.",
     color: "#059669",
     href: "/guides",
     subtopics: [
@@ -180,7 +180,7 @@ const PILIERS: Pilier[] = [
   {
     id: "boutique",
     name: "Boutique",
-    description: "E-books, workbooks, méditations audio, carnets et coffrets. L'univers Origines chez vous — des objets pensés pour écrire, penser et ralentir.",
+    description: "E-books, workbooks, méditations audio, carnets et coffrets. L'univers Origines chez vous : des objets pensés pour écrire, penser et ralentir.",
     color: "#E11D48",
     href: "/boutique",
     subtopics: [
@@ -243,7 +243,7 @@ const FORMATS = [
     href: "/reflexions",
     articles: [
       { title: "Le silence, le dernier luxe collectif.", href: "/reflexions/silence-luxe-collectif" },
-      { title: "Pourquoi on a cessé de s'ennuyer — et ce qu'on y a perdu.", href: "/reflexions/ennui-perdu" },
+      { title: "Pourquoi on a cessé de s'ennuyer, et ce qu'on y a perdu.", href: "/reflexions/ennui-perdu" },
       { title: "La lenteur comme acte politique.", href: "/reflexions/lenteur-acte-politique" },
     ],
   },
@@ -435,7 +435,7 @@ const GUIDES = [
     color: "#5AA352",
     href: "/guides/kits-gratuits",
     articles: [
-      { title: "Kit d'introspection — 12 questions essentielles.", href: "/guides/kits-gratuits/introspection" },
+      { title: "Kit d'introspection : 12 questions essentielles.", href: "/guides/kits-gratuits/introspection" },
       { title: "Checklist bien-être au quotidien.", href: "/guides/kits-gratuits/checklist-bien-etre" },
       { title: "Template : planifier sa semaine avec intention.", href: "/guides/kits-gratuits/planifier-semaine" },
     ],
@@ -450,8 +450,8 @@ const BOUTIQUE = [
     color: "#8B5CF6",
     href: "/boutique?cat=ebooks",
     articles: [
-      { title: "Le Guide de l'Introspection — 120 pages.", href: "/boutique/guide-introspection" },
-      { title: "Comprendre ses émotions — Le manuel.", href: "/boutique/comprendre-emotions" },
+      { title: "Le Guide de l'Introspection : 120 pages.", href: "/boutique/guide-introspection" },
+      { title: "Comprendre ses émotions : Le manuel.", href: "/boutique/comprendre-emotions" },
       { title: "Écrire pour se connaître.", href: "/boutique/ecrire-se-connaitre" },
     ],
   },
@@ -462,9 +462,9 @@ const BOUTIQUE = [
     color: "#EC4899",
     href: "/boutique?cat=workbooks",
     articles: [
-      { title: "Workbook Mindset — 48 exercices.", href: "/boutique/workbook-mindset" },
-      { title: "Journal de Gratitude — 90 jours.", href: "/boutique/journal-gratitude" },
-      { title: "Kit Objectifs — Planifier avec intention.", href: "/boutique/kit-objectifs" },
+      { title: "Workbook Mindset : 48 exercices.", href: "/boutique/workbook-mindset" },
+      { title: "Journal de Gratitude : 90 jours.", href: "/boutique/journal-gratitude" },
+      { title: "Kit Objectifs : Planifier avec intention.", href: "/boutique/kit-objectifs" },
     ],
   },
   {
@@ -474,9 +474,9 @@ const BOUTIQUE = [
     color: "#0891B2",
     href: "/boutique?cat=audio",
     articles: [
-      { title: "Pack Méditation — 12 séances guidées.", href: "/boutique/pack-meditation" },
-      { title: "Ambiances Sonores — Concentration & calme.", href: "/boutique/ambiances-sonores" },
-      { title: "Séance Respiration — 7 exercices.", href: "/boutique/seance-respiration" },
+      { title: "Pack Méditation : 12 séances guidées.", href: "/boutique/pack-meditation" },
+      { title: "Ambiances Sonores : Concentration & calme.", href: "/boutique/ambiances-sonores" },
+      { title: "Séance Respiration : 7 exercices.", href: "/boutique/seance-respiration" },
     ],
   },
   {
@@ -486,9 +486,9 @@ const BOUTIQUE = [
     color: "#10B981",
     href: "/boutique?cat=carnets",
     articles: [
-      { title: "Carnet Origines — 200 pages, papier premium.", href: "/boutique/carnet-origines" },
-      { title: "Carnet de Route — Format voyage.", href: "/boutique/carnet-route" },
-      { title: "Set de Cartes Postales — 12 illustrations.", href: "/boutique/cartes-postales" },
+      { title: "Carnet Origines : 200 pages, papier premium.", href: "/boutique/carnet-origines" },
+      { title: "Carnet de Route : Format voyage.", href: "/boutique/carnet-route" },
+      { title: "Set de Cartes Postales : 12 illustrations.", href: "/boutique/cartes-postales" },
     ],
   },
   {
@@ -499,8 +499,8 @@ const BOUTIQUE = [
     href: "/boutique?cat=coffrets",
     articles: [
       { title: "Coffret Nouveau Départ.", href: "/boutique/coffret-nouveau-depart" },
-      { title: "Coffret Introspection — Le kit complet.", href: "/boutique/coffret-introspection" },
-      { title: "Coffret Duo — Pour deux.", href: "/boutique/coffret-duo" },
+      { title: "Coffret Introspection : Le kit complet.", href: "/boutique/coffret-introspection" },
+      { title: "Coffret Duo : Pour deux.", href: "/boutique/coffret-duo" },
     ],
   },
 ];
@@ -537,21 +537,21 @@ const ENSEMBLE = [
     color: "#C99B1E",
     href: "/newsletter",
     articles: [
-      { title: "Édition #42 — Pourquoi on procrastine les choses qui comptent.", href: "/newsletter/edition-42" },
-      { title: "Édition #41 — Le corps se souvient de tout.", href: "/newsletter/edition-41" },
-      { title: "Édition #40 — Apprendre à dire non sans culpabiliser.", href: "/newsletter/edition-40" },
+      { title: "Édition #42 : Pourquoi on procrastine les choses qui comptent.", href: "/newsletter/edition-42" },
+      { title: "Édition #41 : Le corps se souvient de tout.", href: "/newsletter/edition-41" },
+      { title: "Édition #40 : Apprendre à dire non sans culpabiliser.", href: "/newsletter/edition-40" },
     ],
   },
   {
     id: "boutique",
     name: "Boutique",
-    tagline: "Carnets, affiches, kits — l'univers Origines chez vous.",
+    tagline: "Carnets, affiches, kits : l'univers Origines chez vous.",
     color: "#A07850",
     href: "/boutique",
     articles: [
-      { title: "Kit d'Introspection — Gratuit.", href: "/boutique/kit-introspection" },
-      { title: "Guide Mindset — 48 pages illustrées.", href: "/boutique/guide-mindset" },
-      { title: "Carnet Origines — 200 pages, papier premium.", href: "/boutique/carnet-origines" },
+      { title: "Kit d'Introspection : Gratuit.", href: "/boutique/kit-introspection" },
+      { title: "Guide Mindset : 48 pages illustrées.", href: "/boutique/guide-mindset" },
+      { title: "Carnet Origines : 200 pages, papier premium.", href: "/boutique/carnet-origines" },
     ],
   },
 ];
@@ -560,7 +560,7 @@ const APROPOS = [
   {
     id: "mission",
     name: "Notre mission",
-    tagline: "Pourquoi Origines existe — et pour qui.",
+    tagline: "Pourquoi Origines existe, et pour qui.",
     color: "#8B5CF6",
     href: "/a-propos",
     articles: [
@@ -576,19 +576,19 @@ const APROPOS = [
     color: "#EC4899",
     href: "/a-propos#equipe",
     articles: [
-      { title: "Alexandre Quilghini — Co-fondateur, direction éditoriale.", href: "/a-propos#equipe" },
-      { title: "Alexis Chavetnoir — Co-fondateur, direction social media.", href: "/a-propos#equipe" },
+      { title: "Alexandre Quilghini, Co-fondateur, direction éditoriale.", href: "/a-propos#equipe" },
+      { title: "Alexis Chavetnoir, Co-fondateur, direction social media.", href: "/a-propos#equipe" },
       { title: "Une équipe qui grandit avec le projet.", href: "/a-propos#equipe" },
     ],
   },
   {
     id: "contact",
     name: "Contact",
-    tagline: "Une question, un projet, une idée — écrivez-nous.",
+    tagline: "Une question, un projet, une idée : écrivez-nous.",
     color: "#10B981",
     href: "/contact",
     articles: [
-      { title: "Formulaire de contact — réponse sous 48h.", href: "/contact" },
+      { title: "Formulaire de contact : réponse sous 48h.", href: "/contact" },
       { title: "Proposer un partenariat éditorial.", href: "/partenariats" },
       { title: "Rejoindre l'équipe Origines.", href: "/rejoindre" },
     ],
@@ -805,7 +805,7 @@ export default function Footer2() {
                 Explorez <em>par entr&eacute;e.</em>
               </h2>
               <p className={s.sectionDeck}>
-                Par univers, par format, par dossier ou par vid&eacute;o &mdash;
+                Par univers, par format, par dossier ou par vid&eacute;o,
                 chaque chemin m&egrave;ne quelque part.
               </p>
             </div>

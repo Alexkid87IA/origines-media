@@ -25,7 +25,7 @@ const PILLARS: Pillar[] = [
     name: "Origines",
     subtitle: "Média",
     shortLabel: "Média",
-    tagline: "Articles, récits, immersions, témoignages — tout ce qu’on écrit pour vous.",
+    tagline: "Articles, récits, immersions, témoignages : tout ce qu’on écrit pour vous.",
     href: "/media",
     stats: [
       { label: "Articles", value: "200+" },
@@ -41,7 +41,7 @@ const PILLARS: Pillar[] = [
     name: "Origines",
     subtitle: "Vidéos",
     shortLabel: "Vidéos",
-    tagline: "Documentaires, reportages, interviews — tout ce qu’on filme pour vous.",
+    tagline: "Documentaires, reportages, interviews : tout ce qu’on filme pour vous.",
     href: "/videos",
     stats: [
       { label: "Vidéos", value: "106" },
@@ -57,7 +57,7 @@ const PILLARS: Pillar[] = [
     name: "Guides",
     subtitle: "& Ateliers",
     shortLabel: "Ateliers",
-    tagline: "Masterclass, programmes, kits — pour passer à l’action.",
+    tagline: "Masterclass, programmes, kits : pour passer à l’action.",
     href: "/guides",
     stats: [{ label: "Programmes", value: "12" }],
     accent: "#059669",
@@ -83,7 +83,7 @@ const PILLARS: Pillar[] = [
     name: "Origines",
     subtitle: "Story",
     shortLabel: "Story",
-    tagline: "Vos histoires, vos voix — les témoignages qui font Origines.",
+    tagline: "Vos histoires, vos voix : les témoignages qui font Origines.",
     href: "/histoires",
     stats: [{ label: "Histoires", value: "50+" }],
     accent: "#0284C7",
@@ -289,7 +289,7 @@ export default function Pillars() {
           </h2>
           <p className={s.sectionDeck}>
             Lire, regarder, apprendre ou se faire plaisir.
-            Chaque univers a son rythme &mdash; choisissez le v&ocirc;tre.
+            Chaque univers a son rythme : choisissez le v&ocirc;tre.
           </p>
         </div>
       </header>

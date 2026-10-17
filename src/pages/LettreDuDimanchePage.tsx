@@ -13,8 +13,8 @@ const EDITIONS = [
   { num: 46, title: "Ce que la colère essaie de nous dire", date: "13 avril 2026", excerpt: "La colère a mauvaise réputation. Pourtant, elle nous protège, nous alerte, nous remet debout. Cette semaine, on l'écoute." },
   { num: 45, title: "Pourquoi on s'attache aux lieux", date: "6 avril 2026", excerpt: "Il y a des endroits qu'on ne quitte jamais vraiment. Cette semaine, on explore ce lien invisible entre nous et les lieux qui nous ont construits." },
   { num: 44, title: "Le droit de changer d'avis", date: "30 mars 2026", excerpt: "Changer d'avis, c'est trahir ou grandir ? Cette semaine, on parle de la liberté de se contredire." },
-  { num: 43, title: "Ce qu'on transmet sans le vouloir", date: "23 mars 2026", excerpt: "Les gestes, les silences, les peurs — on hérite de bien plus que d'un nom de famille." },
-  { num: 42, title: "Apprendre à ne rien faire", date: "16 mars 2026", excerpt: "L'ennui est devenu un luxe. Cette semaine, on redécouvre l'art de ne rien faire — vraiment." },
+  { num: 43, title: "Ce qu'on transmet sans le vouloir", date: "23 mars 2026", excerpt: "Les gestes, les silences, les peurs : on hérite de bien plus que d'un nom de famille." },
+  { num: 42, title: "Apprendre à ne rien faire", date: "16 mars 2026", excerpt: "L'ennui est devenu un luxe. Cette semaine, on redécouvre l'art de ne rien faire, vraiment." },
   { num: 41, title: "Pourquoi on a besoin de rituels", date: "9 mars 2026", excerpt: "Le café du matin, la promenade du soir, le dimanche en famille. Ces petits rituels qui structurent nos vies sans qu'on y pense." },
   { num: 40, title: "La fatigue qu'on ne s'avoue pas", date: "2 mars 2026", excerpt: "Pas la fatigue physique. Celle qui s'installe quand on fait semblant trop longtemps." },
   { num: 39, title: "Les amitiés qu'on laisse mourir", date: "23 février 2026", excerpt: "On ne se dispute pas. On s'éloigne. Et un jour, on réalise que quelqu'un a disparu de notre vie." },
@@ -27,7 +27,7 @@ export default function LettreDuDimanchePage() {
   return (
     <div className={s.page}>
       <SEO
-        title="La Lettre du dimanche — Origines Media"
+        title="La Lettre du dimanche | Origines Media"
         description="Chaque dimanche matin, une lettre écrite avec soin. Des réflexions, des recommandations et une question pour bien commencer la semaine."
         url="/lettre-du-dimanche"
         breadcrumbs={[

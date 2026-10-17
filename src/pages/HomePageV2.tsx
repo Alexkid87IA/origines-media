@@ -83,7 +83,7 @@ export default function HomePageV2() {
   return (
     <>
       <SEO
-        absoluteTitle="Origines Media — Articles, récits, vidéos et guides"
+        absoluteTitle="Origines Media : Articles, récits, vidéos et guides"
         title="Origines Media"
         description="Le média pour comprendre ce qui nous construit : articles, récits, vidéos, guides, témoignages et sélections de la rédaction."
         url="/"

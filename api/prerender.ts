@@ -37,43 +37,43 @@ interface PageMeta {
 
 const STATIC_PAGES: Record<string, PageMeta> = {
   '/': { title: 'Origines Media', description: 'Le média pour comprendre ce qui nous construit : articles, récits, vidéos, guides, témoignages et sélections de la rédaction.', ogType: 'website' },
-  '/galaxie': { title: 'Galaxie Origines — Origines Media', description: 'La carte des formats Origines Media : articles, vidéos, guides pratiques et boutique éditoriale.', ogType: 'website' },
-  '/marque': { title: 'La marque Origines Media — Mission, univers et manifeste', description: 'Découvrez l’identité d’Origines Media : notre mission, nos cinq univers, notre ligne éditoriale et notre manière d’explorer ce qui nous construit.', ogType: 'website' },
-  '/articles': { title: 'Articles — Origines Media', description: 'Tous nos articles : analyses, récits, interviews et réflexions sur les grands sujets de société.' },
-  '/videos': { title: 'Vidéos — Origines Media', description: 'Découvrez nos programmes vidéo originaux : documentaires, interviews et contenus exclusifs.' },
-  '/histoires': { title: 'Histoires — Origines Media', description: 'Des parcours de vie inspirants, des témoignages authentiques et des portraits intimes.' },
-  '/recommandations': { title: 'Recommandations — Origines Media', description: 'Livres, films, podcasts, musiques… les coups de cœur de la rédaction.' },
-  '/series': { title: 'Séries — Origines Media', description: 'Nos séries éditoriales : des contenus à suivre sur la durée.' },
-  '/dossiers': { title: 'Dossiers — Origines Media', description: 'La question de la semaine et nos dossiers thématiques approfondis.' },
-  '/univers': { title: 'Univers — Origines Media', description: 'Explorez nos univers narratifs : psychologie, société, culture, bien-être, spiritualité.' },
-  '/bibliotheque': { title: 'Bibliothèque — Origines Media', description: 'Explorez toute notre bibliothèque de contenus par format, thème et popularité.' },
-  '/programmes': { title: 'Programmes — Origines Media', description: 'Nos programmes vidéo originaux : Il était une fois, État d\'esprit, Transmission…' },
-  '/guides': { title: 'Guides — Origines Media', description: 'Nos guides pratiques pour vous accompagner au quotidien.' },
-  '/boutique': { title: 'Boutique — Origines Media', description: 'La boutique Origines : guides, ateliers et contenus premium.' },
-  '/newsletter': { title: 'Newsletter — Origines Media', description: 'Inscrivez-vous à la newsletter Origines pour recevoir le meilleur de nos contenus.' },
-  '/temoignages': { title: 'Témoignages — Origines Media', description: 'Les témoignages de notre communauté : partages de vie et expériences.' },
-  '/ensemble': { title: 'Ensemble — Origines Media', description: 'Rejoignez la communauté Origines et participez à l\'aventure.' },
-  '/a-propos': { title: 'À propos — Origines Media', description: 'Découvrez l\'histoire et la mission d\'Origines Media, un média de sens.' },
-  '/contact': { title: 'Contact — Origines Media', description: 'Contactez l\'équipe Origines Media.' },
-  '/partenariats': { title: 'Partenariats — Origines Media', description: 'Découvrez nos offres de partenariat et de sponsoring.' },
-  '/rejoindre': { title: 'Rejoindre Origines — Origines Media', description: 'Contribuez à Origines Media : écrivez, filmez, partagez votre histoire.' },
-  '/ecrire-mon-histoire': { title: 'Écrire mon histoire — Origines Media', description: 'Rédigez et partagez votre témoignage sur Origines Media.' },
-  '/recherche': { title: 'Recherche — Origines Media', description: 'Recherchez parmi tous les contenus d\'Origines Media.' },
-  '/media': { title: 'Média — Origines Media', description: 'L\'actualité Origines : tous nos derniers articles, vidéos et contenus.', ogType: 'website' },
-  '/inscription': { title: 'Inscription — Origines Media', description: 'Créez votre compte Origines Media.' },
-  '/connexion': { title: 'Connexion — Origines Media', description: 'Connectez-vous à votre compte Origines Media.' },
-  '/cgu': { title: 'CGU — Origines Media', description: 'Conditions générales d\'utilisation du site Origines Media.' },
-  '/cgv': { title: 'CGV — Origines Media', description: 'Conditions générales de vente d\'Origines Media.' },
-  '/confidentialite': { title: 'Confidentialité — Origines Media', description: 'Politique de confidentialité d\'Origines Media.' },
-  '/cookies': { title: 'Cookies — Origines Media', description: 'Politique de cookies du site Origines Media.' },
-  '/mentions-legales': { title: 'Mentions Légales — Origines Media', description: 'Mentions légales du site Origines Media.' },
-  '/plan-du-site': { title: 'Plan du Site — Origines Media', description: 'Retrouvez toutes les pages du site Origines Media.' },
-  '/actu': { title: 'Actualités — Origines Media', description: 'Toute l\'actualité Origines Media : dernières publications, brèves et mises à jour.' },
-  '/discover': { title: 'Découvrir — Origines Media', description: 'Explorez les dernières actualités publiées par Origines Media.' },
-  '/lettre-du-dimanche': { title: 'La Lettre du Dimanche — Origines Media', description: 'Notre lettre hebdomadaire : chaque dimanche, le meilleur d\'Origines dans votre boîte mail.' },
-  '/join-partner': { title: 'Devenir partenaire — Origines Media', description: 'Rejoignez le réseau de partenaires Origines Media et touchez une audience engagée.' },
-  '/proposer-une-reco': { title: 'Proposer une recommandation — Origines Media', description: 'Partagez vos coups de cœur avec la communauté Origines : livres, films, podcasts et plus.' },
-  '/recommandations/produits': { title: 'Produits recommandés — Origines Media', description: 'Suppléments, livres, outils, apps : les produits testés et recommandés par notre rédaction.' },
+  '/galaxie': { title: 'Galaxie Origines | Origines Media', description: 'La carte des formats Origines Media : articles, vidéos, guides pratiques et boutique éditoriale.', ogType: 'website' },
+  '/marque': { title: 'La marque Origines Media | Mission, univers et manifeste', description: 'Découvrez l’identité d’Origines Media : notre mission, nos cinq univers, notre ligne éditoriale et notre manière d’explorer ce qui nous construit.', ogType: 'website' },
+  '/articles': { title: 'Articles | Origines Media', description: 'Tous nos articles : analyses, récits, interviews et réflexions sur les grands sujets de société.' },
+  '/videos': { title: 'Vidéos | Origines Media', description: 'Découvrez nos programmes vidéo originaux : documentaires, interviews et contenus exclusifs.' },
+  '/histoires': { title: 'Histoires | Origines Media', description: 'Des parcours de vie inspirants, des témoignages authentiques et des portraits intimes.' },
+  '/recommandations': { title: 'Recommandations | Origines Media', description: 'Livres, films, podcasts, musiques… les coups de cœur de la rédaction.' },
+  '/series': { title: 'Séries | Origines Media', description: 'Nos séries éditoriales : des contenus à suivre sur la durée.' },
+  '/dossiers': { title: 'Dossiers | Origines Media', description: 'La question de la semaine et nos dossiers thématiques approfondis.' },
+  '/univers': { title: 'Univers | Origines Media', description: 'Explorez nos univers narratifs : psychologie, société, culture, bien-être, spiritualité.' },
+  '/bibliotheque': { title: 'Bibliothèque | Origines Media', description: 'Explorez toute notre bibliothèque de contenus par format, thème et popularité.' },
+  '/programmes': { title: 'Programmes | Origines Media', description: 'Nos programmes vidéo originaux : Il était une fois, État d\'esprit, Transmission…' },
+  '/guides': { title: 'Guides | Origines Media', description: 'Nos guides pratiques pour vous accompagner au quotidien.' },
+  '/boutique': { title: 'Boutique | Origines Media', description: 'La boutique Origines : guides, ateliers et contenus premium.' },
+  '/newsletter': { title: 'Newsletter | Origines Media', description: 'Inscrivez-vous à la newsletter Origines pour recevoir le meilleur de nos contenus.' },
+  '/temoignages': { title: 'Témoignages | Origines Media', description: 'Les témoignages de notre communauté : partages de vie et expériences.' },
+  '/ensemble': { title: 'Ensemble | Origines Media', description: 'Rejoignez la communauté Origines et participez à l\'aventure.' },
+  '/a-propos': { title: 'À propos | Origines Media', description: 'Découvrez l\'histoire et la mission d\'Origines Media, un média de sens.' },
+  '/contact': { title: 'Contact | Origines Media', description: 'Contactez l\'équipe Origines Media.' },
+  '/partenariats': { title: 'Partenariats | Origines Media', description: 'Découvrez nos offres de partenariat et de sponsoring.' },
+  '/rejoindre': { title: 'Rejoindre Origines | Origines Media', description: 'Contribuez à Origines Media : écrivez, filmez, partagez votre histoire.' },
+  '/ecrire-mon-histoire': { title: 'Écrire mon histoire | Origines Media', description: 'Rédigez et partagez votre témoignage sur Origines Media.' },
+  '/recherche': { title: 'Recherche | Origines Media', description: 'Recherchez parmi tous les contenus d\'Origines Media.' },
+  '/media': { title: 'Média | Origines Media', description: 'L\'actualité Origines : tous nos derniers articles, vidéos et contenus.', ogType: 'website' },
+  '/inscription': { title: 'Inscription | Origines Media', description: 'Créez votre compte Origines Media.' },
+  '/connexion': { title: 'Connexion | Origines Media', description: 'Connectez-vous à votre compte Origines Media.' },
+  '/cgu': { title: 'CGU | Origines Media', description: 'Conditions générales d\'utilisation du site Origines Media.' },
+  '/cgv': { title: 'CGV | Origines Media', description: 'Conditions générales de vente d\'Origines Media.' },
+  '/confidentialite': { title: 'Confidentialité | Origines Media', description: 'Politique de confidentialité d\'Origines Media.' },
+  '/cookies': { title: 'Cookies | Origines Media', description: 'Politique de cookies du site Origines Media.' },
+  '/mentions-legales': { title: 'Mentions Légales | Origines Media', description: 'Mentions légales du site Origines Media.' },
+  '/plan-du-site': { title: 'Plan du Site | Origines Media', description: 'Retrouvez toutes les pages du site Origines Media.' },
+  '/actu': { title: 'Actualités | Origines Media', description: 'Toute l\'actualité Origines Media : dernières publications, brèves et mises à jour.' },
+  '/discover': { title: 'Découvrir | Origines Media', description: 'Explorez les dernières actualités publiées par Origines Media.' },
+  '/lettre-du-dimanche': { title: 'La Lettre du Dimanche | Origines Media', description: 'Notre lettre hebdomadaire : chaque dimanche, le meilleur d\'Origines dans votre boîte mail.' },
+  '/join-partner': { title: 'Devenir partenaire | Origines Media', description: 'Rejoignez le réseau de partenaires Origines Media et touchez une audience engagée.' },
+  '/proposer-une-reco': { title: 'Proposer une recommandation | Origines Media', description: 'Partagez vos coups de cœur avec la communauté Origines : livres, films, podcasts et plus.' },
+  '/recommandations/produits': { title: 'Produits recommandés | Origines Media', description: 'Suppléments, livres, outils, apps : les produits testés et recommandés par notre rédaction.' },
 }
 
 // ---------------------------------------------------------------------------
@@ -110,7 +110,7 @@ function catalogHtml(items: CatalogItem[], label: string, prefix?: string): stri
   return `<h2>${esc(label)}</h2><ul>` + items.map(item => {
     const href = prefix ? `${prefix}/${item.slug}`
       : item.kind && item.kind !== 'article' ? `/${item.kind}/${item.slug}` : itemHref(item)
-    return `<li><a href="${esc(href)}">${esc(item.title)}</a>${item.description ? ` — ${esc(item.description)}` : ''}</li>`
+    return `<li><a href="${esc(href)}">${esc(item.title)}</a>${item.description ? ` | ${esc(item.description)}` : ''}</li>`
   }).join('') + '</ul>'
 }
 
@@ -148,7 +148,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
   }
   if (['/connexion', '/inscription', '/deconnexion', '/ecrire-mon-histoire', '/proposer-une-reco', '/recherche'].includes(path)
     || /^\/compte(?:\/|$)/.test(path)) {
-    return { ...defaults, title: STATIC_PAGES[path]?.title || 'Votre compte — Origines Media',
+    return { ...defaults, title: STATIC_PAGES[path]?.title || 'Votre compte | Origines Media',
       description: STATIC_PAGES[path]?.description || 'Connectez-vous à votre compte Origines Media.',
       noindex: true,
       bodyHtml: `<p>${esc(STATIC_PAGES[path]?.description || 'Connectez-vous à votre compte Origines Media.')}</p><p><a href="/connexion">Connexion</a> · <a href="/contact">Contact</a> · <a href="/">Accueil</a></p>` }
@@ -168,7 +168,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     if (path === '/univers') {
       meta.bodyHtml = '<ul>' + Object.values(UNIVERS_MAP).map(universe =>
         `<li><a href="/univers/${esc(universe.id)}">${esc(universe.name)}</a><p>${esc(universe.tagline)}</p><ul>`
-        + universe.subtopics.map(topic => `<li><a href="/univers/${esc(universe.id)}/${esc(topic.slug)}">${esc(topic.label)}</a>${topic.description ? ` — ${esc(topic.description)}` : ''}</li>`).join('')
+        + universe.subtopics.map(topic => `<li><a href="/univers/${esc(universe.id)}/${esc(topic.slug)}">${esc(topic.label)}</a>${topic.description ? ` | ${esc(topic.description)}` : ''}</li>`).join('')
         + '</ul></li>').join('') + '</ul>'
     }
     if (path === '/media' || path === '/bibliotheque' || path === '/programmes'
@@ -207,7 +207,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       if (items?.length) {
         meta.bodyHtml += '<h2>Dernières publications</h2><ul>'
         for (const item of items) {
-          meta.bodyHtml += `<li><a href="${esc(itemHref(item))}">${esc(item.title)}</a>${item.description ? ` — ${esc(item.description)}` : ''}</li>`
+          meta.bodyHtml += `<li><a href="${esc(itemHref(item))}">${esc(item.title)}</a>${item.description ? ` | ${esc(item.description)}` : ''}</li>`
         }
         meta.bodyHtml += '</ul>'
       }
@@ -237,7 +237,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       if (items?.length) {
         let body = `<h2>${lc.label} récents</h2><ul>`
         for (const item of items) {
-          body += `<li><a href="${lc.prefix}/${item.slug}">${esc(item.title)}</a>${item.description ? ` — ${esc(item.description)}` : ''}</li>`
+          body += `<li><a href="${lc.prefix}/${item.slug}">${esc(item.title)}</a>${item.description ? ` | ${esc(item.description)}` : ''}</li>`
         }
         body += '</ul>'
         meta.bodyHtml = body
@@ -266,12 +266,12 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     if (!carousel) return null
     const companion = await fetchSanity<any>(ARTICLE_FULL_QUERY, { slug: carousel.slug })
     let body = `<p>${esc(carousel.deck)}</p>`
-    body += carousel.slides.map((slide, index) => `<figure><img src="${esc(slide)}" alt="${esc(`Slide ${index + 1} — ${carousel.title}`)}" loading="lazy" /></figure>`).join('')
+    body += carousel.slides.map((slide, index) => `<figure><img src="${esc(slide)}" alt="${esc(`Slide ${index + 1} | ${carousel.title}`)}" loading="lazy" /></figure>`).join('')
     if (companion?.contenu?.length) {
       body += `<h2>${esc(companion.title)}</h2>${renderPortableText(companion.contenu)}`
     }
     body += `<p><a href="${esc(carousel.instagram)}">Voir sur Instagram</a></p>`
-    return { ...defaults, title: `${carousel.title} — Origines Media`, description: carousel.deck,
+    return { ...defaults, title: `${carousel.title} | Origines Media`, description: carousel.deck,
       image: carousel.cover || DEFAULT_OG_IMAGE, bodyHtml: body,
       author: companion?.author, publishedAt: companion?.publishedAt, ogType: 'article' }
   }
@@ -424,7 +424,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       if (data.episodes?.length) {
         body += '<h2>Épisodes</h2><ol>'
         for (const ep of data.episodes) {
-          body += `<li><a href="/article/${ep.slug}">${esc(ep.title)}</a>${ep.description ? ` — ${esc(ep.description)}` : ''}</li>`
+          body += `<li><a href="/article/${ep.slug}">${esc(ep.title)}</a>${ep.description ? ` | ${esc(ep.description)}` : ''}</li>`
         }
         body += '</ol>'
       }
@@ -456,7 +456,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       if (data.articles?.length) {
         body += '<h2>Articles du dossier</h2><ul>'
         for (const a of data.articles) {
-          body += `<li><a href="/article/${a.slug}">${esc(a.title)}</a>${a.description ? ` — ${esc(a.description)}` : ''}</li>`
+          body += `<li><a href="/article/${a.slug}">${esc(a.title)}</a>${a.description ? ` | ${esc(a.description)}` : ''}</li>`
         }
         body += '</ul>'
       }
@@ -487,7 +487,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       let body = `<p>${esc(univers.tagline)}</p>`
       body += '<h2>Thématiques</h2><ul>'
       for (const st of univers.subtopics) {
-        body += `<li><a href="/univers/${univers.id}/${st.slug}">${esc(st.label)}</a>${st.description ? ` — ${esc(st.description)}` : ''}</li>`
+        body += `<li><a href="/univers/${univers.id}/${st.slug}">${esc(st.label)}</a>${st.description ? ` | ${esc(st.description)}` : ''}</li>`
       }
       body += '</ul>'
       if (allFaqs.length > 0) {
@@ -508,7 +508,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
       if (articles?.length) {
         body += '<h2>Articles et vidéos récents</h2><ul>'
         for (const a of articles.slice(0, 12)) {
-          body += `<li><a href="${itemHref(a)}">${esc(a.title)}</a>${a.description ? ` — ${esc(a.description)}` : ''}</li>`
+          body += `<li><a href="${itemHref(a)}">${esc(a.title)}</a>${a.description ? ` | ${esc(a.description)}` : ''}</li>`
         }
         body += '</ul>'
       }
@@ -525,7 +525,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
 
       return {
         ...defaults,
-        title: `${univers.name} — Origines Media`,
+        title: `${univers.name} | Origines Media`,
         description: `${univers.tagline} Explorez ${univers.subtopics.length} thématiques : ${univers.subtopics.slice(0, 5).map(s => s.label).join(', ')} et plus.`,
         ogType: 'website',
         bodyHtml: body,
@@ -554,7 +554,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
         body += '<h2>Articles</h2><ul>'
         for (const a of articles) {
           const href = itemHref(a)
-          body += `<li><a href="${href}">${esc(a.title)}</a>${a.description ? ` — ${esc(a.description)}` : ''}</li>`
+          body += `<li><a href="${href}">${esc(a.title)}</a>${a.description ? ` | ${esc(a.description)}` : ''}</li>`
         }
         body += '</ul>'
       }
@@ -580,7 +580,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
 
       return {
         ...defaults,
-        title: `${subtopic.label} — ${univers.name} · Origines Media`,
+        title: `${subtopic.label} | ${univers.name} · Origines Media`,
         description: subtopic.description || `Tous nos articles sur ${subtopic.label.toLowerCase()} dans l'univers ${univers.name}.`,
         ogType: 'website',
         bodyHtml: body,
@@ -610,7 +610,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     const items = await fetchSanity<CatalogItem[]>(FORMAT_CATALOG_QUERY, { formatName: label }) || []
     return {
       ...defaults,
-      title: `${label} — Origines Media`,
+      title: `${label} | Origines Media`,
       description: `Découvrez nos contenus au format ${label} sur Origines Media.`,
       bodyHtml: catalogHtml(items, 'Épisodes publiés'),
       noindex: items.length === 0,
@@ -639,13 +639,13 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
         body += '<h2>Où l\'acheter</h2><ul>'
         for (const l of links) {
           if (!l.url) continue
-          body += `<li><a href="${esc(l.url)}" rel="sponsored nofollow">${esc(l.platform || 'Voir le produit')}</a>${l.price ? ` — ${esc(l.price)}` : ''}</li>`
+          body += `<li><a href="${esc(l.url)}" rel="sponsored nofollow">${esc(l.platform || 'Voir le produit')}</a>${l.price ? ` | ${esc(l.price)}` : ''}</li>`
         }
         body += '</ul>'
       }
       return {
         ...defaults,
-        title: `${data.name} — Produits recommandés · Origines Media`,
+        title: `${data.name} | Produits recommandés · Origines Media`,
         description: data.description || `Découvrez ${data.name} : avis, test et liens d'achat sur Origines Media.`,
         image: data.image || DEFAULT_OG_IMAGE,
         ogType: 'website',
@@ -675,7 +675,7 @@ async function resolveMeta(path: string): Promise<ResolvedMeta | null> {
     const guides = allGuides.filter(item => item.category === segments[1])
     return {
       ...defaults,
-      title: `Guides ${label} — Origines Media`,
+      title: `Guides ${label} | Origines Media`,
       description: `Nos guides pratiques sur ${label.toLowerCase()} : conseils, méthodes et ressources.`,
       bodyHtml: catalogHtml(guides, `Guides ${label}`, '/article'),
       noindex: guides.length === 0,
@@ -842,7 +842,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const meta = await resolveMeta(path)
     if (!meta) {
       const notFoundHtml = renderHTML({
-        title: 'Page non trouvée — Origines Media',
+        title: 'Page non trouvée | Origines Media',
         description: 'Cette page n\'existe pas ou a été déplacée.',
         image: DEFAULT_OG_IMAGE, url: `${BASE_URL}${path}`, ogType: 'website',
         noindex: true,
@@ -858,7 +858,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (err) {
     console.error('[prerender] error:', err)
     const fallback = renderHTML({
-      title: 'Contenu temporairement indisponible — Origines Media',
+      title: 'Contenu temporairement indisponible | Origines Media',
       description: 'Le contenu est temporairement indisponible. Veuillez réessayer dans quelques instants.',
       image: DEFAULT_OG_IMAGE, url: `${BASE_URL}${path}`, ogType: 'website',
       noindex: true,

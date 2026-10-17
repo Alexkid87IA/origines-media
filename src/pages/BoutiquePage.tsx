@@ -151,7 +151,7 @@ function ProductModal({ product, isOpen, onClose }: { product: Product | null; i
                   {product.lien ? (
                     <div className={s.notifyRow}>
                       <a href={product.lien} className={s.notifyBtn} rel="noopener">
-                        Acheter — {product.price}
+                        Acheter : {product.price}
                       </a>
                     </div>
                   ) : status !== "success" ? (
@@ -308,7 +308,7 @@ export default function BoutiquePage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Boutique — Kits thématiques pour grandir"
+        title="Boutique : Kits thématiques pour grandir"
         description="16 kits thématiques alliant carnet, cartes et workbook pour votre développement personnel. Méditation, sport, couple, entrepreneuriat et plus."
         url="/boutique"
         type="website"

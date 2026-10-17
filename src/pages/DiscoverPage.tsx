@@ -125,8 +125,8 @@ export default function DiscoverPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Discover — Le radar d'Origines Media"
-        description="L'essentiel de l'actualité décrypté par Origines Media. Société, culture, psychologie, technologie — les sujets qui comptent, maintenant."
+        title="Discover : Le radar d'Origines Media"
+        description="L'essentiel de l'actualité décrypté par Origines Media. Société, culture, psychologie, technologie : les sujets qui comptent, maintenant."
         url="/discover"
         breadcrumbs={[
           { name: "Accueil", url: "/" },

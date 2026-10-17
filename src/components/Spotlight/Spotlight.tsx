@@ -136,7 +136,7 @@ export default function Spotlight({ cmsItems }: SpotlightProps) {
           </h2>
           <p className={s.sectionDeck}>
             Les articles, vid&eacute;os et r&eacute;cits les plus r&eacute;cents.
-            Frais du jour &mdash; avant que le fil ne les emporte.
+            Frais du jour, avant que le fil ne les emporte.
           </p>
         </div>
         <a className={s.sectionAll} href="/articles" aria-label="Tous les articles">

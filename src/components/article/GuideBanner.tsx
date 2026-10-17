@@ -49,7 +49,7 @@ export default function GuideBanner({ themeColor }: GuideBannerProps) {
         </button>
 
         <p className={s.bannerIntro}>
-          Ce guide est conçu pour vous accompagner sur plusieurs jours, voire plusieurs semaines. Prenez le temps qu'il faut — chaque étape compte.
+          Ce guide est conçu pour vous accompagner sur plusieurs jours, voire plusieurs semaines. Prenez le temps qu'il faut : chaque étape compte.
         </p>
 
         <ul className={s.bannerList}>
@@ -75,14 +75,14 @@ export default function GuideBanner({ themeColor }: GuideBannerProps) {
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            <span>Prévoyez un moment pour y revenir — un rappel dans votre agenda peut suffire.</span>
+            <span>Prévoyez un moment pour y revenir : un rappel dans votre agenda peut suffire.</span>
           </li>
           <li className={s.bannerItem}>
             <svg className={s.bannerItemIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
               <polyline points="9 11 12 14 22 4" />
               <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
             </svg>
-            <span>Les cases à cocher du plan d'action enregistrent votre progression dans votre navigateur. Fermez la page, revenez — tout est sauvegardé.</span>
+            <span>Les cases à cocher du plan d'action enregistrent votre progression dans votre navigateur. Fermez la page, revenez : tout est sauvegardé.</span>
           </li>
         </ul>
       </aside>

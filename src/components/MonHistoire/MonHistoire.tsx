@@ -29,7 +29,7 @@ export default function MonHistoire() {
           <p className={s.body}>
             Un récit, un témoignage, un moment-pivot. Quelque chose que vous
             n&rsquo;avez jamais dit à voix haute. On vous lit, on vous appelle,
-            et si l&rsquo;histoire le demande &mdash; on la publie avec vous.
+            et si l&rsquo;histoire le demande, on la publie avec vous.
           </p>
 
           <hr className={s.sep} />
@@ -53,7 +53,7 @@ export default function MonHistoire() {
               <span className={s.stepNum}>03</span>
               <strong className={s.stepTitle}>On publie ensemble</strong>
               <p className={s.stepDesc}>
-                Si vous le voulez, anonyme ou signé &mdash; vous décidez.
+                Si vous le voulez, anonyme ou signé : vous décidez.
               </p>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function MonHistoire() {
               <p>
                 Je n&rsquo;avais jamais parlé de cette année à personne.
                 Écrire à <strong>Origines</strong>, c&rsquo;était comme le
-                dire une fois pour toutes &mdash; et après, pouvoir passer
+                dire une fois pour toutes, et après, pouvoir passer
                 à autre chose.
               </p>
             </blockquote>

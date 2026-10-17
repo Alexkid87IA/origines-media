@@ -691,7 +691,7 @@ export default function RecommandationsPage() {
                       {filteredRecos.length} recommandation
                       {filteredRecos.length > 1 ? "s" : ""}
                       {activeFilter !== "all" &&
-                        ` — ${recommendationTypes[activeFilter].label}`}
+                        ` | ${recommendationTypes[activeFilter].label}`}
                     </span>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <button

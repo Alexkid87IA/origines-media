@@ -74,7 +74,7 @@ const PartnershipVisionSection: React.FC = () => {
       description: 'Un trésor inexploité',
       stats: {
         members: '1,5M',
-        exchanges: '—',
+        exchanges: '-',
         cities: '1',
         impact: '0€'
       },

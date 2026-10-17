@@ -236,7 +236,7 @@ export default function MediaPage() {
       <Ticker />
       <SiteHeader />
       <main id="main" role="main">
-        <h1 className="sr-only">Média — Articles, récits et témoignages</h1>
+        <h1 className="sr-only">Média : Articles, récits et témoignages</h1>
         <div className="v2-container">
           <Breadcrumb items={[
             { name: "Accueil", url: "/" },

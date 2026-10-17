@@ -1,7 +1,7 @@
 export const BASE_URL = 'https://www.origines.media'
 export const SITE_NAME = 'Origines Media'
 export const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`
-export const DEFAULT_TITLE = 'Origines Media — La profondeur du récit'
+export const DEFAULT_TITLE = 'Origines Media, La profondeur du récit'
 export const DEFAULT_DESCRIPTION =
   'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.'
 
@@ -86,7 +86,7 @@ export const UNIVERS_DATA: UniversData[] = [
       { slug: 'economie', label: 'Économie', description: 'Au-delà des chiffres, l\'économie raconte nos choix de société.' },
       { slug: 'leadership', label: 'Leadership', description: 'Diriger sans dominer, inspirer sans manipuler.' },
       { slug: 'numerique', label: 'Numérique', description: 'Le numérique transforme tout.' },
-      { slug: 'nomadisme', label: 'Nomadisme', description: 'Travailler de partout, vivre nulle part — ou partout.' },
+      { slug: 'nomadisme', label: 'Nomadisme', description: 'Travailler de partout, vivre nulle part, ou partout.' },
     ],
   },
 ]

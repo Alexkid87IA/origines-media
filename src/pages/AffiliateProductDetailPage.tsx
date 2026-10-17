@@ -194,7 +194,7 @@ export default function AffiliateProductDetailPage() {
   return (
     <div className={s.page}>
       <SEO
-        title={`${product.name} — Produits recommandés · Origines Media`}
+        title={`${product.name} | Produits recommandés · Origines Media`}
         description={
           product.description ||
           `Découvrez ${product.name}, recommandé par Origines Media.`

@@ -105,7 +105,7 @@ export default function ActuListPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Actualités — Ce qui se passe maintenant"
+        title="Actualités : Ce qui se passe maintenant"
         description="L'actualité décryptée par Origines Media : société, culture, psychologie, technologie. Des analyses courtes et éclairantes sur ce qui compte."
         url="/actu"
         breadcrumbs={[

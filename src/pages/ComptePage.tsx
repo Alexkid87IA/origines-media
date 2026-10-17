@@ -17,7 +17,7 @@ const SPACES = [
   {
     num: "01",
     title: "Mon profil",
-    desc: "Votre identité éditoriale. Centres d'intérêt, univers favoris, ton préféré — tout ce qui fait de votre fil un reflet de vous.",
+    desc: "Votre identité éditoriale. Centres d'intérêt, univers favoris, ton préféré : tout ce qui fait de votre fil un reflet de vous.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="8" r="4" />
@@ -41,7 +41,7 @@ const SPACES = [
   {
     num: "03",
     title: "Ma liste",
-    desc: "Votre bibliothèque personnelle. Articles, vidéos, recommandations — tout ce que vous voulez retrouver, au même endroit.",
+    desc: "Votre bibliothèque personnelle. Articles, vidéos, recommandations : tout ce que vous voulez retrouver, au même endroit.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M5 5h14v16l-7-4-7 4V5z" />
@@ -52,7 +52,7 @@ const SPACES = [
   {
     num: "04",
     title: "Paramètres",
-    desc: "Votre expérience, vos règles. Notifications, fréquence de la newsletter, confidentialité — vous gardez le contrôle.",
+    desc: "Votre expérience, vos règles. Notifications, fréquence de la newsletter, confidentialité : vous gardez le contrôle.",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="12" r="3" />
@@ -294,7 +294,7 @@ function Dashboard() {
                 <span className={s.dashStatLabel}>Entrée{journalEntries.length !== 1 ? "s" : ""} de journal</span>
               </div>
               <div className={s.dashStatCard}>
-                <span className={s.dashStatValue}>—</span>
+                <span className={s.dashStatValue}>-</span>
                 <span className={s.dashStatLabel}>Abonnement</span>
               </div>
             </div>
@@ -385,7 +385,7 @@ function Dashboard() {
               <div className={s.dashSubCardPro}>
                 <span className={s.dashSubBadgePro}>Bientôt</span>
                 <h3 className={s.dashSubName}>Abonné</h3>
-                <p className={s.dashSubPrice}>—</p>
+                <p className={s.dashSubPrice}>-</p>
                 <ul className={s.dashSubFeatures}>
                   <li>Tout le gratuit</li>
                   <li>Zéro publicité</li>
@@ -423,7 +423,7 @@ function PreAuthLanding() {
     <>
       <SEO
         title="Mon compte"
-        description="Votre espace personnel Origines Media. Profil, journaux, liste de lecture et paramètres — un compte pensé pour vous."
+        description="Votre espace personnel Origines Media. Profil, journaux, liste de lecture et paramètres, un compte pensé pour vous."
         url="/compte"
         noindex
       />
@@ -446,7 +446,7 @@ function PreAuthLanding() {
               <em>à portée de main</em>
             </h1>
             <p className={s.heroDeck}>
-              Un espace pensé pour vous — vos lectures, vos réflexions,
+              Un espace pensé pour vous : vos lectures, vos réflexions,
               vos découvertes. Tout ce qui compte, réuni au même endroit.
             </p>
             <a href="/inscription" className={s.heroCta}>
@@ -455,7 +455,7 @@ function PreAuthLanding() {
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </a>
-            <span className={s.heroNote}>Gratuit — Sans engagement</span>
+            <span className={s.heroNote}>Gratuit, Sans engagement</span>
             <QuickLogin />
           </section>
 

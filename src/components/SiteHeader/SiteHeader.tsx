@@ -213,7 +213,7 @@ const SECONDARY: SecondaryNav[] = [
     dropdownLabel: "Nos produits",
     allLabel: "Voir la boutique",
     items: [
-      { href: "/boutique/kit-introspection", label: "Kit d'Introspection — Gratuit", color: "#5AA352" },
+      { href: "/boutique/kit-introspection", label: "Kit d'Introspection : Gratuit", color: "#5AA352" },
       { href: "/boutique/guide-mindset", label: "Guide Mindset", color: "#7B5CD6" },
       { href: "/boutique/carnet-origines", label: "Carnet Origines", color: "#A07850" },
       { href: "/boutique/pack-affiches", label: "Pack Affiches", color: "#9B6B8D" },
@@ -398,7 +398,7 @@ export default function SiteHeader() {
     >
       <div className="v2-container">
         <div className={styles.row}>
-          <a href="/" className={styles.logo} aria-label="Origines — Accueil">
+          <a href="/" className={styles.logo} aria-label="Origines, Accueil">
             <img
               src="/logos/logo-black.webp"
               alt="Origines Media"
@@ -529,7 +529,7 @@ export default function SiteHeader() {
                     <div
                       className={styles.navDropdown}
                       role="menu"
-                      aria-label={`${section.label} — ${section.dropdownLabel.toLowerCase()}`}
+                      aria-label={`${section.label}, ${section.dropdownLabel.toLowerCase()}`}
                     >
                       <span className={styles.navDropdownLabel}>
                         {section.dropdownLabel}

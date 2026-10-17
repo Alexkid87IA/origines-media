@@ -152,7 +152,7 @@ export default function Shop() {
             Prolonger la lecture, <em>en pratique.</em>
           </h2>
           <p className={s.sectionDeck}>
-            Des kits, des masterclass, des guides produits par la r&eacute;dac &mdash;
+            Des kits, des masterclass, des guides produits par la r&eacute;dac,
             pour ceux qui veulent aller plus loin. Aucun interm&eacute;diaire, aucun
             abonnement cach&eacute;.
           </p>

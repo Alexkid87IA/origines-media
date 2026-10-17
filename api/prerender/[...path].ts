@@ -19,7 +19,7 @@ const SANITY_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VER
 const BASE_URL = 'https://www.origines.media'
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`
 const SITE_NAME = 'Origines Media'
-const DEFAULT_TITLE = 'Origines Media — La profondeur du récit'
+const DEFAULT_TITLE = 'Origines Media | La profondeur du récit'
 const DEFAULT_DESCRIPTION =
   'Une expérience média premium pour les chercheurs de sens. Découvrez des récits authentiques et des univers narratifs profonds.'
 
@@ -88,126 +88,126 @@ const STATIC_PAGES: Record<string, PageMeta> = {
     ogType: 'website',
   },
   '/galaxie': {
-    title: 'Galaxie Origines — Origines Media',
+    title: 'Galaxie Origines | Origines Media',
     description:
       'La carte des formats Origines Media : articles, vidéos, guides pratiques et boutique éditoriale.',
     ogType: 'website',
   },
   '/articles': {
-    title: 'Articles — Origines Media',
+    title: 'Articles | Origines Media',
     description:
       'Tous nos articles : analyses, récits, interviews et réflexions sur les grands sujets de société.',
   },
   '/videos': {
-    title: 'Vidéos — Origines Media',
+    title: 'Vidéos | Origines Media',
     description:
       'Découvrez nos programmes vidéo originaux : documentaires, interviews et contenus exclusifs.',
   },
   '/histoires': {
-    title: 'Histoires — Origines Media',
+    title: 'Histoires | Origines Media',
     description:
       'Des parcours de vie inspirants, des témoignages authentiques et des portraits intimes.',
   },
   '/recommandations': {
-    title: 'Recommandations — Origines Media',
+    title: 'Recommandations | Origines Media',
     description:
       'Livres, films, podcasts, musiques… les coups de cœur de la rédaction.',
   },
   '/series': {
-    title: 'Séries — Origines Media',
+    title: 'Séries | Origines Media',
     description:
       'Nos séries éditoriales : des contenus à suivre sur la durée.',
   },
   '/dossiers': {
-    title: 'Dossiers — Origines Media',
+    title: 'Dossiers | Origines Media',
     description:
       'La question de la semaine et nos dossiers thématiques approfondis.',
   },
   '/univers': {
-    title: 'Univers — Origines Media',
+    title: 'Univers | Origines Media',
     description:
       'Explorez nos univers narratifs : psychologie, société, culture, bien-être, spiritualité.',
   },
   '/bibliotheque': {
-    title: 'Bibliothèque — Origines Media',
+    title: 'Bibliothèque | Origines Media',
     description:
       'Explorez toute notre bibliothèque de contenus par format, thème et popularité.',
   },
   '/programmes': {
-    title: 'Programmes — Origines Media',
+    title: 'Programmes | Origines Media',
     description:
       'Nos programmes vidéo originaux : Il était une fois, État d\'esprit, Transmission…',
   },
   '/guides': {
-    title: 'Guides — Origines Media',
+    title: 'Guides | Origines Media',
     description: 'Nos guides pratiques pour vous accompagner au quotidien.',
   },
   '/boutique': {
-    title: 'Boutique — Origines Media',
+    title: 'Boutique | Origines Media',
     description: 'La boutique Origines : guides, ateliers et contenus premium.',
   },
   '/newsletter': {
-    title: 'Newsletter — Origines Media',
+    title: 'Newsletter | Origines Media',
     description:
       'Inscrivez-vous à la newsletter Origines pour recevoir le meilleur de nos contenus.',
   },
   '/temoignages': {
-    title: 'Témoignages — Origines Media',
+    title: 'Témoignages | Origines Media',
     description:
       'Les témoignages de notre communauté : partages de vie et expériences.',
   },
   '/ensemble': {
-    title: 'Ensemble — Origines Media',
+    title: 'Ensemble | Origines Media',
     description:
       'Rejoignez la communauté Origines et participez à l\'aventure.',
   },
   '/communaute': {
-    title: 'Communauté — Origines Media',
+    title: 'Communauté | Origines Media',
     description:
       'Rejoignez la communauté Origines et participez à l\'aventure.',
   },
   '/a-propos': {
-    title: 'À propos — Origines Media',
+    title: 'À propos | Origines Media',
     description:
       'Découvrez l\'histoire et la mission d\'Origines Media, un média de sens.',
   },
   '/contact': {
-    title: 'Contact — Origines Media',
+    title: 'Contact | Origines Media',
     description: 'Contactez l\'équipe Origines Media.',
   },
   '/partenariats': {
-    title: 'Partenariats — Origines Media',
+    title: 'Partenariats | Origines Media',
     description: 'Découvrez nos offres de partenariat et de sponsoring.',
   },
   '/rejoindre': {
-    title: 'Rejoindre Origines — Origines Media',
+    title: 'Rejoindre Origines | Origines Media',
     description:
       'Contribuez à Origines Media : écrivez, filmez, partagez votre histoire.',
   },
   '/racontez-votre-histoire': {
-    title: 'Racontez votre histoire — Origines Media',
+    title: 'Racontez votre histoire | Origines Media',
     description:
       'Partagez votre parcours de vie avec la communauté Origines.',
   },
   '/ecrire-mon-histoire': {
-    title: 'Écrire mon histoire — Origines Media',
+    title: 'Écrire mon histoire | Origines Media',
     description:
       'Rédigez et partagez votre témoignage sur Origines Media.',
   },
   '/recherche': {
-    title: 'Recherche — Origines Media',
+    title: 'Recherche | Origines Media',
     description: 'Recherchez parmi tous les contenus d\'Origines Media.',
   },
   '/inscription': {
-    title: 'Inscription — Origines Media',
+    title: 'Inscription | Origines Media',
     description: 'Créez votre compte Origines Media.',
   },
   '/connexion': {
-    title: 'Connexion — Origines Media',
+    title: 'Connexion | Origines Media',
     description: 'Connectez-vous à votre compte Origines Media.',
   },
   '/media': {
-    title: 'Média — Origines Media',
+    title: 'Média | Origines Media',
     description:
       'L\'actualité Origines : tous nos derniers articles, vidéos et contenus.',
     ogType: 'website',

@@ -195,7 +195,7 @@ export default function ProposerRecoPage() {
   if (submitted) {
     return (
       <>
-        <SEO title="Merci — Origines Media" description="Votre recommandation a bien été envoyée." />
+        <SEO title="Merci | Origines Media" description="Votre recommandation a bien été envoyée." />
         <Ticker />
         <SiteHeader />
         <main className={s.page}>
@@ -238,7 +238,7 @@ export default function ProposerRecoPage() {
   return (
     <>
       <SEO
-        title="Proposer une recommandation — Origines Media"
+        title="Proposer une recommandation | Origines Media"
         description="Partagez vos pépites : livres, films, musique, podcasts. Vos recommandations enrichissent notre bibliothèque."
       />
       <Ticker />

@@ -101,7 +101,7 @@ const FALLBACK_PROGRAMMES: Programme[] = [
   {
     id: "la-lettre",
     name: "La lettre",
-    tagline: "Écrire, lire, apprendre — autrement.",
+    tagline: "Écrire, lire, apprendre, autrement.",
     color: "#7A8B6B",
     videoCount: 16,
     videos: [

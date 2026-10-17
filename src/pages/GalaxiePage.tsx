@@ -179,7 +179,7 @@ export default function GalaxiePage() {
   return (
     <>
       <SEO
-        title="Galaxie Origines — Articles, vidéos, guides et boutique"
+        title="Galaxie Origines : Articles, vidéos, guides et boutique"
         description="La galaxie Origines réunit les quatre portes d'entrée du média : articles, vidéos, guides pratiques et boutique éditoriale."
         url="/galaxie"
         breadcrumbs={[

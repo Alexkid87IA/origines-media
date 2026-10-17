@@ -146,7 +146,7 @@ export default function GuideCategoryPage() {
   return (
     <div className={s.page}>
       <SEO
-        title={`${config.label} — Guides Origines Media`}
+        title={`${config.label} | Guides Origines Media`}
         description={config.desc}
         url={`/guides/${category}`}
         breadcrumbs={[

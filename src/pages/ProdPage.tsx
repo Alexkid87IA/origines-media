@@ -40,7 +40,7 @@ const PROGRAMME_META: Record<string, { name: string; tagline: string; color: str
   "transmission": { name: "Transmission", tagline: "Ce qu'on reçoit, ce qu'on transmet.", color: "#6B8E6B" },
   "secrets-pro": { name: "Secrets pro.", tagline: "Ceux qui font autrement racontent comment.", color: "#A07850" },
   "imagine": { name: "Imagine", tagline: "L'art comme manière de voir le monde.", color: "#9B6B8D" },
-  "la-lettre": { name: "La lettre", tagline: "Écrire, lire, apprendre — autrement.", color: "#7A8B6B" },
+  "la-lettre": { name: "La lettre", tagline: "Écrire, lire, apprendre, autrement.", color: "#7A8B6B" },
 };
 
 const PROGRAMME_ORDER = ["il-etait-une-fois", "etat-d-esprit", "transmission", "secrets-pro", "imagine", "la-lettre"];
@@ -197,12 +197,12 @@ export default function ProdPage() {
               <p className={s.manifesteBody}>
                 Origines Prod, c&rsquo;est la branche audiovisuelle d&rsquo;Origines Media.
                 On y produit des enqu&ecirc;tes de fond, des documentaires intimistes,
-                des portraits et des formats courts &mdash; toujours au service d&rsquo;une
+                des portraits et des formats courts, toujours au service d&rsquo;une
                 m&ecirc;me question&nbsp;: qu&rsquo;est-ce qui nous fa&ccedil;onne&thinsp;?
               </p>
               <p className={s.manifesteBody}>
-                Nos programmes explorent cinq univers &mdash; l&rsquo;esprit, le corps,
-                les liens, le monde et l&rsquo;avenir &mdash; avec une approche
+                Nos programmes explorent cinq univers (l&rsquo;esprit, le corps,
+                les liens, le monde et l&rsquo;avenir) avec une approche
                 &eacute;ditoriale exigeante, ind&eacute;pendante et profond&eacute;ment humaine.
               </p>
               <p className={s.manifesteBody}>
@@ -216,7 +216,7 @@ export default function ProdPage() {
               <blockquote className={s.manifesteCardQuote}>
                 &laquo;&thinsp;On ne fait pas de la vid&eacute;o pour remplir un feed.
                 On filme parce que certaines histoires ne peuvent pas &ecirc;tre &eacute;crites
-                &mdash; elles doivent &ecirc;tre montr&eacute;es.&thinsp;&raquo;
+ : elles doivent &ecirc;tre montr&eacute;es.&thinsp;&raquo;
               </blockquote>
               <span className={s.manifesteCardAuthor}>La r&eacute;daction Origines</span>
             </div>

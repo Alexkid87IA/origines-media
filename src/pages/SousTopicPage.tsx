@@ -233,7 +233,7 @@ export default function SousTopicPage() {
   return (
     <>
       <SEO
-        title={`${subtopic.label} — ${univers.name} · Origines Media`}
+        title={`${subtopic.label} | ${univers.name} · Origines Media`}
         description={
           subtopic.description
             ? `${subtopic.description}${articles.length > 0 ? ` ${articles.length} articles et vidéos sur Origines Media.` : ""}`

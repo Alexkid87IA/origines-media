@@ -676,7 +676,7 @@ export default function BibliothequePage() {
   return (
     <>
       <SEO
-        title="Bibliothèque — Explorer nos contenus"
+        title="Bibliothèque : Explorer nos contenus"
         description="Explorez tous nos contenus : articles, vidéos, recommandations et histoires inspirantes."
         url="/bibliotheque"
         breadcrumbs={[

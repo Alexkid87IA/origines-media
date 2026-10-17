@@ -9,7 +9,7 @@ import s from "./TemoignagesArticlePage.module.css";
 const MOCK = {
   title: "La lettre que je n'ai jamais envoyée",
   slug: "lettre-jamais-envoyee",
-  chapeau: "Elle l'a écrite il y a dix ans. Elle ne l'a jamais envoyée. Aujourd'hui, elle la publie ici — pour la première fois.",
+  chapeau: "Elle l'a écrite il y a dix ans. Elle ne l'a jamais envoyée. Aujourd'hui, elle la publie ici, pour la première fois.",
   prenom: "Mathilde",
   age: 34,
   ville: "Lyon",
@@ -20,15 +20,15 @@ const MOCK = {
     return `${estimateReadingTimeFromText(allText)} min`;
   },
   paragraphs: [
-    "Je ne sais pas pourquoi je l'ai écrite ce soir-là. Il devait être minuit, peut-être une heure. L'appartement était vide — Thomas venait de partir. Pas pour toujours, pas encore. Juste pour la nuit. Il faisait ça de plus en plus souvent.",
-    "J'ai pris un carnet. Un vieux Moleskine noir que ma mère m'avait offert pour mes vingt ans. Je ne m'en étais jamais servie — j'avais peur de gâcher les pages. Cette nuit-là, j'avais plus peur du silence que du gâchis.",
+    "Je ne sais pas pourquoi je l'ai écrite ce soir-là. Il devait être minuit, peut-être une heure. L'appartement était vide : Thomas venait de partir. Pas pour toujours, pas encore. Juste pour la nuit. Il faisait ça de plus en plus souvent.",
+    "J'ai pris un carnet. Un vieux Moleskine noir que ma mère m'avait offert pour mes vingt ans. Je ne m'en étais jamais servie : j'avais peur de gâcher les pages. Cette nuit-là, j'avais plus peur du silence que du gâchis.",
     "« Papa. Je ne t'ai pas parlé depuis quatre ans. Je ne sais même pas si tu sais que j'ai déménagé. Je ne sais pas si tu sais que je vis avec quelqu'un. Je ne sais pas si tu te souviens de mon visage. »",
-    "J'ai écrit sept pages. D'un trait. Sans m'arrêter. Sept pages de tout ce que je n'avais jamais dit — les anniversaires manqués, les coups de téléphone qui ne venaient jamais, les mensonges que je racontais à mes amis quand ils demandaient pourquoi mon père n'était pas là.",
+    "J'ai écrit sept pages. D'un trait. Sans m'arrêter. Sept pages de tout ce que je n'avais jamais dit : les anniversaires manqués, les coups de téléphone qui ne venaient jamais, les mensonges que je racontais à mes amis quand ils demandaient pourquoi mon père n'était pas là.",
     "Le lendemain matin, j'ai relu la lettre. Elle était maladroite, pleine de ratures, de phrases qui ne finissaient pas. Mais elle était vraie. C'était peut-être la chose la plus vraie que j'avais jamais écrite.",
-    "Je l'ai pliée. Mise dans une enveloppe. Écrit l'adresse — celle de la maison de mon enfance, la seule que je connaissais. Et puis je l'ai posée sur la table de l'entrée.",
+    "Je l'ai pliée. Mise dans une enveloppe. Écrit l'adresse, celle de la maison de mon enfance, la seule que je connaissais. Et puis je l'ai posée sur la table de l'entrée.",
     "Elle est restée là pendant six mois.",
     "Je la voyais chaque matin en partant travailler. Chaque soir en rentrant. Elle était là, blanche, silencieuse, avec son timbre collé et son adresse écrite trop gros. Elle attendait. Et moi aussi.",
-    "Un jour de juin, Thomas m'a demandé ce que c'était. J'ai dit « rien ». Il n'a pas insisté. C'était ça, notre problème — on n'insistait jamais. Sur rien.",
+    "Un jour de juin, Thomas m'a demandé ce que c'était. J'ai dit « rien ». Il n'a pas insisté. C'était ça, notre problème : on n'insistait jamais. Sur rien.",
     "En septembre, j'ai mis la lettre dans un tiroir. En décembre, j'ai changé d'appartement. La lettre est venue avec moi. Elle est toujours là, dans une boîte à chaussures, avec d'autres choses que je garde sans savoir pourquoi.",
     "Je n'ai jamais envoyé cette lettre. Je ne l'enverrai probablement jamais. Mon père est mort l'année dernière. Crise cardiaque, à 62 ans. Je l'ai appris par ma tante. Trois jours après.",
     "Mais cette lettre m'a sauvée. Pas parce qu'elle a changé quelque chose entre nous. Rien n'a changé. Elle m'a sauvée parce qu'en l'écrivant, j'ai arrêté de porter tout ça seule. Les mots étaient sortis. Ils existaient quelque part, même si personne ne les avait lus.",
@@ -43,7 +43,7 @@ export default function TemoignagesArticlePage() {
   return (
     <div className={s.page}>
       <SEO
-        title={`${t.title} — Témoignages`}
+        title={`${t.title} | Témoignages`}
         description={t.chapeau}
         url={`/temoignages/${t.slug}`}
         type="article"

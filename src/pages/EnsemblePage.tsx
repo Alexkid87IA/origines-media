@@ -135,7 +135,7 @@ export default function EnsemblePage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Ensemble — Vie du média"
+        title="Ensemble : Vie du média"
         description="Histoires, recommandations, lettres du dimanche, sondages et calendrier. La vie du média Origines."
         url="/ensemble"
         breadcrumbs={[
@@ -324,7 +324,7 @@ export default function EnsemblePage() {
                 &Agrave; la fin, j&rsquo;ai appel&eacute; mon fr&egrave;re. On ne s&rsquo;&eacute;tait
                 pas parl&eacute; depuis huit mois.
               </blockquote>
-              <cite className={s.verbatimCite}>&mdash; Lectrice, Lyon</cite>
+              <cite className={s.verbatimCite}>Lectrice, Lyon</cite>
             </div>
           </div>
         </section>
@@ -340,7 +340,7 @@ export default function EnsemblePage() {
                 </span>
                 <h2 className={s.sectionTitle}>On a aim&eacute; <em>&ccedil;a.</em></h2>
                 <p className={s.sectionDeck}>
-                  Livres, films, podcasts, musique&nbsp;&mdash; nos coups de c&oelig;ur
+                  Livres, films, podcasts, musique : nos coups de c&oelig;ur
                   de la r&eacute;daction, chaque semaine.
                 </p>
               </div>
@@ -451,7 +451,7 @@ export default function EnsemblePage() {
             </div>
 
             <p className={s.questionMeta}>
-              {votedQuestion !== null ? "Merci pour votre vote ! — 2 340 réponses" : "Cliquez pour voter — 2 340 réponses cette semaine"}
+              {votedQuestion !== null ? "Merci pour votre vote ! 2 340 réponses" : "Cliquez pour voter : 2 340 réponses cette semaine"}
             </p>
           </div>
         </section>
@@ -465,7 +465,7 @@ export default function EnsemblePage() {
                 Ce n&rsquo;est pas un m&eacute;dia qui me dit quoi penser.
                 C&rsquo;est un m&eacute;dia qui me pose les bonnes questions.
               </blockquote>
-              <cite className={s.verbatimCite}>&mdash; Abonn&eacute;, Bruxelles</cite>
+              <cite className={s.verbatimCite}>Abonn&eacute;, Bruxelles</cite>
             </div>
           </div>
         </section>
@@ -506,7 +506,7 @@ export default function EnsemblePage() {
                 })}
               </div>
               <p className={s.pollMeta}>
-                {votedSondage !== null ? "Merci ! — 1 870 votes" : "Votez — 1 870 participants"}
+                {votedSondage !== null ? "Merci ! 1 870 votes" : "Votez : 1 870 participants"}
               </p>
             </div>
           </div>
@@ -556,7 +556,7 @@ export default function EnsemblePage() {
                 </span>
                 <h2 className={s.sectionTitle}>Participez.</h2>
                 <p className={s.sectionDeck}>
-                  Origines, c&rsquo;est aussi vous&nbsp;&mdash; contribuez au projet.
+                  Origines, c&rsquo;est aussi vous : contribuez au projet.
                 </p>
               </div>
             </header>

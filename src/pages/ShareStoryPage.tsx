@@ -767,7 +767,7 @@ const ShareStoryPage: React.FC = () => {
                       <p className={s.formatExplainDesc}>
                         Notre outil d&rsquo;&eacute;criture guid&eacute; vous accompagne pas &agrave; pas.
                         Anonymat garanti, sauvegarde automatique, relecture avant publication.
-                        R&eacute;serv&eacute; aux membres inscrits — c&rsquo;est gratuit.
+                        R&eacute;serv&eacute; aux membres inscrits : c&rsquo;est gratuit.
                       </p>
                     </div>
                   </div>
@@ -872,7 +872,7 @@ const ShareStoryPage: React.FC = () => {
                       <span className={s.formatExplainStepNum}>3</span>
                       <div>
                         <strong>Production ensemble</strong>
-                        <span>On coproduit le {selectedFormat} avec vous &mdash; vous gardez le contr&ocirc;le &agrave; chaque &eacute;tape</span>
+                        <span>On coproduit le {selectedFormat} avec vous : vous gardez le contr&ocirc;le &agrave; chaque &eacute;tape</span>
                       </div>
                     </div>
                   </div>

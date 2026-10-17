@@ -9,9 +9,9 @@ import s from "./ComprendreArticlePage.module.css";
 
 const MOCK = {
   title: "Pourquoi le cerveau résiste au changement",
-  seoTitle: "Pourquoi le cerveau résiste au changement — neurosciences et habitudes",
+  seoTitle: "Pourquoi le cerveau résiste au changement : neurosciences et habitudes",
   slug: "cerveau-resistance-changement",
-  chapeau: "Changer d'habitude, c'est aller contre des millions d'années d'évolution. Voici ce que la neuroscience dit — et ce qu'on peut faire.",
+  chapeau: "Changer d'habitude, c'est aller contre des millions d'années d'évolution. Voici ce que la neuroscience dit, et ce qu'on peut faire.",
   author: "Émilie Roux",
   date: "22 avril 2026",
   get readTime() {
@@ -21,7 +21,7 @@ const MOCK = {
   univers: "L'Esprit",
   universColor: "#7B5CD6",
   keyTakeaways: [
-    "Le cerveau préfère l'habitude par économie d'énergie — c'est biologique, pas moral.",
+    "Le cerveau préfère l'habitude par économie d'énergie : c'est biologique, pas moral.",
     "21 jours ne suffisent pas : les études montrent plutôt 66 jours en moyenne.",
     "Le contexte (lieu, heure, routine) compte plus que la motivation ou la volonté.",
   ],
@@ -36,12 +36,12 @@ const MOCK = {
     {
       id: "pourquoi",
       title: "Pourquoi on résiste au changement",
-      content: "Le cerveau humain consomme environ 20% de notre énergie totale, alors qu'il ne représente que 2% de notre masse corporelle. Pour économiser cette énergie précieuse, il a développé un mécanisme redoutablement efficace : l'habitude.\n\nQuand vous répétez un comportement, les connexions neuronales impliquées se renforcent — c'est ce qu'on appelle la potentialisation à long terme. Au bout d'un certain temps, le comportement passe du cortex préfrontal (décision consciente) aux ganglions de la base (automatisme). C'est comme passer de la conduite supervisée à la conduite automatique.\n\nLe problème ? Une fois automatisé, un comportement ne disparaît jamais vraiment. Il peut être remplacé, mais le circuit neuronal reste — prêt à se réactiver au moindre signal.",
+      content: "Le cerveau humain consomme environ 20% de notre énergie totale, alors qu'il ne représente que 2% de notre masse corporelle. Pour économiser cette énergie précieuse, il a développé un mécanisme redoutablement efficace : l'habitude.\n\nQuand vous répétez un comportement, les connexions neuronales impliquées se renforcent : c'est ce qu'on appelle la potentialisation à long terme. Au bout d'un certain temps, le comportement passe du cortex préfrontal (décision consciente) aux ganglions de la base (automatisme). C'est comme passer de la conduite supervisée à la conduite automatique.\n\nLe problème ? Une fois automatisé, un comportement ne disparaît jamais vraiment. Il peut être remplacé, mais le circuit neuronal reste, prêt à se réactiver au moindre signal.",
     },
     {
       id: "mecanismes",
       title: "Les mécanismes neurologiques en jeu",
-      content: "Trois systèmes cérébraux s'opposent quand vous essayez de changer :\n\nLe système de récompense (dopamine) : il favorise ce qui est connu et prévisible. L'habitude, même mauvaise, active le circuit de la récompense parce qu'elle est familière.\n\nL'amygdale : elle interprète le nouveau comme une menace potentielle. Changer, c'est s'aventurer en terrain inconnu — et l'amygdale déteste l'inconnu.\n\nLe cortex préfrontal : c'est lui qui veut changer. Mais il se fatigue vite. Sa capacité de décision est limitée — c'est pourquoi vous tenez votre résolution le matin mais craquez le soir.",
+      content: "Trois systèmes cérébraux s'opposent quand vous essayez de changer :\n\nLe système de récompense (dopamine) : il favorise ce qui est connu et prévisible. L'habitude, même mauvaise, active le circuit de la récompense parce qu'elle est familière.\n\nL'amygdale : elle interprète le nouveau comme une menace potentielle. Changer, c'est s'aventurer en terrain inconnu, et l'amygdale déteste l'inconnu.\n\nLe cortex préfrontal : c'est lui qui veut changer. Mais il se fatigue vite. Sa capacité de décision est limitée : c'est pourquoi vous tenez votre résolution le matin mais craquez le soir.",
     },
     {
       id: "mythe-21",
@@ -51,7 +51,7 @@ const MOCK = {
     {
       id: "contexte",
       title: "Le rôle du contexte",
-      content: "La recherche de Wendy Wood (Duke University) a montré que 43% de nos comportements quotidiens sont des habitudes déclenchées par le contexte, pas par une décision consciente.\n\nCela signifie que changer de contexte est souvent plus efficace que changer de motivation. Les personnes qui déménagent, changent de travail ou modifient leur routine quotidienne ont significativement plus de chances de modifier leurs habitudes — même sans le vouloir consciemment.",
+      content: "La recherche de Wendy Wood (Duke University) a montré que 43% de nos comportements quotidiens sont des habitudes déclenchées par le contexte, pas par une décision consciente.\n\nCela signifie que changer de contexte est souvent plus efficace que changer de motivation. Les personnes qui déménagent, changent de travail ou modifient leur routine quotidienne ont significativement plus de chances de modifier leurs habitudes, même sans le vouloir consciemment.",
     },
     {
       id: "strategies",

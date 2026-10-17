@@ -65,7 +65,7 @@ const PREFLIGHT_CHECKS: PreflightItem[] = [
       { label: "15 à 20 minutes", value: "medium", ok: true },
       { label: "30 minutes ou plus", value: "long", ok: true },
     ],
-    tip: "Pas de pression — je m'adapterai à votre rythme. Même 5 minutes peuvent suffire pour un beau témoignage.",
+    tip: "Pas de pression : je m'adapterai à votre rythme. Même 5 minutes peuvent suffire pour un beau témoignage.",
   },
   {
     id: "mood",
@@ -101,7 +101,7 @@ const PREFLIGHT_CHECKS: PreflightItem[] = [
   },
   {
     id: "go",
-    lyaIntro: "Parfait, tout est prêt. La première question va s'afficher à l'écran — répondez comme si vous parliez à un ami. Pas de bonne ou mauvaise réponse.",
+    lyaIntro: "Parfait, tout est prêt. La première question va s'afficher à l'écran : répondez comme si vous parliez à un ami. Pas de bonne ou mauvaise réponse.",
     question: "On y va ?",
     options: [
       { label: "C'est parti !", value: "go", ok: true },
@@ -113,7 +113,7 @@ const PREFLIGHT_CHECKS: PreflightItem[] = [
 
 const LYA_PREFLIGHT_RESPONSES: Record<string, Record<string, string>> = {
   welcome: {
-    "first-time": "Bienvenue ! Ne vous inquiétez pas, je serai là pour vous guider pas à pas. Il n'y a rien à préparer — juste être vous-même.",
+    "first-time": "Bienvenue ! Ne vous inquiétez pas, je serai là pour vous guider pas à pas. Il n'y a rien à préparer, juste être vous-même.",
     "experienced": "Super, vous connaissez déjà l'exercice. On va quand même prendre un moment pour bien se préparer.",
     "nervous": "C'est tout à fait normal ! Le trac disparaît dès les premières secondes. Et si besoin, vous pourrez refaire n'importe quelle réponse.",
   },
@@ -134,7 +134,7 @@ const LYA_PREFLIGHT_RESPONSES: Record<string, Record<string, string>> = {
   },
   sound: {
     "yes": "Très bien. Le son est important pour la qualité de votre témoignage.",
-    "no": "Si possible, trouvez un coin plus calme. Sinon, ce n'est pas grave — on fera avec.",
+    "no": "Si possible, trouvez un coin plus calme. Sinon, ce n'est pas grave : on fera avec.",
   },
   go: {
     "go": "Alors allons-y. Je suis là avec vous. 💜",
@@ -508,7 +508,7 @@ export default function VideoRecorder({ questions: initialQuestions, onComplete,
   }, [reviewUrl, questionIdx]);
 
   const skipToFallback = useCallback(() => {
-    const fallback = { label: "Continuez votre récit — qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps." };
+    const fallback = { label: "Continuez votre récit : qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps." };
     setQuestions((prev) => [...prev, fallback]);
     setRecordings((prev) => [...prev, null]);
     pendingQuestionRef.current = null;

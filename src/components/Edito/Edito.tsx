@@ -12,7 +12,7 @@ export default function Edito() {
             les choix qui nous transforment.</em>
           </h2>
           <p className={s.coda}>
-            Psychologie, bien-&ecirc;tre, relations, culture, avenir &mdash;
+            Psychologie, bien-&ecirc;tre, relations, culture, avenir :
             cinq territoires, une m&ecirc;me question&nbsp;: <strong>d&rsquo;o&ugrave; vient-on, et vers quoi&nbsp;?</strong>
           </p>
         </div>
@@ -20,7 +20,7 @@ export default function Edito() {
           <div className={s.imageWrap}>
             <img
               src="/images/mosaic-origines.webp"
-              alt="Mosaïque de visages — Origines Media"
+              alt="Mosaïque de visages, Origines Media"
               className={s.image}
               loading="lazy"
             />

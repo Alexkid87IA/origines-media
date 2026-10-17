@@ -189,7 +189,7 @@ export default function GuidesPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Guides — Parcours et kits gratuits"
+        title="Guides : Parcours et kits gratuits"
         description="Explorez notre bibliothèque de guides : parcours structurés et kits gratuits sur la psychologie, le bien-être, les relations et la culture."
         url="/guides"
         breadcrumbs={[
@@ -225,7 +225,7 @@ export default function GuidesPage() {
                   Avancez pour de <em>vrai.</em>
                 </h1>
                 <p className={s.heroDeck}>
-                  Parcours structurés et kits gratuits — chaque guide est conçu pour
+                  Parcours structurés et kits gratuits : chaque guide est conçu pour
                   vous aider à passer de la compréhension à l'action, sans vous perdre
                   dans des conseils vagues.
                 </p>
@@ -467,7 +467,7 @@ export default function GuidesPage() {
                         à télécharger <em>maintenant.</em>
                       </h2>
                       <p className={s.magnetDeck}>
-                        Recevez tous nos kits par email — psychologie, bien-être,
+                        Recevez tous nos kits par email : psychologie, bien-être,
                         finances, créativité. Zéro engagement.
                       </p>
                     </div>

@@ -180,7 +180,7 @@ function UniversListPage() {
   return (
     <>
       <SEO
-        title="Tous les univers — Origines Media"
+        title="Tous les univers | Origines Media"
         description={totalArticles > 0
           ? `Explorez les cinq univers Origines Media : esprit, corps, liens, monde et avenir. ${totalArticles} contenus et ${totalThemes} thèmes pour trouver le bon point d'entrée.`
           : "Explorez les cinq univers Origines Media : esprit, corps, liens, monde et avenir. Une carte claire pour trouver articles, vidéos et guides par thème."
@@ -543,7 +543,7 @@ function UniversDetailPage({ universId }: { universId: string }) {
   return (
     <>
       <SEO
-        title={`${univers.name} — Origines Media`}
+        title={`${univers.name} | Origines Media`}
         description={`${univers.tagline} ${articles.length > 0 ? `${articles.length} articles` : "Articles, vidéos et reportages"} pour explorer ${univers.name.toLowerCase()} : ${univers.subtopics.slice(0, 5).map(st => st.label).join(", ")} et plus.`}
         url={`/univers/${universId}`}
         breadcrumbs={[

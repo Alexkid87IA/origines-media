@@ -148,7 +148,7 @@ export function Interlude2() {
         <blockquote className={s.quote}>
           <p className={s.quoteText}>
             Cette semaine, j&rsquo;ai failli ne pas écrire cette lettre.
-            Et puis <em>on m&rsquo;a envoyé une histoire</em> &mdash; celle
+            Et puis <em>on m&rsquo;a envoyé une histoire</em>, celle
             d&rsquo;une femme qui a passé dix ans à ranger ses propres
             mots dans une boîte, sans savoir qu&rsquo;on allait les lire.
           </p>
@@ -225,7 +225,7 @@ export function Interlude3() {
         </h3>
         <p className={s.halfDesc}>
           Le meilleur de la semaine, un édito personnel, et ce qu&rsquo;on
-          a trouvé pour vous &mdash; en 5 minutes de lecture.
+          a trouvé pour vous, en 5 minutes de lecture.
         </p>
         <form className={s.nlForm} action="/api/subscribe" method="POST">
           <input
@@ -324,7 +324,7 @@ export function Interlude4() {
         </div>
         <span className={s.wordWeek}>S.17</span>
         <h3 className={s.wordTitle}>Résilience.</h3>
-        <p className={s.wordPronounce}>/&thinsp;re.zi.ljɑ̃s&thinsp;/ &mdash; nom féminin</p>
+        <p className={s.wordPronounce}>/&thinsp;re.zi.ljɑ̃s&thinsp;/, nom féminin</p>
         <blockquote className={s.wordDef}>
           <p>
             Capacité à absorber un choc, à se reconstruire après

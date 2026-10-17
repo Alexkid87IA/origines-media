@@ -59,7 +59,7 @@ const FORMATS = [
     href: "/reflexions",
     articles: [
       { title: "Le silence, le dernier luxe collectif.", href: "/reflexions/silence-luxe-collectif" },
-      { title: "Pourquoi on a cessé de s'ennuyer — et ce qu'on y a perdu.", href: "/reflexions/ennui-perdu" },
+      { title: "Pourquoi on a cessé de s'ennuyer, et ce qu'on y a perdu.", href: "/reflexions/ennui-perdu" },
       { title: "La lenteur comme acte politique.", href: "/reflexions/lenteur-acte-politique" },
     ],
   },
@@ -251,7 +251,7 @@ const GUIDES = [
     color: "#5AA352",
     href: "/guides/kits-gratuits",
     articles: [
-      { title: "Kit d'introspection — 12 questions essentielles.", href: "/guides/kits-gratuits/introspection" },
+      { title: "Kit d'introspection : 12 questions essentielles.", href: "/guides/kits-gratuits/introspection" },
       { title: "Checklist bien-être au quotidien.", href: "/guides/kits-gratuits/checklist-bien-etre" },
       { title: "Template : planifier sa semaine avec intention.", href: "/guides/kits-gratuits/planifier-semaine" },
     ],
@@ -290,21 +290,21 @@ const ENSEMBLE = [
     color: "#C99B1E",
     href: "/newsletter",
     articles: [
-      { title: "Édition #42 — Pourquoi on procrastine les choses qui comptent.", href: "/newsletter/edition-42" },
-      { title: "Édition #41 — Le corps se souvient de tout.", href: "/newsletter/edition-41" },
-      { title: "Édition #40 — Apprendre à dire non sans culpabiliser.", href: "/newsletter/edition-40" },
+      { title: "Édition #42 : Pourquoi on procrastine les choses qui comptent.", href: "/newsletter/edition-42" },
+      { title: "Édition #41 : Le corps se souvient de tout.", href: "/newsletter/edition-41" },
+      { title: "Édition #40 : Apprendre à dire non sans culpabiliser.", href: "/newsletter/edition-40" },
     ],
   },
   {
     id: "boutique",
     name: "Boutique",
-    tagline: "Carnets, affiches, kits — l'univers Origines chez vous.",
+    tagline: "Carnets, affiches, kits : l'univers Origines chez vous.",
     color: "#A07850",
     href: "/boutique",
     articles: [
-      { title: "Kit d'Introspection — Gratuit.", href: "/boutique/kit-introspection" },
-      { title: "Guide Mindset — 48 pages illustrées.", href: "/boutique/guide-mindset" },
-      { title: "Carnet Origines — 200 pages, papier premium.", href: "/boutique/carnet-origines" },
+      { title: "Kit d'Introspection : Gratuit.", href: "/boutique/kit-introspection" },
+      { title: "Guide Mindset : 48 pages illustrées.", href: "/boutique/guide-mindset" },
+      { title: "Carnet Origines : 200 pages, papier premium.", href: "/boutique/carnet-origines" },
     ],
   },
 ];
@@ -450,7 +450,7 @@ export default function Triad({ cmsUnivers }: TriadProps) {
             Un m&eacute;dia,<br /><em>mille entr&eacute;es.</em>
           </h2>
           <p className={s.sectionDeck}>
-            Par univers, par format, par dossier, par vid&eacute;o &mdash;
+            Par univers, par format, par dossier, par vid&eacute;o :
             trouvez l&rsquo;angle qui vous parle. Chaque chemin m&egrave;ne
             aux m&ecirc;mes histoires, racont&eacute;es diff&eacute;remment.
           </p>

@@ -19,17 +19,17 @@ const MOCK = {
     return `${estimateReadingTimeFromText(allText)} min`;
   },
   pullQuote: "Le bruit n'est pas le contraire du silence. Le bruit, c'est ce qui arrive quand on a oublié que le silence existait.",
-  authorNote: "Ce texte est né d'une semaine passée dans un monastère des Cévennes. Pas pour trouver Dieu — pour trouver le calme. J'y suis restée cinq jours. Le sixième, je suis repartie. Mais quelque chose avait changé.",
+  authorNote: "Ce texte est né d'une semaine passée dans un monastère des Cévennes. Pas pour trouver Dieu, pour trouver le calme. J'y suis restée cinq jours. Le sixième, je suis repartie. Mais quelque chose avait changé.",
   paragraphs: [
-    "Il y a un moment, dans une journée, où le bruit cesse d'être un événement et devient un état. On ne l'entend plus. Il est partout — dans la rue, dans le métro, dans les oreilles avec le podcast, dans le salon avec la télé qui parle à personne. Le bruit est devenu l'air qu'on respire. On ne le remarque que quand il disparaît.",
+    "Il y a un moment, dans une journée, où le bruit cesse d'être un événement et devient un état. On ne l'entend plus. Il est partout : dans la rue, dans le métro, dans les oreilles avec le podcast, dans le salon avec la télé qui parle à personne. Le bruit est devenu l'air qu'on respire. On ne le remarque que quand il disparaît.",
     "J'ai réalisé ça un mardi matin de novembre, dans un train vers Alès. Pas de réseau, pas de musique, le téléphone mort. Et pendant quarante minutes, il ne s'est rien passé. Rien. Pas de notification, pas de voix, pas de stimulus. Juste le paysage, le bruit des rails, et ma propre respiration.",
     "C'était insupportable.",
     "Pas physiquement. Psychologiquement. Mon cerveau cherchait frénétiquement quelque chose à consommer. Un article. Un message. Un titre. N'importe quoi pour combler ce vide que le silence venait de révéler.",
-    "Le philosophe Blaise Pascal écrivait déjà en 1670 : « Tout le malheur des hommes vient d'une seule chose, qui est de ne savoir pas demeurer en repos dans une chambre. » Trois siècles plus tard, on a résolu le problème — en mettant un écran dans la chambre.",
-    "Mais le silence n'est pas l'absence de bruit. Le silence, c'est la présence de soi. C'est le moment où il n'y a plus rien entre vous et vos pensées. Pas de filtre, pas de distraction, pas d'échappatoire. Et c'est précisément ce qui le rend si effrayant — et si précieux.",
+    "Le philosophe Blaise Pascal écrivait déjà en 1670 : « Tout le malheur des hommes vient d'une seule chose, qui est de ne savoir pas demeurer en repos dans une chambre. » Trois siècles plus tard, on a résolu le problème, en mettant un écran dans la chambre.",
+    "Mais le silence n'est pas l'absence de bruit. Le silence, c'est la présence de soi. C'est le moment où il n'y a plus rien entre vous et vos pensées. Pas de filtre, pas de distraction, pas d'échappatoire. Et c'est précisément ce qui le rend si effrayant, et si précieux.",
     "Dans les zones urbaines, le niveau sonore moyen dépasse 65 décibels. L'OMS considère que le seuil de nuisance commence à 55. On vit donc, en permanence, au-dessus du seuil de ce que notre organisme considère comme supportable. Et on s'étonne d'être fatigués.",
-    "Le silence est devenu un luxe. Pas au sens marchand — même si les retraites silencieuses à 3 000 euros la semaine existent. Un luxe au sens premier du mot : quelque chose de rare, de précieux, et d'inégalement distribué. Ceux qui vivent dans le bruit sont souvent ceux qui n'ont pas le choix.",
-    "Je ne propose pas de solution. Je n'en ai pas. Je propose juste une question : quand avez-vous entendu le silence pour la dernière fois ? Pas le calme. Pas le repos. Le silence — celui qui vous fait entendre votre propre souffle, vos propres pensées, votre propre peur ?",
+    "Le silence est devenu un luxe. Pas au sens marchand, même si les retraites silencieuses à 3 000 euros la semaine existent. Un luxe au sens premier du mot : quelque chose de rare, de précieux, et d'inégalement distribué. Ceux qui vivent dans le bruit sont souvent ceux qui n'ont pas le choix.",
+    "Je ne propose pas de solution. Je n'en ai pas. Je propose juste une question : quand avez-vous entendu le silence pour la dernière fois ? Pas le calme. Pas le repos. Le silence, celui qui vous fait entendre votre propre souffle, vos propres pensées, votre propre peur ?",
     "Si vous ne vous en souvenez pas, c'est peut-être que le bruit a gagné.",
   ],
 };
@@ -41,7 +41,7 @@ export default function ReflexionsArticlePage() {
   return (
     <div className={s.page}>
       <SEO
-        title={`${a.title} — Réflexions`}
+        title={`${a.title} | Réflexions`}
         description={a.chapeau}
         url={`/reflexions/${a.slug}`}
         type="article"
@@ -96,7 +96,7 @@ export default function ReflexionsArticlePage() {
         <div className={s.nlBlock}>
           <span className={s.nlKicker}>La lettre du dimanche</span>
           <h3 className={s.nlTitle}>Cet auteur publie chaque dimanche dans la <em>Lettre Origines.</em></h3>
-          <p className={s.nlDeck}>Essais in&eacute;dits, recommandations de lecture, un regard diff&eacute;rent sur la semaine &mdash; directement dans votre bo&icirc;te mail.</p>
+          <p className={s.nlDeck}>Essais in&eacute;dits, recommandations de lecture, un regard diff&eacute;rent sur la semaine, directement dans votre bo&icirc;te mail.</p>
           <EmailCapture source="reflexions-article" variant="dark" placeholder="votre@email.com" buttonText="Recevoir la lettre" />
           <span className={s.nlTrust}>Gratuit &middot; Chaque dimanche &middot; D&eacute;sinscription en 1 clic</span>
         </div>

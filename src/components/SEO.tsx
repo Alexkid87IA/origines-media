@@ -343,7 +343,7 @@ const SEO: React.FC<SEOProps> = ({
   productData,
 }) => {
   const fullTitle = absoluteTitle || (title
-    ? title.includes(DEFAULT_TITLE) ? title : `${title} — ${DEFAULT_TITLE}`
+    ? title.includes(DEFAULT_TITLE) ? title : `${title} | ${DEFAULT_TITLE}`
     : DEFAULT_TITLE);
   const rawPath = url || (typeof window !== 'undefined' ? window.location.pathname : '/');
   const cleanPath = rawPath === '/' ? '/' : rawPath.replace(/\/+$/, '');

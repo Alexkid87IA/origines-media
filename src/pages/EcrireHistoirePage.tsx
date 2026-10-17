@@ -182,7 +182,7 @@ const CORE_QUESTIONS: GuidedQuestion[] = [
   {
     id: "ressenti",
     question: "Qu'avez-vous ressenti ?",
-    hint: "Décrivez vos émotions brutes, sans filtre. La colère, la joie, la peur, le soulagement — tout ce qui vous a traversé(e).",
+    hint: "Décrivez vos émotions brutes, sans filtre. La colère, la joie, la peur, le soulagement : tout ce qui vous a traversé(e).",
     placeholder: "Sur le moment, j'ai ressenti…",
     minRows: 4,
     encouragement: "Vos émotions sont le cœur de votre histoire. Elles toucheront les gens.",
@@ -201,7 +201,7 @@ const INTENTION_QUESTIONS: Record<string, GuidedQuestion[]> = {
     {
       id: "invisible",
       question: "Qu'est-ce que les gens ne voient pas ?",
-      hint: "Ce qui reste invisible — les efforts, les doutes, les moments difficiles que personne ne soupçonne.",
+      hint: "Ce qui reste invisible : les efforts, les doutes, les moments difficiles que personne ne soupçonne.",
       placeholder: "Ce que les gens ne savent pas, c'est que…",
       minRows: 4,
     },
@@ -217,7 +217,7 @@ const INTENTION_QUESTIONS: Record<string, GuidedQuestion[]> = {
     {
       id: "force",
       question: "Où avez-vous puisé votre force ?",
-      hint: "Une personne, une croyance, une colère, un rêve — qu'est-ce qui vous a tenu(e) debout ?",
+      hint: "Une personne, une croyance, une colère, un rêve : qu'est-ce qui vous a tenu(e) debout ?",
       placeholder: "Ce qui m'a permis de tenir, c'est…",
       minRows: 4,
     },
@@ -233,7 +233,7 @@ const INTENTION_QUESTIONS: Record<string, GuidedQuestion[]> = {
     {
       id: "erreur",
       question: "Quelle erreur ne referiez-vous jamais ?",
-      hint: "Ce que vous feriez différemment si c'était à refaire — et pourquoi.",
+      hint: "Ce que vous feriez différemment si c'était à refaire, et pourquoi.",
       placeholder: "Si c'était à refaire, je…",
       minRows: 4,
     },
@@ -250,7 +250,7 @@ const INTENTION_QUESTIONS: Record<string, GuidedQuestion[]> = {
     {
       id: "silence",
       question: "Pourquoi n'en avez-vous jamais parlé ?",
-      hint: "La honte, la peur du jugement, la protection d'un proche — qu'est-ce qui vous retenait ?",
+      hint: "La honte, la peur du jugement, la protection d'un proche : qu'est-ce qui vous retenait ?",
       placeholder: "Je n'en ai jamais parlé parce que…",
       minRows: 4,
     },
@@ -259,7 +259,7 @@ const INTENTION_QUESTIONS: Record<string, GuidedQuestion[]> = {
     {
       id: "gratitude",
       question: "À qui ou à quoi voulez-vous dire merci ?",
-      hint: "Une personne, un événement, un lieu, une épreuve même — qui vous a fait grandir.",
+      hint: "Une personne, un événement, un lieu, une épreuve même, qui vous a fait grandir.",
       placeholder: "Je veux remercier…",
       minRows: 5,
     },
@@ -282,7 +282,7 @@ const INTENTION_QUESTIONS: Record<string, GuidedQuestion[]> = {
     {
       id: "vecu",
       question: "Comment l'avez-vous vécu dans votre chair ?",
-      hint: "Pas une opinion — votre expérience personnelle, concrète, incarnée.",
+      hint: "Pas une opinion, votre expérience personnelle, concrète, incarnée.",
       placeholder: "Dans ma propre vie, ça s'est traduit par…",
       minRows: 4,
     },
@@ -343,7 +343,7 @@ const SUJET_QUESTIONS: Record<string, GuidedQuestion> = {
   "engagement": {
     id: "sujet-engagement",
     question: "Qu'est-ce qui vous pousse à agir ?",
-    hint: "L'indignation, l'espoir, un événement personnel — qu'est-ce qui vous met en mouvement ?",
+    hint: "L'indignation, l'espoir, un événement personnel : qu'est-ce qui vous met en mouvement ?",
     placeholder: "Ce qui me pousse, c'est…",
     minRows: 4,
   },
@@ -360,7 +360,7 @@ const CLOSING_QUESTIONS: GuidedQuestion[] = [
   {
     id: "conseil",
     question: "Que diriez-vous à quelqu'un qui vit la même chose ?",
-    hint: "Un conseil, un avertissement, un encouragement — comme si cette personne était en face de vous.",
+    hint: "Un conseil, un avertissement, un encouragement, comme si cette personne était en face de vous.",
     placeholder: "Je lui dirais…",
     minRows: 4,
     encouragement: "Ce message peut changer la vie de quelqu'un.",
@@ -368,7 +368,7 @@ const CLOSING_QUESTIONS: GuidedQuestion[] = [
   {
     id: "mot-fin",
     question: "Un dernier mot ?",
-    hint: "Librement — un mot, une phrase, un cri, un merci. Ce qui reste quand on a tout dit.",
+    hint: "Librement : un mot, une phrase, un cri, un merci. Ce qui reste quand on a tout dit.",
     placeholder: "Pour finir…",
     minRows: 3,
   },
@@ -390,8 +390,8 @@ const LYA_OPENERS: Record<string, { question: string; hint: string; placeholder:
   "sante-corps": { question: "Raconte-moi le moment où tu as pris conscience que quelque chose avait changé dans ton corps ou ta santé.", hint: "Replonge dans ce jour précis : où étais-tu, avec qui, qu'as-tu ressenti ?", placeholder: "C'était le jour où..." },
   "emotions-mental": { question: "Il y a un moment précis où tu as senti que tes émotions prenaient le dessus. Raconte-moi ce jour-là.", hint: "Pas besoin de tout expliquer. Décris la scène, ce que tu as ressenti.", placeholder: "Ce jour-là, j'ai senti que..." },
   "famille-relations": { question: "Quel est le souvenir de famille ou de relation qui te revient le plus souvent ?", hint: "Un moment fort, heureux ou douloureux, avec quelqu'un qui compte pour toi.", placeholder: "Je me souviens de..." },
-  "travail-vocation": { question: "Quel est le moment où tu as su que c'était ça que tu voulais faire — ou au contraire, que tu devais tout changer ?", hint: "Le déclic, la révélation, ou le ras-le-bol. Raconte la scène.", placeholder: "J'ai compris le jour où..." },
-  "identite-origines": { question: "Quel moment de ta vie t'a fait prendre conscience de qui tu es vraiment — de tes origines, de ton identité ?", hint: "Un regard, une parole, un voyage, une découverte. Replonge dans ce moment.", placeholder: "J'ai réalisé que..." },
+  "travail-vocation": { question: "Quel est le moment où tu as su que c'était ça que tu voulais faire, ou au contraire, que tu devais tout changer ?", hint: "Le déclic, la révélation, ou le ras-le-bol. Raconte la scène.", placeholder: "J'ai compris le jour où..." },
+  "identite-origines": { question: "Quel moment de ta vie t'a fait prendre conscience de qui tu es vraiment, de tes origines, de ton identité ?", hint: "Un regard, une parole, un voyage, une découverte. Replonge dans ce moment.", placeholder: "J'ai réalisé que..." },
   "deuil-perte": { question: "Comment as-tu appris la nouvelle ? Raconte-moi ce moment, même si c'est difficile.", hint: "Prends ton temps. Décris ce que tu as vu, entendu, ressenti à cet instant.", placeholder: "Quand j'ai appris..." },
   "renaissance": { question: "Quel est le premier jour où tu as senti que quelque chose de nouveau commençait ?", hint: "Le moment exact où tu as senti le changement. Le lieu, l'heure, ce que tu faisais.", placeholder: "Le premier jour, c'était..." },
   "engagement": { question: "Qu'est-ce qui t'a poussé à t'engager ? Raconte le déclic.", hint: "L'événement, la rencontre ou l'injustice qui t'a fait dire : assez.", placeholder: "J'ai décidé d'agir quand..." },
@@ -457,19 +457,19 @@ const SUJETS = [
 const VIDEO_QUESTIONS = [
   {
     label: "Présentez-vous et racontez-nous ce qui vous amène ici aujourd'hui.",
-    hint: "Dites votre prénom, votre âge si vous le souhaitez, d'où vous venez. Expliquez pourquoi vous avez décidé de témoigner — qu'est-ce qui vous pousse à prendre la parole maintenant ? Prenez votre temps, il n'y a pas de mauvaise réponse.",
+    hint: "Dites votre prénom, votre âge si vous le souhaitez, d'où vous venez. Expliquez pourquoi vous avez décidé de témoigner : qu'est-ce qui vous pousse à prendre la parole maintenant ? Prenez votre temps, il n'y a pas de mauvaise réponse.",
   },
   {
-    label: "Racontez le moment précis où tout a basculé — le jour, la scène, ce que vous avez ressenti.",
+    label: "Racontez le moment précis où tout a basculé : le jour, la scène, ce que vous avez ressenti.",
     hint: "Fermez les yeux et replongez dans ce moment. Où étiez-vous ? Avec qui ? Qu'avez-vous vu, entendu, ressenti dans votre corps ? Essayez de décrire la scène comme si vous y étiez encore. Les détails comptent : une odeur, un son, un regard, une phrase.",
   },
   {
-    label: "Comment avez-vous traversé cette épreuve ? Qu'est-ce qui vous a aidé — ou au contraire, qu'est-ce qui a manqué ?",
+    label: "Comment avez-vous traversé cette épreuve ? Qu'est-ce qui vous a aidé, ou au contraire, qu'est-ce qui a manqué ?",
     hint: "Parlez des personnes qui vous ont soutenu, ou de celles qui n'ont pas compris. Racontez les jours difficiles, les doutes, mais aussi les petites victoires. Comment avez-vous trouvé la force de continuer ? Y a-t-il eu un déclic, un tournant ?",
   },
   {
     label: "Qu'est-ce que cette expérience a changé en vous ? Comment êtes-vous différent aujourd'hui ?",
-    hint: "Réfléchissez à la personne que vous étiez avant et celle que vous êtes maintenant. Qu'avez-vous appris sur vous-même ? Sur les autres ? Y a-t-il quelque chose que vous voyez différemment aujourd'hui — une valeur, une priorité, une relation ?",
+    hint: "Réfléchissez à la personne que vous étiez avant et celle que vous êtes maintenant. Qu'avez-vous appris sur vous-même ? Sur les autres ? Y a-t-il quelque chose que vous voyez différemment aujourd'hui : une valeur, une priorité, une relation ?",
   },
   {
     label: "Quel message aimeriez-vous transmettre à quelqu'un qui traverse la même chose en ce moment ?",
@@ -477,7 +477,7 @@ const VIDEO_QUESTIONS = [
   },
   {
     label: "Y a-t-il quelque chose que vous n'avez jamais dit à voix haute et que vous aimeriez dire maintenant ?",
-    hint: "C'est le moment de dire ce qui n'a jamais été dit — à quelqu'un, à vous-même, au monde. Vous pouvez remercier, pardonner, dénoncer, ou simplement poser les mots. Cette vidéo est votre espace. Personne ne vous jugera.",
+    hint: "C'est le moment de dire ce qui n'a jamais été dit, à quelqu'un, à vous-même, au monde. Vous pouvez remercier, pardonner, dénoncer, ou simplement poser les mots. Cette vidéo est votre espace. Personne ne vous jugera.",
   },
 ];
 
@@ -501,15 +501,15 @@ const STEPS_VIDEO = ["Bienvenue", "Thématique", "Enregistrement", "Identité", 
 
 const LYA_STEP_MESSAGES: Record<number, { text: string; sub?: string }> = {
   0: {
-    text: "Bonjour ! Je suis Lya, je vous accompagne tout au long de ce parcours. Prenez votre temps — il n'y a aucune pression.",
-    sub: "Plus de 200 témoignages recueillis — chaque histoire compte.",
+    text: "Bonjour ! Je suis Lya, je vous accompagne tout au long de ce parcours. Prenez votre temps : il n'y a aucune pression.",
+    sub: "Plus de 200 témoignages recueillis, chaque histoire compte.",
   },
   1: {
-    text: "Ces deux choix m'aident à mieux vous guider. Il n'y a pas de mauvaise réponse — suivez votre instinct.",
+    text: "Ces deux choix m'aident à mieux vous guider. Il n'y a pas de mauvaise réponse : suivez votre instinct.",
     sub: "Ça prend 10 secondes. Deux clics, c'est tout.",
   },
   2: {
-    text: "C'est le cœur du parcours. Racontez comme vous le sentez — je suis là si vous avez besoin d'un coup de pouce.",
+    text: "C'est le cœur du parcours. Racontez comme vous le sentez : je suis là si vous avez besoin d'un coup de pouce.",
     sub: "Pas de jugement, pas de filtre. Votre voix, vos mots.",
   },
   3: {
@@ -517,7 +517,7 @@ const LYA_STEP_MESSAGES: Record<number, { text: string; sub?: string }> = {
     sub: "Votre anonymat est garanti à 100% si vous le souhaitez.",
   },
   4: {
-    text: "Relisez tranquillement. Rien ne sera publié sans votre accord explicite — vous gardez le contrôle total.",
+    text: "Relisez tranquillement. Rien ne sera publié sans votre accord explicite : vous gardez le contrôle total.",
     sub: "L'équipe éditoriale relira votre texte avec le plus grand soin.",
   },
 };
@@ -564,9 +564,9 @@ const REASSURANCE_REASONS: ImpactReason[] = [
 const REASSURANCE_FAQS = [
   { q: "C'est vraiment gratuit ?", a: "Oui, 100% gratuit. Notre mission est de donner la parole à ceux qui ont quelque chose à raconter." },
   { q: "Qui peut participer ?", a: "Tout le monde. Chaque histoire compte, même les plus simples." },
-  { q: "Je peux rester anonyme ?", a: "Absolument. Pseudonyme, voix modifiée, visage flouté — vous choisissez." },
+  { q: "Je peux rester anonyme ?", a: "Absolument. Pseudonyme, voix modifiée, visage flouté : vous choisissez." },
   { q: "J'ai le droit de relecture ?", a: "Bien sûr. Vous validez tout avant publication. Rien n'est diffusé sans votre accord." },
-  { q: "Mon histoire peut devenir quoi ?", a: "Un article, une vidéo sur nos réseaux, un podcast, voire le début d'un documentaire — selon votre histoire et vos envies." },
+  { q: "Mon histoire peut devenir quoi ?", a: "Un article, une vidéo sur nos réseaux, un podcast, voire le début d'un documentaire, selon votre histoire et vos envies." },
   { q: "Et si je change d'avis ?", a: "Vous pouvez vous retirer à tout moment, même après publication." },
 ];
 
@@ -886,7 +886,7 @@ export default function EcrireHistoirePage() {
   const videoExchangeCount = useRef(0);
 
   const handleVideoAiRecord = useCallback(async (blob: Blob, questionLabel: string, preflightCtx?: { firstTime: string; availableTime: string; mood: string }): Promise<{ done: boolean; question?: { label: string; hint?: string }; encouragement?: string; transcript?: string }> => {
-    const FALLBACK_QUESTION = { label: "Continuez — qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps, racontez la suite." };
+    const FALLBACK_QUESTION = { label: "Continuez : qu'est-ce qui s'est passé ensuite ?", hint: "Prenez votre temps, racontez la suite." };
 
     try {
       console.log("[VideoAI] Starting transcription, blob size:", blob.size, "type:", blob.type);
@@ -913,7 +913,7 @@ export default function EcrireHistoirePage() {
 
       if (!transcribeRes.ok) {
         console.error("[VideoAI] Transcription failed:", transcribeRes.status, await transcribeRes.text().catch(() => ""));
-        return { done: false, question: FALLBACK_QUESTION, encouragement: "Problème de transcription — continuez, on réessaie." };
+        return { done: false, question: FALLBACK_QUESTION, encouragement: "Problème de transcription : continuez, on réessaie." };
       }
       const { text } = await transcribeRes.json();
       console.log("[VideoAI] Transcription:", text?.slice(0, 80));
@@ -944,7 +944,7 @@ export default function EcrireHistoirePage() {
 
       if (!lyaRes.ok) {
         console.error("[VideoAI] Generate failed:", lyaRes.status);
-        return { done: false, question: FALLBACK_QUESTION, encouragement: "Allya a eu un souci — continuez votre récit." };
+        return { done: false, question: FALLBACK_QUESTION, encouragement: "Allya a eu un souci : continuez votre récit." };
       }
       const data = await lyaRes.json();
       console.log("[VideoAI] Allya response:", JSON.stringify(data).slice(0, 300));
@@ -965,7 +965,7 @@ export default function EcrireHistoirePage() {
       return { done: false, question: FALLBACK_QUESTION, transcript: text };
     } catch (err) {
       console.error("[VideoAI] Error:", err);
-      return { done: false, question: FALLBACK_QUESTION, encouragement: "Problème technique — continuez votre récit." };
+      return { done: false, question: FALLBACK_QUESTION, encouragement: "Problème technique : continuez votre récit." };
     }
   }, [draft.intention, draft.sujet]);
 
@@ -1185,7 +1185,7 @@ export default function EcrireHistoirePage() {
                   Nous le visionnerons avec soin et réaliserons un montage professionnel.
                   {" "}<strong>Rien ne sera diffusé sans votre accord explicite.</strong>
                   {" "}Si votre histoire s'y prête, nous pourrons aussi vous proposer de
-                  participer à un projet plus ambitieux — podcast, documentaire, série.
+                  participer à un projet plus ambitieux : podcast, documentaire, série.
                   Vous recevrez un retour sous 7 jours à <strong>{user.email}</strong>.
                 </p>
               ) : (
@@ -1193,7 +1193,7 @@ export default function EcrireHistoirePage() {
                   Votre récit a bien été transmis à notre équipe éditoriale.
                   Nous le lirons avec toute l'attention qu'il mérite.
                   Il pourra être publié sous forme d'article sur Origines, et si votre
-                  histoire s'y prête, nous pourrons vous proposer de la développer ensemble —
+                  histoire s'y prête, nous pourrons vous proposer de la développer ensemble :
                   vidéo, podcast, ou projet éditorial.
                   Vous recevrez un retour sous 7 jours à <strong>{user.email}</strong>.
                 </p>
@@ -1224,7 +1224,7 @@ export default function EcrireHistoirePage() {
     <div className={s.page}>
       <SEO
         title="Racontez votre histoire"
-        description="Partagez votre parcours et inspirez des milliers de personnes. Écrivez ou filmez votre témoignage — 100% gratuit."
+        description="Partagez votre parcours et inspirez des milliers de personnes. Écrivez ou filmez votre témoignage, 100% gratuit."
         url="/ecrire-mon-histoire"
         breadcrumbs={[
           { name: "Accueil", url: "/" },
@@ -1467,7 +1467,7 @@ export default function EcrireHistoirePage() {
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
                   Votre témoignage pourra devenir un article Origines, une vidéo sur
-                  nos réseaux, ou le début d'un projet éditorial plus grand — podcast,
+                  nos réseaux, ou le début d'un projet éditorial plus grand : podcast,
                   documentaire, série. Choisissez simplement le format qui vous convient.
                 </motion.p>
 
@@ -1575,7 +1575,7 @@ export default function EcrireHistoirePage() {
                         </div>
                         <div>
                           <strong>Publication uniquement avec votre accord</strong>
-                          <span>Rien n'est diffusé sans votre consentement explicite. Vous gardez le contrôle total — à chaque étape.</span>
+                          <span>Rien n'est diffusé sans votre consentement explicite. Vous gardez le contrôle total, à chaque étape.</span>
                         </div>
                       </div>
                     </>
@@ -1647,7 +1647,7 @@ export default function EcrireHistoirePage() {
                 <h2 className={s.stepTitle}>Aidez-nous à comprendre votre <em>histoire.</em></h2>
                 <p className={s.stepDeck}>
                   Deux questions rapides pour mieux accompagner votre {draft.format === "video" ? "témoignage" : "récit"}.
-                  Il n'y a pas de mauvaise réponse — cliquez simplement sur ce qui vous correspond.
+                  Il n'y a pas de mauvaise réponse : cliquez simplement sur ce qui vous correspond.
                 </p>
               </div>
 
@@ -1797,8 +1797,8 @@ export default function EcrireHistoirePage() {
                   {draft.writeMode === "avatar"
                     ? "Lya, notre journaliste IA, apparaît en vidéo et vous pose ses questions en direct. Répondez face caméra, naturellement."
                     : draft.writeMode === "guide"
-                      ? "Notre journaliste IA Allya vous pose des questions en temps réel, adaptées à votre récit. Répondez face caméra — elle s'occupe du reste."
-                      : "6 questions s'affichent à l'écran, une par une. Répondez naturellement, comme si vous parliez à un ami. 2 minutes max par question. Prenez votre temps — les indications sous chaque question sont là pour vous aider."
+                      ? "Notre journaliste IA Allya vous pose des questions en temps réel, adaptées à votre récit. Répondez face caméra : elle s'occupe du reste."
+                      : "6 questions s'affichent à l'écran, une par une. Répondez naturellement, comme si vous parliez à un ami. 2 minutes max par question. Prenez votre temps : les indications sous chaque question sont là pour vous aider."
                   }
                 </p>
               </div>
@@ -1957,7 +1957,7 @@ export default function EcrireHistoirePage() {
                 </h2>
                 <p className={s.stepDeck}>
                   {draft.writeMode === "guide"
-                    ? "Répondez aux questions une par une. Prenez le temps qu'il faut — chaque réponse enrichit votre histoire."
+                    ? "Répondez aux questions une par une. Prenez le temps qu'il faut : chaque réponse enrichit votre histoire."
                     : "Page blanche. Pas de règle, pas de format imposé. Écrivez comme ça vient."
                   }
                 </p>

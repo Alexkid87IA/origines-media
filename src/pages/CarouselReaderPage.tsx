@@ -144,7 +144,7 @@ export default function CarouselReaderPage() {
   return (
     <>
       <SEO
-        title={`${carousel.title} — ${brandLabel}`}
+        title={`${carousel.title} | ${brandLabel}`}
         description={carousel.deck}
         url={`/carousel/${carousel.slug}`}
         image={carousel.cover}
@@ -171,7 +171,7 @@ export default function CarouselReaderPage() {
             <img
               key={slides[index]}
               src={slides[index]}
-              alt={`Slide ${index + 1} — ${carousel.title}`}
+              alt={`Slide ${index + 1} | ${carousel.title}`}
               className={s.slide}
               width={1080}
               height={1350}

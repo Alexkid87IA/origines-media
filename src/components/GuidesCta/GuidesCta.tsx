@@ -20,7 +20,7 @@ export default function GuidesCta() {
         <div className={s.bandImg}>
           <img
             src="/series/01_transmission_poster.webp"
-            alt="Immersion — Guides Origines"
+            alt="Immersion, Guides Origines"
             loading="lazy"
             decoding="async"
           />
@@ -38,7 +38,7 @@ export default function GuidesCta() {
               Nos plus belles <em>plong&eacute;es.</em>
             </h2>
             <p className={s.bandDeck}>
-              Des guides au long cours &mdash; enqu&ecirc;tes, portraits, essais.
+              Des guides au long cours : enqu&ecirc;tes, portraits, essais.
               De 2&nbsp;000 &agrave; 4&nbsp;000 mots, des mois d&rsquo;investigation.
             </p>
           </div>

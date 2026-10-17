@@ -727,7 +727,7 @@ export const createPortableTextComponentsV2 = ({
                       {value.source && (
                         <span className={s.quoteSource}>
                           {" "}
-                          &mdash; {renderSource()}
+                           · {renderSource()}
                         </span>
                       )}
                     </div>
@@ -753,7 +753,7 @@ export const createPortableTextComponentsV2 = ({
                   )}
                   {value.role && <span>, {value.role}</span>}
                   {value.source && (
-                    <span> &mdash; {renderSource()}</span>
+                    <span>  · {renderSource()}</span>
                   )}
                 </figcaption>
               )}
@@ -812,7 +812,7 @@ export const createPortableTextComponentsV2 = ({
                     {value.source && (
                       <span className={s.quoteSource}>
                         {" "}
-                        &mdash; {renderSource()}
+                         · {renderSource()}
                       </span>
                     )}
                   </div>
@@ -843,7 +843,7 @@ export const createPortableTextComponentsV2 = ({
                   {value.source && (
                     <span className={s.quoteSource}>
                       {" "}
-                      &mdash; {renderSource()}
+                       · {renderSource()}
                     </span>
                   )}
                 </div>
@@ -902,7 +902,7 @@ export const createPortableTextComponentsV2 = ({
                   {source && (
                     <span className={s.quoteSource}>
                       {" "}
-                      &mdash; {linkifySource(source, sourceUrl)}
+                       · {linkifySource(source, sourceUrl)}
                     </span>
                   )}
                 </div>

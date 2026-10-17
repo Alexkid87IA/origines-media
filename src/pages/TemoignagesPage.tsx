@@ -156,7 +156,7 @@ export default function TemoignagesPage() {
   return (
     <div className={s.page}>
       <SEO
-        title="Témoignages et portraits — Récits de vie"
+        title="Témoignages et portraits : Récits de vie"
         description="Des histoires vraies, racontées à la première personne. Témoignages, portraits, récits de vie."
         url="/temoignages"
         breadcrumbs={[
@@ -192,7 +192,7 @@ export default function TemoignagesPage() {
             <p className={s.heroDeck}>
               Pas de jugement, pas de le&ccedil;on. Juste la v&eacute;rit&eacute; de
               ceux qui osent la partager. Chaque r&eacute;cit est une fen&ecirc;tre
-              sur un monde que vous ne connaissez peut-&ecirc;tre pas &mdash;&nbsp;ou
+              sur un monde que vous ne connaissez peut-&ecirc;tre pas, ou
               que vous reconna&icirc;trez trop bien.
             </p>
 

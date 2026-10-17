@@ -258,7 +258,7 @@ export default function VideosPage() {
   return (
     <>
       <SEO
-        title="Vidéos — Documentaires, reportages et témoignages"
+        title="Vidéos : Documentaires, reportages et témoignages"
         description={`${videos.length} vidéos Origines Media : documentaires, reportages et témoignages sur la psychologie, les relations, la culture et l'avenir. Regardez ce qui compte.`}
         url="/videos"
         breadcrumbs={[

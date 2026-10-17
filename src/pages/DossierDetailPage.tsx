@@ -124,12 +124,12 @@ export default function DossierDetailPage() {
   const metaDesc =
     dossier.seoDescription ||
     dossier.chapeau ||
-    `${dossier.question} — ${articles.length} articles pour explorer cette question sous tous les angles.`;
+    `${dossier.question} | ${articles.length} articles pour explorer cette question sous tous les angles.`;
 
   return (
     <div className={s.page}>
       <SEO
-        title={`${dossier.question} — Dossiers · Origines Media`}
+        title={`${dossier.question} | Dossiers · Origines Media`}
         description={metaDesc}
         url={`/dossiers/${dossier.slug || slug}`}
         image={dossier.imageUrl}
@@ -215,7 +215,7 @@ export default function DossierDetailPage() {
           <div className={s.sommaireRight}>
             <p className={s.sommaireText}>
               {dossier.chapeau ||
-                `Chaque semaine, Origines Media explore une question essentielle sous plusieurs angles — psychologie, science, témoignage, société, pratique. Découvrez les ${articles.length} articles de ce dossier pour construire votre propre réponse.`}
+                `Chaque semaine, Origines Media explore une question essentielle sous plusieurs angles : psychologie, science, témoignage, société, pratique. Découvrez les ${articles.length} articles de ce dossier pour construire votre propre réponse.`}
             </p>
           </div>
         </div>

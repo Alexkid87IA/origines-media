@@ -1364,8 +1364,7 @@ export default function ArticlePageV2() {
           </h3>
           <p className={s.endNlDeck}>
             Un &eacute;dito personnel, les meilleurs articles de la semaine,
-            et des recommandations que vous ne trouverez nulle part ailleurs
-            &mdash;&nbsp;en 5&nbsp;minutes de lecture.
+            et des recommandations que vous ne trouverez nulle part ailleurs, en 5&nbsp;minutes de lecture.
           </p>
           <ul className={s.endNlPoints}>
             <li>

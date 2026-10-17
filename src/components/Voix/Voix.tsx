@@ -100,7 +100,7 @@ const STORIES: Story[] = [
     img: "/histoires/histoire_sante_mentale.webp",
     quote: "Mon frère ne parle presque plus. Je ne sais plus comment ",
     quoteEm: "entrer",
-    quoteSuffix: " dans sa chambre — alors j'ai décidé d'écrire.",
+    quoteSuffix: " dans sa chambre, alors j'ai décidé d'écrire.",
     author: "Théo",
     age: 29,
     category: "Santé mentale",
@@ -137,7 +137,7 @@ export default function Voix({ cmsStories }: VoixProps) {
           <p className={s.sectionDeck}>
             Un r&eacute;cit, un t&eacute;moignage, un moment-pivot. Quelque chose que vous
             n&rsquo;avez jamais dit &agrave; voix haute. On vous lit, on vous appelle, et
-            si l&rsquo;histoire le demande &mdash; on la publie avec vous.
+            si l&rsquo;histoire le demande, on la publie avec vous.
           </p>
         </div>
         <a className={s.sectionAll} href="/histoires" aria-label="Toutes les histoires">

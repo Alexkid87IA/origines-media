@@ -85,7 +85,7 @@ const SLIDES: Slide[] = [
     univers: "liens",
     meta: "Récit · N°12",
     title: "Ma mère ne veut plus qu'on se voie.",
-    deck: "La rupture entre parents et enfants adultes progresse en silence. Trois histoires, trois manières de l'accepter — ou pas.",
+    deck: "La rupture entre parents et enfants adultes progresse en silence. Trois histoires, trois manières de l'accepter, ou pas.",
     author: "Mathilde Aubry",
     readTime: "Lecture 16 min",
     href: "/article/rupture-mere-fille",

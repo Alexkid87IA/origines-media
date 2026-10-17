@@ -317,7 +317,7 @@ export default function Feed({ cmsItems }: FeedProps) {
           </h3>
           <p className={s.sectionDeck}>
             Les derniers articles, enqu&ecirc;tes et portraits publi&eacute;s par la
-            r&eacute;daction. Du plus r&eacute;cent au plus ancien &mdash; filtrez par
+            r&eacute;daction. Du plus r&eacute;cent au plus ancien : filtrez par
             univers, triez comme vous voulez.
           </p>
         </div>

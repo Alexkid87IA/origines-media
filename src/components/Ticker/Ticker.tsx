@@ -25,7 +25,7 @@ export default function Ticker() {
         <div className={`${styles.row} mono`}>
           <span>
             <span className={styles.dot} />
-            En direct &mdash; <span>{time}</span> Paris
+            En direct : <span>{time}</span> Paris
           </span>
 
           <div className={styles.tickerCenter}>

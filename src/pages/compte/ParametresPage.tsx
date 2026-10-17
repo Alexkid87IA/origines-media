@@ -122,7 +122,7 @@ export default function ParametresPage() {
                 <div className={s.settingsDesc}>
                   {user.metadata.creationTime
                     ? new Date(user.metadata.creationTime).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
-                    : "—"}
+                    : "-"}
                 </div>
               </div>
             </div>

@@ -128,10 +128,10 @@ export default function ConfidentialitePage() {
             <h2 className={s.sectionTitle}>7. Sous-traitants et transferts</h2>
             <p className={s.text}>Vos donn&eacute;es peuvent &ecirc;tre transmises aux sous-traitants suivants :</p>
             <ul className={s.list}>
-              <li><strong>Firebase / Google Cloud</strong> (authentification, base de donn&eacute;es) &mdash; UE</li>
-              <li><strong>Sanity.io</strong> (gestion de contenu) &mdash; UE / US (clauses contractuelles types)</li>
-              <li><strong>Stripe</strong> (paiements) &mdash; certifi&eacute; PCI-DSS</li>
-              <li><strong>OVH</strong> (h&eacute;bergement) &mdash; France</li>
+              <li><strong>Firebase / Google Cloud</strong> (authentification, base de donn&eacute;es), UE</li>
+              <li><strong>Sanity.io</strong> (gestion de contenu), UE / US (clauses contractuelles types)</li>
+              <li><strong>Stripe</strong> (paiements), certifi&eacute; PCI-DSS</li>
+              <li><strong>OVH</strong> (h&eacute;bergement), France</li>
             </ul>
             <p className={s.text}>
               Aucune donn&eacute;e n&rsquo;est vendue &agrave; des tiers. Les transferts hors UE sont encadr&eacute;s par des clauses contractuelles types approuv&eacute;es par la Commission europ&eacute;enne.

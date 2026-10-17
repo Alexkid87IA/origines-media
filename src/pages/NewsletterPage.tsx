@@ -136,7 +136,7 @@ const NewsletterPage: React.FC = () => {
   return (
     <div className={s.page}>
       <SEO
-        title="Newsletter — Restez inspirés chaque semaine"
+        title="Newsletter : Restez inspirés chaque semaine"
         description="Inscrivez-vous à la newsletter Origines Media. Recevez nos meilleurs récits, coulisses de tournage et recommandations directement dans votre boîte mail."
         url="/newsletter"
         breadcrumbs={[

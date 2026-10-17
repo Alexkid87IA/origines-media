@@ -113,7 +113,7 @@ function renderCustomType(block: any): string {
       const text = typeof raw === 'string' ? raw : extractText(raw)
       if (!text) return ''
       const author = block.author || block.auteur || ''
-      return `<blockquote><p>${esc(text)}</p>${author ? `<footer>— ${esc(author)}</footer>` : ''}</blockquote>`
+      return `<blockquote><p>${esc(text)}</p>${author ? `<footer>${esc(author)}</footer>` : ''}</blockquote>`
     }
     case 'keyTakeaways': {
       const items = block.items || block.points || block.takeaways || block.list || block.content || block.bullets || block.essentiels || block.keys || block.highlights || block.children || []

@@ -27,7 +27,7 @@ export default function MarquePage() {
   return (
     <>
       <SEO
-        absoluteTitle="La marque Origines Media — Mission, univers et manifeste"
+        absoluteTitle="La marque Origines Media : Mission, univers et manifeste"
         title="La marque Origines Media"
         description="Découvrez l'identité d'Origines Media : notre mission, nos cinq univers, notre ligne éditoriale et notre manière d'explorer ce qui nous construit."
         url="/marque"

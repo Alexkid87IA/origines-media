@@ -103,7 +103,7 @@ export function AffiliateBlockRenderer({ value }: { value: { titre?: string; pro
         ))}
       </div>
       <p className={s.disclosure}>
-        Lien affilié — Origines Media perçoit une commission, sans surcoût pour vous.
+        Lien affilié : Origines Media perçoit une commission, sans surcoût pour vous.
       </p>
     </aside>
   );
