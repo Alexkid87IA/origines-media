@@ -1,3 +1,4 @@
+import { normalizeEditorialBlocks } from "../lib/editorialContent";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -424,7 +425,7 @@ export default function ArticlePageV2() {
   const imageUrl = article.imageUrl || article.mainImage?.asset?.url || (typeof article.mainImage === "string" ? article.mainImage : "") || "";
   const date = article.datePublication || article.publishedAt;
   const readTime = article.tempsLecture || estimateReadingTime(article.contenu || article.body) || 1;
-  const fullContent = article.contenu || article.body || [];
+  const fullContent = normalizeEditorialBlocks<any>(article.contenu || article.body || []);
   const firstParaIndex = fullContent.findIndex(
     (b: any) => b._type === "block" && (b.style === "normal" || !b.style)
   );

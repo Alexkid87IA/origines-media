@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { PortableText } from "@portabletext/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getImageUrl } from "../../lib/imageUrl";
 import { sanityImg } from "../../lib/sanityImage";
@@ -10,14 +9,7 @@ import LiteYouTube from "../ui/LiteYouTube";
 import { AffiliateBlockRenderer } from "./AffiliateProductCard";
 import s from "./PortableTextV2.module.css";
 
-function parseInlineMarkdown(text: string): React.ReactNode[] {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((part, i) => {
-    const bold = part.match(/^\*\*(.+)\*\*$/);
-    if (bold) return <strong key={i}>{bold[1]}</strong>;
-    return part;
-  });
-}
+import { EditorialText, EditorialLink, parseInlineMarkdown } from "./EditorialText";
 
 interface PortableTextConfig {
   themeColor: string;
@@ -140,9 +132,7 @@ const linkifySource = (source: string, sourceUrl?: string): React.ReactNode => {
   if (!source) return null;
   if (sourceUrl) {
     return (
-      <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className={s.link}>
-        {source}
-      </a>
+      <EditorialLink href={sourceUrl}>{source}</EditorialLink>
     );
   }
   const domainPattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
@@ -160,7 +150,7 @@ const linkifySource = (source: string, sourceUrl?: string): React.ReactNode => {
       </a>
     );
   }
-  return <>{source}</>;
+  return <>{parseInlineMarkdown(source)}</>;
 };
 
 /* ------------------------------------------------------------------ */
@@ -276,20 +266,20 @@ function AccordionItemV2({
   const renderAnswer = () => {
     if (!answer) return null;
     if (typeof answer === "string")
-      return <p className={s.accordionAnswerText}>{answer}</p>;
+      return <div className={s.accordionAnswerText}><EditorialText value={answer} /></div>;
     if (Array.isArray(answer)) {
       const hasPortableText = answer.some((item: any) => item?._type);
       if (hasPortableText)
         return (
           <div className={s.accordionAnswerText}>
-            <PortableText value={answer} />
+            <EditorialText value={answer} />
           </div>
         );
     }
     if (answer?._type === "block")
       return (
         <div className={s.accordionAnswerText}>
-          <PortableText value={[answer]} />
+          <EditorialText value={answer} />
         </div>
       );
     const text = extractText(answer);
@@ -352,13 +342,13 @@ function SingleAccordionV2({ value }: { value: any }) {
   const renderContent = () => {
     if (!rawContent) return null;
     if (typeof rawContent === "string")
-      return <p className={s.accordionAnswerText}>{rawContent}</p>;
+      return <div className={s.accordionAnswerText}><EditorialText value={rawContent} /></div>;
     if (Array.isArray(rawContent)) {
       const hasPortableText = rawContent.some((item: any) => item?._type);
       if (hasPortableText)
         return (
           <div className={s.accordionAnswerText}>
-            <PortableText value={rawContent} />
+            <EditorialText value={rawContent} />
           </div>
         );
     }
@@ -626,8 +616,7 @@ export const createPortableTextComponentsV2 = ({
       },
 
       callout: ({ value }: any) => {
-        const contentValue = value.text || value.content || value.body;
-        const isRichText = Array.isArray(contentValue);
+        const contentValue = value.text || value.content || value.body || value.contenu || value.texte;
 
         if (value.type === "stat") {
           return (
@@ -645,11 +634,7 @@ export const createPortableTextComponentsV2 = ({
               </div>
               <div className={s.calloutStatBody}>
                 <div className={s.calloutText}>
-                  {isRichText ? (
-                    <PortableText value={contentValue} />
-                  ) : contentValue ? (
-                    <p>{parseInlineMarkdown(contentValue)}</p>
-                  ) : null}
+                  <EditorialText value={contentValue} />
                 </div>
                 {value.source && (
                   <p className={s.calloutSource}>
@@ -686,11 +671,7 @@ export const createPortableTextComponentsV2 = ({
                   <p className={s.calloutTitle}>{value.title}</p>
                 )}
                 <div className={s.calloutText}>
-                  {isRichText ? (
-                    <PortableText value={contentValue} />
-                  ) : contentValue ? (
-                    <p>{parseInlineMarkdown(contentValue)}</p>
-                  ) : null}
+                  <EditorialText value={contentValue} />
                 </div>
                 {value.source && (
                   <p className={s.calloutSource}>
@@ -902,7 +883,7 @@ export const createPortableTextComponentsV2 = ({
             <blockquote>
               {isPortableText ? (
                 <div className={s.quoteText}>
-                  <PortableText value={rawQuote} />
+                  <EditorialText value={rawQuote} />
                 </div>
               ) : (
                 <p className={s.quoteText}>
@@ -950,6 +931,7 @@ export const createPortableTextComponentsV2 = ({
           const itemTitle =
             item?.title || item?.heading || item?.label || item?.name;
           const itemContent =
+            (Array.isArray(item) || item?._type === "block" ? (Array.isArray(item) ? item : [item]) : null) ||
             item?.content ||
             item?.body ||
             item?.description ||
@@ -972,9 +954,9 @@ export const createPortableTextComponentsV2 = ({
                   </p>
                   <div className={s.takeawaysItemText}>
                     {typeof itemContent === "string" ? (
-                      <p>{parseInlineMarkdown(itemContent)}</p>
+                      <EditorialText value={itemContent} emphasizeLead />
                     ) : Array.isArray(itemContent) ? (
-                      <PortableText value={itemContent} />
+                      <EditorialText value={itemContent} />
                     ) : (
                       <p>{extractText(itemContent)}</p>
                     )}
@@ -991,7 +973,7 @@ export const createPortableTextComponentsV2 = ({
                   {getIconSvg(itemIcon)}
                 </span>
                 <div className={s.takeawaysItemText}>
-                  <PortableText value={itemContent} />
+                  <EditorialText value={itemContent} />
                 </div>
               </li>
             );
@@ -1003,7 +985,7 @@ export const createPortableTextComponentsV2 = ({
                 <span className={s.takeawaysItemIcon}>
                   {getIconSvg(itemIcon)}
                 </span>
-                <span className={s.takeawaysItemText}>{parseInlineMarkdown(itemContent)}</span>
+                <div className={s.takeawaysItemText}><EditorialText value={itemContent} emphasizeLead /></div>
               </li>
             );
           }
@@ -1016,7 +998,7 @@ export const createPortableTextComponentsV2 = ({
                 <span className={s.takeawaysItemIcon}>
                   {getIconSvg(itemIcon)}
                 </span>
-                <span className={s.takeawaysItemText}>{parseInlineMarkdown(text)}</span>
+                <div className={s.takeawaysItemText}><EditorialText value={text} emphasizeLead /></div>
               </li>
             );
           }
@@ -1074,6 +1056,7 @@ export const createPortableTextComponentsV2 = ({
       checklist: ({ value }: any) => {
         const slug = article?.slug?.current || article?.slug || "default";
         const storageKey = `checklist-${slug}-${value._key || "0"}`;
+        const labelId = React.useId();
 
         const [checked, setChecked] = React.useState<Set<string>>(() => {
           try {
@@ -1105,7 +1088,7 @@ export const createPortableTextComponentsV2 = ({
                 </svg>
               </span>
               <h4 className={s.checklistTitle}>
-                {value.title || "Checklist"}
+                {value.title || value.titre || "Checklist"}
               </h4>
               <span className={s.checklistCount}>{done}/{total}</span>
             </div>
@@ -1117,16 +1100,9 @@ export const createPortableTextComponentsV2 = ({
                   <li
                     key={item._key || index}
                     className={`${s.checklistItem} ${isChecked ? s.checklistItemDone : ""}`}
-                    onClick={() => toggle(id)}
                   >
-                    <span className={s.checklistBox}>
-                      {isChecked ? (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
-                      ) : null}
-                    </span>
-                    <span className={s.checklistText}>{item.text}</span>
+                    <input type="checkbox" className={s.checklistBox} checked={isChecked} onChange={() => toggle(id)} aria-labelledby={`${labelId}-${index}`} />
+                    <div id={`${labelId}-${index}`} className={s.checklistText}><EditorialText value={typeof item === "string" ? item : item.text || item.texte || item.content} /></div>
                   </li>
                 );
               })}

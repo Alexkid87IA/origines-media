@@ -60,7 +60,7 @@ test('AdSense desktop/mobile and Google Ads receive HTML on every existing crawl
 test('Server modules start with native Node ESM loading, including carousel JSON imports', async () => {
   const native = await mkdtemp(join(temp, 'native-runtime-'));
   const helpers = (await readdir('api/_lib')).filter(name => name.endsWith('.ts')).map(name => `api/_lib/${name}`);
-  await build({ entryPoints: ['api/prerender.ts', 'api/contact.ts', 'src/data/carousels.ts', 'src/lib/contact.ts', 'src/lib/contentQueries.ts', ...helpers],
+  await build({ entryPoints: ['api/prerender.ts', 'api/contact.ts', 'src/data/carousels.ts', 'src/lib/contact.ts', 'src/lib/contentQueries.ts', 'src/lib/editorialContent.ts', ...helpers],
     bundle: false, platform: 'node', format: 'esm', target: 'node22', outdir: native, outbase: '.' });
   await writeFile(join(native, 'package.json'), '{"type":"module"}');
   await copyFile('src/data/carouselSlides.json', join(native, 'src/data/carouselSlides.json'));
